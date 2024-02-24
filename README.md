@@ -1,16 +1,7 @@
-# wayllu_project
+## Wayllu App
 
-A new Flutter project.
 
-## Getting Started
 
-This project is a starting point for a Flutter application.
+![Logo](/assets/LOGOTIPO.png)
 
-A few resources to get you started if this is your first Flutter project:
-
-- [Lab: Write your first Flutter app](https://docs.flutter.dev/get-started/codelab)
-- [Cookbook: Useful Flutter samples](https://docs.flutter.dev/cookbook)
-
-For help getting started with Flutter development, view the
-[online documentation](https://docs.flutter.dev/), which offers tutorials,
-samples, guidance on mobile development, and a full API reference.
+An app developed an designed by a group of students, which goal is to help to Ruraq artisans of the Peru to mange their inventory and sales made in their day-by-day (See Ruraq Website impulsed by Peru Minister of Culture for references [Ruraq Website](https://ruraqmaki.pe/))
