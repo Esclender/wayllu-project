@@ -1,18 +1,22 @@
 import 'dart:ui';
-
 import 'package:flutter/material.dart';
 import 'package:flutter_hooks/flutter_hooks.dart';
 import 'package:ionicons/ionicons.dart';
+import 'package:wayllu_project/src/config/router/app_router.dart';
+import 'package:wayllu_project/src/locator.dart';
 import 'package:wayllu_project/src/utils/constants/colors.dart';
 
 class BottomNavBar extends HookWidget {
   BottomNavBar({super.key});
 
-  final List<IconData> optionsIcons = [
-    Ionicons.home,
-    Ionicons.bar_chart,
-    Ionicons.person,
+  final List<Map<String, dynamic>> optionsIcons = [
+    {'icon': Ionicons.home, 'route': '/home'},
+    {'icon': Ionicons.bar_chart, 'route': '/home'},
+    {'icon': Ionicons.person, 'route': '/info-user'},
   ];
+
+  //Dependencies Injection
+  final appRouter = getIt<AppRouter>();
 
   final viewSelected = useState(0);
 
@@ -46,8 +50,9 @@ class BottomNavBar extends HookWidget {
             children: List.generate(
               optionsIcons.length,
               (index) => _buildOptions(
-                optionsIcons[index],
+                optionsIcons[index]['icon'] as IconData,
                 index,
+                optionsIcons[index]['route'] as String,
               ),
             ),
           ),
@@ -56,10 +61,11 @@ class BottomNavBar extends HookWidget {
     );
   }
 
-  Widget _buildOptions(IconData icon, int index) {
+  Widget _buildOptions(IconData icon, int index, String route) {
     return Flexible(
       child: InkWell(
         onTap: () {
+          appRouter.pushNamed('/info-user');
           viewSelected.value = index;
         },
         child: Container(

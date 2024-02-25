@@ -5,15 +5,20 @@ import 'package:wayllu_project/src/presentation/widgets/bottom_navbar.dart';
 import 'package:wayllu_project/src/utils/constants/colors.dart';
 
 @RoutePage()
-class HomeScreen extends HookWidget {
-  const HomeScreen({super.key});
+class InfoUserScreen extends HookWidget {
+  const InfoUserScreen({super.key});
 
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      backgroundColor: bgPrimary,
-      body: const Placeholder(),
       floatingActionButtonLocation: FloatingActionButtonLocation.centerDocked,
+      backgroundColor: bgPrimary,
+      body: Padding(
+        padding: const EdgeInsets.all(8.0),
+        child: Center(
+          child: Text('Info User'),
+        ),
+      ),
       floatingActionButton: BottomNavBar(),
     );
   }
