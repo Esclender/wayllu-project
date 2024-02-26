@@ -11,7 +11,7 @@ void main() {
 class MyApp extends StatelessWidget {
   MyApp({super.key});
 
-  final _appRouter = AppRouter();
+  final _appRouter = getIt<AppRouter>();
 
   // This widget is the root of your application.
   @override
@@ -19,8 +19,7 @@ class MyApp extends StatelessWidget {
     return MaterialApp.router(
       debugShowCheckedModeBanner: false,
       theme: ThemeApp.light,
-      routerDelegate: _appRouter.delegate(),
-      routeInformationParser: _appRouter.defaultRouteParser(),
+      routerConfig: _appRouter.config(),
     );
   }
 }

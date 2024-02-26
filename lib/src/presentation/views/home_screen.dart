@@ -12,6 +12,8 @@ import 'package:wayllu_project/src/utils/constants/colors.dart';
 class HomeScreen extends HookWidget {
   const HomeScreen({super.key});
 
+  int get viewIndex => 0;
+
   @override
   Widget build(BuildContext context) {
     // Determinar el saludo según la hora
@@ -169,7 +171,9 @@ class HomeScreen extends HookWidget {
         ),
       ),
       floatingActionButtonLocation: FloatingActionButtonLocation.centerDocked,
-      floatingActionButton: BottomNavBar(),
+      floatingActionButton: BottomNavBar(
+        viewSelected: viewIndex,
+      ),
     );
   }
 
@@ -316,8 +320,10 @@ class HomeScreen extends HookWidget {
                   .withOpacity(0.08), // Color de la sombra y su opacidad
               spreadRadius: 2, // Radio de propagación de la sombra
               blurRadius: 4, // Radio de desenfoque de la sombra
-              offset: Offset(0,
-                  1), // Desplazamiento de la sombra (en este caso, hacia abajo)
+              offset: Offset(
+                0,
+                1,
+              ), // Desplazamiento de la sombra (en este caso, hacia abajo)
             ),
           ],
         ),
@@ -330,9 +336,10 @@ class HomeScreen extends HookWidget {
               child: Text(
                 name,
                 style: const TextStyle(
-                    fontFamily: 'Gotham',
-                    fontWeight: FontWeight.w500,
-                    fontSize: 16),
+                  fontFamily: 'Gotham',
+                  fontWeight: FontWeight.w500,
+                  fontSize: 16,
+                ),
               ),
             )
           ],

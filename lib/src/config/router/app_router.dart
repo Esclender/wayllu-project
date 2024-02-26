@@ -12,3 +12,5 @@ class AppRouter extends _$AppRouter {
         AutoRoute(path: '/info-user', page: InfoUserRoute.page),
       ];
 }
+
+final appRouter = AppRouter();

@@ -8,6 +8,8 @@ import 'package:wayllu_project/src/utils/constants/colors.dart';
 class InfoUserScreen extends HookWidget {
   const InfoUserScreen({super.key});
 
+  int get viewIndex => 1;
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -19,7 +21,9 @@ class InfoUserScreen extends HookWidget {
           child: Text('Info User'),
         ),
       ),
-      floatingActionButton: BottomNavBar(),
+      floatingActionButton: BottomNavBar(
+        viewSelected: viewIndex,
+      ),
     );
   }
 }
