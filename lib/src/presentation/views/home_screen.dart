@@ -1,9 +1,11 @@
 import 'package:auto_size_text/auto_size_text.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter/rendering.dart';
 import 'package:flutter/widgets.dart';
 import 'package:flutter_hooks/flutter_hooks.dart';
 import 'package:ionicons/ionicons.dart';
+import 'package:wayllu_project/src/domain/models/models_products.dart';
 import 'package:wayllu_project/src/presentation/widgets/bottom_navbar.dart';
 import 'package:wayllu_project/src/utils/constants/colors.dart';
 
@@ -18,7 +20,7 @@ class HomeScreen extends HookWidget {
     String greeting = getGreeting(hour);
     return Scaffold(
       backgroundColor: bgPrimary,
-      appBar: AppBar(
+      /* appBar: AppBar(
         automaticallyImplyLeading: false,
         backgroundColor: Colors.transparent,
         bottom: PreferredSize(
@@ -30,7 +32,7 @@ class HomeScreen extends HookWidget {
               children: [
                 Container(
                   alignment: Alignment.centerLeft,
-                  child: SizedBox(
+                  child: const SizedBox(
                     width: 45,
                     height: 45,
                     child: CircleAvatar(
@@ -68,114 +70,172 @@ class HomeScreen extends HookWidget {
             topVector(context),
           ],
         ),
-      ),
-      body: SingleChildScrollView(
-        child: Column(
-          children: [
-            Container(
-              margin: EdgeInsets.symmetric(horizontal: 24, vertical: 6),
-              child: Row(
-                mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                children: [barSearch(context), shoppingCart(context)],
-              ),
+      ),*/
+      body: CustomScrollView(
+        slivers: [
+          SliverAppBar(
+            expandedHeight: 68.0, // Altura expandida del SliverAppBar
+            floating:
+                true, // La barra de herramientas no se "desvanece" hacia arriba
+            pinned:
+                false, 
+            backgroundColor: Colors.transparent,// La barra de herramientas se "ancla" en la parte superior
+            flexibleSpace: FlexibleSpaceBar(
+              
+              background: topVector(context),
             ),
-            SingleChildScrollView(
-              scrollDirection: Axis.horizontal,
-              child: Padding(
-                padding: EdgeInsets.only(left: 4),
+            bottom: PreferredSize(
+              preferredSize: Size.fromHeight(20),
+              child: Container(
+                margin: EdgeInsets.symmetric(horizontal: 22),
                 child: Row(
-                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                  mainAxisAlignment: MainAxisAlignment.start,
                   children: [
-                    categoriesProducts(
-                      context,
-                      'Gorros',
-                      'assets/images/product/gorro-category.png',
+                    Container(
+                      alignment: Alignment.centerLeft,
+                      child: const SizedBox(
+                        width: 45,
+                        height: 45,
+                        child: CircleAvatar(
+                          backgroundImage:
+                              AssetImage("assets/images/admin2.jpg"),
+                        ),
+                      ),
                     ),
-                    categoriesProducts(context, "Ponchos",
-                        "assets/images/product/poncho-category.png"),
-                    categoriesProducts(context, "Mantos",
-                        "assets/images/product/manto-category.png"),
-                    categoriesProducts(
-                      context,
-                      'Gorros',
-                      'assets/images/product/gorro-category.png',
+                    Container(
+                      margin: EdgeInsets.symmetric(horizontal: 10),
+                      child: Column(
+                        crossAxisAlignment: CrossAxisAlignment.start,
+                        children: [
+                          AutoSizeText(
+                            "Mariano", // Cambiado a un nombre fijo para simplificar
+                            style: const TextStyle(
+                              fontFamily: 'Gotham',
+                              fontSize: 16,
+                              fontWeight: FontWeight.w500,
+                              height: 1,
+                              color: Color(0xff313131),
+                            ),
+                            maxLines: 1,
+                            overflow: TextOverflow.ellipsis,
+                          ),
+                        ],
+                      ),
                     ),
-                    categoriesProducts(context, "Ponchos",
-                        "assets/images/product/poncho-category.png"),
-                    categoriesProducts(context, "Mantos",
-                        "assets/images/product/manto-category.png"),
                   ],
                 ),
               ),
             ),
-            const SizedBox(
-              height: 6,
-            ),
-            Container(
-              padding: EdgeInsets.symmetric(vertical: 6, horizontal: 16),
-              //margin: EdgeInsets.symmetric(horizontal: 16),
-              alignment: Alignment.centerLeft,
-              child: Text(
-                "Todos los productos",
-                style: TextStyle(
-                    fontFamily: "Gotham",
-                    fontSize: 24,
-                    fontWeight: FontWeight.w500),
-              ),
-            ),
-            SizedBox(
-              height: 10,
-            ),
-             Container(
-        margin: EdgeInsets.symmetric(horizontal: 16),
-          width: MediaQuery.of(context).size.width,
-          height: MediaQuery.of(context).size.height,
-          child: ListView.builder(
-            itemCount: 10,
-            itemBuilder: (context, index) {
-        String image = "assets/images/product/chullo.jpg";
-        
-        return index.isEven
-            ? Column(
-                children: [
-                  Row(
-                    children: [
-                      Expanded(
-                        child: productsHome(context, image),
-                      ),
-                      SizedBox(
-                        width: 8.0,
-                      ),
-                      Expanded(
-                        child: index + 1 < 10
-                            ? productsHome(
-                                context, "assets/images/product/chullo.jpg")
-                            : Container(),
-                      ),
-                    ],
-                  ),
-                  SizedBox(
-                    height: 8.0,
-                  ),
-                ],
-              )
-            : Container();
-            },
           ),
-        )
-        
-          ],
-        ),
+          SliverList(
+            delegate: SliverChildListDelegate(
+              [
+                Container(
+                  margin: EdgeInsets.symmetric(horizontal: 24, vertical: 6),
+                  child: Row(
+                    mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                    children: [barSearch(context), shoppingCart(context)],
+                  ),
+                ),
+                SingleChildScrollView(
+                  scrollDirection: Axis.horizontal,
+                  child: Padding(
+                    padding: const EdgeInsets.only(left: 4),
+                    child: Row(
+                      mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                      children: [
+                        categoriesProducts(
+                          context,
+                          'Gorros',
+                          'assets/images/product/gorro-category.png',
+                        ),
+                        categoriesProducts(context, "Ponchos",
+                            "assets/images/product/poncho-category.png"),
+                        categoriesProducts(context, "Mantos",
+                            "assets/images/product/manto-category.png"),
+                        categoriesProducts(
+                          context,
+                          'Gorros',
+                          'assets/images/product/gorro-category.png',
+                        ),
+                        categoriesProducts(context, "Ponchos",
+                            "assets/images/product/poncho-category.png"),
+                        categoriesProducts(context, "Mantos",
+                            "assets/images/product/manto-category.png"),
+                      ],
+                    ),
+                  ),
+                ),
+                const SizedBox(
+                  height: 6,
+                ),
+                Container(
+                  padding:
+                      const EdgeInsets.symmetric(vertical: 6, horizontal: 16),
+                  alignment: Alignment.centerLeft,
+                  child: Text(
+                    "Todos los productos",
+                    style: TextStyle(
+                        fontFamily: "Gotham",
+                        fontSize: 24,
+                        fontWeight: FontWeight.w500),
+                  ),
+                ),
+              /*  SizedBox(
+                  height: 10,
+                ),*/
+                Container(
+                  margin: EdgeInsets.symmetric(horizontal: 16),
+                  width: MediaQuery.of(context).size.width,
+                  height: MediaQuery.of(context).size.height,
+                  child: ListView.builder(
+                    itemCount: productos.length,
+                    itemBuilder: (context, index) {
+                      final producto = productos[index];
+
+                      return index.isEven
+                          ? Column(
+                              children: [
+                                Row(
+                                  children: [
+                                    Expanded(
+                                      child: productsHome(context, producto),
+                                    ),
+                                    const SizedBox(
+                                      width: 8.0,
+                                    ),
+                                    Expanded(
+                                      child: index + 1 < productos.length
+                                          ? productsHome(
+                                              context, productos[index + 1])
+                                          : Container(),
+                                    ),
+                                  ],
+                                ),
+                                const SizedBox(
+                                  height: 8.0,
+                                ),
+                              ],
+                            )
+                          : Container();
+                    },
+                  ),
+                ),
+              ],
+            ),
+          ),
+           
+        ],
       ),
       floatingActionButtonLocation: FloatingActionButtonLocation.centerDocked,
       floatingActionButton: BottomNavBar(),
     );
   }
 
-  Container productsHome(BuildContext context, String image) {
+  Container productsHome(BuildContext context, Producto producto) {
     return Container(
       width: MediaQuery.of(context).size.width * 0.45,
-      height: MediaQuery.of(context).size.height * 0.27,
+      height: MediaQuery.of(context).size.height * 0.285,
       decoration: BoxDecoration(
         color: bottomNavBar,
         boxShadow: [
@@ -195,37 +255,37 @@ class HomeScreen extends HookWidget {
         children: [
           Container(
             width: MediaQuery.of(context).size.width * 0.45,
-            height: MediaQuery.of(context).size.height * 0.18,
-            decoration: const BoxDecoration(
+            height: MediaQuery.of(context).size.height * 0.2,
+            decoration: BoxDecoration(
                 borderRadius: BorderRadius.only(
                     topLeft: Radius.circular(10),
                     topRight: Radius.circular(10)),
                 image: DecorationImage(
-                  image: AssetImage('assets/images/product/chullo.jpg'),
+                  image: AssetImage(producto.imagen),
                   fit: BoxFit.cover,
                 )),
           ),
           Container(
             margin: const EdgeInsets.symmetric(horizontal: 4),
-            child: const Column(
+            child: Column(
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
                 Text(
-                  "Lorem Ipsum",
-                  style: TextStyle(
-                      fontFamily: "Gotham",
+                  producto.name,
+                  style: const TextStyle(
+                      fontFamily: 'Gotham',
                       fontSize: 16,
                       fontWeight: FontWeight.w500),
                 ),
                 Text(
-                  "Descripción del producto",
+                  producto.description,
                   style: TextStyle(
                       fontFamily: "Gotham",
                       fontSize: 10,
                       fontWeight: FontWeight.w300),
                 ),
                 Text(
-                  'S/20',
+                  'S/' + producto.price.toString(),
                   style: TextStyle(
                       fontFamily: "Gotham",
                       fontSize: 18,
@@ -361,7 +421,4 @@ class HomeScreen extends HookWidget {
       return 'Buenas noches, ';
     }
   }
-
-  @override
-  Size get preferredSize => const Size.fromHeight(68.0);
 }
