@@ -18,7 +18,7 @@ class BottomNavBar extends HookWidget {
 
   final double blur = 1.5;
   final BorderRadiusGeometry containersBorder = const BorderRadius.all(
-    Radius.circular(10),
+    Radius.circular(10), 
   );
 
   @override
@@ -32,6 +32,7 @@ class BottomNavBar extends HookWidget {
           top: BorderSide(color: bottomNavBarStroke),
           left: BorderSide(color: bottomNavBarStroke),
           right: BorderSide(color: bottomNavBarStroke),
+        
         ),
       ),
       child: ClipRRect(
@@ -67,7 +68,7 @@ class BottomNavBar extends HookWidget {
           decoration: BoxDecoration(
             color: bottomNavBar,
             borderRadius: containersBorder,
-            border: Border.all(color: bottomNavBarStroke),
+            border: Border.all(color: bottomNavBarStroke, width: 0.4),
           ),
           alignment: Alignment.center,
           child: Icon(

@@ -1,7 +1,7 @@
+import 'dart:math';
+
 import 'package:auto_size_text/auto_size_text.dart';
-import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
-import 'package:flutter/rendering.dart';
 import 'package:flutter/widgets.dart';
 import 'package:flutter_hooks/flutter_hooks.dart';
 import 'package:ionicons/ionicons.dart';
@@ -10,86 +10,31 @@ import 'package:wayllu_project/src/presentation/widgets/bottom_navbar.dart';
 import 'package:wayllu_project/src/utils/constants/colors.dart';
 
 class HomeScreen extends HookWidget {
-  const HomeScreen(param0, {super.key});
+  const HomeScreen(param0, {Key? key}) : super(key: key);
 
   @override
   Widget build(BuildContext context) {
-    // Determinar el saludo según la hora
     DateTime now = DateTime.now();
     int hour = now.hour;
     String greeting = getGreeting(hour);
+
     return Scaffold(
       backgroundColor: bgPrimary,
-      /* appBar: AppBar(
-        automaticallyImplyLeading: false,
-        backgroundColor: Colors.transparent,
-        bottom: PreferredSize(
-          preferredSize: Size.fromHeight(20),
-          child: Container(
-            margin: EdgeInsets.symmetric(horizontal: 22),
-            child: Row(
-              mainAxisAlignment: MainAxisAlignment.start,
-              children: [
-                Container(
-                  alignment: Alignment.centerLeft,
-                  child: const SizedBox(
-                    width: 45,
-                    height: 45,
-                    child: CircleAvatar(
-                      backgroundImage: AssetImage("assets/images/admin2.jpg"),
-                    ),
-                  ),
-                ),
-                Container(
-                  margin: EdgeInsets.symmetric(horizontal: 10),
-                  child: Column(
-                    crossAxisAlignment: CrossAxisAlignment.start,
-                    children: [
-                      AutoSizeText(
-                        greeting + "Mariano",
-                        style: const TextStyle(
-                          fontFamily: 'Gotham',
-                          fontSize: 16,
-                          fontWeight: FontWeight.w500,
-                          height: 1,
-                          color: Color(0xff313131),
-                        ),
-                        maxLines:
-                            1, // Establece el número máximo de líneas que el texto puede ocupar
-                        overflow: TextOverflow.ellipsis,
-                      ),
-                    ],
-                  ),
-                ),
-              ],
-            ),
-          ),
-        ),
-        flexibleSpace: Column(
-          children: [
-            topVector(context),
-          ],
-        ),
-      ),*/
       body: CustomScrollView(
         slivers: [
           SliverAppBar(
-            expandedHeight: 68.0, // Altura expandida del SliverAppBar
-            floating:
-                true, // La barra de herramientas no se "desvanece" hacia arriba
-            pinned:
-                false, 
-            backgroundColor: Colors.transparent,// La barra de herramientas se "ancla" en la parte superior
+            expandedHeight: 68.0,
+            floating: true,
+            pinned: false,
+            backgroundColor: Colors.transparent,
             flexibleSpace: FlexibleSpaceBar(
-              
               background: topVector(context),
             ),
             bottom: PreferredSize(
-              preferredSize: Size.fromHeight(20),
+              preferredSize: const Size.fromHeight(20),
               child: Container(
-                margin: EdgeInsets.symmetric(horizontal: 22),
+                margin: const EdgeInsets.symmetric(horizontal: 22),
                 child: Row(
-                  mainAxisAlignment: MainAxisAlignment.start,
                   children: [
                     Container(
                       alignment: Alignment.centerLeft,
@@ -98,17 +43,17 @@ class HomeScreen extends HookWidget {
                         height: 45,
                         child: CircleAvatar(
                           backgroundImage:
-                              AssetImage("assets/images/admin2.jpg"),
+                              AssetImage('assets/images/admin2.jpg'),
                         ),
                       ),
                     ),
                     Container(
-                      margin: EdgeInsets.symmetric(horizontal: 10),
+                      margin: const EdgeInsets.symmetric(horizontal: 10),
                       child: Column(
                         crossAxisAlignment: CrossAxisAlignment.start,
                         children: [
                           AutoSizeText(
-                            "Mariano", // Cambiado a un nombre fijo para simplificar
+                            greeting + 'Mariano',
                             style: const TextStyle(
                               fontFamily: 'Gotham',
                               fontSize: 16,
@@ -131,7 +76,7 @@ class HomeScreen extends HookWidget {
             delegate: SliverChildListDelegate(
               [
                 Container(
-                  margin: EdgeInsets.symmetric(horizontal: 24, vertical: 6),
+                  margin: const EdgeInsets.symmetric(horizontal: 24, vertical: 6),
                   child: Row(
                     mainAxisAlignment: MainAxisAlignment.spaceBetween,
                     children: [barSearch(context), shoppingCart(context)],
@@ -149,19 +94,31 @@ class HomeScreen extends HookWidget {
                           'Gorros',
                           'assets/images/product/gorro-category.png',
                         ),
-                        categoriesProducts(context, "Ponchos",
-                            "assets/images/product/poncho-category.png"),
-                        categoriesProducts(context, "Mantos",
-                            "assets/images/product/manto-category.png"),
+                        categoriesProducts(
+                          context,
+                          'Ponchos',
+                          'assets/images/product/poncho-category.png',
+                        ),
+                        categoriesProducts(
+                          context,
+                          'Mantos',
+                          'assets/images/product/manto-category.png',
+                        ),
                         categoriesProducts(
                           context,
                           'Gorros',
                           'assets/images/product/gorro-category.png',
                         ),
-                        categoriesProducts(context, "Ponchos",
-                            "assets/images/product/poncho-category.png"),
-                        categoriesProducts(context, "Mantos",
-                            "assets/images/product/manto-category.png"),
+                        categoriesProducts(
+                          context,
+                          'Ponchos',
+                          'assets/images/product/poncho-category.png',
+                        ),
+                        categoriesProducts(
+                          context,
+                          'Mantos',
+                          'assets/images/product/manto-category.png',
+                        ),
                       ],
                     ),
                   ),
@@ -170,67 +127,62 @@ class HomeScreen extends HookWidget {
                   height: 6,
                 ),
                 Container(
-                  padding:
-                      const EdgeInsets.symmetric(vertical: 6, horizontal: 16),
+                  padding: const EdgeInsets.symmetric(horizontal: 16),
                   alignment: Alignment.centerLeft,
-                  child: Text(
-                    "Todos los productos",
+                  child: const Text(
+                    'Todos los productos',
                     style: TextStyle(
-                        fontFamily: "Gotham",
-                        fontSize: 24,
-                        fontWeight: FontWeight.w500),
+                      fontFamily: 'Gotham',
+                      fontSize: 24,
+                      fontWeight: FontWeight.w500,
+                    ),
                   ),
                 ),
-              /*  SizedBox(
-                  height: 10,
-                ),*/
                 Container(
-                  margin: EdgeInsets.symmetric(horizontal: 16),
-                  width: MediaQuery.of(context).size.width,
-                  height: MediaQuery.of(context).size.height,
-                  child: ListView.builder(
-                    itemCount: productos.length,
-                    itemBuilder: (context, index) {
-                      final producto = productos[index];
-
-                      return index.isEven
-                          ? Column(
+                  margin: const EdgeInsets.symmetric(vertical: 4, horizontal: 16),
+                  child: Column(
+                    children: List.generate(
+                      productos.length ~/ 2, // Usar la mitad de la longitud
+                      (index) {
+                        final evenIndex = index * 2;
+                        final oddIndex = evenIndex + 1;
+                        return Column(
+                          children: [
+                            Row(
                               children: [
-                                Row(
-                                  children: [
-                                    Expanded(
-                                      child: productsHome(context, producto),
-                                    ),
-                                    const SizedBox(
-                                      width: 8.0,
-                                    ),
-                                    Expanded(
-                                      child: index + 1 < productos.length
-                                          ? productsHome(
-                                              context, productos[index + 1])
-                                          : Container(),
-                                    ),
-                                  ],
+                                Expanded(
+                                  child: productsHome(context, productos[evenIndex]),
                                 ),
                                 const SizedBox(
-                                  height: 8.0,
+                                  width: 8.0,
+                                ),
+                                Expanded(
+                                  child: oddIndex < productos.length
+                                      ? productsHome(context, productos[oddIndex])
+                                      : Container(),
                                 ),
                               ],
-                            )
-                          : Container();
-                    },
+                            ),
+                            const SizedBox(
+                              height: 8.0,
+                            ),
+                          ],
+                        );
+                      },
+                    ),
                   ),
                 ),
               ],
             ),
           ),
-           
         ],
       ),
       floatingActionButtonLocation: FloatingActionButtonLocation.centerDocked,
       floatingActionButton: BottomNavBar(),
     );
   }
+}
+
 
   Container productsHome(BuildContext context, Producto producto) {
     return Container(
@@ -253,18 +205,45 @@ class HomeScreen extends HookWidget {
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
+          Stack(
+            children: [ Container(
+              width: MediaQuery.of(context).size.width * 0.45,
+              height: MediaQuery.of(context).size.height * 0.2,
+              decoration: BoxDecoration(
+                  borderRadius: const BorderRadius.only(
+                      topLeft: Radius.circular(10),
+                      topRight: Radius.circular(10)),
+                  image: DecorationImage(
+                    image: AssetImage(producto.imagen),
+                    fit: BoxFit.cover,
+                  ),
+                  ),
+            ),
+            Positioned(
+          top: 8.0, // Ajusta la posición del botón según sea necesario
+          right: 8.0,
+          child: 
           Container(
-            width: MediaQuery.of(context).size.width * 0.45,
-            height: MediaQuery.of(context).size.height * 0.2,
+          
             decoration: BoxDecoration(
-                borderRadius: BorderRadius.only(
-                    topLeft: Radius.circular(10),
-                    topRight: Radius.circular(10)),
-                image: DecorationImage(
-                  image: AssetImage(producto.imagen),
-                  fit: BoxFit.cover,
-                )),
+              color: bottomNavBar,
+              borderRadius: BorderRadius.circular(5),
+            ),
+            child: Container(
+              child: IconButton(
+                padding: EdgeInsets.all(2),
+                icon: Icon(Icons.add),
+                onPressed: () {
+                  // Lógica para agregar al carrito o cualquier otra acción
+                },
+                color: bottomNavBarStroke,
+              ),
+            ),
           ),
+       ),
+             ],
+          ),
+       
           Container(
             margin: const EdgeInsets.symmetric(horizontal: 4),
             child: Column(
@@ -279,21 +258,22 @@ class HomeScreen extends HookWidget {
                 ),
                 Text(
                   producto.description,
-                  style: TextStyle(
-                      fontFamily: "Gotham",
+                  style: const TextStyle(
+                      fontFamily: 'Gotham',
                       fontSize: 10,
                       fontWeight: FontWeight.w300),
                 ),
                 Text(
                   'S/' + producto.price.toString(),
                   style: TextStyle(
-                      fontFamily: "Gotham",
+                      fontFamily: 'Gotham',
                       fontSize: 18,
                       fontWeight: FontWeight.w500),
                 )
               ],
             ),
-          )
+          ),
+         
         ],
       ),
     );
@@ -345,7 +325,7 @@ class HomeScreen extends HookWidget {
             'Búsqueda',
             style: TextStyle(
                 fontSize: 16,
-                fontFamily: "Gotham",
+                fontFamily: 'Gotham',
                 fontWeight: FontWeight.w500,
                 color: Color(0xff8A8991)),
             textAlign: TextAlign.center,
@@ -368,7 +348,7 @@ class HomeScreen extends HookWidget {
         width: MediaQuery.of(context).size.width * 0.35,
         decoration: BoxDecoration(
           color: bottomNavBar,
-          borderRadius: BorderRadius.all(Radius.circular(10)),
+          borderRadius: const BorderRadius.all(Radius.circular(10)),
           boxShadow: [
             BoxShadow(
               color: Color.fromARGB(255, 95, 95, 95)
@@ -421,4 +401,4 @@ class HomeScreen extends HookWidget {
       return 'Buenas noches, ';
     }
   }
-}
+
