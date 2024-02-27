@@ -1,9 +1,6 @@
-import 'package:auto_size_text/auto_size_text.dart';
-import 'package:flutter/cupertino.dart';
 import 'package:auto_route/auto_route.dart';
+import 'package:auto_size_text/auto_size_text.dart';
 import 'package:flutter/material.dart';
-import 'package:flutter/rendering.dart';
-import 'package:flutter/widgets.dart';
 import 'package:flutter_hooks/flutter_hooks.dart';
 import 'package:ionicons/ionicons.dart';
 import 'package:wayllu_project/src/domain/models/models_products.dart';
@@ -19,9 +16,10 @@ class HomeScreen extends HookWidget {
   @override
   Widget build(BuildContext context) {
     // Determinar el saludo según la hora
-    DateTime now = DateTime.now();
-    int hour = now.hour;
-    String greeting = getGreeting(hour);
+    //final DateTime now = DateTime.now();
+    //final int hour = now.hour;
+    //final String greeting = getGreeting(hour);
+
     return Scaffold(
       backgroundColor: bgPrimary,
       /* appBar: AppBar(
@@ -81,18 +79,16 @@ class HomeScreen extends HookWidget {
             expandedHeight: 68.0, // Altura expandida del SliverAppBar
             floating:
                 true, // La barra de herramientas no se "desvanece" hacia arriba
-            pinned: false,
             backgroundColor: Colors
                 .transparent, // La barra de herramientas se "ancla" en la parte superior
             flexibleSpace: FlexibleSpaceBar(
               background: topVector(context),
             ),
             bottom: PreferredSize(
-              preferredSize: Size.fromHeight(20),
+              preferredSize: const Size.fromHeight(20),
               child: Container(
-                margin: EdgeInsets.symmetric(horizontal: 22),
+                margin: const EdgeInsets.symmetric(horizontal: 22),
                 child: Row(
-                  mainAxisAlignment: MainAxisAlignment.start,
                   children: [
                     Container(
                       alignment: Alignment.centerLeft,
@@ -101,18 +97,18 @@ class HomeScreen extends HookWidget {
                         height: 45,
                         child: CircleAvatar(
                           backgroundImage:
-                              AssetImage("assets/images/admin2.jpg"),
+                              AssetImage('assets/images/admin2.jpg'),
                         ),
                       ),
                     ),
                     Container(
-                      margin: EdgeInsets.symmetric(horizontal: 10),
-                      child: Column(
+                      margin: const EdgeInsets.symmetric(horizontal: 10),
+                      child: const Column(
                         crossAxisAlignment: CrossAxisAlignment.start,
                         children: [
                           AutoSizeText(
-                            "Mariano", // Cambiado a un nombre fijo para simplificar
-                            style: const TextStyle(
+                            'Mariano', // Cambiado a un nombre fijo para simplificar
+                            style: TextStyle(
                               fontFamily: 'Gotham',
                               fontSize: 16,
                               fontWeight: FontWeight.w500,
@@ -134,7 +130,8 @@ class HomeScreen extends HookWidget {
             delegate: SliverChildListDelegate(
               [
                 Container(
-                  margin: EdgeInsets.symmetric(horizontal: 24, vertical: 6),
+                  margin:
+                      const EdgeInsets.symmetric(horizontal: 24, vertical: 6),
                   child: Row(
                     mainAxisAlignment: MainAxisAlignment.spaceBetween,
                     children: [barSearch(context), shoppingCart(context)],
@@ -152,19 +149,31 @@ class HomeScreen extends HookWidget {
                           'Gorros',
                           'assets/images/product/gorro-category.png',
                         ),
-                        categoriesProducts(context, "Ponchos",
-                            "assets/images/product/poncho-category.png"),
-                        categoriesProducts(context, "Mantos",
-                            "assets/images/product/manto-category.png"),
+                        categoriesProducts(
+                          context,
+                          'Ponchos',
+                          'assets/images/product/poncho-category.png',
+                        ),
+                        categoriesProducts(
+                          context,
+                          'Mantos',
+                          'assets/images/product/manto-category.png',
+                        ),
                         categoriesProducts(
                           context,
                           'Gorros',
                           'assets/images/product/gorro-category.png',
                         ),
-                        categoriesProducts(context, "Ponchos",
-                            "assets/images/product/poncho-category.png"),
-                        categoriesProducts(context, "Mantos",
-                            "assets/images/product/manto-category.png"),
+                        categoriesProducts(
+                          context,
+                          'Ponchos',
+                          'assets/images/product/poncho-category.png',
+                        ),
+                        categoriesProducts(
+                          context,
+                          'Mantos',
+                          'assets/images/product/manto-category.png',
+                        ),
                       ],
                     ),
                   ),
@@ -176,19 +185,20 @@ class HomeScreen extends HookWidget {
                   padding:
                       const EdgeInsets.symmetric(vertical: 6, horizontal: 16),
                   alignment: Alignment.centerLeft,
-                  child: Text(
-                    "Todos los productos",
+                  child: const Text(
+                    'Todos los productos',
                     style: TextStyle(
-                        fontFamily: "Gotham",
-                        fontSize: 24,
-                        fontWeight: FontWeight.w500),
+                      fontFamily: 'Gotham',
+                      fontSize: 24,
+                      fontWeight: FontWeight.w500,
+                    ),
                   ),
                 ),
                 /*  SizedBox(
                   height: 10,
                 ),*/
                 Container(
-                  margin: EdgeInsets.symmetric(horizontal: 16),
+                  margin: const EdgeInsets.symmetric(horizontal: 16),
                   width: MediaQuery.of(context).size.width,
                   height: MediaQuery.of(context).size.height,
                   child: ListView.builder(
@@ -210,7 +220,9 @@ class HomeScreen extends HookWidget {
                                     Expanded(
                                       child: index + 1 < productos.length
                                           ? productsHome(
-                                              context, productos[index + 1])
+                                              context,
+                                              productos[index + 1],
+                                            )
                                           : Container(),
                                     ),
                                   ],
@@ -244,12 +256,14 @@ class HomeScreen extends HookWidget {
         color: bottomNavBar,
         boxShadow: [
           BoxShadow(
-            color: Color.fromARGB(255, 95, 95, 95)
+            color: const Color.fromARGB(255, 95, 95, 95)
                 .withOpacity(0.08), // Color de la sombra y su opacidad
             spreadRadius: 2, // Radio de propagación de la sombra
             blurRadius: 4, // Radio de desenfoque de la sombra
-            offset: Offset(0,
-                1), // Desplazamiento de la sombra (en este caso, hacia abajo)
+            offset: const Offset(
+              0,
+              1,
+            ), // Desplazamiento de la sombra (en este caso, hacia abajo)
           ),
         ],
         borderRadius: BorderRadius.circular(10),
@@ -261,13 +275,15 @@ class HomeScreen extends HookWidget {
             width: MediaQuery.of(context).size.width * 0.45,
             height: MediaQuery.of(context).size.height * 0.2,
             decoration: BoxDecoration(
-                borderRadius: BorderRadius.only(
-                    topLeft: Radius.circular(10),
-                    topRight: Radius.circular(10)),
-                image: DecorationImage(
-                  image: AssetImage(producto.imagen),
-                  fit: BoxFit.cover,
-                )),
+              borderRadius: const BorderRadius.only(
+                topLeft: Radius.circular(10),
+                topRight: Radius.circular(10),
+              ),
+              image: DecorationImage(
+                image: AssetImage(producto.imagen),
+                fit: BoxFit.cover,
+              ),
+            ),
           ),
           Container(
             margin: const EdgeInsets.symmetric(horizontal: 4),
@@ -277,27 +293,30 @@ class HomeScreen extends HookWidget {
                 Text(
                   producto.name,
                   style: const TextStyle(
-                      fontFamily: 'Gotham',
-                      fontSize: 16,
-                      fontWeight: FontWeight.w500),
+                    fontFamily: 'Gotham',
+                    fontSize: 16,
+                    fontWeight: FontWeight.w500,
+                  ),
                 ),
                 Text(
                   producto.description,
-                  style: TextStyle(
-                      fontFamily: "Gotham",
-                      fontSize: 10,
-                      fontWeight: FontWeight.w300),
+                  style: const TextStyle(
+                    fontFamily: 'Gotham',
+                    fontSize: 10,
+                    fontWeight: FontWeight.w300,
+                  ),
                 ),
                 Text(
-                  'S/' + producto.price.toString(),
-                  style: TextStyle(
-                      fontFamily: "Gotham",
-                      fontSize: 18,
-                      fontWeight: FontWeight.w500),
-                )
+                  'S/${producto.price}',
+                  style: const TextStyle(
+                    fontFamily: 'Gotham',
+                    fontSize: 18,
+                    fontWeight: FontWeight.w500,
+                  ),
+                ),
               ],
             ),
-          )
+          ),
         ],
       ),
     );
@@ -312,28 +331,30 @@ class HomeScreen extends HookWidget {
         borderRadius: BorderRadius.circular(10),
         boxShadow: [
           BoxShadow(
-            color: Color.fromARGB(255, 95, 95, 95)
+            color: const Color.fromARGB(255, 95, 95, 95)
                 .withOpacity(0.08), // Color de la sombra y su opacidad
             spreadRadius: 2, // Radio de propagación de la sombra
             blurRadius: 4, // Radio de desenfoque de la sombra
-            offset: Offset(0,
-                1), // Desplazamiento de la sombra (en este caso, hacia abajo)
+            offset: const Offset(
+              0,
+              1,
+            ), // Desplazamiento de la sombra (en este caso, hacia abajo)
           ),
         ],
       ),
-      child: Icon(Ionicons.bag_handle_outline),
+      child: const Icon(Ionicons.bag_handle_outline),
     );
   }
 
   Container barSearch(BuildContext context) {
     return Container(
       width: MediaQuery.of(context).size.width * 0.75,
-      padding: EdgeInsets.symmetric(vertical: 8, horizontal: 4),
+      padding: const EdgeInsets.symmetric(vertical: 8, horizontal: 4),
       decoration: BoxDecoration(
-          color: bottomNavBar,
-          borderRadius: BorderRadius.all(Radius.circular(10))),
+        color: bottomNavBar,
+        borderRadius: const BorderRadius.all(Radius.circular(10)),
+      ),
       child: const Row(
-        mainAxisAlignment: MainAxisAlignment.start,
         children: [
           SizedBox(
             width: 4,
@@ -348,38 +369,42 @@ class HomeScreen extends HookWidget {
           Text(
             'Búsqueda',
             style: TextStyle(
-                fontSize: 16,
-                fontFamily: "Gotham",
-                fontWeight: FontWeight.w500,
-                color: Color(0xff8A8991)),
+              fontSize: 16,
+              fontFamily: 'Gotham',
+              fontWeight: FontWeight.w500,
+              color: Color(0xff8A8991),
+            ),
             textAlign: TextAlign.center,
-          )
+          ),
         ],
       ),
     );
   }
 
   Container categoriesProducts(
-      BuildContext context, String name, String image) {
+    BuildContext context,
+    String name,
+    String image,
+  ) {
     return Container(
-      padding: EdgeInsets.symmetric(
+      padding: const EdgeInsets.symmetric(
         vertical: 8,
       ),
       child: Container(
-        margin: EdgeInsets.symmetric(horizontal: 4),
-        padding: EdgeInsets.only(top: 15, bottom: 8),
+        margin: const EdgeInsets.symmetric(horizontal: 4),
+        padding: const EdgeInsets.only(top: 15, bottom: 8),
         height: MediaQuery.of(context).size.height * 0.20,
         width: MediaQuery.of(context).size.width * 0.35,
         decoration: BoxDecoration(
           color: bottomNavBar,
-          borderRadius: BorderRadius.all(Radius.circular(10)),
+          borderRadius: const BorderRadius.all(Radius.circular(10)),
           boxShadow: [
             BoxShadow(
-              color: Color.fromARGB(255, 95, 95, 95)
+              color: const Color.fromARGB(255, 95, 95, 95)
                   .withOpacity(0.08), // Color de la sombra y su opacidad
               spreadRadius: 2, // Radio de propagación de la sombra
               blurRadius: 4, // Radio de desenfoque de la sombra
-              offset: Offset(
+              offset: const Offset(
                 0,
                 1,
               ), // Desplazamiento de la sombra (en este caso, hacia abajo)
@@ -400,7 +425,7 @@ class HomeScreen extends HookWidget {
                   fontSize: 16,
                 ),
               ),
-            )
+            ),
           ],
         ),
       ),

@@ -2,6 +2,7 @@ import 'package:hexcolor/hexcolor.dart';
 
 HexColor bgPrimary = HexColor('#FCF6F0');
 HexColor bottomNavBar = HexColor('#FFFFFF');
+HexColor bgContainer = HexColor('#FFFFFF');
 HexColor bottomNavBarStroke = HexColor('#919191');
 HexColor noSelectedView = HexColor('#646369');
 HexColor mainColor = HexColor('#B80000');
