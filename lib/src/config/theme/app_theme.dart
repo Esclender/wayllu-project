@@ -6,6 +6,9 @@ abstract class ThemeApp {
   static ThemeData get light => ThemeData(
         fontFamily: 'Gotham',
         splashColor: Colors.transparent,
+        appBarTheme: AppBarTheme(
+          systemOverlayStyle: SystemStyles.light,
+        ),
       );
 }
 
