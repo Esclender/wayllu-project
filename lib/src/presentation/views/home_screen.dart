@@ -1,8 +1,6 @@
 import 'package:auto_route/auto_route.dart';
 import 'package:auto_size_text/auto_size_text.dart';
 import 'package:flutter/material.dart';
-import 'package:flutter/rendering.dart';
-import 'package:flutter/widgets.dart';
 import 'package:flutter_hooks/flutter_hooks.dart';
 import 'package:ionicons/ionicons.dart';
 import 'package:wayllu_project/src/domain/models/models_products.dart';
@@ -17,10 +15,9 @@ class HomeScreen extends HookWidget {
 
   @override
   Widget build(BuildContext context) {
-    // Determinar el saludo según la hora
-    //final DateTime now = DateTime.now();
-    //final int hour = now.hour;
-    //final String greeting = getGreeting(hour);
+    final DateTime now = DateTime.now();
+    final int hour = now.hour;
+    final String greeting = getGreeting(hour);
 
     return Scaffold(
       backgroundColor: bgPrimary,
@@ -29,7 +26,6 @@ class HomeScreen extends HookWidget {
           SliverAppBar(
             expandedHeight: 68.0,
             floating: true,
-            pinned: false,
             backgroundColor: Colors.transparent,
             flexibleSpace: FlexibleSpaceBar(
               background: topVector(context),
@@ -57,7 +53,7 @@ class HomeScreen extends HookWidget {
                         crossAxisAlignment: CrossAxisAlignment.start,
                         children: [
                           AutoSizeText(
-                            greeting + 'Mariano',
+                            '${greeting}Mariano',
                             style: const TextStyle(
                               fontFamily: 'Gotham',
                               fontSize: 16,
@@ -156,13 +152,7 @@ class HomeScreen extends HookWidget {
                   alignment: Alignment.centerLeft,
                   child: const Text(
                     'Todos los productos',
-                    child: const Text(
-                      'Todos los productos',
-                      style: TextStyle(
-                        fontFamily: 'Gotham',
-                        fontSize: 24,
-                        fontWeight: FontWeight.w500,
-                      ),
+                    style: TextStyle(
                       fontFamily: 'Gotham',
                       fontSize: 24,
                       fontWeight: FontWeight.w500,
@@ -187,7 +177,9 @@ class HomeScreen extends HookWidget {
                               children: [
                                 Expanded(
                                   child: productsHome(
-                                      context, productos[evenIndex]),
+                                    context,
+                                    productos[evenIndex],
+                                  ),
                                 ),
                                 const SizedBox(
                                   width: 8.0,
@@ -195,7 +187,9 @@ class HomeScreen extends HookWidget {
                                 Expanded(
                                   child: oddIndex < productos.length
                                       ? productsHome(
-                                          context, productos[oddIndex])
+                                          context,
+                                          productos[oddIndex],
+                                        )
                                       : Container(),
                                 ),
                               ],
@@ -252,8 +246,9 @@ Container productsHome(BuildContext context, Producto producto) {
               height: MediaQuery.of(context).size.height * 0.2,
               decoration: BoxDecoration(
                 borderRadius: const BorderRadius.only(
-                    topLeft: Radius.circular(10),
-                    topRight: Radius.circular(10)),
+                  topLeft: Radius.circular(10),
+                  topRight: Radius.circular(10),
+                ),
                 image: DecorationImage(
                   image: AssetImage(producto.imagen),
                   fit: BoxFit.cover,
@@ -270,8 +265,8 @@ Container productsHome(BuildContext context, Producto producto) {
                 ),
                 child: Container(
                   child: IconButton(
-                    padding: EdgeInsets.all(2),
-                    icon: Icon(Icons.add),
+                    padding: const EdgeInsets.all(2),
+                    icon: const Icon(Icons.add),
                     onPressed: () {
                       // Lógica para agregar al carrito o cualquier otra acción
                     },
@@ -298,17 +293,19 @@ Container productsHome(BuildContext context, Producto producto) {
               Text(
                 producto.description,
                 style: const TextStyle(
-                    fontFamily: 'Gotham',
-                    fontSize: 10,
-                    fontWeight: FontWeight.w300),
+                  fontFamily: 'Gotham',
+                  fontSize: 10,
+                  fontWeight: FontWeight.w300,
+                ),
               ),
               Text(
-                'S/' + producto.price.toString(),
-                style: TextStyle(
-                    fontFamily: 'Gotham',
-                    fontSize: 18,
-                    fontWeight: FontWeight.w500),
-              )
+                'S/${producto.price}',
+                style: const TextStyle(
+                  fontFamily: 'Gotham',
+                  fontSize: 18,
+                  fontWeight: FontWeight.w500,
+                ),
+              ),
             ],
           ),
         ),
@@ -364,10 +361,11 @@ Container barSearch(BuildContext context) {
         Text(
           'Búsqueda',
           style: TextStyle(
-              fontSize: 16,
-              fontFamily: 'Gotham',
-              fontWeight: FontWeight.w500,
-              color: Color(0xff8A8991)),
+            fontSize: 16,
+            fontFamily: 'Gotham',
+            fontWeight: FontWeight.w500,
+            color: Color(0xff8A8991),
+          ),
           textAlign: TextAlign.center,
         ),
       ],
