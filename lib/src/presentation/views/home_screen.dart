@@ -229,15 +229,13 @@ class HomeScreen extends HookWidget {
               color: bottomNavBar,
               borderRadius: BorderRadius.circular(5),
             ),
-            child: Container(
-              child: IconButton(
-                padding: EdgeInsets.all(2),
-                icon: Icon(Icons.add),
-                onPressed: () {
-                  // Lógica para agregar al carrito o cualquier otra acción
-                },
-                color: bottomNavBarStroke,
-              ),
+            child: IconButton(
+             // padding: EdgeInsets.all(2),
+              icon: Icon(Icons.add),
+              onPressed: () {
+                // Lógica para agregar al carrito
+              },
+              color: bottomNavBarStroke,
             ),
           ),
        ),
