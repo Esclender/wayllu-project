@@ -25,7 +25,7 @@ class HomeScreen extends HookWidget {
         slivers: [
           SliverAppBar(
             expandedHeight: 68.0,
-            floating: true,
+            floating: false,
             backgroundColor: Colors.transparent,
             flexibleSpace: FlexibleSpaceBar(
               background: topVector(context),
@@ -179,6 +179,7 @@ class HomeScreen extends HookWidget {
                                   child: productsHome(
                                     context,
                                     productos[evenIndex],
+                                    false
                                   ),
                                 ),
                                 const SizedBox(
@@ -189,6 +190,7 @@ class HomeScreen extends HookWidget {
                                       ? productsHome(
                                           context,
                                           productos[oddIndex],
+                                          false
                                         )
                                       : Container(),
                                 ),
@@ -216,7 +218,7 @@ class HomeScreen extends HookWidget {
   }
 }
 
-Container productsHome(BuildContext context, Producto producto) {
+Container productsHome(BuildContext context, Producto producto, bool isAdmin) {
   return Container(
     width: MediaQuery.of(context).size.width * 0.45,
     height: MediaQuery.of(context).size.height * 0.285,
@@ -258,23 +260,22 @@ Container productsHome(BuildContext context, Producto producto) {
             Positioned(
           top: 8.0, // Ajusta la posición del botón según sea necesario
           right: 8.0,
-          child: 
-          Container(
-          
-            decoration: BoxDecoration(
-              color: bottomNavBar,
-              borderRadius: BorderRadius.circular(5),
-            ),
-            child: IconButton(
-             // padding: EdgeInsets.all(2),
-              icon: Icon(Icons.add),
-              onPressed: () {
-                // Lógica para agregar al carrito
-              },
-              color: bottomNavBarStroke,
-            ),
-          ),
-       ),
+          child: isAdmin
+                    ? Container(
+                  padding: EdgeInsets.all(4.5),
+                  decoration: BoxDecoration(
+                    color: bottomNavBar,
+                    borderRadius: BorderRadius.circular(5),
+                    border: Border.all(width: 0.2, color: iconColor),
+                  ),
+                  child: Icon(
+                    Ionicons.add,
+                    color: iconColor,
+                  ),
+                )
+              : Container(),
+        ),
+        
              ],
           ),
        
@@ -297,12 +298,33 @@ Container productsHome(BuildContext context, Producto producto) {
                       fontSize: 10,
                       fontWeight: FontWeight.w300),
                 ),
-                Text(
-                  'S/' + producto.price.toString(),
-                  style: TextStyle(
-                      fontFamily: 'Gotham',
-                      fontSize: 18,
-                      fontWeight: FontWeight.w500),
+                Row(
+                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                  children: [
+                    Text(
+                      'S/' + producto.price.toString(),
+                      style: TextStyle(
+                          fontFamily: 'Gotham',
+                          fontSize: 18,
+                          fontWeight: FontWeight.w500),
+                    ),
+                    if(!isAdmin)
+                    Container(
+                  padding: EdgeInsets.all(4.5),
+                  decoration: BoxDecoration(
+                    color: Colors.blue, // Puedes cambiar el color según tus necesidades
+                    borderRadius: BorderRadius.circular(5),
+                  ),
+                  child: Text(
+                    'Editar',
+                    style: TextStyle(
+                      color: Colors.white,
+                      fontSize: 11,
+                      fontWeight: FontWeight.bold,
+                    ),
+                  ),
+                    )
+                  ],
                 )
               ],
             ),
