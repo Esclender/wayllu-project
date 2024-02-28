@@ -1,20 +1,26 @@
 import 'dart:ui';
-
 import 'package:flutter/material.dart';
 import 'package:flutter_hooks/flutter_hooks.dart';
 import 'package:ionicons/ionicons.dart';
+import 'package:wayllu_project/src/config/router/app_router.dart';
+import 'package:wayllu_project/src/locator.dart';
 import 'package:wayllu_project/src/utils/constants/colors.dart';
 
-class BottomNavBar extends HookWidget {
-  BottomNavBar({super.key});
+//final viewSelected = useState(0);
 
-  final List<IconData> optionsIcons = [
-    Ionicons.home,
-    Ionicons.bar_chart,
-    Ionicons.person,
+class BottomNavBar extends HookWidget {
+  final int viewSelected;
+
+  BottomNavBar({super.key, this.viewSelected = 0});
+
+  final List<Map<String, dynamic>> optionsIcons = [
+    {'icon': Ionicons.home, 'route': '/'},
+    //{'icon': Ionicons.bar_chart, 'route': '/home'},
+    {'icon': Ionicons.person, 'route': '/info-user'},
   ];
 
-  final viewSelected = useState(0);
+  //Dependencies Injection
+  final appRouter = getIt<AppRouter>();
 
   final double blur = 1.5;
   final BorderRadiusGeometry containersBorder = const BorderRadius.all(
@@ -47,8 +53,10 @@ class BottomNavBar extends HookWidget {
             children: List.generate(
               optionsIcons.length,
               (index) => _buildOptions(
-                optionsIcons[index],
+                optionsIcons[index]['icon'] as IconData,
                 index,
+                optionsIcons[index]['route'] as String,
+                context,
               ),
             ),
           ),
@@ -57,11 +65,17 @@ class BottomNavBar extends HookWidget {
     );
   }
 
-  Widget _buildOptions(IconData icon, int index) {
+  Widget _buildOptions(
+    IconData icon,
+    int index,
+    String route,
+    BuildContext context,
+  ) {
     return Flexible(
       child: InkWell(
         onTap: () {
-          viewSelected.value = index;
+          //context.router.pushNamed(route);
+          appRouter.pushNamed(route);
         },
         child: Container(
           margin: const EdgeInsets.symmetric(horizontal: 7.5, vertical: 10.0),
@@ -73,8 +87,7 @@ class BottomNavBar extends HookWidget {
           alignment: Alignment.center,
           child: Icon(
             icon,
-            color:
-                viewSelected.value == index ? secondaryColor : noSelectedView,
+            color: viewSelected == index ? secondaryColor : noSelectedView,
           ),
         ),
       ),
