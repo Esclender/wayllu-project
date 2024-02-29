@@ -9,7 +9,7 @@ import 'package:wayllu_project/src/utils/constants/colors.dart';
 
 @RoutePage()
 class HomeScreen extends HookWidget {
-  const HomeScreen({super.key});
+  const HomeScreen();
 
   int get viewIndex => 0;
 

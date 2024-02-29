@@ -11,7 +11,9 @@ import 'package:wayllu_project/src/utils/constants/colors.dart';
 
 @RoutePage()
 class InfoUserScreen extends HookWidget {
-  InfoUserScreen({super.key});
+  final bool isAdmin;
+
+  InfoUserScreen({this.isAdmin = false});
 
   final ImagePicker imagePicker = ImagePicker();
 
@@ -44,6 +46,7 @@ class InfoUserScreen extends HookWidget {
             children: [
               _buildInfoContainer('Informacion Personal', person),
               _buildInfoContainer('Informacion de Contacto', contact),
+              if (!isAdmin) _buildInhabilitButton() else Container(),
             ],
           ),
         ],
@@ -51,6 +54,13 @@ class InfoUserScreen extends HookWidget {
       floatingActionButton: BottomNavBar(
         viewSelected: viewIndex,
       ),
+    );
+  }
+
+  Widget _buildInhabilitButton() {
+    return TextButton(
+      onPressed: () {},
+      child: const Text('Deshabilitar'),
     );
   }
 
