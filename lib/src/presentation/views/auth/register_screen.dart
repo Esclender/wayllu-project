@@ -1,24 +1,21 @@
 import 'package:flutter/material.dart';
-import 'package:flutter/widgets.dart';
-import 'package:hexcolor/hexcolor.dart';
-import 'package:lottie/lottie.dart';
 import 'package:google_fonts/google_fonts.dart';
-import 'package:validators/validators.dart';
+import 'package:hexcolor/hexcolor.dart';
 import 'package:wayllu_project/src/domain/models/community_model.dart';
 import 'package:wayllu_project/src/presentation/widgets/register_user/info_label_modal.dart';
 import 'package:wayllu_project/src/presentation/widgets/register_user/my_text_label.dart';
 import 'package:wayllu_project/src/presentation/widgets/register_user/my_textfield.dart';
 import 'package:wayllu_project/src/presentation/widgets/register_user/space_y.dart';
 
-class loginScreen extends StatefulWidget {
-  const loginScreen({Key? key}) : super(key: key);
+class LoginScreen extends StatefulWidget {
+  const LoginScreen({super.key});
 
   @override
-  State<loginScreen> createState() => _loginScreenState();
+  State<LoginScreen> createState() => _LoginScreenState();
 }
 
-class _loginScreenState extends State<loginScreen> {
-  TextEditingController _textEditingController = TextEditingController();
+class _LoginScreenState extends State<LoginScreen> {
+  final TextEditingController _textEditingController = TextEditingController();
 
   final nameEditingController = TextEditingController();
   final dniEditingController = TextEditingController();
@@ -56,21 +53,29 @@ class _loginScreenState extends State<loginScreen> {
             child: Column(
               children: <Widget>[
                 InfoLabelModal(
-                    hintText: 'Usuario', valueText: nameEditingController.text),
+                  hintText: 'Usuario',
+                  valueText: nameEditingController.text,
+                ),
                 const SpaceY(),
                 InfoLabelModal(
-                    hintText: 'Dni', valueText: dniEditingController.text),
+                  hintText: 'Dni',
+                  valueText: dniEditingController.text,
+                ),
                 const SpaceY(),
                 InfoLabelModal(
-                    hintText: 'Teléfono',
-                    valueText: phoneEditingController.text),
+                  hintText: 'Teléfono',
+                  valueText: phoneEditingController.text,
+                ),
                 const SpaceY(),
                 InfoLabelModal(
-                    hintText: 'Email', valueText: emailEditingController.text),
+                  hintText: 'Email',
+                  valueText: emailEditingController.text,
+                ),
                 const SpaceY(),
                 InfoLabelModal(
-                    hintText: 'Comunidad',
-                    valueText: community_select.toString()),
+                  hintText: 'Comunidad',
+                  valueText: community_select.toString(),
+                ),
               ],
             ),
           ),
@@ -82,7 +87,8 @@ class _loginScreenState extends State<loginScreen> {
                   style: TextButton.styleFrom(
                     backgroundColor: Colors.grey,
                     shape: const RoundedRectangleBorder(
-                        borderRadius: BorderRadius.all(Radius.circular(10))),
+                      borderRadius: BorderRadius.all(Radius.circular(10)),
+                    ),
                   ),
                   child: const Text('Volver'),
                   onPressed:
@@ -92,7 +98,8 @@ class _loginScreenState extends State<loginScreen> {
                   style: TextButton.styleFrom(
                     backgroundColor: Colors.blue,
                     shape: const RoundedRectangleBorder(
-                        borderRadius: BorderRadius.all(Radius.circular(10))),
+                      borderRadius: BorderRadius.all(Radius.circular(10)),
+                    ),
                   ),
                   child: const Text('Guardar'),
                   onPressed: () {
@@ -100,9 +107,9 @@ class _loginScreenState extends State<loginScreen> {
                     FocusScope.of(context).unfocus();
                     _formKey.currentState?.reset();
                   },
-                )
+                ),
               ],
-            )
+            ),
           ],
         );
       },
