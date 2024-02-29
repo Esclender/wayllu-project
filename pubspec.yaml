@@ -35,9 +35,12 @@ dependencies:
     sdk: flutter
   flutter_bloc: ^8.1.4
   flutter_hooks: ^0.20.5
+  google_fonts: ^6.1.0
   hexcolor: ^3.0.1
   ionicons: ^0.2.2
+  lottie: ^3.1.0
   retrofit: ^4.1.0
+  validators: ^3.0.0
 
 dev_dependencies:
   flutter_test:
