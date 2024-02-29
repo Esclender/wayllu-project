@@ -18,14 +18,14 @@ class HomeScreen extends HookWidget {
     final DateTime now = DateTime.now();
     final int hour = now.hour;
     final String greeting = getGreeting(hour);
-
+    const bool isAdmin = false;
     return Scaffold(
       backgroundColor: bgPrimary,
       body: CustomScrollView(
         slivers: [
           SliverAppBar(
             expandedHeight: 68.0,
-            floating: false,
+            floating: true,
             backgroundColor: Colors.transparent,
             flexibleSpace: FlexibleSpaceBar(
               background: topVector(context),
@@ -75,6 +75,15 @@ class HomeScreen extends HookWidget {
           SliverList(
             delegate: SliverChildListDelegate(
               [
+                if(!isAdmin)
+                Center(
+                  child: Container(
+                    margin: EdgeInsets.symmetric(horizontal: 16, vertical: 8),
+                    width: MediaQuery.of(context).size.width,
+                    height: 150,
+                    decoration: BoxDecoration(color: Colors.black45),
+                    ),
+                ),
                 Container(
                   margin:
                       const EdgeInsets.symmetric(horizontal: 24, vertical: 6),
@@ -159,9 +168,6 @@ class HomeScreen extends HookWidget {
                     ),
                   ),
                 ),
-                /*  SizedBox(
-                  height: 10,
-                ),*/
                 Container(
                   margin:
                       const EdgeInsets.symmetric(vertical: 4, horizontal: 16),
@@ -177,10 +183,7 @@ class HomeScreen extends HookWidget {
                               children: [
                                 Expanded(
                                   child: productsHome(
-                                    context,
-                                    productos[evenIndex],
-                                    false
-                                  ),
+                                      context, productos[evenIndex], false,),
                                 ),
                                 const SizedBox(
                                   width: 8.0,
@@ -188,10 +191,7 @@ class HomeScreen extends HookWidget {
                                 Expanded(
                                   child: oddIndex < productos.length
                                       ? productsHome(
-                                          context,
-                                          productos[oddIndex],
-                                          false
-                                        )
+                                          context, productos[oddIndex], false,)
                                       : Container(),
                                 ),
                               ],
@@ -233,7 +233,7 @@ Container productsHome(BuildContext context, Producto producto, bool isAdmin) {
           offset: const Offset(
             0,
             1,
-          ), // Desplazamiento de la sombra (en este caso, hacia abajo)
+          ),
         ),
       ],
       borderRadius: BorderRadius.circular(10),
@@ -245,7 +245,7 @@ Container productsHome(BuildContext context, Producto producto, bool isAdmin) {
           children: [
             Container(
               width: MediaQuery.of(context).size.width * 0.45,
-              height: MediaQuery.of(context).size.height * 0.2,
+              height: MediaQuery.of(context).size.height * 0.19,
               decoration: BoxDecoration(
                 borderRadius: const BorderRadius.only(
                   topLeft: Radius.circular(10),
@@ -258,82 +258,84 @@ Container productsHome(BuildContext context, Producto producto, bool isAdmin) {
               ),
             ),
             Positioned(
-          top: 8.0, // Ajusta la posición del botón según sea necesario
-          right: 8.0,
-          child: isAdmin
-                    ? Container(
-                  padding: EdgeInsets.all(4.5),
-                  decoration: BoxDecoration(
-                    color: bottomNavBar,
-                    borderRadius: BorderRadius.circular(5),
-                    border: Border.all(width: 0.2, color: iconColor),
-                  ),
-                  child: Icon(
-                    Ionicons.add,
-                    color: iconColor,
-                  ),
-                )
-              : Container(),
+              top: 8.0,
+              right: 8.0,
+              child: isAdmin
+                  ? Container(
+                      padding: EdgeInsets.all(4.5),
+                      decoration: BoxDecoration(
+                        color: bottomNavBar,
+                        borderRadius: BorderRadius.circular(5),
+                        border: Border.all(width: 0.2, color: iconColor),
+                      ),
+                      child: Icon(
+                        Ionicons.add,
+                        color: iconColor,
+                      ),
+                    )
+                  : Container(),
+            ),
+          ],
         ),
-        
-             ],
-          ),
-       
-          Container(
-            margin: const EdgeInsets.symmetric(horizontal: 4),
-            child: Column(
-              crossAxisAlignment: CrossAxisAlignment.start,
-              children: [
-                Text(
-                  producto.name,
-                  style: const TextStyle(
-                      fontFamily: 'Gotham',
-                      fontSize: 16,
-                      fontWeight: FontWeight.w500),
-                ),
-                Text(
-                  producto.description,
-                  style: const TextStyle(
-                      fontFamily: 'Gotham',
-                      fontSize: 10,
-                      fontWeight: FontWeight.w300),
-                ),
-                Row(
+        Container(
+          margin: const EdgeInsets.symmetric(horizontal: 4),
+          child: Column(
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: [
+              Text(
+                producto.name,
+                style: const TextStyle(
+                    fontFamily: 'Gotham',
+                    fontSize: 16,
+                    fontWeight: FontWeight.w500),
+              ),
+              Text(
+                producto.description,
+                style: const TextStyle(
+                    fontFamily: 'Gotham',
+                    fontSize: 10,
+                    fontWeight: FontWeight.w300),
+              ),
+              Container(
+                margin: EdgeInsets.only(top: 6, right: 2),
+                child: Row(
                   mainAxisAlignment: MainAxisAlignment.spaceBetween,
                   children: [
                     Text(
-                      'S/' + producto.price.toString(),
-                      style: TextStyle(
+                      'S/${producto.price}',
+                      style: const TextStyle(
                           fontFamily: 'Gotham',
                           fontSize: 18,
                           fontWeight: FontWeight.w500),
                     ),
-                    if(!isAdmin)
-                    Container(
-                  padding: EdgeInsets.all(4.5),
-                  decoration: BoxDecoration(
-                    color: Colors.blue, // Puedes cambiar el color según tus necesidades
-                    borderRadius: BorderRadius.circular(5),
-                  ),
-                  child: Text(
-                    'Editar',
-                    style: TextStyle(
-                      color: Colors.white,
-                      fontSize: 11,
-                      fontWeight: FontWeight.bold,
-                    ),
-                  ),
-                    )
+                    if (!isAdmin)
+                      Container(
+                        padding: const EdgeInsets.symmetric(
+                            vertical: 4, horizontal: 6.5),
+                        decoration: BoxDecoration(
+                          color:
+                              secondaryColor, // Puedes cambiar el color según tus necesidades
+                          borderRadius: BorderRadius.circular(5),
+                        ),
+                        child: const Text(
+                          'Editar',
+                          style: TextStyle(
+                            color: Colors.white,
+                            fontSize: 11,
+                            fontWeight: FontWeight.bold,
+                          ),
+                        ),
+                      ),
                   ],
-                )
-              ],
-            ),
+                ),
+              ),
+            ],
           ),
-         
-        ],
-      ),
-    );
-  }
+        ),
+      ],
+    ),
+  );
+}
 
 Container shoppingCart(BuildContext context) {
   return Container(
