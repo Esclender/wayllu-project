@@ -18,8 +18,7 @@ class MyApp extends StatelessWidget {
       theme: ThemeApp.light,
       home: AnnotatedRegion(
         value: SystemStyles.light,
-        // child: const HomeScreen(null),
-        child: const loginScreen(),
+        child: const HomeScreen(null),
       ),
     );
   }
