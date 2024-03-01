@@ -1,5 +1,4 @@
 import 'package:auto_route/auto_route.dart';
-import 'package:wayllu_project/src/presentation/views/auth/register_user_screen.dart';
 import 'package:wayllu_project/src/presentation/views/home_screen.dart';
 import 'package:wayllu_project/src/presentation/views/info_user_screen.dart';
 import 'package:wayllu_project/src/presentation/views/login_example.dart';
@@ -14,7 +13,6 @@ class AppRouter extends _$AppRouter {
         AutoRoute(path: '/', page: LoginExampleRoute.page, initial: true),
         AutoRoute(path: '/home', page: HomeRoute.page),
         AutoRoute(path: '/info-user', page: InfoUserRoute.page),
-        AutoRoute(path: '/admin/register-user', page: UserRegisterRoute.page),
         AutoRoute(path: '/admin/user-lists', page: UsersListAdminRoute.page),
       ];
 }

@@ -35,12 +35,6 @@ abstract class _$AppRouter extends RootStackRouter {
         child: LoginExampleScreen(),
       );
     },
-    UserRegisterRoute.name: (routeData) {
-      return AutoRoutePage<dynamic>(
-        routeData: routeData,
-        child: const UserRegisterScreen(),
-      );
-    },
     UsersListAdminRoute.name: (routeData) {
       return AutoRoutePage<dynamic>(
         routeData: routeData,
@@ -103,20 +97,6 @@ class LoginExampleRoute extends PageRouteInfo<void> {
         );
 
   static const String name = 'LoginExampleRoute';
-
-  static const PageInfo<void> page = PageInfo<void>(name);
-}
-
-/// generated route for
-/// [UserRegisterScreen]
-class UserRegisterRoute extends PageRouteInfo<void> {
-  const UserRegisterRoute({List<PageRouteInfo>? children})
-      : super(
-          UserRegisterRoute.name,
-          initialChildren: children,
-        );
-
-  static const String name = 'UserRegisterRoute';
 
   static const PageInfo<void> page = PageInfo<void>(name);
 }
