@@ -77,15 +77,7 @@ class HomeScreen extends HookWidget {
           SliverList(
             delegate: SliverChildListDelegate(
               [
-                if(!isAdmin)
-                Center(
-                  child: Container(
-                    margin: EdgeInsets.symmetric(horizontal: 16, vertical: 8),
-                    width: MediaQuery.of(context).size.width,
-                    height: 150,
-                    decoration: BoxDecoration(color: Colors.black45),
-                    ),
-                ),
+                dashboard(context, isAdmin),
                 Container(
                   margin:
                       const EdgeInsets.symmetric(horizontal: 24, vertical: 6),
@@ -224,10 +216,175 @@ class HomeScreen extends HookWidget {
       ),
     );
   }
+
+  Center dashboard(BuildContext context, UserRoles rol) {
+    final bool isAdmin = rol == UserRoles.admin;
+
+    return Center(
+      child: isAdmin
+          ? Container(
+              margin: const EdgeInsets.symmetric(horizontal: 22, vertical: 6),
+              width: MediaQuery.of(context).size.width,
+              height: MediaQuery.of(context).size.height * 0.24,
+              decoration: BoxDecoration(
+                color: bottomNavBar,
+                boxShadow: [
+                  BoxShadow(
+                    color: const Color.fromARGB(255, 95, 95, 95)
+                        .withOpacity(0.08), // Color de la sombra y su opacidad
+                    spreadRadius: 2, // Radio de propagación de la sombra
+                    blurRadius: 4, // Radio de desenfoque de la sombra
+                    offset: const Offset(
+                      0,
+                      1,
+                    ),
+                  ),
+                ],
+                borderRadius: BorderRadius.circular(10),
+              ),
+              child: Column(
+                children: [
+                  Stack(
+                    children: [
+                      Container(
+                        width: MediaQuery.of(context).size.width,
+                        height: MediaQuery.of(context).size.height * 0.09,
+                        padding: const EdgeInsets.symmetric(horizontal: 12),
+                        decoration: BoxDecoration(
+                          color: iconColor.withOpacity(0.7),
+                          borderRadius: const BorderRadius.only(
+                              topLeft: Radius.circular(10),
+                              topRight: Radius.circular(10),),
+                        ),
+                        child: Row(
+                          mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                          children: [
+                            Column(
+                              crossAxisAlignment: CrossAxisAlignment.start,
+                              mainAxisAlignment: MainAxisAlignment.center,
+                              children: [
+                                Text(
+                                  'Ingresos semanales',
+                                  style: TextStyle(
+                                    fontFamily: 'Gotham',
+                                    fontSize: 12,
+                                    color: clearLetters,
+                                    fontWeight: FontWeight.w300,
+                                  ),
+                                ),
+                                Text(
+                                  'S/ 1.200,00',
+                                  style: TextStyle(
+                                    fontFamily: 'Gotham',
+                                    fontSize: 24,
+                                    color: bottomNavBar,
+                                    fontWeight: FontWeight.w500,
+                                  ),
+                                ),
+                              ],
+                            ),
+                            Image.asset('assets/stacks.png')
+                          ],
+                        ),
+                      ),
+                    ],
+                  ),
+                  Row(
+                    children: [
+                      Row(
+                        children: [
+                          Container(
+                            width: 30,
+                            height: 30,
+                            decoration: BoxDecoration(
+                                color: thirdColor.withOpacity(0.4),
+                                shape: BoxShape.circle,),
+                            child: Icon(
+                              Ionicons.checkmark,
+                              color: thirdColor,
+                            ),
+                          ),
+                          const SizedBox(
+                            width: 6,
+                          ),
+                          Column(
+                            crossAxisAlignment: CrossAxisAlignment.start,
+                            children: [
+                              Text(
+                                'Entrada',
+                                style: TextStyle(
+                                  fontFamily: 'Gotham',
+                                  fontSize: 11,
+                                  color: iconColor,
+                                  fontWeight: FontWeight.w300,
+                                ),
+                              ),
+                              Text(
+                                'S/ 2.000,50',
+                                style: TextStyle(
+                                  fontFamily: 'Gotham',
+                                  fontSize: 16,
+                                  color: iconColor,
+                                  fontWeight: FontWeight.w500,
+                                ),
+                              ),
+                            ],
+                          ),
+                        ],
+                      ),
+                      Row(
+                        children: [
+                          Container(
+                            width: 30,
+                            height: 30,
+                            decoration: BoxDecoration(
+                                color: thirdColor.withOpacity(0.4),
+                                shape: BoxShape.circle,),
+                            child: Icon(
+                              Ionicons.checkmark,
+                              color: thirdColor,
+                            ),
+                          ),
+                          const SizedBox(
+                            width: 6,
+                          ),
+                          Column(
+                            crossAxisAlignment: CrossAxisAlignment.start,
+                            children: [
+                              Text(
+                                'Entrada',
+                                style: TextStyle(
+                                  fontFamily: 'Gotham',
+                                  fontSize: 11,
+                                  color: iconColor,
+                                  fontWeight: FontWeight.w300,
+                                ),
+                              ),
+                              Text(
+                                'S/ 2.000,50',
+                                style: TextStyle(
+                                  fontFamily: 'Gotham',
+                                  fontSize: 16,
+                                  color: iconColor,
+                                  fontWeight: FontWeight.w500,
+                                ),
+                              ),
+                            ],
+                          ),
+                        ],
+                      ),
+                    ],
+                  ),
+                ],
+              ),
+            )
+          : Container(),
+    );
+  }
 }
 
 Container productsHome(BuildContext context, Producto producto, UserRoles rol) {
-  final bool isAdmin = rol == UserRoles.artesano;
+  final bool isAdmin = rol == UserRoles.admin;
 
   return Container(
     width: MediaQuery.of(context).size.width * 0.45,
@@ -270,7 +427,7 @@ Container productsHome(BuildContext context, Producto producto, UserRoles rol) {
             Positioned(
               top: 8.0, // Ajusta la posición del botón según sea necesario
               right: 8.0,
-              child: isAdmin
+              child: !isAdmin
                   ? Container(
                       padding: const EdgeInsets.all(4.5),
                       decoration: BoxDecoration(
@@ -289,6 +446,7 @@ Container productsHome(BuildContext context, Producto producto, UserRoles rol) {
         ),
         Container(
           margin: const EdgeInsets.symmetric(horizontal: 4),
+          padding: EdgeInsets.only(right: 4),
           child: Column(
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
@@ -308,8 +466,12 @@ Container productsHome(BuildContext context, Producto producto, UserRoles rol) {
                   fontWeight: FontWeight.w300,
                 ),
               ),
+              const SizedBox(
+                height: 6,
+              ),
               Row(
                 mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                crossAxisAlignment: CrossAxisAlignment.end,
                 children: [
                   Text(
                     'S/${producto.price}',
@@ -319,12 +481,12 @@ Container productsHome(BuildContext context, Producto producto, UserRoles rol) {
                       fontWeight: FontWeight.w500,
                     ),
                   ),
-                  if (!isAdmin)
+                  if (isAdmin)
                     Container(
-                      padding: const EdgeInsets.all(4.5),
+                      padding: const EdgeInsets.symmetric(vertical:4, horizontal: 6),
                       decoration: BoxDecoration(
-                        color: Colors
-                            .blue, // Puedes cambiar el color según tus necesidades
+                        color:
+                            secondaryColor, // Puedes cambiar el color según tus necesidades
                         borderRadius: BorderRadius.circular(5),
                       ),
                       child: const Text(

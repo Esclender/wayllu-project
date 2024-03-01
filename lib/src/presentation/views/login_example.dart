@@ -2,6 +2,7 @@ import 'package:auto_route/auto_route.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_hooks/flutter_hooks.dart';
+import 'package:get/get.dart';
 import 'package:wayllu_project/src/config/router/app_router.dart';
 import 'package:wayllu_project/src/domain/dtos/user_credentials_rep.dart';
 import 'package:wayllu_project/src/locator.dart';
@@ -18,6 +19,7 @@ class LoginExampleScreen extends HookWidget {
   final credentialsUser = const UserCredentialDto(
     dni: 'user',
     clave: 'user',
+   
   );
 
   //Dependencies Injection
@@ -29,7 +31,10 @@ class LoginExampleScreen extends HookWidget {
       clave: clave,
     );
     context.read<UserLoggedCubit>().isAdmin(credentialsUser);
+      final isAdmin = context.read<UserLoggedCubit>().state;
+    print('Inicio de sesión como $isAdmin');
     appRouter.navigateNamed('/home');
+    
   }
 
   @override

@@ -10,3 +10,4 @@ HexColor secondaryColor = HexColor('#FFA743');
 HexColor thirdColor = HexColor('#A4B304');
 HexColor fourthColor = HexColor('#007A98');
 HexColor iconColor = HexColor('#241E20');
+HexColor clearLetters = HexColor('#DADADA');
