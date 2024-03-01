@@ -1,6 +1,7 @@
 import 'package:auto_route/auto_route.dart';
 import 'package:wayllu_project/src/presentation/views/home_screen.dart';
 import 'package:wayllu_project/src/presentation/views/info_user_screen.dart';
+import 'package:wayllu_project/src/presentation/views/login_example.dart';
 
 part 'app_router.gr.dart';
 
@@ -8,7 +9,8 @@ part 'app_router.gr.dart';
 class AppRouter extends _$AppRouter {
   @override
   List<AutoRoute> get routes => [
-        AutoRoute(path: '/', page: HomeRoute.page, initial: true),
+        AutoRoute(path: '/', page: LoginExampleRoute.page, initial: true),
+        AutoRoute(path: '/home', page: HomeRoute.page),
         AutoRoute(path: '/info-user', page: InfoUserRoute.page),
       ];
 }

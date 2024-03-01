@@ -18,13 +18,19 @@ abstract class _$AppRouter extends RootStackRouter {
     HomeRoute.name: (routeData) {
       return AutoRoutePage<dynamic>(
         routeData: routeData,
-        child: const HomeScreen(),
+        child: HomeScreen(),
       );
     },
     InfoUserRoute.name: (routeData) {
       return AutoRoutePage<dynamic>(
         routeData: routeData,
         child: InfoUserScreen(),
+      );
+    },
+    LoginExampleRoute.name: (routeData) {
+      return AutoRoutePage<dynamic>(
+        routeData: routeData,
+        child: LoginExampleScreen(),
       );
     },
   };
@@ -54,6 +60,20 @@ class InfoUserRoute extends PageRouteInfo<void> {
         );
 
   static const String name = 'InfoUserRoute';
+
+  static const PageInfo<void> page = PageInfo<void>(name);
+}
+
+/// generated route for
+/// [LoginExampleScreen]
+class LoginExampleRoute extends PageRouteInfo<void> {
+  const LoginExampleRoute({List<PageRouteInfo>? children})
+      : super(
+          LoginExampleRoute.name,
+          initialChildren: children,
+        );
+
+  static const String name = 'LoginExampleRoute';
 
   static const PageInfo<void> page = PageInfo<void>(name);
 }

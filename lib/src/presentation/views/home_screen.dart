@@ -1,15 +1,17 @@
 import 'package:auto_route/auto_route.dart';
 import 'package:auto_size_text/auto_size_text.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_hooks/flutter_hooks.dart';
 import 'package:ionicons/ionicons.dart';
 import 'package:wayllu_project/src/domain/models/models_products.dart';
+import 'package:wayllu_project/src/presentation/cubit/is_admin_cubit.dart';
 import 'package:wayllu_project/src/presentation/widgets/bottom_navbar.dart';
 import 'package:wayllu_project/src/utils/constants/colors.dart';
 
 @RoutePage()
 class HomeScreen extends HookWidget {
-  const HomeScreen({super.key});
+  const HomeScreen();
 
   int get viewIndex => 0;
 
@@ -18,14 +20,14 @@ class HomeScreen extends HookWidget {
     final DateTime now = DateTime.now();
     final int hour = now.hour;
     final String greeting = getGreeting(hour);
-    const bool isAdmin = false;
+    final isAdmin = context.read<UserLoggedCubit>().state;
+
     return Scaffold(
       backgroundColor: bgPrimary,
       body: CustomScrollView(
         slivers: [
           SliverAppBar(
             expandedHeight: 68.0,
-            floating: true,
             backgroundColor: Colors.transparent,
             flexibleSpace: FlexibleSpaceBar(
               background: topVector(context),
@@ -183,7 +185,10 @@ class HomeScreen extends HookWidget {
                               children: [
                                 Expanded(
                                   child: productsHome(
-                                      context, productos[evenIndex], false,),
+                                    context,
+                                    productos[evenIndex],
+                                    isAdmin,
+                                  ),
                                 ),
                                 const SizedBox(
                                   width: 8.0,
@@ -191,7 +196,10 @@ class HomeScreen extends HookWidget {
                                 Expanded(
                                   child: oddIndex < productos.length
                                       ? productsHome(
-                                          context, productos[oddIndex], false,)
+                                          context,
+                                          productos[oddIndex],
+                                          isAdmin,
+                                        )
                                       : Container(),
                                 ),
                               ],
@@ -218,7 +226,9 @@ class HomeScreen extends HookWidget {
   }
 }
 
-Container productsHome(BuildContext context, Producto producto, bool isAdmin) {
+Container productsHome(BuildContext context, Producto producto, UserRoles rol) {
+  final bool isAdmin = rol == UserRoles.artesano;
+
   return Container(
     width: MediaQuery.of(context).size.width * 0.45,
     height: MediaQuery.of(context).size.height * 0.285,
@@ -258,11 +268,11 @@ Container productsHome(BuildContext context, Producto producto, bool isAdmin) {
               ),
             ),
             Positioned(
-              top: 8.0,
+              top: 8.0, // Ajusta la posición del botón según sea necesario
               right: 8.0,
               child: isAdmin
                   ? Container(
-                      padding: EdgeInsets.all(4.5),
+                      padding: const EdgeInsets.all(4.5),
                       decoration: BoxDecoration(
                         color: bottomNavBar,
                         borderRadius: BorderRadius.circular(5),
@@ -285,49 +295,48 @@ Container productsHome(BuildContext context, Producto producto, bool isAdmin) {
               Text(
                 producto.name,
                 style: const TextStyle(
-                    fontFamily: 'Gotham',
-                    fontSize: 16,
-                    fontWeight: FontWeight.w500),
+                  fontFamily: 'Gotham',
+                  fontSize: 16,
+                  fontWeight: FontWeight.w500,
+                ),
               ),
               Text(
                 producto.description,
                 style: const TextStyle(
-                    fontFamily: 'Gotham',
-                    fontSize: 10,
-                    fontWeight: FontWeight.w300),
+                  fontFamily: 'Gotham',
+                  fontSize: 10,
+                  fontWeight: FontWeight.w300,
+                ),
               ),
-              Container(
-                margin: EdgeInsets.only(top: 6, right: 2),
-                child: Row(
-                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                  children: [
-                    Text(
-                      'S/${producto.price}',
-                      style: const TextStyle(
-                          fontFamily: 'Gotham',
-                          fontSize: 18,
-                          fontWeight: FontWeight.w500),
+              Row(
+                mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                children: [
+                  Text(
+                    'S/${producto.price}',
+                    style: const TextStyle(
+                      fontFamily: 'Gotham',
+                      fontSize: 18,
+                      fontWeight: FontWeight.w500,
                     ),
-                    if (!isAdmin)
-                      Container(
-                        padding: const EdgeInsets.symmetric(
-                            vertical: 4, horizontal: 6.5),
-                        decoration: BoxDecoration(
-                          color:
-                              secondaryColor, // Puedes cambiar el color según tus necesidades
-                          borderRadius: BorderRadius.circular(5),
-                        ),
-                        child: const Text(
-                          'Editar',
-                          style: TextStyle(
-                            color: Colors.white,
-                            fontSize: 11,
-                            fontWeight: FontWeight.bold,
-                          ),
+                  ),
+                  if (!isAdmin)
+                    Container(
+                      padding: const EdgeInsets.all(4.5),
+                      decoration: BoxDecoration(
+                        color: Colors
+                            .blue, // Puedes cambiar el color según tus necesidades
+                        borderRadius: BorderRadius.circular(5),
+                      ),
+                      child: const Text(
+                        'Editar',
+                        style: TextStyle(
+                          color: Colors.white,
+                          fontSize: 11,
+                          fontWeight: FontWeight.bold,
                         ),
                       ),
-                  ],
-                ),
+                    ),
+                ],
               ),
             ],
           ),

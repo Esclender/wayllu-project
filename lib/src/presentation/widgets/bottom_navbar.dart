@@ -24,7 +24,7 @@ class BottomNavBar extends HookWidget {
 
   final double blur = 1.5;
   final BorderRadiusGeometry containersBorder = const BorderRadius.all(
-    Radius.circular(10), 
+    Radius.circular(10),
   );
 
   @override
@@ -38,7 +38,6 @@ class BottomNavBar extends HookWidget {
           top: BorderSide(color: bottomNavBarStroke),
           left: BorderSide(color: bottomNavBarStroke),
           right: BorderSide(color: bottomNavBarStroke),
-        
         ),
       ),
       child: ClipRRect(
@@ -74,8 +73,7 @@ class BottomNavBar extends HookWidget {
     return Flexible(
       child: InkWell(
         onTap: () {
-          //context.router.pushNamed(route);
-          appRouter.pushNamed(route);
+          appRouter.navigateNamed(route);
         },
         child: Container(
           margin: const EdgeInsets.symmetric(horizontal: 7.5, vertical: 10.0),
