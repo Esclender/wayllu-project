@@ -2,7 +2,7 @@ import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:wayllu_project/src/domain/dtos/user_credentials_rep.dart';
 
 //States
-enum UserRoles { admin, artesano }
+enum UserRoles { admin, artesano, all }
 
 class UserLoggedCubit extends Cubit<UserRoles> {
   UserLoggedCubit() : super(UserRoles.artesano);

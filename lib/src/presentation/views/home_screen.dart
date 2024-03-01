@@ -253,8 +253,9 @@ class HomeScreen extends HookWidget {
                         decoration: BoxDecoration(
                           color: iconColor.withOpacity(0.7),
                           borderRadius: const BorderRadius.only(
-                              topLeft: Radius.circular(10),
-                              topRight: Radius.circular(10),),
+                            topLeft: Radius.circular(10),
+                            topRight: Radius.circular(10),
+                          ),
                         ),
                         child: Row(
                           mainAxisAlignment: MainAxisAlignment.spaceBetween,
@@ -292,7 +293,7 @@ class HomeScreen extends HookWidget {
                   Padding(
                     padding: const EdgeInsets.all(8.0),
                     child: SizedBox(
-                      width: MediaQuery.of(context).size.width*0.75,
+                      width: MediaQuery.of(context).size.width * 0.75,
                       child: Column(
                         children: [
                           Row(
@@ -304,8 +305,9 @@ class HomeScreen extends HookWidget {
                                     width: 30,
                                     height: 30,
                                     decoration: BoxDecoration(
-                                        color: thirdColor.withOpacity(0.4),
-                                        shape: BoxShape.circle,),
+                                      color: thirdColor.withOpacity(0.4),
+                                      shape: BoxShape.circle,
+                                    ),
                                     child: Icon(
                                       Ionicons.checkmark,
                                       color: thirdColor,
@@ -315,7 +317,8 @@ class HomeScreen extends HookWidget {
                                     width: 8,
                                   ),
                                   Column(
-                                    crossAxisAlignment: CrossAxisAlignment.start,
+                                    crossAxisAlignment:
+                                        CrossAxisAlignment.start,
                                     children: [
                                       Text(
                                         'Entrada',
@@ -345,8 +348,9 @@ class HomeScreen extends HookWidget {
                                     width: 30,
                                     height: 30,
                                     decoration: BoxDecoration(
-                                        color: mainColor.withOpacity(0.4),
-                                        shape: BoxShape.circle,),
+                                      color: mainColor.withOpacity(0.4),
+                                      shape: BoxShape.circle,
+                                    ),
                                     child: Icon(
                                       Ionicons.caret_down_outline,
                                       color: mainColor,
@@ -356,7 +360,8 @@ class HomeScreen extends HookWidget {
                                     width: 8,
                                   ),
                                   Column(
-                                    crossAxisAlignment: CrossAxisAlignment.start,
+                                    crossAxisAlignment:
+                                        CrossAxisAlignment.start,
                                     children: [
                                       Text(
                                         'Salida',
@@ -376,32 +381,40 @@ class HomeScreen extends HookWidget {
                                           fontWeight: FontWeight.w500,
                                         ),
                                       ),
-                                     
                                     ],
                                   ),
                                 ],
                               ),
                             ],
                           ),
-                          TextButton(onPressed: ()=>null, 
-                          child: Container(width: 200,
-                          height: 40,
-                          decoration: BoxDecoration(gradient: LinearGradient(
-                  colors: [ 
-          mainColor.withOpacity(0.5),
-          secondaryColor.withOpacity(0.5),
-          secondaryColor,], 
-                 stops: [0.0, 0.4, 0.6, ],
-                  begin: Alignment.bottomCenter,
-                  end: Alignment.topCenter,
-                ),
-                borderRadius: BorderRadius.circular(5),),
-                          ))
+                          TextButton(
+                            onPressed: () {},
+                            child: Container(
+                              width: 200,
+                              height: 40,
+                              decoration: BoxDecoration(
+                                gradient: LinearGradient(
+                                  colors: [
+                                    mainColor.withOpacity(0.5),
+                                    secondaryColor.withOpacity(0.5),
+                                    secondaryColor,
+                                  ],
+                                  stops: const [
+                                    0.0,
+                                    0.4,
+                                    0.6,
+                                  ],
+                                  begin: Alignment.bottomCenter,
+                                  end: Alignment.topCenter,
+                                ),
+                                borderRadius: BorderRadius.circular(5),
+                              ),
+                            ),
+                          ),
                         ],
                       ),
                     ),
                   ),
-                   
                 ],
               ),
             )
@@ -420,10 +433,9 @@ Container productsHome(BuildContext context, Producto producto, UserRoles rol) {
       color: bottomNavBar,
       boxShadow: [
         BoxShadow(
-          color: const Color.fromARGB(255, 95, 95, 95)
-              .withOpacity(0.08), 
-          spreadRadius: 2, 
-          blurRadius: 4, 
+          color: const Color.fromARGB(255, 95, 95, 95).withOpacity(0.08),
+          spreadRadius: 2,
+          blurRadius: 4,
           offset: const Offset(
             0,
             1,
@@ -510,7 +522,8 @@ Container productsHome(BuildContext context, Producto producto, UserRoles rol) {
                   ),
                   if (isAdmin)
                     Container(
-                      padding: const EdgeInsets.symmetric(vertical:4, horizontal: 6),
+                      padding: const EdgeInsets.symmetric(
+                          vertical: 4, horizontal: 6),
                       decoration: BoxDecoration(
                         color:
                             secondaryColor, // Puedes cambiar el color según tus necesidades

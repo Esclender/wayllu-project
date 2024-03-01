@@ -15,7 +15,7 @@ class AppRouter extends _$AppRouter {
         AutoRoute(path: '/home', page: HomeRoute.page),
         AutoRoute(path: '/info-user', page: InfoUserRoute.page),
         AutoRoute(path: '/admin/register-user', page: UserRegisterRoute.page),
-        AutoRoute(path: '/admin/user-lists', page: UserRegisterRoute.page),
+        AutoRoute(path: '/admin/user-lists', page: UsersListAdminRoute.page),
       ];
 }
 
