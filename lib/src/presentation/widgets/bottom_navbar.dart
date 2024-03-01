@@ -14,7 +14,7 @@ class BottomNavBar extends HookWidget {
   BottomNavBar({super.key, this.viewSelected = 0});
 
   final List<Map<String, dynamic>> optionsIcons = [
-    {'icon': Ionicons.home, 'route': '/'},
+    {'icon': Ionicons.home, 'route': '/home'},
     //{'icon': Ionicons.bar_chart, 'route': '/home'},
     {'icon': Ionicons.person, 'route': '/info-user'},
   ];

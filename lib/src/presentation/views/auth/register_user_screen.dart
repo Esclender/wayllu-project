@@ -1,3 +1,4 @@
+import 'package:auto_route/auto_route.dart';
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:hexcolor/hexcolor.dart';
@@ -7,14 +8,15 @@ import 'package:wayllu_project/src/presentation/widgets/register_user/my_text_la
 import 'package:wayllu_project/src/presentation/widgets/register_user/my_textfield.dart';
 import 'package:wayllu_project/src/presentation/widgets/register_user/space_y.dart';
 
-class LoginScreen extends StatefulWidget {
-  const LoginScreen({super.key});
+@RoutePage()
+class UserRegisterScreen extends StatefulWidget {
+  const UserRegisterScreen({super.key});
 
   @override
-  State<LoginScreen> createState() => _LoginScreenState();
+  State<UserRegisterScreen> createState() => _UserRegisterScreenState();
 }
 
-class _LoginScreenState extends State<LoginScreen> {
+class _UserRegisterScreenState extends State<UserRegisterScreen> {
   final TextEditingController _textEditingController = TextEditingController();
 
   final nameEditingController = TextEditingController();

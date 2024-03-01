@@ -22,15 +22,29 @@ abstract class _$AppRouter extends RootStackRouter {
       );
     },
     InfoUserRoute.name: (routeData) {
+      final args = routeData.argsAs<InfoUserRouteArgs>(
+          orElse: () => const InfoUserRouteArgs());
       return AutoRoutePage<dynamic>(
         routeData: routeData,
-        child: InfoUserScreen(),
+        child: InfoUserScreen(isAdmin: args.isAdmin),
       );
     },
     LoginExampleRoute.name: (routeData) {
       return AutoRoutePage<dynamic>(
         routeData: routeData,
         child: LoginExampleScreen(),
+      );
+    },
+    UserRegisterRoute.name: (routeData) {
+      return AutoRoutePage<dynamic>(
+        routeData: routeData,
+        child: const UserRegisterScreen(),
+      );
+    },
+    UsersListAdminRoute.name: (routeData) {
+      return AutoRoutePage<dynamic>(
+        routeData: routeData,
+        child: UsersListAdminScreen(),
       );
     },
   };
@@ -52,16 +66,31 @@ class HomeRoute extends PageRouteInfo<void> {
 
 /// generated route for
 /// [InfoUserScreen]
-class InfoUserRoute extends PageRouteInfo<void> {
-  const InfoUserRoute({List<PageRouteInfo>? children})
-      : super(
+class InfoUserRoute extends PageRouteInfo<InfoUserRouteArgs> {
+  InfoUserRoute({
+    bool isAdmin = false,
+    List<PageRouteInfo>? children,
+  }) : super(
           InfoUserRoute.name,
+          args: InfoUserRouteArgs(isAdmin: isAdmin),
           initialChildren: children,
         );
 
   static const String name = 'InfoUserRoute';
 
-  static const PageInfo<void> page = PageInfo<void>(name);
+  static const PageInfo<InfoUserRouteArgs> page =
+      PageInfo<InfoUserRouteArgs>(name);
+}
+
+class InfoUserRouteArgs {
+  const InfoUserRouteArgs({this.isAdmin = false});
+
+  final bool isAdmin;
+
+  @override
+  String toString() {
+    return 'InfoUserRouteArgs{isAdmin: $isAdmin}';
+  }
 }
 
 /// generated route for
@@ -74,6 +103,34 @@ class LoginExampleRoute extends PageRouteInfo<void> {
         );
 
   static const String name = 'LoginExampleRoute';
+
+  static const PageInfo<void> page = PageInfo<void>(name);
+}
+
+/// generated route for
+/// [UserRegisterScreen]
+class UserRegisterRoute extends PageRouteInfo<void> {
+  const UserRegisterRoute({List<PageRouteInfo>? children})
+      : super(
+          UserRegisterRoute.name,
+          initialChildren: children,
+        );
+
+  static const String name = 'UserRegisterRoute';
+
+  static const PageInfo<void> page = PageInfo<void>(name);
+}
+
+/// generated route for
+/// [UsersListAdminScreen]
+class UsersListAdminRoute extends PageRouteInfo<void> {
+  const UsersListAdminRoute({List<PageRouteInfo>? children})
+      : super(
+          UsersListAdminRoute.name,
+          initialChildren: children,
+        );
+
+  static const String name = 'UsersListAdminRoute';
 
   static const PageInfo<void> page = PageInfo<void>(name);
 }
