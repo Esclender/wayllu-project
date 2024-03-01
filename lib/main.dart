@@ -1,24 +1,41 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:wayllu_project/src/config/router/app_router.dart';
 import 'package:wayllu_project/src/config/theme/app_theme.dart';
-import 'package:wayllu_project/src/presentation/views/home_screen.dart';
+import 'package:wayllu_project/src/locator.dart';
+import 'package:wayllu_project/src/presentation/cubit/is_admin_cubit.dart';
 
 void main() {
-  runApp(const MyApp());
+  initializeDependecies();
+  runApp(BlocSettup());
+}
+
+class BlocSettup extends StatelessWidget {
+  @override
+  Widget build(BuildContext context) {
+    return MultiBlocProvider(
+      providers: [
+        BlocProvider<UserLoggedCubit>(
+          create: (BuildContext context) => UserLoggedCubit(),
+        ),
+      ],
+      child: MyApp(),
+    );
+  }
 }
 
 class MyApp extends StatelessWidget {
-  const MyApp({super.key});
+  MyApp({super.key});
+
+  final _appRouter = getIt<AppRouter>();
 
   // This widget is the root of your application.
   @override
   Widget build(BuildContext context) {
-    return MaterialApp(
+    return MaterialApp.router(
       debugShowCheckedModeBanner: false,
       theme: ThemeApp.light,
-      home: AnnotatedRegion(
-        value: SystemStyles.light,
-        child: const HomeScreen(null),
-      ),
+      routerConfig: _appRouter.config(),
     );
   }
 }
