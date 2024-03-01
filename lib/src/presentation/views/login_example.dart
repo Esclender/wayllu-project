@@ -28,6 +28,7 @@ class LoginExampleScreen extends HookWidget {
       dni: dni,
       clave: clave,
     );
+
     context.read<UserLoggedCubit>().isAdmin(credentialsUser);
     appRouter.navigateNamed('/home');
   }

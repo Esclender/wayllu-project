@@ -71,13 +71,22 @@ class BottomNavBar extends HookWidget {
             children: List.generate(
               optionsIcons.length,
               (index) {
-                return _buildOptions(
-                  optionsIcons[index].icon,
-                  optionsIcons[index].routes,
-                  context,
-                  rol,
-                  index,
-                );
+                try {
+                  final OptionsIconsRoutes optionForThisRol =
+                      optionsIcons[index].routes.firstWhere(
+                            (opt) => opt.rol == rol || opt.rol == UserRoles.all,
+                          );
+
+                  return _buildOptions(
+                    optionsIcons[index].icon,
+                    optionForThisRol,
+                    context,
+                    index,
+                    rol,
+                  );
+                } catch (e) {
+                  return Container();
+                }
               },
             ),
           ),
@@ -88,14 +97,11 @@ class BottomNavBar extends HookWidget {
 
   Widget _buildOptions(
     IconData icon,
-    List<OptionsIconsRoutes> options,
+    OptionsIconsRoutes optionForThisRol,
     BuildContext context,
-    UserRoles rol,
     int index,
+    UserRoles rol,
   ) {
-    final OptionsIconsRoutes optionForThisRol =
-        options.firstWhere((opt) => opt.rol == rol || opt.rol == UserRoles.all);
-
     return Flexible(
       child: InkWell(
         onTap: () {
