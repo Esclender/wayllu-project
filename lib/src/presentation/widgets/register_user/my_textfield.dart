@@ -6,14 +6,16 @@ import 'package:hexcolor/hexcolor.dart';
 class MyTextField extends StatelessWidget {
   MyTextField({
     super.key,
-    required this.controller,
     required this.hintText,
     required this.obscureText,
+    required this.onSaved,
+    this.validator,
     this.maxLength,
     this.onChanged,
   });
 
-  TextEditingController controller = TextEditingController();
+  final String? Function(String?)? validator;
+  final Function(String?) onSaved;
   final String hintText;
   final bool obscureText;
   final int? maxLength;
@@ -21,12 +23,13 @@ class MyTextField extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return TextField(
+    return TextFormField(
       maxLength: maxLength,
       onChanged: onChanged ?? (text) {},
-      controller: controller,
       obscureText: obscureText,
       cursorColor: HexColor('#4f4f4f'),
+      validator: validator,
+      onSaved: onSaved,
       decoration: InputDecoration(
         hintText: hintText,
         fillColor: Colors.transparent,
