@@ -283,98 +283,125 @@ class HomeScreen extends HookWidget {
                                 ),
                               ],
                             ),
-                            Image.asset('assets/stacks.png')
+                            Image.asset('assets/stacks.png'),
                           ],
                         ),
                       ),
                     ],
                   ),
-                  Row(
-                    children: [
-                      Row(
+                  Padding(
+                    padding: const EdgeInsets.all(8.0),
+                    child: SizedBox(
+                      width: MediaQuery.of(context).size.width*0.75,
+                      child: Column(
                         children: [
-                          Container(
-                            width: 30,
-                            height: 30,
-                            decoration: BoxDecoration(
-                                color: thirdColor.withOpacity(0.4),
-                                shape: BoxShape.circle,),
-                            child: Icon(
-                              Ionicons.checkmark,
-                              color: thirdColor,
-                            ),
-                          ),
-                          const SizedBox(
-                            width: 6,
-                          ),
-                          Column(
-                            crossAxisAlignment: CrossAxisAlignment.start,
+                          Row(
+                            mainAxisAlignment: MainAxisAlignment.spaceBetween,
                             children: [
-                              Text(
-                                'Entrada',
-                                style: TextStyle(
-                                  fontFamily: 'Gotham',
-                                  fontSize: 11,
-                                  color: iconColor,
-                                  fontWeight: FontWeight.w300,
-                                ),
+                              Row(
+                                children: [
+                                  Container(
+                                    width: 30,
+                                    height: 30,
+                                    decoration: BoxDecoration(
+                                        color: thirdColor.withOpacity(0.4),
+                                        shape: BoxShape.circle,),
+                                    child: Icon(
+                                      Ionicons.checkmark,
+                                      color: thirdColor,
+                                    ),
+                                  ),
+                                  const SizedBox(
+                                    width: 8,
+                                  ),
+                                  Column(
+                                    crossAxisAlignment: CrossAxisAlignment.start,
+                                    children: [
+                                      Text(
+                                        'Entrada',
+                                        style: TextStyle(
+                                          fontFamily: 'Gotham',
+                                          fontSize: 11,
+                                          color: iconColor,
+                                          fontWeight: FontWeight.w300,
+                                        ),
+                                      ),
+                                      Text(
+                                        'S/ 2.000,50',
+                                        style: TextStyle(
+                                          fontFamily: 'Gotham',
+                                          fontSize: 16,
+                                          color: iconColor,
+                                          fontWeight: FontWeight.w500,
+                                        ),
+                                      ),
+                                    ],
+                                  ),
+                                ],
                               ),
-                              Text(
-                                'S/ 2.000,50',
-                                style: TextStyle(
-                                  fontFamily: 'Gotham',
-                                  fontSize: 16,
-                                  color: iconColor,
-                                  fontWeight: FontWeight.w500,
-                                ),
+                              Row(
+                                children: [
+                                  Container(
+                                    width: 30,
+                                    height: 30,
+                                    decoration: BoxDecoration(
+                                        color: mainColor.withOpacity(0.4),
+                                        shape: BoxShape.circle,),
+                                    child: Icon(
+                                      Ionicons.caret_down_outline,
+                                      color: mainColor,
+                                    ),
+                                  ),
+                                  const SizedBox(
+                                    width: 8,
+                                  ),
+                                  Column(
+                                    crossAxisAlignment: CrossAxisAlignment.start,
+                                    children: [
+                                      Text(
+                                        'Salida',
+                                        style: TextStyle(
+                                          fontFamily: 'Gotham',
+                                          fontSize: 11,
+                                          color: iconColor,
+                                          fontWeight: FontWeight.w300,
+                                        ),
+                                      ),
+                                      Text(
+                                        'S/ 800,00',
+                                        style: TextStyle(
+                                          fontFamily: 'Gotham',
+                                          fontSize: 16,
+                                          color: iconColor,
+                                          fontWeight: FontWeight.w500,
+                                        ),
+                                      ),
+                                     
+                                    ],
+                                  ),
+                                ],
                               ),
                             ],
                           ),
+                          TextButton(onPressed: ()=>null, 
+                          child: Container(width: 200,
+                          height: 40,
+                          decoration: BoxDecoration(gradient: LinearGradient(
+                  colors: [ 
+          mainColor.withOpacity(0.5),
+          secondaryColor.withOpacity(0.5),
+          secondaryColor,], 
+                 stops: [0.0, 0.4, 0.6, ],
+                  begin: Alignment.bottomCenter,
+                  end: Alignment.topCenter,
+                ),
+                borderRadius: BorderRadius.circular(5),),
+                          ))
                         ],
                       ),
-                      Row(
-                        children: [
-                          Container(
-                            width: 30,
-                            height: 30,
-                            decoration: BoxDecoration(
-                                color: thirdColor.withOpacity(0.4),
-                                shape: BoxShape.circle,),
-                            child: Icon(
-                              Ionicons.checkmark,
-                              color: thirdColor,
-                            ),
-                          ),
-                          const SizedBox(
-                            width: 6,
-                          ),
-                          Column(
-                            crossAxisAlignment: CrossAxisAlignment.start,
-                            children: [
-                              Text(
-                                'Entrada',
-                                style: TextStyle(
-                                  fontFamily: 'Gotham',
-                                  fontSize: 11,
-                                  color: iconColor,
-                                  fontWeight: FontWeight.w300,
-                                ),
-                              ),
-                              Text(
-                                'S/ 2.000,50',
-                                style: TextStyle(
-                                  fontFamily: 'Gotham',
-                                  fontSize: 16,
-                                  color: iconColor,
-                                  fontWeight: FontWeight.w500,
-                                ),
-                              ),
-                            ],
-                          ),
-                        ],
-                      ),
-                    ],
+                    ),
                   ),
+                   
                 ],
               ),
             )
@@ -394,9 +421,9 @@ Container productsHome(BuildContext context, Producto producto, UserRoles rol) {
       boxShadow: [
         BoxShadow(
           color: const Color.fromARGB(255, 95, 95, 95)
-              .withOpacity(0.08), // Color de la sombra y su opacidad
-          spreadRadius: 2, // Radio de propagación de la sombra
-          blurRadius: 4, // Radio de desenfoque de la sombra
+              .withOpacity(0.08), 
+          spreadRadius: 2, 
+          blurRadius: 4, 
           offset: const Offset(
             0,
             1,
@@ -446,7 +473,7 @@ Container productsHome(BuildContext context, Producto producto, UserRoles rol) {
         ),
         Container(
           margin: const EdgeInsets.symmetric(horizontal: 4),
-          padding: EdgeInsets.only(right: 4),
+          padding: const EdgeInsets.only(right: 4),
           child: Column(
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
