@@ -20,10 +20,6 @@ class HomeScreen extends HookWidget {
 
   final appRouter = getIt<AppRouter>();
 
-  void _shoppingCartNavigation() {
-    appRouter.navigateNamed('/home/carrito');
-  }
-
   @override
   Widget build(BuildContext context) {
     final DateTime now = DateTime.now();
@@ -228,7 +224,9 @@ class HomeScreen extends HookWidget {
 
   Widget shoppingCart(BuildContext context) {
     return InkWell(
-      onTap: _shoppingCartNavigation,
+      onTap: () {
+        appRouter.pushNamed('/home/carrito');
+      },
       child: Container(
         width: MediaQuery.of(context).size.width * 0.11,
         height: MediaQuery.of(context).size.width * 0.11,
@@ -559,7 +557,9 @@ Container productsHome(BuildContext context, Producto producto, UserRoles rol) {
                   if (isAdmin)
                     Container(
                       padding: const EdgeInsets.symmetric(
-                          vertical: 4, horizontal: 6,),
+                        vertical: 4,
+                        horizontal: 6,
+                      ),
                       decoration: BoxDecoration(
                         color:
                             secondaryColor, // Puedes cambiar el color según tus necesidades

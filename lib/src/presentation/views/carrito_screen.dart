@@ -70,7 +70,7 @@ class CarritoScreen extends HookWidget {
                                     child: ClipRRect(
                                       borderRadius: BorderRadius.circular(10),
                                       child: Image.asset(
-                                        '../../../assets/images/img1.jpg',
+                                        'assets/images/img1.jpg',
                                         width: 100,
                                         height: 80,
                                         fit: BoxFit.cover,
