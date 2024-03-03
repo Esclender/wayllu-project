@@ -4,17 +4,25 @@ import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_hooks/flutter_hooks.dart';
 import 'package:ionicons/ionicons.dart';
+import 'package:wayllu_project/src/config/router/app_router.dart';
 import 'package:wayllu_project/src/domain/enums/user_roles.dart';
 import 'package:wayllu_project/src/domain/models/models_products.dart';
+import 'package:wayllu_project/src/locator.dart';
 import 'package:wayllu_project/src/presentation/cubit/is_admin_cubit.dart';
 import 'package:wayllu_project/src/presentation/widgets/bottom_navbar.dart';
 import 'package:wayllu_project/src/utils/constants/colors.dart';
 
 @RoutePage()
 class HomeScreen extends HookWidget {
-  const HomeScreen();
+  HomeScreen();
 
   int get viewIndex => 0;
+
+  final appRouter = getIt<AppRouter>();
+
+  void _shoppingCartNavigation() {
+    appRouter.navigateNamed('/home/carrito');
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -214,6 +222,33 @@ class HomeScreen extends HookWidget {
       floatingActionButtonLocation: FloatingActionButtonLocation.centerDocked,
       floatingActionButton: BottomNavBar(
         viewSelected: viewIndex,
+      ),
+    );
+  }
+
+  Widget shoppingCart(BuildContext context) {
+    return InkWell(
+      onTap: _shoppingCartNavigation,
+      child: Container(
+        width: MediaQuery.of(context).size.width * 0.11,
+        height: MediaQuery.of(context).size.width * 0.11,
+        decoration: BoxDecoration(
+          color: bottomNavBar,
+          borderRadius: BorderRadius.circular(10),
+          boxShadow: [
+            BoxShadow(
+              color: const Color.fromARGB(255, 95, 95, 95)
+                  .withOpacity(0.08), // Color de la sombra y su opacidad
+              spreadRadius: 2, // Radio de propagación de la sombra
+              blurRadius: 4, // Radio de desenfoque de la sombra
+              offset: const Offset(
+                0,
+                1,
+              ), // Desplazamiento de la sombra (en este caso, hacia abajo)
+            ),
+          ],
+        ),
+        child: const Icon(Ionicons.bag_handle_outline),
       ),
     );
   }
@@ -546,30 +581,6 @@ Container productsHome(BuildContext context, Producto producto, UserRoles rol) {
         ),
       ],
     ),
-  );
-}
-
-Container shoppingCart(BuildContext context) {
-  return Container(
-    width: MediaQuery.of(context).size.width * 0.11,
-    height: MediaQuery.of(context).size.width * 0.11,
-    decoration: BoxDecoration(
-      color: bottomNavBar,
-      borderRadius: BorderRadius.circular(10),
-      boxShadow: [
-        BoxShadow(
-          color: const Color.fromARGB(255, 95, 95, 95)
-              .withOpacity(0.08), // Color de la sombra y su opacidad
-          spreadRadius: 2, // Radio de propagación de la sombra
-          blurRadius: 4, // Radio de desenfoque de la sombra
-          offset: const Offset(
-            0,
-            1,
-          ), // Desplazamiento de la sombra (en este caso, hacia abajo)
-        ),
-      ],
-    ),
-    child: const Icon(Ionicons.bag_handle_outline),
   );
 }
 
