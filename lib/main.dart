@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:wayllu_project/src/config/theme/app_theme.dart';
-import 'package:wayllu_project/src/presentation/views/home_screen.dart';
+import 'package:wayllu_project/src/presentation/views/carrito_screen.dart';
 
 void main() {
   runApp(const MyApp());
