@@ -92,58 +92,9 @@ class HomeScreen extends HookWidget {
                     padding: const EdgeInsets.only(left: 4),
                     child: Row(
                       mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                      children: [
-                        categoriesProducts(
-                          context,
-                          'Gorros',
-                          'assets/images/product/gorro-category.png',
-                        ),
-                        categoriesProducts(
-                          context,
-                          'Ponchos',
-                          'assets/images/product/poncho-category.png',
-                        ),
-                        categoriesProducts(
-                          context,
-                          'Mantos',
-                          'assets/images/product/manto-category.png',
-                        ),
-                        categoriesProducts(
-                          context,
-                          'Ponchos',
-                          'assets/images/product/poncho-category.png',
-                        ),
-                        categoriesProducts(
-                          context,
-                          'Mantos',
-                          'assets/images/product/manto-category.png',
-                        ),
-                        categoriesProducts(
-                          context,
-                          'Gorros',
-                          'assets/images/product/gorro-category.png',
-                        ),
-                        categoriesProducts(
-                          context,
-                          'Ponchos',
-                          'assets/images/product/poncho-category.png',
-                        ),
-                        categoriesProducts(
-                          context,
-                          'Mantos',
-                          'assets/images/product/manto-category.png',
-                        ),
-                        categoriesProducts(
-                          context,
-                          'Ponchos',
-                          'assets/images/product/poncho-category.png',
-                        ),
-                        categoriesProducts(
-                          context,
-                          'Mantos',
-                          'assets/images/product/manto-category.png',
-                        ),
-                      ],
+                      children: categories.map((category) {
+              return categoriesProducts(context, category.name, category.image);
+            }).toList(),
                     ),
                   ),
                 ),
@@ -384,19 +335,18 @@ class HomeScreen extends HookWidget {
                             ],
                           ),
                           TextButton(onPressed: ()=>null, 
-                          child: Container(width: 200,
-                          height: 40,
-                          decoration: BoxDecoration(gradient: LinearGradient(
-                  colors: [ 
-          mainColor.withOpacity(0.5),
-          secondaryColor.withOpacity(0.5),
-          secondaryColor,], 
-                 stops: [0.0, 0.4, 0.6, ],
-                  begin: Alignment.bottomCenter,
-                  end: Alignment.topCenter,
-                ),
-                borderRadius: BorderRadius.circular(5),),
-                          ))
+                          child: Container(
+  width: 276,
+  height: 34,
+  decoration: ShapeDecoration(
+    gradient: LinearGradient(
+      begin: Alignment(0.31, -0.95),
+      end: Alignment(-0.31, 0.95),
+      colors: [Color(0xFFFFA743), Color(0xFFB80000)],
+    ),
+    shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(5)),
+  ),
+))
                         ],
                       ),
                     ),
