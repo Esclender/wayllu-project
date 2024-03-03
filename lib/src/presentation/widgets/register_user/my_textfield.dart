@@ -4,7 +4,7 @@ import 'package:hexcolor/hexcolor.dart';
 
 // ignore: must_be_immutable
 class MyTextField extends StatelessWidget {
-  MyTextField({
+  const MyTextField({
     super.key,
     required this.hintText,
     required this.obscureText,

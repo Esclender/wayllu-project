@@ -524,7 +524,7 @@ Container productsHome(BuildContext context, Producto producto, UserRoles rol) {
                   if (isAdmin)
                     Container(
                       padding: const EdgeInsets.symmetric(
-                          vertical: 4, horizontal: 6),
+                          vertical: 4, horizontal: 6,),
                       decoration: BoxDecoration(
                         color:
                             secondaryColor, // Puedes cambiar el color según tus necesidades

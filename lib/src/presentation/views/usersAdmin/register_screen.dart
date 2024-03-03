@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
-import 'package:hexcolor/hexcolor.dart';
 import 'package:google_fonts/google_fonts.dart';
+import 'package:hexcolor/hexcolor.dart';
 import 'package:wayllu_project/src/domain/models/community_model.dart';
 import 'package:wayllu_project/src/presentation/widgets/register_user/info_label_modal.dart';
 import 'package:wayllu_project/src/presentation/widgets/register_user/my_text_label.dart';
@@ -19,7 +19,13 @@ class _RegisterUserScreenState extends State<RegisterUserScreen> {
 
   var community_select;
 
-  String? username, dni, phone, email, community, password, confirmPassword;
+  String? username;
+  String? dni;
+  String? phone;
+  String? email;
+  String? community;
+  String? password;
+  String? confirmPassword;
 
   @override
   void dispose() {
@@ -76,7 +82,7 @@ class _RegisterUserScreenState extends State<RegisterUserScreen> {
                 const SpaceY(),
                 InfoLabelModal(
                     hintText: 'Comunidad:',
-                    valueText: community_select.toString()),
+                    valueText: community_select.toString(),),
               ],
             ),
           ),
@@ -88,7 +94,7 @@ class _RegisterUserScreenState extends State<RegisterUserScreen> {
                   style: TextButton.styleFrom(
                     backgroundColor: Colors.grey,
                     shape: const RoundedRectangleBorder(
-                        borderRadius: BorderRadius.all(Radius.circular(10))),
+                        borderRadius: BorderRadius.all(Radius.circular(10)),),
                   ),
                   child: const Text('Volver'),
                   onPressed: () {},
@@ -97,7 +103,7 @@ class _RegisterUserScreenState extends State<RegisterUserScreen> {
                   style: TextButton.styleFrom(
                     backgroundColor: Colors.blue,
                     shape: const RoundedRectangleBorder(
-                        borderRadius: BorderRadius.all(Radius.circular(10))),
+                        borderRadius: BorderRadius.all(Radius.circular(10)),),
                   ),
                   child: const Text('Guardar'),
                   onPressed: () {
@@ -105,9 +111,9 @@ class _RegisterUserScreenState extends State<RegisterUserScreen> {
                     FocusScope.of(context).unfocus();
                     _formKey.currentState?.reset();
                   },
-                )
+                ),
               ],
-            )
+            ),
           ],
         );
       },
@@ -136,7 +142,7 @@ class _RegisterUserScreenState extends State<RegisterUserScreen> {
                         onSaved: (val) => {
                           setState(() {
                             username = val;
-                          })
+                          }),
                         },
                         hintText: 'Maria',
                         obscureText: false,
@@ -154,7 +160,7 @@ class _RegisterUserScreenState extends State<RegisterUserScreen> {
                             onSaved: (val) => {
                               setState(() {
                                 dni = val;
-                              })
+                              }),
                             },
                             hintText: '87654321',
                             obscureText: false,
@@ -176,7 +182,7 @@ class _RegisterUserScreenState extends State<RegisterUserScreen> {
                             onSaved: (val) => {
                               setState(() {
                                 phone = val;
-                              })
+                              }),
                             },
                             hintText: '987654321',
                             obscureText: false,
@@ -199,7 +205,7 @@ class _RegisterUserScreenState extends State<RegisterUserScreen> {
                             onSaved: (val) => {
                               setState(() {
                                 email = val ?? '';
-                              })
+                              }),
                             },
                             hintText: 'ejemplo@gmail.com',
                             obscureText: false,
@@ -310,7 +316,7 @@ class _RegisterUserScreenState extends State<RegisterUserScreen> {
                                 onSaved: (val) => {
                                   setState(() {
                                     confirmPassword = val;
-                                  })
+                                  }),
                                 },
                                 hintText: '987654321',
                                 obscureText: true,
@@ -356,6 +362,6 @@ class _RegisterUserScreenState extends State<RegisterUserScreen> {
                   ),
                 ],
               ),
-            )));
+            ),),);
   }
 }
