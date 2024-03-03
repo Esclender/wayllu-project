@@ -4,16 +4,25 @@ import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_hooks/flutter_hooks.dart';
 import 'package:ionicons/ionicons.dart';
+import 'package:wayllu_project/src/config/router/app_router.dart';
+import 'package:wayllu_project/src/domain/enums/user_roles.dart';
 import 'package:wayllu_project/src/domain/models/models_products.dart';
+import 'package:wayllu_project/src/locator.dart';
 import 'package:wayllu_project/src/presentation/cubit/is_admin_cubit.dart';
 import 'package:wayllu_project/src/presentation/widgets/bottom_navbar.dart';
 import 'package:wayllu_project/src/utils/constants/colors.dart';
 
 @RoutePage()
 class HomeScreen extends HookWidget {
-  const HomeScreen();
+  HomeScreen();
 
   int get viewIndex => 0;
+
+  final appRouter = getIt<AppRouter>();
+
+  void _shoppingCartNavigation() {
+    appRouter.navigateNamed('/home/carrito');
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -77,6 +86,10 @@ class HomeScreen extends HookWidget {
           SliverList(
             delegate: SliverChildListDelegate(
               [
+                const SizedBox(
+                  height: 8,
+                ),
+                firstLine(context),
                 dashboard(context, isAdmin),
                 Container(
                   margin:
@@ -93,8 +106,12 @@ class HomeScreen extends HookWidget {
                     child: Row(
                       mainAxisAlignment: MainAxisAlignment.spaceBetween,
                       children: categories.map((category) {
-              return categoriesProducts(context, category.name, category.image);
-            }).toList(),
+                        return categoriesProducts(
+                          context,
+                          category.name,
+                          category.image,
+                        );
+                      }).toList(),
                     ),
                   ),
                 ),
@@ -168,13 +185,83 @@ class HomeScreen extends HookWidget {
     );
   }
 
+  Padding firstLine(BuildContext context) {
+    return Padding(
+      padding: const EdgeInsets.symmetric(horizontal: 22.0),
+      child: SizedBox(
+        width: MediaQuery.of(context).size.width,
+        height: 18,
+        child: const Row(
+          mainAxisAlignment: MainAxisAlignment.spaceBetween,
+          children: [
+            SizedBox(
+              width: 120,
+              height: 18,
+              child: Text(
+                'Actividad',
+                style: TextStyle(
+                  color: Color(0xFF241E20),
+                  fontSize: 16,
+                  fontFamily: 'Gotham',
+                  fontWeight: FontWeight.w500,
+                  height: 0,
+                ),
+              ),
+            ),
+            SizedBox(
+                width: 145,
+                child: AutoSizeText(
+                  'Hoy, 22 de febrero de 2024',
+                  textAlign: TextAlign.center,
+                  style: TextStyle(
+                    color: Color(0xFF636369),
+                    fontFamily: 'Gotham',
+                    fontWeight: FontWeight.w300,
+                  ),
+                  maxLines: 1,
+                  minFontSize: 10, 
+                  maxFontSize: 12, 
+                ),),
+          ],
+        ),
+      ),
+    );
+  }
+
+  Widget shoppingCart(BuildContext context) {
+    return InkWell(
+      onTap: _shoppingCartNavigation,
+      child: Container(
+        width: MediaQuery.of(context).size.width * 0.11,
+        height: MediaQuery.of(context).size.width * 0.11,
+        decoration: BoxDecoration(
+          color: bottomNavBar,
+          borderRadius: BorderRadius.circular(10),
+          boxShadow: [
+            BoxShadow(
+              color: const Color.fromARGB(255, 95, 95, 95)
+                  .withOpacity(0.08), // Color de la sombra y su opacidad
+              spreadRadius: 2, // Radio de propagación de la sombra
+              blurRadius: 4, // Radio de desenfoque de la sombra
+              offset: const Offset(
+                0,
+                1,
+              ), // Desplazamiento de la sombra (en este caso, hacia abajo)
+            ),
+          ],
+        ),
+        child: const Icon(Ionicons.bag_handle_outline),
+      ),
+    );
+  }
+
   Center dashboard(BuildContext context, UserRoles rol) {
     final bool isAdmin = rol == UserRoles.admin;
 
     return Center(
       child: isAdmin
           ? Container(
-              margin: const EdgeInsets.symmetric(horizontal: 22, vertical: 6),
+              margin: const EdgeInsets.symmetric(horizontal: 24, vertical: 6),
               width: MediaQuery.of(context).size.width,
               height: MediaQuery.of(context).size.height * 0.24,
               decoration: BoxDecoration(
@@ -204,8 +291,9 @@ class HomeScreen extends HookWidget {
                         decoration: BoxDecoration(
                           color: iconColor.withOpacity(0.7),
                           borderRadius: const BorderRadius.only(
-                              topLeft: Radius.circular(10),
-                              topRight: Radius.circular(10),),
+                            topLeft: Radius.circular(10),
+                            topRight: Radius.circular(10),
+                          ),
                         ),
                         child: Row(
                           mainAxisAlignment: MainAxisAlignment.spaceBetween,
@@ -241,9 +329,12 @@ class HomeScreen extends HookWidget {
                     ],
                   ),
                   Padding(
-                    padding: const EdgeInsets.all(8.0),
+                    padding: const EdgeInsets.symmetric(
+                      horizontal: 8.0,
+                      vertical: 10,
+                    ),
                     child: SizedBox(
-                      width: MediaQuery.of(context).size.width*0.75,
+                      width: MediaQuery.of(context).size.width * 0.72,
                       child: Column(
                         children: [
                           Row(
@@ -255,18 +346,20 @@ class HomeScreen extends HookWidget {
                                     width: 30,
                                     height: 30,
                                     decoration: BoxDecoration(
-                                        color: thirdColor.withOpacity(0.4),
-                                        shape: BoxShape.circle,),
+                                      color: thirdColor.withOpacity(0.4),
+                                      shape: BoxShape.circle,
+                                    ),
                                     child: Icon(
                                       Ionicons.checkmark,
                                       color: thirdColor,
                                     ),
                                   ),
                                   const SizedBox(
-                                    width: 8,
+                                    width: 4,
                                   ),
                                   Column(
-                                    crossAxisAlignment: CrossAxisAlignment.start,
+                                    crossAxisAlignment:
+                                        CrossAxisAlignment.start,
                                     children: [
                                       Text(
                                         'Entrada',
@@ -296,8 +389,9 @@ class HomeScreen extends HookWidget {
                                     width: 30,
                                     height: 30,
                                     decoration: BoxDecoration(
-                                        color: mainColor.withOpacity(0.4),
-                                        shape: BoxShape.circle,),
+                                      color: mainColor.withOpacity(0.4),
+                                      shape: BoxShape.circle,
+                                    ),
                                     child: Icon(
                                       Ionicons.caret_down_outline,
                                       color: mainColor,
@@ -307,7 +401,8 @@ class HomeScreen extends HookWidget {
                                     width: 8,
                                   ),
                                   Column(
-                                    crossAxisAlignment: CrossAxisAlignment.start,
+                                    crossAxisAlignment:
+                                        CrossAxisAlignment.start,
                                     children: [
                                       Text(
                                         'Salida',
@@ -327,31 +422,42 @@ class HomeScreen extends HookWidget {
                                           fontWeight: FontWeight.w500,
                                         ),
                                       ),
-                                     
                                     ],
                                   ),
                                 ],
                               ),
                             ],
                           ),
-                          TextButton(onPressed: ()=>null, 
-                          child: Container(
-  width: 276,
-  height: 34,
-  decoration: ShapeDecoration(
-    gradient: LinearGradient(
-      begin: Alignment(0.31, -0.95),
-      end: Alignment(-0.31, 0.95),
-      colors: [Color(0xFFFFA743), Color(0xFFB80000)],
-    ),
-    shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(5)),
-  ),
-))
+                          TextButton(
+                            // ignore: avoid_returning_null_for_void
+                            onPressed: () => null,
+                            child: Container(
+                              margin: const EdgeInsets.only(top: 6),
+                              width: MediaQuery.of(context).size.width,
+                              height: 36,
+                              decoration: ShapeDecoration(
+                                color: secondary,
+                                shape: RoundedRectangleBorder(
+                                  borderRadius: BorderRadius.circular(5),
+                                ),
+                              ),
+                              child: const Center(
+                                child: Text(
+                                  'Nuevo informe',
+                                  style: TextStyle(
+                                    fontFamily: 'Gotham',
+                                    fontSize: 12,
+                                    fontWeight: FontWeight.w300,
+                                    color: Colors.white,
+                                  ),
+                                ),
+                              ),
+                            ),
+                          ),
                         ],
                       ),
                     ),
                   ),
-                   
                 ],
               ),
             )
@@ -370,10 +476,9 @@ Container productsHome(BuildContext context, Producto producto, UserRoles rol) {
       color: bottomNavBar,
       boxShadow: [
         BoxShadow(
-          color: const Color.fromARGB(255, 95, 95, 95)
-              .withOpacity(0.08), 
-          spreadRadius: 2, 
-          blurRadius: 4, 
+          color: const Color.fromARGB(255, 95, 95, 95).withOpacity(0.08),
+          spreadRadius: 2,
+          blurRadius: 4,
           offset: const Offset(
             0,
             1,
@@ -460,7 +565,10 @@ Container productsHome(BuildContext context, Producto producto, UserRoles rol) {
                   ),
                   if (isAdmin)
                     Container(
-                      padding: const EdgeInsets.symmetric(vertical:4, horizontal: 6),
+                      padding: const EdgeInsets.symmetric(
+                        vertical: 4,
+                        horizontal: 6,
+                      ),
                       decoration: BoxDecoration(
                         color:
                             secondaryColor, // Puedes cambiar el color según tus necesidades
@@ -482,30 +590,6 @@ Container productsHome(BuildContext context, Producto producto, UserRoles rol) {
         ),
       ],
     ),
-  );
-}
-
-Container shoppingCart(BuildContext context) {
-  return Container(
-    width: MediaQuery.of(context).size.width * 0.11,
-    height: MediaQuery.of(context).size.width * 0.11,
-    decoration: BoxDecoration(
-      color: bottomNavBar,
-      borderRadius: BorderRadius.circular(10),
-      boxShadow: [
-        BoxShadow(
-          color: const Color.fromARGB(255, 95, 95, 95)
-              .withOpacity(0.08), // Color de la sombra y su opacidad
-          spreadRadius: 2, // Radio de propagación de la sombra
-          blurRadius: 4, // Radio de desenfoque de la sombra
-          offset: const Offset(
-            0,
-            1,
-          ), // Desplazamiento de la sombra (en este caso, hacia abajo)
-        ),
-      ],
-    ),
-    child: const Icon(Ionicons.bag_handle_outline),
   );
 }
 
