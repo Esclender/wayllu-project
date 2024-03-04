@@ -14,6 +14,31 @@ class RegisterUserScreen extends StatefulWidget {
   State<RegisterUserScreen> createState() => _RegisterUserScreenState();
 }
 
+String? validateNotEmpty(String? value, String message) {
+  if (value == null || value.isEmpty) {
+    return message;
+  }
+
+  return null;
+}
+
+String? validateMinMaxLength(
+  String? value,
+  int minLength,
+  int maxLength,
+) {
+  if (value != null) {
+    if (value.length < minLength) {
+      return 'La longitud no puede ser menor a $minLength';
+    }
+
+    if (value.length > maxLength) {
+      return 'La longitud no puede ser mayor a $maxLength';
+    }
+  }
+  return null;
+}
+
 class _RegisterUserScreenState extends State<RegisterUserScreen> {
   final TextEditingController _textEditingController = TextEditingController();
 
@@ -33,7 +58,6 @@ class _RegisterUserScreenState extends State<RegisterUserScreen> {
     super.dispose();
   }
 
-  bool isEmailCorrect = false;
   final _formKey = GlobalKey<FormState>();
 
   List<DropdownMenuItem<String>> communityDropdownItems =
@@ -81,8 +105,9 @@ class _RegisterUserScreenState extends State<RegisterUserScreen> {
                 InfoLabelModal(hintText: 'Email:', valueText: email ?? ''),
                 const SpaceY(),
                 InfoLabelModal(
-                    hintText: 'Comunidad:',
-                    valueText: community_select.toString(),),
+                  hintText: 'Comunidad:',
+                  valueText: community_select.toString(),
+                ),
               ],
             ),
           ),
@@ -94,16 +119,20 @@ class _RegisterUserScreenState extends State<RegisterUserScreen> {
                   style: TextButton.styleFrom(
                     backgroundColor: Colors.grey,
                     shape: const RoundedRectangleBorder(
-                        borderRadius: BorderRadius.all(Radius.circular(10)),),
+                      borderRadius: BorderRadius.all(Radius.circular(10)),
+                    ),
                   ),
                   child: const Text('Volver'),
-                  onPressed: () {},
+                  onPressed: () {
+                    Navigator.of(context).pop();
+                  },
                 ),
                 TextButton(
                   style: TextButton.styleFrom(
                     backgroundColor: Colors.blue,
                     shape: const RoundedRectangleBorder(
-                        borderRadius: BorderRadius.all(Radius.circular(10)),),
+                      borderRadius: BorderRadius.all(Radius.circular(10)),
+                    ),
                   ),
                   child: const Text('Guardar'),
                   onPressed: () {
@@ -123,17 +152,86 @@ class _RegisterUserScreenState extends State<RegisterUserScreen> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-        body: Padding(
-            padding: const EdgeInsets.all(
-              10.0,
-            ),
-            child: Form(
-              key: _formKey,
-              child: ListView(
+      body: Padding(
+        padding: const EdgeInsets.all(
+          10.0,
+        ),
+        child: Form(
+          autovalidateMode: AutovalidateMode.onUserInteraction,
+          key: _formKey,
+          child: ListView(
+            children: [
+              Column(
                 children: [
+                  const MyTextLabel(hintText: 'Usuario:'),
+                  const SizedBox(
+                    height: 10,
+                  ),
+                  MyTextField(
+                    onChanged: (text) {},
+                    validator: (value) {
+                      final String? notEmptyValidation = validateNotEmpty(
+                          value, 'El nombre de usuario no puede estar vacío');
+                      if (notEmptyValidation != null) {
+                        return notEmptyValidation;
+                      }
+
+                      final String? minMaxLengthValidation =
+                          validateMinMaxLength(value, 3, 10);
+                      if (minMaxLengthValidation != null) {
+                        return minMaxLengthValidation;
+                      }
+                      return null;
+                    },
+                    onSaved: (val) => {
+                      setState(() {
+                        username = val;
+                      }),
+                    },
+                    hintText: 'Maria',
+                    obscureText: false,
+                  ),
+                  const SpaceY(),
                   Column(
+                    crossAxisAlignment: CrossAxisAlignment.start,
                     children: [
-                      const MyTextLabel(hintText: 'Usuario:'),
+                      const MyTextLabel(hintText: 'DNI:'),
+                      const SizedBox(
+                        height: 10,
+                      ),
+                      MyTextField(
+                        onChanged: (text) {},
+                        validator: (value) {
+                          final String? notEmptyValidation = validateNotEmpty(
+                              value, 'El campo DNI no puede estar vacío');
+                          if (notEmptyValidation != null) {
+                            return notEmptyValidation;
+                          }
+
+                          final String? minMaxLengthValidation =
+                              validateMinMaxLength(value, 8, 8);
+                          if (minMaxLengthValidation != null) {
+                            return minMaxLengthValidation;
+                          }
+                          return null;
+                        },
+                        onSaved: (val) => {
+                          setState(() {
+                            dni = val;
+                          }),
+                        },
+                        hintText: '87654321',
+                        obscureText: false,
+                      ),
+                    ],
+                  ),
+                  const SpaceY(),
+                  Column(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: [
+                      const MyTextLabel(
+                        hintText: 'Teléfono:',
+                      ),
                       const SizedBox(
                         height: 10,
                       ),
@@ -141,227 +239,253 @@ class _RegisterUserScreenState extends State<RegisterUserScreen> {
                         onChanged: (text) {},
                         onSaved: (val) => {
                           setState(() {
-                            username = val;
+                            phone = val;
                           }),
                         },
-                        hintText: 'Maria',
+                        validator: (value) {
+                          final String? notEmptyValidation = validateNotEmpty(
+                              value, 'El telefono no puede estar vacío');
+                          if (notEmptyValidation != null) {
+                            return notEmptyValidation;
+                          }
+
+                          final String? minMaxLengthValidation =
+                              validateMinMaxLength(value, 9, 9);
+                          if (minMaxLengthValidation != null) {
+                            return minMaxLengthValidation;
+                          }
+                          return null;
+                        },
+                        hintText: '987654321',
                         obscureText: false,
-                      ),
-                      const SpaceY(),
-                      Column(
-                        crossAxisAlignment: CrossAxisAlignment.start,
-                        children: [
-                          const MyTextLabel(hintText: 'DNI:'),
-                          const SizedBox(
-                            height: 10,
-                          ),
-                          MyTextField(
-                            onChanged: (text) {},
-                            onSaved: (val) => {
-                              setState(() {
-                                dni = val;
-                              }),
-                            },
-                            hintText: '87654321',
-                            obscureText: false,
-                          ),
-                        ],
-                      ),
-                      const SpaceY(),
-                      Column(
-                        crossAxisAlignment: CrossAxisAlignment.start,
-                        children: [
-                          const MyTextLabel(
-                            hintText: 'Teléfono:',
-                          ),
-                          const SizedBox(
-                            height: 10,
-                          ),
-                          MyTextField(
-                            onChanged: (text) {},
-                            onSaved: (val) => {
-                              setState(() {
-                                phone = val;
-                              }),
-                            },
-                            hintText: '987654321',
-                            obscureText: false,
-                          ),
-                        ],
-                      ),
-                      const SpaceY(),
-                      Column(
-                        crossAxisAlignment: CrossAxisAlignment.start,
-                        children: [
-                          const MyTextLabel(
-                            hintText: 'Email',
-                            warText: '*Opcional*',
-                          ),
-                          const SizedBox(
-                            height: 10,
-                          ),
-                          MyTextField(
-                            onChanged: (text) {},
-                            onSaved: (val) => {
-                              setState(() {
-                                email = val ?? '';
-                              }),
-                            },
-                            hintText: 'ejemplo@gmail.com',
-                            obscureText: false,
-                          ),
-                        ],
-                      ),
-                      const SpaceY(),
-                      Column(
-                        children: [
-                          const MyTextLabel(
-                            hintText: 'Comunidad:',
-                          ),
-                          const SizedBox(
-                            height: 10,
-                          ),
-                          DropdownButtonFormField(
-                            decoration: InputDecoration(
-                              border: OutlineInputBorder(
-                                borderSide: const BorderSide(
-                                  color: Color.fromARGB(
-                                    120,
-                                    0,
-                                    0,
-                                    0,
-                                  ),
-                                ),
-                                borderRadius: BorderRadius.circular(10),
-                              ),
-                              enabledBorder: OutlineInputBorder(
-                                borderSide: const BorderSide(
-                                  color: Color.fromARGB(
-                                    120,
-                                    0,
-                                    0,
-                                    0,
-                                  ),
-                                ),
-                                borderRadius: BorderRadius.circular(10),
-                              ),
-                            ),
-                            items: communityDropdownItems,
-                            hint: Text(
-                              'Comunidad',
-                              style: GoogleFonts.poppins(
-                                fontSize: 14,
-                                color: const Color.fromARGB(
-                                  128,
-                                  0,
-                                  0,
-                                  0,
-                                ),
-                              ),
-                            ),
-                            onChanged: (value) {
-                              setState(() {
-                                community_select = value;
-                              });
-                            },
-                            onSaved: (value) {
-                              setState(() {
-                                community_select = value;
-                              });
-                            },
-                          ),
-                        ],
                       ),
                     ],
                   ),
                   const SpaceY(),
-                  Container(
-                    margin: const EdgeInsets.only(bottom: 20),
-                    child: Row(
-                      children: [
-                        Expanded(
-                          child: Column(
-                            crossAxisAlignment: CrossAxisAlignment.start,
-                            children: [
-                              const MyTextLabel(
-                                hintText: 'Contraseña:',
-                              ),
-                              const SizedBox(
-                                height: 10,
-                              ),
-                              MyTextField(
-                                onSaved: (val) => {
-                                  setState(() {
-                                    password = val;
-                                  }),
-                                },
-                                hintText: '12345678',
-                                obscureText: true,
-                              ),
-                            ],
-                          ),
-                        ),
-                        const SizedBox(width: 20),
-                        Expanded(
-                          child: Column(
-                            crossAxisAlignment: CrossAxisAlignment.start,
-                            children: [
-                              const MyTextLabel(
-                                hintText: 'Confirmar',
-                              ),
-                              const SizedBox(
-                                height: 10,
-                              ),
-                              MyTextField(
-                                onSaved: (val) => {
-                                  setState(() {
-                                    confirmPassword = val;
-                                  }),
-                                },
-                                hintText: '987654321',
-                                obscureText: true,
-                              ),
-                            ],
-                          ),
-                        ),
-                      ],
-                    ),
+                  Column(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: [
+                      const MyTextLabel(
+                        hintText: 'Email',
+                        warText: '*Opcional*',
+                      ),
+                      const SizedBox(
+                        height: 10,
+                      ),
+                      MyTextField(
+                        onChanged: (text) {},
+                        onSaved: (val) => {
+                          setState(() {
+                            email = val ?? '';
+                          }),
+                        },
+                        hintText: 'ejemplo@gmail.com',
+                        obscureText: false,
+                      ),
+                    ],
                   ),
                   const SpaceY(),
-                  Padding(
-                    padding: const EdgeInsets.fromLTRB(8, 0, 0, 0),
-                    child: Text(
-                      '_errorMessage',
-                      style: GoogleFonts.poppins(
-                        fontSize: 12,
-                        color: Colors.white,
+                  Column(
+                    children: [
+                      const MyTextLabel(
+                        hintText: 'Comunidad:',
                       ),
-                    ),
-                  ),
-                  ElevatedButton(
-                    style: ElevatedButton.styleFrom(
-                      shape: RoundedRectangleBorder(
-                        borderRadius: BorderRadius.circular(8.58),
+                      const SizedBox(
+                        height: 10,
                       ),
-                      backgroundColor: HexColor('#FFA743'),
-                      minimumSize: const Size.fromHeight(60),
-                    ),
-                    onPressed: () {
-                      if (_formKey.currentState!.validate()) {
-                        _formKey.currentState!.save();
-                        _submit();
-                      }
-                    },
-                    child: Text(
-                      'Registrar',
-                      style: GoogleFonts.poppins(
-                        fontSize: 16,
-                        color: Colors.white,
+                      DropdownButtonFormField(
+                        decoration: InputDecoration(
+                          border: OutlineInputBorder(
+                            borderSide: const BorderSide(
+                              color: Color.fromARGB(
+                                120,
+                                0,
+                                0,
+                                0,
+                              ),
+                            ),
+                            borderRadius: BorderRadius.circular(10),
+                          ),
+                          enabledBorder: OutlineInputBorder(
+                            borderSide: const BorderSide(
+                              color: Color.fromARGB(
+                                120,
+                                0,
+                                0,
+                                0,
+                              ),
+                            ),
+                            borderRadius: BorderRadius.circular(10),
+                          ),
+                        ),
+                        items: communityDropdownItems,
+                        hint: Text(
+                          'Comunidad',
+                          style: GoogleFonts.poppins(
+                            fontSize: 14,
+                            color: const Color.fromARGB(
+                              128,
+                              0,
+                              0,
+                              0,
+                            ),
+                          ),
+                        ),
+                        validator: (value) {
+                          if (value == null) {
+                            return 'Debes seleccionar una comunidad';
+                          }
+                        },
+                        onChanged: (value) {
+                          setState(() {
+                            community_select = value;
+                          });
+                        },
+                        onSaved: (value) {
+                          setState(() {
+                            community_select = value;
+                          });
+                        },
                       ),
-                    ),
+                    ],
                   ),
                 ],
               ),
-            ),),);
+              const SpaceY(),
+              Container(
+                margin: const EdgeInsets.only(bottom: 20),
+                child: Row(
+                  children: [
+                    Expanded(
+                      child: Column(
+                        crossAxisAlignment: CrossAxisAlignment.start,
+                        children: [
+                          const MyTextLabel(
+                            hintText: 'Contraseña:',
+                          ),
+                          const SizedBox(
+                            height: 10,
+                          ),
+                          MyTextField(
+                            onChanged: (val) => {
+                              setState(() {
+                                password = val;
+                              }),
+                            },
+                            onSaved: (val) => {
+                              setState(() {
+                                password = val;
+                              }),
+                            },
+                            validator: (value) {
+                              final String? notEmptyValidation =
+                                  validateNotEmpty(
+                                value,
+                                'La contraseña no puede estar vacío',
+                              );
+                              if (notEmptyValidation != null) {
+                                return notEmptyValidation;
+                              }
+
+                              final String? minMaxLengthValidation =
+                                  validateMinMaxLength(value, 6, 15);
+                              if (minMaxLengthValidation != null) {
+                                return minMaxLengthValidation;
+                              }
+                              return null;
+                            },
+                            hintText: '12345678',
+                            obscureText: true,
+                          ),
+                        ],
+                      ),
+                    ),
+                    const SizedBox(width: 20),
+                    Expanded(
+                      child: Column(
+                        crossAxisAlignment: CrossAxisAlignment.start,
+                        children: [
+                          const MyTextLabel(
+                            hintText: 'Confirmar',
+                          ),
+                          const SizedBox(
+                            height: 10,
+                          ),
+                          MyTextField(
+                            validator: (value) {
+                              final String? notEmptyValidation =
+                                  validateNotEmpty(
+                                value,
+                                'La confirmación no puede estar vacío',
+                              );
+
+                              if (notEmptyValidation != null) {
+                                return notEmptyValidation;
+                              }
+
+                              final String? minMaxLengthValidation =
+                                  validateMinMaxLength(value, 6, 15);
+                              if (minMaxLengthValidation != null) {
+                                return minMaxLengthValidation;
+                              }
+
+                              if (value != password) {
+                                return 'No son iguales';
+                              }
+
+                              return null;
+                            },
+                            onSaved: (val) => {
+                              setState(() {
+                                confirmPassword = val;
+                              }),
+                            },
+                            hintText: '987654321',
+                            obscureText: true,
+                          ),
+                        ],
+                      ),
+                    ),
+                  ],
+                ),
+              ),
+              const SpaceY(),
+              Padding(
+                padding: const EdgeInsets.fromLTRB(8, 0, 0, 0),
+                child: Text(
+                  '_errorMessage',
+                  style: GoogleFonts.poppins(
+                    fontSize: 12,
+                    color: Colors.white,
+                  ),
+                ),
+              ),
+              ElevatedButton(
+                style: ElevatedButton.styleFrom(
+                  shape: RoundedRectangleBorder(
+                    borderRadius: BorderRadius.circular(8.58),
+                  ),
+                  backgroundColor: HexColor('#FFA743'),
+                  minimumSize: const Size.fromHeight(60),
+                ),
+                onPressed: () {
+                  if (_formKey.currentState!.validate()) {
+                    _formKey.currentState!.save();
+                    _submit();
+                  }
+                },
+                child: Text(
+                  'Registrar',
+                  style: GoogleFonts.poppins(
+                    fontSize: 16,
+                    color: Colors.white,
+                  ),
+                ),
+              ),
+            ],
+          ),
+        ),
+      ),
+    );
   }
 }
