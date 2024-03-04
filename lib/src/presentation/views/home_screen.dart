@@ -470,8 +470,8 @@ Container productsHome(BuildContext context, Producto producto, UserRoles rol) {
   final bool isAdmin = rol == UserRoles.admin;
 
   return Container(
-    width: MediaQuery.of(context).size.width * 0.45,
-    height: MediaQuery.of(context).size.height * 0.285,
+    width: MediaQuery.of(context).size.width * 0.40,
+    height: MediaQuery.of(context).size.height * 0.26,
     decoration: BoxDecoration(
       color: bottomNavBar,
       boxShadow: [
@@ -494,7 +494,7 @@ Container productsHome(BuildContext context, Producto producto, UserRoles rol) {
           children: [
             Container(
               width: MediaQuery.of(context).size.width * 0.45,
-              height: MediaQuery.of(context).size.height * 0.19,
+              height: MediaQuery.of(context).size.height * 0.16,
               decoration: BoxDecoration(
                 borderRadius: const BorderRadius.only(
                   topLeft: Radius.circular(10),
@@ -536,7 +536,7 @@ Container productsHome(BuildContext context, Producto producto, UserRoles rol) {
                 producto.name,
                 style: const TextStyle(
                   fontFamily: 'Gotham',
-                  fontSize: 16,
+                  fontSize: 14,
                   fontWeight: FontWeight.w500,
                 ),
               ),
@@ -640,8 +640,8 @@ Container categoriesProducts(
     child: Container(
       margin: const EdgeInsets.symmetric(horizontal: 4),
       padding: const EdgeInsets.only(top: 15, bottom: 8),
-      height: MediaQuery.of(context).size.height * 0.20,
-      width: MediaQuery.of(context).size.width * 0.35,
+      height: MediaQuery.of(context).size.height * 0.18,
+      width: MediaQuery.of(context).size.width * 0.32,
       decoration: BoxDecoration(
         color: bottomNavBar,
         borderRadius: const BorderRadius.all(Radius.circular(10)),
@@ -661,7 +661,7 @@ Container categoriesProducts(
       child: Column(
         mainAxisAlignment: MainAxisAlignment.spaceBetween,
         children: [
-          Container(alignment: Alignment.center, child: Image.asset(image)),
+          Container(alignment: Alignment.center, child: Image.asset(image, width: 80,)),
           Container(
             alignment: Alignment.bottomCenter,
             child: Text(
