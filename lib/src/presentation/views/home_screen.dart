@@ -20,10 +20,6 @@ class HomeScreen extends HookWidget {
 
   final appRouter = getIt<AppRouter>();
 
-  void _shoppingCartNavigation() {
-    appRouter.navigateNamed('/home/carrito');
-  }
-
   @override
   Widget build(BuildContext context) {
     final DateTime now = DateTime.now();
@@ -230,7 +226,9 @@ class HomeScreen extends HookWidget {
 
   Widget shoppingCart(BuildContext context) {
     return InkWell(
-      onTap: _shoppingCartNavigation,
+      onTap: () {
+        appRouter.pushNamed('/user/carrito');
+      },
       child: Container(
         width: MediaQuery.of(context).size.width * 0.11,
         height: MediaQuery.of(context).size.width * 0.11,

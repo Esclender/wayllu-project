@@ -1,8 +1,11 @@
 import 'package:auto_route/auto_route.dart';
-import 'package:wayllu_project/src/presentation/views/carrito_screen.dart';
+import 'package:wayllu_project/src/presentation/views/admin_navigation.dart';
+import 'package:wayllu_project/src/presentation/views/homeUser/user_carrito_screen.dart';
 import 'package:wayllu_project/src/presentation/views/home_screen.dart';
-import 'package:wayllu_project/src/presentation/views/info_user_screen.dart';
 import 'package:wayllu_project/src/presentation/views/login_example.dart';
+import 'package:wayllu_project/src/presentation/views/main_navigation.dart';
+import 'package:wayllu_project/src/presentation/views/user_navigation.dart';
+import 'package:wayllu_project/src/presentation/views/usersAdmin/info_user_screen.dart';
 import 'package:wayllu_project/src/presentation/views/usersAdmin/user_list_admin.dart';
 
 part 'app_router.gr.dart';
@@ -11,15 +14,47 @@ part 'app_router.gr.dart';
 class AppRouter extends _$AppRouter {
   @override
   List<AutoRoute> get routes => [
-        AutoRoute(path: '/', page: LoginExampleRoute.page, initial: true),
         AutoRoute(
-          path: '/home',
-          page: HomeRoute.page,
+          page: MainNavigationRoute.page,
+          initial: true,
           children: [
-            AutoRoute(path: 'carrito', page: CarritoRoute.page),
+            RedirectRoute(path: '', redirectTo: 'login'),
+            AutoRoute(
+              path: 'login',
+              page: LoginExampleRoute.page,
+            ),
+            AutoRoute(
+              path: 'home',
+              page: HomeRoute.page,
+              children: [
+                AutoRoute(path: 'carrito', page: CarritoRoute.page),
+              ],
+            ),
+            AutoRoute(
+              path: 'user',
+              page: UserNavigationRoute.page,
+              children: [
+                AutoRoute(
+                  path: 'info',
+                  page: InfoUserRoute.page,
+                ),
+                AutoRoute(
+                  path: 'carrito',
+                  page: CarritoRoute.page,
+                ),
+              ],
+            ),
+            AutoRoute(
+              path: 'admin',
+              page: AdminNavigationRoute.page,
+              children: [
+                AutoRoute(
+                  path: 'users-list',
+                  page: UsersListAdminRoute.page,
+                ),
+              ],
+            ),
           ],
         ),
-        AutoRoute(path: '/info-user', page: InfoUserRoute.page),
-        AutoRoute(path: '/admin/user-lists', page: UsersListAdminRoute.page),
       ];
 }
