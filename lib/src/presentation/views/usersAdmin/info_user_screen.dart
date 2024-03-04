@@ -18,7 +18,7 @@ class InfoUserScreen extends HookWidget {
 
   final ImagePicker imagePicker = ImagePicker();
 
-  int get viewIndex => 1;
+  final int viewIndex = 2;
 
   final PersonalInfo person = PersonalInfo(
     dni: '123456789',
@@ -50,7 +50,7 @@ class InfoUserScreen extends HookWidget {
             children: [
               _buildInfoContainer('Informacion Personal', person),
               _buildInfoContainer('Informacion de Contacto', contact),
-              if (!isAdmin) _buildInhabilitButton() else Container(),
+              if (isAdmin) _buildInhabilitButton(context) else Container(),
             ],
           ),
         ],
@@ -58,10 +58,26 @@ class InfoUserScreen extends HookWidget {
     );
   }
 
-  Widget _buildInhabilitButton() {
-    return TextButton(
-      onPressed: () {},
-      child: const Text('Deshabilitar'),
+  Widget _buildInhabilitButton(BuildContext context) {
+    return Container(
+      padding: const EdgeInsets.symmetric(horizontal: 20.0),
+      width: MediaQuery.of(context).size.width,
+      child: ElevatedButton(
+        onPressed: () {},
+        style: TextButton.styleFrom(
+          padding: const EdgeInsets.all(20.0),
+          backgroundColor: mainColor,
+          shape: const RoundedRectangleBorder(
+            borderRadius: BorderRadius.all(Radius.circular(10.0)),
+          ),
+        ),
+        child: Text(
+          'Deshabilitar',
+          style: TextStyle(
+            color: bgPrimary,
+          ),
+        ),
+      ),
     );
   }
 

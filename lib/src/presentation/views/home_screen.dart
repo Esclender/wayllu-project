@@ -225,7 +225,7 @@ class HomeScreen extends HookWidget {
   Widget shoppingCart(BuildContext context) {
     return InkWell(
       onTap: () {
-        appRouter.pushNamed('/home/carrito');
+        appRouter.pushNamed('/user/carrito');
       },
       child: Container(
         width: MediaQuery.of(context).size.width * 0.11,
