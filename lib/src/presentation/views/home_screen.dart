@@ -1,8 +1,10 @@
 import 'package:auto_route/auto_route.dart';
 import 'package:auto_size_text/auto_size_text.dart';
+import 'package:badges/badges.dart' as badge;
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_hooks/flutter_hooks.dart';
+import 'package:intl/intl.dart';
 import 'package:ionicons/ionicons.dart';
 import 'package:wayllu_project/src/config/router/app_router.dart';
 import 'package:wayllu_project/src/domain/enums/user_roles.dart';
@@ -85,7 +87,7 @@ class HomeScreen extends HookWidget {
                 const SizedBox(
                   height: 8,
                 ),
-                firstLine(context),
+                firstLine(context, isAdmin),
                 dashboard(context, isAdmin),
                 Container(
                   margin:
@@ -181,47 +183,52 @@ class HomeScreen extends HookWidget {
     );
   }
 
-  Padding firstLine(BuildContext context) {
+  Padding firstLine(BuildContext context, UserRoles rol) {
+    final bool isAdmin = rol == UserRoles.admin;
+    final dateString = DateFormat("dd 'de' MMMM yyyy", 'es').format(DateTime.now());
+
     return Padding(
-      padding: const EdgeInsets.symmetric(horizontal: 22.0),
-      child: SizedBox(
-        width: MediaQuery.of(context).size.width,
-        height: 18,
-        child: const Row(
-          mainAxisAlignment: MainAxisAlignment.spaceBetween,
-          children: [
-            SizedBox(
-              width: 120,
-              height: 18,
-              child: Text(
-                'Actividad',
-                style: TextStyle(
-                  color: Color(0xFF241E20),
-                  fontSize: 16,
-                  fontFamily: 'Gotham',
-                  fontWeight: FontWeight.w500,
-                  height: 0,
+        padding:  EdgeInsets.symmetric(horizontal: 22.0),
+        child: isAdmin
+            ? SizedBox(
+                width: MediaQuery.of(context).size.width,
+                height: 18,
+                child:  Row(
+                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                  children: [
+                    const SizedBox(
+                      width: 120,
+                      height: 18,
+                      child: Text(
+                        'Actividad',
+                        style: TextStyle(
+                          color: Color(0xFF241E20),
+                          fontSize: 16,
+                          fontFamily: 'Gotham',
+                          fontWeight: FontWeight.w500,
+                          height: 0,
+                        ),
+                      ),
+                    ),
+                    SizedBox(
+                      width: 145,
+                      child: AutoSizeText(
+                        'Hoy, $dateString' ,
+                        textAlign: TextAlign.center,
+                        style: const TextStyle(
+                          color: Color(0xFF636369),
+                          fontFamily: 'Gotham',
+                          fontWeight: FontWeight.w300,
+                        ),
+                        maxLines: 1,
+                        minFontSize: 10,
+                        maxFontSize: 12,
+                      ),
+                    ),
+                  ],
                 ),
-              ),
-            ),
-            SizedBox(
-                width: 145,
-                child: AutoSizeText(
-                  'Hoy, 22 de febrero de 2024',
-                  textAlign: TextAlign.center,
-                  style: TextStyle(
-                    color: Color(0xFF636369),
-                    fontFamily: 'Gotham',
-                    fontWeight: FontWeight.w300,
-                  ),
-                  maxLines: 1,
-                  minFontSize: 10, 
-                  maxFontSize: 12, 
-                ),),
-          ],
-        ),
-      ),
-    );
+              )
+            : Container(),);
   }
 
   Widget shoppingCart(BuildContext context) {
@@ -229,26 +236,33 @@ class HomeScreen extends HookWidget {
       onTap: () {
         appRouter.pushNamed('/user/carrito');
       },
-      child: Container(
-        width: MediaQuery.of(context).size.width * 0.11,
-        height: MediaQuery.of(context).size.width * 0.11,
-        decoration: BoxDecoration(
-          color: bottomNavBar,
-          borderRadius: BorderRadius.circular(10),
-          boxShadow: [
-            BoxShadow(
-              color: const Color.fromARGB(255, 95, 95, 95)
-                  .withOpacity(0.08), // Color de la sombra y su opacidad
-              spreadRadius: 2, // Radio de propagación de la sombra
-              blurRadius: 4, // Radio de desenfoque de la sombra
-              offset: const Offset(
-                0,
-                1,
-              ), // Desplazamiento de la sombra (en este caso, hacia abajo)
-            ),
-          ],
+      child: badge.Badge(
+        badgeContent: const Text(
+          '4',
+          style: TextStyle(color: Colors.white),
         ),
-        child: const Icon(Ionicons.bag_handle_outline),
+        position: badge.BadgePosition.topEnd(top: -8, end: -8),
+        child: Container(
+          width: MediaQuery.of(context).size.width * 0.11,
+          height: MediaQuery.of(context).size.width * 0.11,
+          decoration: BoxDecoration(
+            color: bottomNavBar,
+            borderRadius: BorderRadius.circular(10),
+            boxShadow: [
+              BoxShadow(
+                color: const Color.fromARGB(255, 95, 95, 95)
+                    .withOpacity(0.08), // Color de la sombra y su opacidad
+                spreadRadius: 2, // Radio de propagación de la sombra
+                blurRadius: 4, // Radio de desenfoque de la sombra
+                offset: const Offset(
+                  0,
+                  1,
+                ), // Desplazamiento de la sombra (en este caso, hacia abajo)
+              ),
+            ],
+          ),
+          child: const Icon(Ionicons.bag_handle_outline),
+        ),
       ),
     );
   }
@@ -492,7 +506,7 @@ Container productsHome(BuildContext context, Producto producto, UserRoles rol) {
           children: [
             Container(
               width: MediaQuery.of(context).size.width * 0.45,
-              height: MediaQuery.of(context).size.height * 0.16,
+              height: MediaQuery.of(context).size.height * 0.17,
               decoration: BoxDecoration(
                 borderRadius: const BorderRadius.only(
                   topLeft: Radius.circular(10),
@@ -509,7 +523,7 @@ Container productsHome(BuildContext context, Producto producto, UserRoles rol) {
               right: 8.0,
               child: !isAdmin
                   ? Container(
-                      padding: const EdgeInsets.all(4.5),
+                      padding: const EdgeInsets.all(4),
                       decoration: BoxDecoration(
                         color: bottomNavBar,
                         borderRadius: BorderRadius.circular(5),
@@ -659,7 +673,12 @@ Container categoriesProducts(
       child: Column(
         mainAxisAlignment: MainAxisAlignment.spaceBetween,
         children: [
-          Container(alignment: Alignment.center, child: Image.asset(image, width: 80,)),
+          Container(
+              alignment: Alignment.center,
+              child: Image.asset(
+                image,
+                width: 80,
+              )),
           Container(
             alignment: Alignment.bottomCenter,
             child: Text(

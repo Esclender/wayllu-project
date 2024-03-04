@@ -1,12 +1,16 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:intl/date_symbol_data_local.dart';
 import 'package:wayllu_project/src/config/router/app_router.dart';
 import 'package:wayllu_project/src/config/theme/app_theme.dart';
 import 'package:wayllu_project/src/locator.dart';
 import 'package:wayllu_project/src/presentation/cubit/is_admin_cubit.dart';
 
-void main() {
+Future<void> main() async {
+ await initializeDateFormatting('es');
+
   initializeDependecies();
+  
   runApp(BlocSettup());
 }
 
