@@ -65,13 +65,11 @@ class ColorfullItemsList extends HookWidget {
   Widget _buildItemContainer({
     required ColorfullItem itemData,
   }) {
-    final int random = Random().nextInt(3);
-
     final BoxDecoration decoration = BoxDecoration(
       boxShadow: [
         simpleShadow,
       ],
-      gradient: gradients[random][0] as Gradient,
+      gradient: gradients[itemData.gradient][0] as Gradient,
       borderRadius: const BorderRadius.all(
         Radius.circular(20),
       ),
@@ -95,7 +93,7 @@ class ColorfullItemsList extends HookWidget {
               ),
             ),
             _itemMarker(
-              gradients[random][1] as Color,
+              gradients[itemData.gradient][1] as Color,
             ),
           ],
         ),

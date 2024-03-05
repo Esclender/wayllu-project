@@ -19,7 +19,7 @@ class UsersListAdminScreen extends HookWidget {
   final appRouter = getIt<AppRouter>();
 
   void _navigateRegisterUser() {
-    appRouter.navigate(const RegisterUserRoute());
+    appRouter.pushNamed('/admin/register');
   }
 
   @override
