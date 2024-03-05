@@ -15,6 +15,18 @@ abstract class _$AppRouter extends RootStackRouter {
 
   @override
   final Map<String, PageFactory> pagesMap = {
+    AdminNavigationRoute.name: (routeData) {
+      return AutoRoutePage<dynamic>(
+        routeData: routeData,
+        child: AdminNavigationScreen(),
+      );
+    },
+    CarritoRoute.name: (routeData) {
+      return AutoRoutePage<dynamic>(
+        routeData: routeData,
+        child: CarritoScreen(),
+      );
+    },
     HomeRoute.name: (routeData) {
       return AutoRoutePage<dynamic>(
         routeData: routeData,
@@ -35,6 +47,18 @@ abstract class _$AppRouter extends RootStackRouter {
         child: LoginExampleScreen(),
       );
     },
+    MainNavigationRoute.name: (routeData) {
+      return AutoRoutePage<dynamic>(
+        routeData: routeData,
+        child: MainNavigationScreen(),
+      );
+    },
+    UserNavigationRoute.name: (routeData) {
+      return AutoRoutePage<dynamic>(
+        routeData: routeData,
+        child: UserNavigationScreen(),
+      );
+    },
     UsersListAdminRoute.name: (routeData) {
       return AutoRoutePage<dynamic>(
         routeData: routeData,
@@ -42,6 +66,34 @@ abstract class _$AppRouter extends RootStackRouter {
       );
     },
   };
+}
+
+/// generated route for
+/// [AdminNavigationScreen]
+class AdminNavigationRoute extends PageRouteInfo<void> {
+  const AdminNavigationRoute({List<PageRouteInfo>? children})
+      : super(
+          AdminNavigationRoute.name,
+          initialChildren: children,
+        );
+
+  static const String name = 'AdminNavigationRoute';
+
+  static const PageInfo<void> page = PageInfo<void>(name);
+}
+
+/// generated route for
+/// [CarritoScreen]
+class CarritoRoute extends PageRouteInfo<void> {
+  const CarritoRoute({List<PageRouteInfo>? children})
+      : super(
+          CarritoRoute.name,
+          initialChildren: children,
+        );
+
+  static const String name = 'CarritoRoute';
+
+  static const PageInfo<void> page = PageInfo<void>(name);
 }
 
 /// generated route for
@@ -97,6 +149,34 @@ class LoginExampleRoute extends PageRouteInfo<void> {
         );
 
   static const String name = 'LoginExampleRoute';
+
+  static const PageInfo<void> page = PageInfo<void>(name);
+}
+
+/// generated route for
+/// [MainNavigationScreen]
+class MainNavigationRoute extends PageRouteInfo<void> {
+  const MainNavigationRoute({List<PageRouteInfo>? children})
+      : super(
+          MainNavigationRoute.name,
+          initialChildren: children,
+        );
+
+  static const String name = 'MainNavigationRoute';
+
+  static const PageInfo<void> page = PageInfo<void>(name);
+}
+
+/// generated route for
+/// [UserNavigationScreen]
+class UserNavigationRoute extends PageRouteInfo<void> {
+  const UserNavigationRoute({List<PageRouteInfo>? children})
+      : super(
+          UserNavigationRoute.name,
+          initialChildren: children,
+        );
+
+  static const String name = 'UserNavigationRoute';
 
   static const PageInfo<void> page = PageInfo<void>(name);
 }

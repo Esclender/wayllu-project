@@ -35,8 +35,8 @@ class LoginExampleScreen extends HookWidget {
 
   @override
   Widget build(BuildContext context) {
-    final controllerEmail = useTextEditingController(text: 'admin');
-    final controllerClave = useTextEditingController(text: 'admin');
+    final controllerEmail = useTextEditingController(text: 'user');
+    final controllerClave = useTextEditingController(text: 'user');
 
     return Scaffold(
       backgroundColor: bgPrimary,

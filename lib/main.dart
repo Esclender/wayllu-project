@@ -4,10 +4,21 @@ import 'package:wayllu_project/src/config/router/app_router.dart';
 import 'package:wayllu_project/src/config/theme/app_theme.dart';
 import 'package:wayllu_project/src/locator.dart';
 import 'package:wayllu_project/src/presentation/cubit/is_admin_cubit.dart';
+import 'package:wayllu_project/src/presentation/views/usersAdmin/register_screen.dart';
 
 void main() {
   initializeDependecies();
-  runApp(BlocSettup());
+  runApp(MyTestApp());
+}
+
+class MyTestApp extends StatelessWidget {
+  @override
+  Widget build(BuildContext context) {
+    return MaterialApp(
+      debugShowCheckedModeBanner: false,
+      home: RegisterUserScreen(),
+    );
+  }
 }
 
 class BlocSettup extends StatelessWidget {
