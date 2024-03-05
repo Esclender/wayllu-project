@@ -6,6 +6,7 @@ import 'package:wayllu_project/src/presentation/views/login_example.dart';
 import 'package:wayllu_project/src/presentation/views/main_navigation.dart';
 import 'package:wayllu_project/src/presentation/views/user_navigation.dart';
 import 'package:wayllu_project/src/presentation/views/usersAdmin/info_user_screen.dart';
+import 'package:wayllu_project/src/presentation/views/usersAdmin/register_screen.dart';
 import 'package:wayllu_project/src/presentation/views/usersAdmin/user_list_admin.dart';
 
 part 'app_router.gr.dart';
@@ -51,6 +52,12 @@ class AppRouter extends _$AppRouter {
                 AutoRoute(
                   path: 'users-list',
                   page: UsersListAdminRoute.page,
+                  children: [
+                    AutoRoute(
+                      path: 'register',
+                      page: RegisterUserRoute.page,
+                    ),
+                  ],
                 ),
               ],
             ),

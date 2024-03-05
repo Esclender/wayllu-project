@@ -185,50 +185,52 @@ class HomeScreen extends HookWidget {
 
   Padding firstLine(BuildContext context, UserRoles rol) {
     final bool isAdmin = rol == UserRoles.admin;
-    final dateString = DateFormat("dd 'de' MMMM yyyy", 'es').format(DateTime.now());
+    final dateString =
+        DateFormat("dd 'de' MMMM yyyy", 'es').format(DateTime.now());
 
     return Padding(
-        padding:  EdgeInsets.symmetric(horizontal: 22.0),
-        child: isAdmin
-            ? SizedBox(
-                width: MediaQuery.of(context).size.width,
-                height: 18,
-                child:  Row(
-                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                  children: [
-                    const SizedBox(
-                      width: 120,
-                      height: 18,
-                      child: Text(
-                        'Actividad',
-                        style: TextStyle(
-                          color: Color(0xFF241E20),
-                          fontSize: 16,
-                          fontFamily: 'Gotham',
-                          fontWeight: FontWeight.w500,
-                          height: 0,
-                        ),
+      padding: EdgeInsets.symmetric(horizontal: 22.0),
+      child: isAdmin
+          ? SizedBox(
+              width: MediaQuery.of(context).size.width,
+              height: 18,
+              child: Row(
+                mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                children: [
+                  const SizedBox(
+                    width: 120,
+                    height: 18,
+                    child: Text(
+                      'Actividad',
+                      style: TextStyle(
+                        color: Color(0xFF241E20),
+                        fontSize: 16,
+                        fontFamily: 'Gotham',
+                        fontWeight: FontWeight.w500,
+                        height: 0,
                       ),
                     ),
-                    SizedBox(
-                      width: 145,
-                      child: AutoSizeText(
-                        'Hoy, $dateString' ,
-                        textAlign: TextAlign.center,
-                        style: const TextStyle(
-                          color: Color(0xFF636369),
-                          fontFamily: 'Gotham',
-                          fontWeight: FontWeight.w300,
-                        ),
-                        maxLines: 1,
-                        minFontSize: 10,
-                        maxFontSize: 12,
+                  ),
+                  SizedBox(
+                    width: 145,
+                    child: AutoSizeText(
+                      'Hoy, $dateString',
+                      textAlign: TextAlign.center,
+                      style: const TextStyle(
+                        color: Color(0xFF636369),
+                        fontFamily: 'Gotham',
+                        fontWeight: FontWeight.w300,
                       ),
+                      maxLines: 1,
+                      minFontSize: 10,
+                      maxFontSize: 12,
                     ),
-                  ],
-                ),
-              )
-            : Container(),);
+                  ),
+                ],
+              ),
+            )
+          : Container(),
+    );
   }
 
   Widget shoppingCart(BuildContext context) {

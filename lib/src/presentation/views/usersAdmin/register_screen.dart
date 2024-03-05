@@ -1,3 +1,4 @@
+import 'package:auto_route/auto_route.dart';
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:hexcolor/hexcolor.dart';
@@ -7,6 +8,7 @@ import 'package:wayllu_project/src/presentation/widgets/register_user/my_text_la
 import 'package:wayllu_project/src/presentation/widgets/register_user/my_textfield.dart';
 import 'package:wayllu_project/src/presentation/widgets/register_user/space_y.dart';
 
+@RoutePage()
 class RegisterUserScreen extends StatefulWidget {
   const RegisterUserScreen({super.key});
 
@@ -81,8 +83,9 @@ class _RegisterUserScreenState extends State<RegisterUserScreen> {
                 InfoLabelModal(hintText: 'Email:', valueText: email ?? ''),
                 const SpaceY(),
                 InfoLabelModal(
-                    hintText: 'Comunidad:',
-                    valueText: community_select.toString(),),
+                  hintText: 'Comunidad:',
+                  valueText: community_select.toString(),
+                ),
               ],
             ),
           ),
@@ -94,7 +97,8 @@ class _RegisterUserScreenState extends State<RegisterUserScreen> {
                   style: TextButton.styleFrom(
                     backgroundColor: Colors.grey,
                     shape: const RoundedRectangleBorder(
-                        borderRadius: BorderRadius.all(Radius.circular(10)),),
+                      borderRadius: BorderRadius.all(Radius.circular(10)),
+                    ),
                   ),
                   child: const Text('Volver'),
                   onPressed: () {},
@@ -103,7 +107,8 @@ class _RegisterUserScreenState extends State<RegisterUserScreen> {
                   style: TextButton.styleFrom(
                     backgroundColor: Colors.blue,
                     shape: const RoundedRectangleBorder(
-                        borderRadius: BorderRadius.all(Radius.circular(10)),),
+                      borderRadius: BorderRadius.all(Radius.circular(10)),
+                    ),
                   ),
                   child: const Text('Guardar'),
                   onPressed: () {
@@ -123,17 +128,35 @@ class _RegisterUserScreenState extends State<RegisterUserScreen> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-        body: Padding(
-            padding: const EdgeInsets.all(
-              10.0,
-            ),
-            child: Form(
-              key: _formKey,
-              child: ListView(
+      body: Padding(
+        padding: const EdgeInsets.all(
+          10.0,
+        ),
+        child: Form(
+          key: _formKey,
+          child: ListView(
+            children: [
+              Column(
                 children: [
+                  const MyTextLabel(hintText: 'Usuario:'),
+                  const SizedBox(
+                    height: 10,
+                  ),
+                  MyTextField(
+                    onChanged: (text) {},
+                    onSaved: (val) => {
+                      setState(() {
+                        username = val;
+                      }),
+                    },
+                    hintText: 'Maria',
+                    obscureText: false,
+                  ),
+                  const SpaceY(),
                   Column(
+                    crossAxisAlignment: CrossAxisAlignment.start,
                     children: [
-                      const MyTextLabel(hintText: 'Usuario:'),
+                      const MyTextLabel(hintText: 'DNI:'),
                       const SizedBox(
                         height: 10,
                       ),
@@ -141,227 +164,211 @@ class _RegisterUserScreenState extends State<RegisterUserScreen> {
                         onChanged: (text) {},
                         onSaved: (val) => {
                           setState(() {
-                            username = val;
+                            dni = val;
                           }),
                         },
-                        hintText: 'Maria',
+                        hintText: '87654321',
                         obscureText: false,
-                      ),
-                      const SpaceY(),
-                      Column(
-                        crossAxisAlignment: CrossAxisAlignment.start,
-                        children: [
-                          const MyTextLabel(hintText: 'DNI:'),
-                          const SizedBox(
-                            height: 10,
-                          ),
-                          MyTextField(
-                            onChanged: (text) {},
-                            onSaved: (val) => {
-                              setState(() {
-                                dni = val;
-                              }),
-                            },
-                            hintText: '87654321',
-                            obscureText: false,
-                          ),
-                        ],
-                      ),
-                      const SpaceY(),
-                      Column(
-                        crossAxisAlignment: CrossAxisAlignment.start,
-                        children: [
-                          const MyTextLabel(
-                            hintText: 'Teléfono:',
-                          ),
-                          const SizedBox(
-                            height: 10,
-                          ),
-                          MyTextField(
-                            onChanged: (text) {},
-                            onSaved: (val) => {
-                              setState(() {
-                                phone = val;
-                              }),
-                            },
-                            hintText: '987654321',
-                            obscureText: false,
-                          ),
-                        ],
-                      ),
-                      const SpaceY(),
-                      Column(
-                        crossAxisAlignment: CrossAxisAlignment.start,
-                        children: [
-                          const MyTextLabel(
-                            hintText: 'Email',
-                            warText: '*Opcional*',
-                          ),
-                          const SizedBox(
-                            height: 10,
-                          ),
-                          MyTextField(
-                            onChanged: (text) {},
-                            onSaved: (val) => {
-                              setState(() {
-                                email = val ?? '';
-                              }),
-                            },
-                            hintText: 'ejemplo@gmail.com',
-                            obscureText: false,
-                          ),
-                        ],
-                      ),
-                      const SpaceY(),
-                      Column(
-                        children: [
-                          const MyTextLabel(
-                            hintText: 'Comunidad:',
-                          ),
-                          const SizedBox(
-                            height: 10,
-                          ),
-                          DropdownButtonFormField(
-                            decoration: InputDecoration(
-                              border: OutlineInputBorder(
-                                borderSide: const BorderSide(
-                                  color: Color.fromARGB(
-                                    120,
-                                    0,
-                                    0,
-                                    0,
-                                  ),
-                                ),
-                                borderRadius: BorderRadius.circular(10),
-                              ),
-                              enabledBorder: OutlineInputBorder(
-                                borderSide: const BorderSide(
-                                  color: Color.fromARGB(
-                                    120,
-                                    0,
-                                    0,
-                                    0,
-                                  ),
-                                ),
-                                borderRadius: BorderRadius.circular(10),
-                              ),
-                            ),
-                            items: communityDropdownItems,
-                            hint: Text(
-                              'Comunidad',
-                              style: GoogleFonts.poppins(
-                                fontSize: 14,
-                                color: const Color.fromARGB(
-                                  128,
-                                  0,
-                                  0,
-                                  0,
-                                ),
-                              ),
-                            ),
-                            onChanged: (value) {
-                              setState(() {
-                                community_select = value;
-                              });
-                            },
-                            onSaved: (value) {
-                              setState(() {
-                                community_select = value;
-                              });
-                            },
-                          ),
-                        ],
                       ),
                     ],
                   ),
                   const SpaceY(),
-                  Container(
-                    margin: const EdgeInsets.only(bottom: 20),
-                    child: Row(
-                      children: [
-                        Expanded(
-                          child: Column(
-                            crossAxisAlignment: CrossAxisAlignment.start,
-                            children: [
-                              const MyTextLabel(
-                                hintText: 'Contraseña:',
-                              ),
-                              const SizedBox(
-                                height: 10,
-                              ),
-                              MyTextField(
-                                onSaved: (val) => {
-                                  setState(() {
-                                    password = val;
-                                  }),
-                                },
-                                hintText: '12345678',
-                                obscureText: true,
-                              ),
-                            ],
-                          ),
-                        ),
-                        const SizedBox(width: 20),
-                        Expanded(
-                          child: Column(
-                            crossAxisAlignment: CrossAxisAlignment.start,
-                            children: [
-                              const MyTextLabel(
-                                hintText: 'Confirmar',
-                              ),
-                              const SizedBox(
-                                height: 10,
-                              ),
-                              MyTextField(
-                                onSaved: (val) => {
-                                  setState(() {
-                                    confirmPassword = val;
-                                  }),
-                                },
-                                hintText: '987654321',
-                                obscureText: true,
-                              ),
-                            ],
-                          ),
-                        ),
-                      ],
-                    ),
+                  Column(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: [
+                      const MyTextLabel(
+                        hintText: 'Teléfono:',
+                      ),
+                      const SizedBox(
+                        height: 10,
+                      ),
+                      MyTextField(
+                        onChanged: (text) {},
+                        onSaved: (val) => {
+                          setState(() {
+                            phone = val;
+                          }),
+                        },
+                        hintText: '987654321',
+                        obscureText: false,
+                      ),
+                    ],
                   ),
                   const SpaceY(),
-                  Padding(
-                    padding: const EdgeInsets.fromLTRB(8, 0, 0, 0),
-                    child: Text(
-                      '_errorMessage',
-                      style: GoogleFonts.poppins(
-                        fontSize: 12,
-                        color: Colors.white,
+                  Column(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: [
+                      const MyTextLabel(
+                        hintText: 'Email',
+                        warText: '*Opcional*',
                       ),
-                    ),
+                      const SizedBox(
+                        height: 10,
+                      ),
+                      MyTextField(
+                        onChanged: (text) {},
+                        onSaved: (val) => {
+                          setState(() {
+                            email = val ?? '';
+                          }),
+                        },
+                        hintText: 'ejemplo@gmail.com',
+                        obscureText: false,
+                      ),
+                    ],
                   ),
-                  ElevatedButton(
-                    style: ElevatedButton.styleFrom(
-                      shape: RoundedRectangleBorder(
-                        borderRadius: BorderRadius.circular(8.58),
+                  const SpaceY(),
+                  Column(
+                    children: [
+                      const MyTextLabel(
+                        hintText: 'Comunidad:',
                       ),
-                      backgroundColor: HexColor('#FFA743'),
-                      minimumSize: const Size.fromHeight(60),
-                    ),
-                    onPressed: () {
-                      if (_formKey.currentState!.validate()) {
-                        _formKey.currentState!.save();
-                        _submit();
-                      }
-                    },
-                    child: Text(
-                      'Registrar',
-                      style: GoogleFonts.poppins(
-                        fontSize: 16,
-                        color: Colors.white,
+                      const SizedBox(
+                        height: 10,
                       ),
-                    ),
+                      DropdownButtonFormField(
+                        decoration: InputDecoration(
+                          border: OutlineInputBorder(
+                            borderSide: const BorderSide(
+                              color: Color.fromARGB(
+                                120,
+                                0,
+                                0,
+                                0,
+                              ),
+                            ),
+                            borderRadius: BorderRadius.circular(10),
+                          ),
+                          enabledBorder: OutlineInputBorder(
+                            borderSide: const BorderSide(
+                              color: Color.fromARGB(
+                                120,
+                                0,
+                                0,
+                                0,
+                              ),
+                            ),
+                            borderRadius: BorderRadius.circular(10),
+                          ),
+                        ),
+                        items: communityDropdownItems,
+                        hint: Text(
+                          'Comunidad',
+                          style: GoogleFonts.poppins(
+                            fontSize: 14,
+                            color: const Color.fromARGB(
+                              128,
+                              0,
+                              0,
+                              0,
+                            ),
+                          ),
+                        ),
+                        onChanged: (value) {
+                          setState(() {
+                            community_select = value;
+                          });
+                        },
+                        onSaved: (value) {
+                          setState(() {
+                            community_select = value;
+                          });
+                        },
+                      ),
+                    ],
                   ),
                 ],
               ),
-            ),),);
+              const SpaceY(),
+              Container(
+                margin: const EdgeInsets.only(bottom: 20),
+                child: Row(
+                  children: [
+                    Expanded(
+                      child: Column(
+                        crossAxisAlignment: CrossAxisAlignment.start,
+                        children: [
+                          const MyTextLabel(
+                            hintText: 'Contraseña:',
+                          ),
+                          const SizedBox(
+                            height: 10,
+                          ),
+                          MyTextField(
+                            onSaved: (val) => {
+                              setState(() {
+                                password = val;
+                              }),
+                            },
+                            hintText: '12345678',
+                            obscureText: true,
+                          ),
+                        ],
+                      ),
+                    ),
+                    const SizedBox(width: 20),
+                    Expanded(
+                      child: Column(
+                        crossAxisAlignment: CrossAxisAlignment.start,
+                        children: [
+                          const MyTextLabel(
+                            hintText: 'Confirmar',
+                          ),
+                          const SizedBox(
+                            height: 10,
+                          ),
+                          MyTextField(
+                            onSaved: (val) => {
+                              setState(() {
+                                confirmPassword = val;
+                              }),
+                            },
+                            hintText: '987654321',
+                            obscureText: true,
+                          ),
+                        ],
+                      ),
+                    ),
+                  ],
+                ),
+              ),
+              const SpaceY(),
+              Padding(
+                padding: const EdgeInsets.fromLTRB(8, 0, 0, 0),
+                child: Text(
+                  '_errorMessage',
+                  style: GoogleFonts.poppins(
+                    fontSize: 12,
+                    color: Colors.white,
+                  ),
+                ),
+              ),
+              ElevatedButton(
+                style: ElevatedButton.styleFrom(
+                  shape: RoundedRectangleBorder(
+                    borderRadius: BorderRadius.circular(8.58),
+                  ),
+                  backgroundColor: HexColor('#FFA743'),
+                  minimumSize: const Size.fromHeight(60),
+                ),
+                onPressed: () {
+                  if (_formKey.currentState!.validate()) {
+                    _formKey.currentState!.save();
+                    _submit();
+                  }
+                },
+                child: Text(
+                  'Registrar',
+                  style: GoogleFonts.poppins(
+                    fontSize: 16,
+                    color: Colors.white,
+                  ),
+                ),
+              ),
+            ],
+          ),
+        ),
+      ),
+    );
   }
 }

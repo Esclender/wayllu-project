@@ -53,6 +53,12 @@ abstract class _$AppRouter extends RootStackRouter {
         child: MainNavigationScreen(),
       );
     },
+    RegisterUserRoute.name: (routeData) {
+      return AutoRoutePage<dynamic>(
+        routeData: routeData,
+        child: const RegisterUserScreen(),
+      );
+    },
     UserNavigationRoute.name: (routeData) {
       return AutoRoutePage<dynamic>(
         routeData: routeData,
@@ -163,6 +169,20 @@ class MainNavigationRoute extends PageRouteInfo<void> {
         );
 
   static const String name = 'MainNavigationRoute';
+
+  static const PageInfo<void> page = PageInfo<void>(name);
+}
+
+/// generated route for
+/// [RegisterUserScreen]
+class RegisterUserRoute extends PageRouteInfo<void> {
+  const RegisterUserRoute({List<PageRouteInfo>? children})
+      : super(
+          RegisterUserRoute.name,
+          initialChildren: children,
+        );
+
+  static const String name = 'RegisterUserRoute';
 
   static const PageInfo<void> page = PageInfo<void>(name);
 }
