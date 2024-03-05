@@ -1,10 +1,10 @@
 import 'package:auto_route/auto_route.dart';
-import 'package:wayllu_project/src/presentation/views/admin_navigation.dart';
 import 'package:wayllu_project/src/presentation/views/homeUser/user_carrito_screen.dart';
+import 'package:wayllu_project/src/presentation/views/mainNavigationsRoles/admin_navigation.dart';
 import 'package:wayllu_project/src/presentation/views/home_screen.dart';
 import 'package:wayllu_project/src/presentation/views/login_example.dart';
-import 'package:wayllu_project/src/presentation/views/main_navigation.dart';
-import 'package:wayllu_project/src/presentation/views/user_navigation.dart';
+import 'package:wayllu_project/src/presentation/views/mainNavigationsRoles/main_navigation.dart';
+import 'package:wayllu_project/src/presentation/views/mainNavigationsRoles/user_navigation.dart';
 import 'package:wayllu_project/src/presentation/views/usersAdmin/info_user_screen.dart';
 import 'package:wayllu_project/src/presentation/views/usersAdmin/register_screen.dart';
 import 'package:wayllu_project/src/presentation/views/usersAdmin/user_list_admin.dart';
@@ -27,9 +27,6 @@ class AppRouter extends _$AppRouter {
             AutoRoute(
               path: 'home',
               page: HomeRoute.page,
-              children: [
-                AutoRoute(path: 'carrito', page: CarritoRoute.page),
-              ],
             ),
             AutoRoute(
               path: 'user',
@@ -52,12 +49,10 @@ class AppRouter extends _$AppRouter {
                 AutoRoute(
                   path: 'users-list',
                   page: UsersListAdminRoute.page,
-                  children: [
-                    AutoRoute(
-                      path: 'register',
-                      page: RegisterUserRoute.page,
-                    ),
-                  ],
+                ),
+                AutoRoute(
+                  path: 'register',
+                  page: RegisterUserRoute.page,
                 ),
               ],
             ),

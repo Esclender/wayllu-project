@@ -2,11 +2,15 @@ import 'package:auto_route/auto_route.dart';
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:hexcolor/hexcolor.dart';
+import 'package:ionicons/ionicons.dart';
+import 'package:wayllu_project/src/config/router/app_router.dart';
 import 'package:wayllu_project/src/domain/models/community_model.dart';
+import 'package:wayllu_project/src/locator.dart';
 import 'package:wayllu_project/src/presentation/widgets/register_user/info_label_modal.dart';
 import 'package:wayllu_project/src/presentation/widgets/register_user/my_text_label.dart';
 import 'package:wayllu_project/src/presentation/widgets/register_user/my_textfield.dart';
 import 'package:wayllu_project/src/presentation/widgets/register_user/space_y.dart';
+import 'package:wayllu_project/src/utils/constants/colors.dart';
 
 @RoutePage()
 class RegisterUserScreen extends StatefulWidget {
@@ -37,6 +41,8 @@ class _RegisterUserScreenState extends State<RegisterUserScreen> {
 
   bool isEmailCorrect = false;
   final _formKey = GlobalKey<FormState>();
+
+  final appRouter = getIt<AppRouter>();
 
   List<DropdownMenuItem<String>> communityDropdownItems =
       list_community.map((community) {
@@ -128,9 +134,20 @@ class _RegisterUserScreenState extends State<RegisterUserScreen> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
+      backgroundColor: bgPrimary,
+      appBar: AppBar(
+        backgroundColor: bgPrimary,
+        surfaceTintColor: Colors.transparent,
+        leading: InkWell(
+          onTap: () => {appRouter.pop()},
+          child: const Icon(Ionicons.arrow_back),
+        ),
+        title: const Text('Registrar'),
+        centerTitle: true,
+      ),
       body: Padding(
         padding: const EdgeInsets.all(
-          10.0,
+          30.0,
         ),
         child: Form(
           key: _formKey,

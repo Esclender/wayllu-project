@@ -25,7 +25,7 @@ class BottomNavBar extends HookWidget {
     OptionsIcons(
       icon: Ionicons.bar_chart,
       routes: [
-        OptionsIconsRoutes(route: '/carrito', rol: UserRoles.admin),
+        OptionsIconsRoutes(route: '/home', rol: UserRoles.admin),
       ],
     ),
     OptionsIcons(
