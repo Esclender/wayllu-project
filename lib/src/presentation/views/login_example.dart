@@ -30,7 +30,7 @@ class LoginExampleScreen extends HookWidget {
     );
 
     context.read<UserLoggedCubit>().isAdmin(credentialsUser);
-    appRouter.navigateNamed('/home');
+    appRouter.navigate(HomeRoute(viewIndex: 0));
   }
 
   @override

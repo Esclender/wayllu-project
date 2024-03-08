@@ -16,9 +16,11 @@ import 'package:wayllu_project/src/utils/constants/colors.dart';
 
 @RoutePage()
 class HomeScreen extends HookWidget {
-  HomeScreen();
+  final int viewIndex;
 
-  int get viewIndex => 0;
+  HomeScreen({
+    required this.viewIndex,
+  });
 
   final appRouter = getIt<AppRouter>();
 
@@ -189,7 +191,7 @@ class HomeScreen extends HookWidget {
         DateFormat("dd 'de' MMMM yyyy", 'es').format(DateTime.now());
 
     return Padding(
-      padding: EdgeInsets.symmetric(horizontal: 22.0),
+      padding: const EdgeInsets.symmetric(horizontal: 22.0),
       child: isAdmin
           ? SizedBox(
               width: MediaQuery.of(context).size.width,
@@ -243,7 +245,7 @@ class HomeScreen extends HookWidget {
           '4',
           style: TextStyle(color: Colors.white),
         ),
-        position: badge.BadgePosition.topEnd(top: -8, end: -8),
+        position: badge.BadgePosition.topEnd(end: -8),
         child: Container(
           width: MediaQuery.of(context).size.width * 0.11,
           height: MediaQuery.of(context).size.width * 0.11,
@@ -676,11 +678,12 @@ Container categoriesProducts(
         mainAxisAlignment: MainAxisAlignment.spaceBetween,
         children: [
           Container(
-              alignment: Alignment.center,
-              child: Image.asset(
-                image,
-                width: 80,
-              )),
+            alignment: Alignment.center,
+            child: Image.asset(
+              image,
+              width: 80,
+            ),
+          ),
           Container(
             alignment: Alignment.bottomCenter,
             child: Text(

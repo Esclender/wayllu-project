@@ -12,9 +12,12 @@ import 'package:wayllu_project/src/utils/constants/colors.dart';
 
 @RoutePage()
 class UsersListAdminScreen extends HookWidget {
-  final int viewIndex = 2;
-
+  final int viewIndex;
   final double navbarHeight = 60;
+
+  UsersListAdminScreen({
+    required this.viewIndex,
+  });
 
   final appRouter = getIt<AppRouter>();
 

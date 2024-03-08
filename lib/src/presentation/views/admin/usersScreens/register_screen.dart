@@ -6,6 +6,7 @@ import 'package:ionicons/ionicons.dart';
 import 'package:wayllu_project/src/config/router/app_router.dart';
 import 'package:wayllu_project/src/domain/models/community_model.dart';
 import 'package:wayllu_project/src/locator.dart';
+import 'package:wayllu_project/src/presentation/widgets/gradient_text.dart';
 import 'package:wayllu_project/src/presentation/widgets/register_user/info_label_modal.dart';
 import 'package:wayllu_project/src/presentation/widgets/register_user/my_text_label.dart';
 import 'package:wayllu_project/src/presentation/widgets/register_user/my_textfield.dart';
@@ -142,7 +143,15 @@ class _RegisterUserScreenState extends State<RegisterUserScreen> {
           onTap: () => {appRouter.pop()},
           child: const Icon(Ionicons.arrow_back),
         ),
-        title: const Text('Registrar'),
+        title: GradientText(
+          text: 'Grafico de ventas',
+          gradient: LinearGradient(
+            colors: [mainColor, secondaryColor],
+            begin: Alignment.topCenter,
+            end: Alignment.bottomCenter,
+          ),
+          fontSize: 25.0,
+        ),
         centerTitle: true,
       ),
       body: Padding(

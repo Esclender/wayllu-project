@@ -3,7 +3,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_hooks/flutter_hooks.dart';
 
 @RoutePage()
-class AdminUsersNavigation extends HookWidget {
+class AdminUsersNavigationScreen extends HookWidget {
   @override
   Widget build(BuildContext context) {
     return const AutoRouter();
