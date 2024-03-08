@@ -41,8 +41,11 @@ class BottomNavBar extends HookWidget {
   final appRouter = getIt<AppRouter>();
 
   final double blur = 1.5;
+  final BorderRadiusGeometry borderRadiusBotNav = const BorderRadius.only(
+   topLeft: Radius.circular(10), topRight: Radius.circular(10)
+  );
   final BorderRadiusGeometry containersBorder = const BorderRadius.all(
-    Radius.circular(10),
+    Radius.circular(10), 
   );
 
   @override
@@ -50,15 +53,11 @@ class BottomNavBar extends HookWidget {
     final UserRoles rol = context.read<UserLoggedCubit>().state;
 
     return Container(
-      height: 60,
+      height: 50,
       decoration: BoxDecoration(
         color: bottomNavBar.withOpacity(0.8),
-        borderRadius: containersBorder,
-        border: Border(
-          top: BorderSide(color: bottomNavBarStroke),
-          left: BorderSide(color: bottomNavBarStroke),
-          right: BorderSide(color: bottomNavBarStroke),
-        ),
+        borderRadius: borderRadiusBotNav,
+        border: Border( top: BorderSide(color: bottomNavBarStroke, width: 0.2),),
       ),
       child: ClipRRect(
         borderRadius: containersBorder,
@@ -113,11 +112,11 @@ class BottomNavBar extends HookWidget {
           decoration: BoxDecoration(
             color: bottomNavBar,
             borderRadius: containersBorder,
-            border: Border.all(color: bottomNavBarStroke, width: 0.4),
+            border: Border.all(color: bottomNavBarStroke, width: 0.2),
           ),
           alignment: Alignment.center,
           child: Icon(
-            icon,
+            icon, size: 22,
             color: viewSelected == index ? secondaryColor : noSelectedView,
           ),
         ),

@@ -171,6 +171,9 @@ class HomeScreen extends HookWidget {
                     ),
                   ),
                 ),
+                const SizedBox(
+                  height: kBottomNavigationBarHeight + 16.0,
+                ),
               ],
             ),
           ),
@@ -189,7 +192,7 @@ class HomeScreen extends HookWidget {
         DateFormat("dd 'de' MMMM yyyy", 'es').format(DateTime.now());
 
     return Padding(
-      padding: EdgeInsets.symmetric(horizontal: 22.0),
+      padding: const EdgeInsets.symmetric(horizontal: 22.0),
       child: isAdmin
           ? SizedBox(
               width: MediaQuery.of(context).size.width,
@@ -243,7 +246,7 @@ class HomeScreen extends HookWidget {
           '4',
           style: TextStyle(color: Colors.white),
         ),
-        position: badge.BadgePosition.topEnd(top: -8, end: -8),
+        position: badge.BadgePosition.topEnd(end: -8),
         child: Container(
           width: MediaQuery.of(context).size.width * 0.11,
           height: MediaQuery.of(context).size.width * 0.11,
@@ -253,14 +256,14 @@ class HomeScreen extends HookWidget {
             boxShadow: [
               BoxShadow(
                 color: const Color.fromARGB(255, 95, 95, 95)
-                    .withOpacity(0.08), // Color de la sombra y su opacidad
-                spreadRadius: 2, // Radio de propagación de la sombra
-                blurRadius: 4, // Radio de desenfoque de la sombra
+                    .withOpacity(0.08), 
+                spreadRadius: 2, 
+                blurRadius: 4, 
                 offset: const Offset(
                   0,
                   1,
-                ), // Desplazamiento de la sombra (en este caso, hacia abajo)
-              ),
+                ), 
+                 ),
             ],
           ),
           child: const Icon(Ionicons.bag_handle_outline),
@@ -443,10 +446,11 @@ class HomeScreen extends HookWidget {
                             ],
                           ),
                           TextButton(
-                            // ignore: avoid_returning_null_for_void
-                            onPressed: () => null,
+                            onPressed: () {
+                              appRouter.pushNamed('usersAdmin/report.dart');
+                            },
                             child: Container(
-                              margin: const EdgeInsets.only(top: 6),
+                              margin: const EdgeInsets.only(top: 4),
                               width: MediaQuery.of(context).size.width,
                               height: 36,
                               decoration: ShapeDecoration(
@@ -663,12 +667,12 @@ Container categoriesProducts(
           BoxShadow(
             color: const Color.fromARGB(255, 95, 95, 95)
                 .withOpacity(0.08), // Color de la sombra y su opacidad
-            spreadRadius: 2, // Radio de propagación de la sombra
-            blurRadius: 4, // Radio de desenfoque de la sombra
+            spreadRadius: 2, 
+            blurRadius: 4, 
             offset: const Offset(
               0,
               1,
-            ), // Desplazamiento de la sombra (en este caso, hacia abajo)
+            ), 
           ),
         ],
       ),
@@ -680,7 +684,7 @@ Container categoriesProducts(
               child: Image.asset(
                 image,
                 width: 80,
-              )),
+              ),),
           Container(
             alignment: Alignment.bottomCenter,
             child: Text(
