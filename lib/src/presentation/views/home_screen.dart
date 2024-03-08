@@ -1,15 +1,18 @@
 import 'package:auto_route/auto_route.dart';
 import 'package:auto_size_text/auto_size_text.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_hooks/flutter_hooks.dart';
 import 'package:ionicons/ionicons.dart';
+import 'package:wayllu_project/src/domain/enums/user_roles.dart';
 import 'package:wayllu_project/src/domain/models/models_products.dart';
+import 'package:wayllu_project/src/presentation/cubit/is_admin_cubit.dart';
 import 'package:wayllu_project/src/presentation/widgets/bottom_navbar.dart';
 import 'package:wayllu_project/src/utils/constants/colors.dart';
 
 @RoutePage()
 class HomeScreen extends HookWidget {
-  const HomeScreen({super.key});
+  const HomeScreen();
 
   int get viewIndex => 0;
 
@@ -18,6 +21,7 @@ class HomeScreen extends HookWidget {
     final DateTime now = DateTime.now();
     final int hour = now.hour;
     final String greeting = getGreeting(hour);
+    final isAdmin = context.read<UserLoggedCubit>().state;
 
     return Scaffold(
       backgroundColor: bgPrimary,
@@ -25,7 +29,6 @@ class HomeScreen extends HookWidget {
         slivers: [
           SliverAppBar(
             expandedHeight: 68.0,
-            floating: true,
             backgroundColor: Colors.transparent,
             flexibleSpace: FlexibleSpaceBar(
               background: topVector(context),
@@ -75,6 +78,7 @@ class HomeScreen extends HookWidget {
           SliverList(
             delegate: SliverChildListDelegate(
               [
+                dashboard(context, isAdmin),
                 Container(
                   margin:
                       const EdgeInsets.symmetric(horizontal: 24, vertical: 6),
@@ -159,9 +163,6 @@ class HomeScreen extends HookWidget {
                     ),
                   ),
                 ),
-                /*  SizedBox(
-                  height: 10,
-                ),*/
                 Container(
                   margin:
                       const EdgeInsets.symmetric(vertical: 4, horizontal: 16),
@@ -179,6 +180,7 @@ class HomeScreen extends HookWidget {
                                   child: productsHome(
                                     context,
                                     productos[evenIndex],
+                                    isAdmin,
                                   ),
                                 ),
                                 const SizedBox(
@@ -189,6 +191,7 @@ class HomeScreen extends HookWidget {
                                       ? productsHome(
                                           context,
                                           productos[oddIndex],
+                                          isAdmin,
                                         )
                                       : Container(),
                                 ),
@@ -214,9 +217,216 @@ class HomeScreen extends HookWidget {
       ),
     );
   }
+
+  Center dashboard(BuildContext context, UserRoles rol) {
+    final bool isAdmin = rol == UserRoles.admin;
+
+    return Center(
+      child: isAdmin
+          ? Container(
+              margin: const EdgeInsets.symmetric(horizontal: 22, vertical: 6),
+              width: MediaQuery.of(context).size.width,
+              height: MediaQuery.of(context).size.height * 0.24,
+              decoration: BoxDecoration(
+                color: bottomNavBar,
+                boxShadow: [
+                  BoxShadow(
+                    color: const Color.fromARGB(255, 95, 95, 95)
+                        .withOpacity(0.08), // Color de la sombra y su opacidad
+                    spreadRadius: 2, // Radio de propagación de la sombra
+                    blurRadius: 4, // Radio de desenfoque de la sombra
+                    offset: const Offset(
+                      0,
+                      1,
+                    ),
+                  ),
+                ],
+                borderRadius: BorderRadius.circular(10),
+              ),
+              child: Column(
+                children: [
+                  Stack(
+                    children: [
+                      Container(
+                        width: MediaQuery.of(context).size.width,
+                        height: MediaQuery.of(context).size.height * 0.09,
+                        padding: const EdgeInsets.symmetric(horizontal: 12),
+                        decoration: BoxDecoration(
+                          color: iconColor.withOpacity(0.7),
+                          borderRadius: const BorderRadius.only(
+                            topLeft: Radius.circular(10),
+                            topRight: Radius.circular(10),
+                          ),
+                        ),
+                        child: Row(
+                          mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                          children: [
+                            Column(
+                              crossAxisAlignment: CrossAxisAlignment.start,
+                              mainAxisAlignment: MainAxisAlignment.center,
+                              children: [
+                                Text(
+                                  'Ingresos semanales',
+                                  style: TextStyle(
+                                    fontFamily: 'Gotham',
+                                    fontSize: 12,
+                                    color: clearLetters,
+                                    fontWeight: FontWeight.w300,
+                                  ),
+                                ),
+                                Text(
+                                  'S/ 1.200,00',
+                                  style: TextStyle(
+                                    fontFamily: 'Gotham',
+                                    fontSize: 24,
+                                    color: bottomNavBar,
+                                    fontWeight: FontWeight.w500,
+                                  ),
+                                ),
+                              ],
+                            ),
+                            Image.asset('assets/stacks.png'),
+                          ],
+                        ),
+                      ),
+                    ],
+                  ),
+                  Padding(
+                    padding: const EdgeInsets.all(8.0),
+                    child: SizedBox(
+                      width: MediaQuery.of(context).size.width * 0.75,
+                      child: Column(
+                        children: [
+                          Row(
+                            mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                            children: [
+                              Row(
+                                children: [
+                                  Container(
+                                    width: 30,
+                                    height: 30,
+                                    decoration: BoxDecoration(
+                                      color: thirdColor.withOpacity(0.4),
+                                      shape: BoxShape.circle,
+                                    ),
+                                    child: Icon(
+                                      Ionicons.checkmark,
+                                      color: thirdColor,
+                                    ),
+                                  ),
+                                  const SizedBox(
+                                    width: 8,
+                                  ),
+                                  Column(
+                                    crossAxisAlignment:
+                                        CrossAxisAlignment.start,
+                                    children: [
+                                      Text(
+                                        'Entrada',
+                                        style: TextStyle(
+                                          fontFamily: 'Gotham',
+                                          fontSize: 11,
+                                          color: iconColor,
+                                          fontWeight: FontWeight.w300,
+                                        ),
+                                      ),
+                                      Text(
+                                        'S/ 2.000,50',
+                                        style: TextStyle(
+                                          fontFamily: 'Gotham',
+                                          fontSize: 16,
+                                          color: iconColor,
+                                          fontWeight: FontWeight.w500,
+                                        ),
+                                      ),
+                                    ],
+                                  ),
+                                ],
+                              ),
+                              Row(
+                                children: [
+                                  Container(
+                                    width: 30,
+                                    height: 30,
+                                    decoration: BoxDecoration(
+                                      color: mainColor.withOpacity(0.4),
+                                      shape: BoxShape.circle,
+                                    ),
+                                    child: Icon(
+                                      Ionicons.caret_down_outline,
+                                      color: mainColor,
+                                    ),
+                                  ),
+                                  const SizedBox(
+                                    width: 8,
+                                  ),
+                                  Column(
+                                    crossAxisAlignment:
+                                        CrossAxisAlignment.start,
+                                    children: [
+                                      Text(
+                                        'Salida',
+                                        style: TextStyle(
+                                          fontFamily: 'Gotham',
+                                          fontSize: 11,
+                                          color: iconColor,
+                                          fontWeight: FontWeight.w300,
+                                        ),
+                                      ),
+                                      Text(
+                                        'S/ 800,00',
+                                        style: TextStyle(
+                                          fontFamily: 'Gotham',
+                                          fontSize: 16,
+                                          color: iconColor,
+                                          fontWeight: FontWeight.w500,
+                                        ),
+                                      ),
+                                    ],
+                                  ),
+                                ],
+                              ),
+                            ],
+                          ),
+                          TextButton(
+                            onPressed: () {},
+                            child: Container(
+                              width: 200,
+                              height: 40,
+                              decoration: BoxDecoration(
+                                gradient: LinearGradient(
+                                  colors: [
+                                    mainColor.withOpacity(0.5),
+                                    secondaryColor.withOpacity(0.5),
+                                    secondaryColor,
+                                  ],
+                                  stops: const [
+                                    0.0,
+                                    0.4,
+                                    0.6,
+                                  ],
+                                  begin: Alignment.bottomCenter,
+                                  end: Alignment.topCenter,
+                                ),
+                                borderRadius: BorderRadius.circular(5),
+                              ),
+                            ),
+                          ),
+                        ],
+                      ),
+                    ),
+                  ),
+                ],
+              ),
+            )
+          : Container(),
+    );
+  }
 }
 
-Container productsHome(BuildContext context, Producto producto) {
+Container productsHome(BuildContext context, Producto producto, UserRoles rol) {
+  final bool isAdmin = rol == UserRoles.admin;
+
   return Container(
     width: MediaQuery.of(context).size.width * 0.45,
     height: MediaQuery.of(context).size.height * 0.285,
@@ -224,14 +434,13 @@ Container productsHome(BuildContext context, Producto producto) {
       color: bottomNavBar,
       boxShadow: [
         BoxShadow(
-          color: const Color.fromARGB(255, 95, 95, 95)
-              .withOpacity(0.08), // Color de la sombra y su opacidad
-          spreadRadius: 2, // Radio de propagación de la sombra
-          blurRadius: 4, // Radio de desenfoque de la sombra
+          color: const Color.fromARGB(255, 95, 95, 95).withOpacity(0.08),
+          spreadRadius: 2,
+          blurRadius: 4,
           offset: const Offset(
             0,
             1,
-          ), // Desplazamiento de la sombra (en este caso, hacia abajo)
+          ),
         ),
       ],
       borderRadius: BorderRadius.circular(10),
@@ -243,7 +452,7 @@ Container productsHome(BuildContext context, Producto producto) {
           children: [
             Container(
               width: MediaQuery.of(context).size.width * 0.45,
-              height: MediaQuery.of(context).size.height * 0.2,
+              height: MediaQuery.of(context).size.height * 0.19,
               decoration: BoxDecoration(
                 borderRadius: const BorderRadius.only(
                   topLeft: Radius.circular(10),
@@ -258,27 +467,26 @@ Container productsHome(BuildContext context, Producto producto) {
             Positioned(
               top: 8.0, // Ajusta la posición del botón según sea necesario
               right: 8.0,
-              child: Container(
-                decoration: BoxDecoration(
-                  color: bottomNavBar,
-                  borderRadius: BorderRadius.circular(5),
-                ),
-                child: Container(
-                  child: IconButton(
-                    padding: const EdgeInsets.all(2),
-                    icon: const Icon(Icons.add),
-                    onPressed: () {
-                      // Lógica para agregar al carrito o cualquier otra acción
-                    },
-                    color: bottomNavBarStroke,
-                  ),
-                ),
-              ),
+              child: !isAdmin
+                  ? Container(
+                      padding: const EdgeInsets.all(4.5),
+                      decoration: BoxDecoration(
+                        color: bottomNavBar,
+                        borderRadius: BorderRadius.circular(5),
+                        border: Border.all(width: 0.2, color: iconColor),
+                      ),
+                      child: Icon(
+                        Ionicons.add,
+                        color: iconColor,
+                      ),
+                    )
+                  : Container(),
             ),
           ],
         ),
         Container(
           margin: const EdgeInsets.symmetric(horizontal: 4),
+          padding: const EdgeInsets.only(right: 4),
           child: Column(
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
@@ -298,13 +506,40 @@ Container productsHome(BuildContext context, Producto producto) {
                   fontWeight: FontWeight.w300,
                 ),
               ),
-              Text(
-                'S/${producto.price}',
-                style: const TextStyle(
-                  fontFamily: 'Gotham',
-                  fontSize: 18,
-                  fontWeight: FontWeight.w500,
-                ),
+              const SizedBox(
+                height: 6,
+              ),
+              Row(
+                mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                crossAxisAlignment: CrossAxisAlignment.end,
+                children: [
+                  Text(
+                    'S/${producto.price}',
+                    style: const TextStyle(
+                      fontFamily: 'Gotham',
+                      fontSize: 18,
+                      fontWeight: FontWeight.w500,
+                    ),
+                  ),
+                  if (isAdmin)
+                    Container(
+                      padding: const EdgeInsets.symmetric(
+                          vertical: 4, horizontal: 6,),
+                      decoration: BoxDecoration(
+                        color:
+                            secondaryColor, // Puedes cambiar el color según tus necesidades
+                        borderRadius: BorderRadius.circular(5),
+                      ),
+                      child: const Text(
+                        'Editar',
+                        style: TextStyle(
+                          color: Colors.white,
+                          fontSize: 11,
+                          fontWeight: FontWeight.bold,
+                        ),
+                      ),
+                    ),
+                ],
               ),
             ],
           ),

@@ -1,7 +1,3 @@
-abstract class InfoBase {
-  List<List> get entries => [];
-}
-
 class UserInfo {
   PersonalInfo userInfo;
   ContactInfo userContactInfo;
@@ -10,6 +6,10 @@ class UserInfo {
     required this.userInfo,
     required this.userContactInfo,
   });
+}
+
+abstract class InfoBase {
+  List<List> get entries => [];
 }
 
 class PersonalInfo extends InfoBase {

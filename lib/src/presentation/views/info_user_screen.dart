@@ -6,11 +6,14 @@ import 'package:image_picker/image_picker.dart';
 import 'package:ionicons/ionicons.dart';
 import 'package:wayllu_project/src/domain/models/user_info_model.dart';
 import 'package:wayllu_project/src/presentation/widgets/bottom_navbar.dart';
+import 'package:wayllu_project/src/presentation/widgets/top_vector.dart';
 import 'package:wayllu_project/src/utils/constants/colors.dart';
 
 @RoutePage()
 class InfoUserScreen extends HookWidget {
-  InfoUserScreen({super.key});
+  final bool isAdmin;
+
+  InfoUserScreen({this.isAdmin = false});
 
   final ImagePicker imagePicker = ImagePicker();
 
@@ -29,10 +32,13 @@ class InfoUserScreen extends HookWidget {
   Widget build(BuildContext context) {
     return Scaffold(
       floatingActionButtonLocation: FloatingActionButtonLocation.centerDocked,
+      floatingActionButton: BottomNavBar(
+        viewSelected: viewIndex,
+      ),
       backgroundColor: bgPrimary,
       body: Column(
         children: [
-          _topVector(context),
+          TopVector(),
           Row(
             mainAxisAlignment: MainAxisAlignment.center,
             children: [
@@ -43,13 +49,18 @@ class InfoUserScreen extends HookWidget {
             children: [
               _buildInfoContainer('Informacion Personal', person),
               _buildInfoContainer('Informacion de Contacto', contact),
+              if (!isAdmin) _buildInhabilitButton() else Container(),
             ],
           ),
         ],
       ),
-      floatingActionButton: BottomNavBar(
-        viewSelected: viewIndex,
-      ),
+    );
+  }
+
+  Widget _buildInhabilitButton() {
+    return TextButton(
+      onPressed: () {},
+      child: const Text('Deshabilitar'),
     );
   }
 
@@ -207,18 +218,6 @@ class InfoUserScreen extends HookWidget {
           entry[1].toString(),
         ),
       ],
-    );
-  }
-
-  Widget _topVector(BuildContext context) {
-    return Container(
-      width: MediaQuery.of(context).size.width,
-      alignment: Alignment.topCenter,
-      child: Image.asset(
-        'assets/Vector-Top.png',
-        width: MediaQuery.of(context).size.width,
-        fit: BoxFit.cover,
-      ),
     );
   }
 }
