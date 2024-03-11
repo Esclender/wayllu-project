@@ -13,18 +13,21 @@ import 'package:wayllu_project/src/utils/constants/colors.dart';
 @RoutePage()
 class InfoUserScreen extends HookWidget {
   final bool isAdmin;
+  final int viewIndex;
 
-  InfoUserScreen({this.isAdmin = false});
+  InfoUserScreen({
+    required this.viewIndex,
+    this.isAdmin = false,
+  });
 
   final ImagePicker imagePicker = ImagePicker();
-
-  final int viewIndex = 2;
 
   final PersonalInfo person = PersonalInfo(
     dni: '123456789',
     nombre: 'Maria Jose Fernandez',
     comunidad: 'Grupo 1',
     clave: 'Enero20.',
+    isAdmin: true,
   );
 
   final ContactInfo contact = ContactInfo(telefono: '928590695');

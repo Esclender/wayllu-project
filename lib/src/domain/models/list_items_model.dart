@@ -1,6 +1,9 @@
+import 'dart:math';
+
 class ColorfullItem {
   String nombre;
   String url;
+  int gradient = Random().nextInt(3);
   List<DescriptionItem> descriptions;
 
   ColorfullItem({
