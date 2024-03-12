@@ -19,4 +19,11 @@ abstract class SystemStyles {
         systemNavigationBarColor: bgPrimary,
         systemNavigationBarIconBrightness: Brightness.dark,
       );
+
+  static SystemUiOverlayStyle get login => SystemUiOverlayStyle(
+        statusBarColor: Colors.transparent,
+        statusBarIconBrightness: Brightness.dark,
+        systemNavigationBarColor: loginBottom,
+        systemNavigationBarIconBrightness: Brightness.dark,
+      );
 }

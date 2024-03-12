@@ -5,14 +5,14 @@ import 'package:wayllu_project/src/presentation/widgets/bottom_navbar.dart';
 import 'package:wayllu_project/src/utils/constants/colors.dart';
 
 @RoutePage()
-class ReciboScreen extends HookWidget{
+class ReciboScreen extends HookWidget {
   ReciboScreen({super.key});
 
-@override
-Widget build(BuildContext context) {
-  return Scaffold(
-    backgroundColor: bgContainer,
-    body:SingleChildScrollView(
+  @override
+  Widget build(BuildContext context) {
+    return Scaffold(
+      backgroundColor: bgContainer,
+      body: SingleChildScrollView(
         child: Center(
           child: Container(
             child: Column(
@@ -31,13 +31,12 @@ Widget build(BuildContext context) {
           ),
         ),
       ),
-    bottomNavigationBar: BottomNavBar(
-      key: key,
-    ),
-  );
+      bottomNavigationBar: BottomNavBar(
+        key: key,
+      ),
+    );
+  }
 }
-}
-
 
 class RegistroExitoso extends StatelessWidget {
   @override
@@ -47,7 +46,8 @@ class RegistroExitoso extends StatelessWidget {
       padding: EdgeInsets.only(bottom: 30),
       decoration: BoxDecoration(
         border: Border(
-          bottom: BorderSide(color: line, width: 2.0), // Borde inferior negro de 2.0 de ancho
+          bottom: BorderSide(
+              color: line, width: 2.0), // Borde inferior negro de 2.0 de ancho
         ),
       ),
       child: Column(
@@ -67,7 +67,7 @@ class RegistroExitoso extends StatelessWidget {
               fontSize: 20,
               fontWeight: FontWeight.w500,
               fontFamily: 'Gotham',
-              ),
+            ),
           ),
           SizedBox(height: 10.0),
           Text(
@@ -77,7 +77,7 @@ class RegistroExitoso extends StatelessWidget {
               fontSize: 14,
               fontWeight: FontWeight.w400,
               fontFamily: 'Gotham',
-              ),
+            ),
           ),
         ],
       ),
@@ -90,10 +90,11 @@ class FechaRegistro extends StatelessWidget {
   Widget build(BuildContext context) {
     return Container(
       width: double.infinity,
-      padding: EdgeInsets.only(bottom: 30.0,left: 30.0),
+      padding: EdgeInsets.only(bottom: 30.0, left: 30.0),
       decoration: BoxDecoration(
         border: Border(
-          bottom: BorderSide(color: line, width: 2.0), // Borde inferior negro de 2.0 de ancho
+          bottom: BorderSide(
+              color: line, width: 2.0), // Borde inferior negro de 2.0 de ancho
         ),
       ), // Añade espacio alrededor del contenido
       child: Column(
@@ -117,7 +118,7 @@ class FechaRegistro extends StatelessWidget {
               fontSize: 14,
               fontWeight: FontWeight.w400,
               fontFamily: 'Gotham',
-              ),
+            ),
           ),
         ],
       ),
@@ -132,7 +133,7 @@ class ProductosRegistrados extends StatelessWidget {
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
         Padding(
-          padding: EdgeInsets.symmetric(horizontal: 30.0), 
+          padding: EdgeInsets.symmetric(horizontal: 30.0),
           child: Text(
             'Productos Registrados',
             style: TextStyle(
@@ -140,7 +141,7 @@ class ProductosRegistrados extends StatelessWidget {
               fontSize: 16,
               fontWeight: FontWeight.w500,
               fontFamily: 'Gotham',
-              ),
+            ),
           ),
         ),
         for (int i = 0; i < 2; i++)
@@ -160,7 +161,7 @@ class ProductosRegistrados extends StatelessWidget {
                       child: ClipRRect(
                         borderRadius: BorderRadius.circular(10),
                         child: Image.asset(
-                          "../../../assets/images/img1.jpg",
+                          "assets/images/img1.jpg",
                           width: 100,
                           height: 80,
                           fit: BoxFit.cover,
@@ -176,38 +177,38 @@ class ProductosRegistrados extends StatelessWidget {
                           Text(
                             'Nombre del Producto',
                             style: TextStyle(
-                                color: iconColor,
-                                fontSize: 16,
-                                fontWeight: FontWeight.w500,
-                                fontFamily: 'Gotham',
+                              color: iconColor,
+                              fontSize: 16,
+                              fontWeight: FontWeight.w500,
+                              fontFamily: 'Gotham',
                             ),
                           ),
                           Text(
                             'Categoría del Producto',
                             style: TextStyle(
-                                color: subs,
-                                fontSize: 14,
-                                fontWeight: FontWeight.w400,
-                                fontFamily: 'Gotham',
-                              ),
+                              color: subs,
+                              fontSize: 14,
+                              fontWeight: FontWeight.w400,
+                              fontFamily: 'Gotham',
+                            ),
                           ),
                           Text(
                             '\$100.00', // Reemplaza con el precio real
                             style: TextStyle(
-                                color: iconColor,
-                                fontSize: 20,
-                                fontWeight: FontWeight.w500,
-                                fontFamily: 'Gotham',
-                              ),
+                              color: iconColor,
+                              fontSize: 20,
+                              fontWeight: FontWeight.w500,
+                              fontFamily: 'Gotham',
+                            ),
                           ),
                           Text(
                             'Cantidad: 10', // Reemplaza con la cantidad real
                             style: TextStyle(
-                                color: iconColor,
-                                fontSize: 14,
-                                fontWeight: FontWeight.w400,
-                                fontFamily: 'Gotham',
-                              ),
+                              color: iconColor,
+                              fontSize: 14,
+                              fontWeight: FontWeight.w400,
+                              fontFamily: 'Gotham',
+                            ),
                           ),
                         ],
                       ),
@@ -217,44 +218,44 @@ class ProductosRegistrados extends StatelessWidget {
               ),
               // Fila con Precio Total y Monto
               SizedBox(height: 20),
-             Container(
-              padding: EdgeInsets.symmetric(horizontal: 20.0), // Ajusta el padding según sea necesario
-              child: Row(
-                mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                children: [
-                  Expanded(
-                    child: Text(
-                      'Precio Total (10 Productos)',
-                      style: TextStyle(
-                        color: subs,
-                        fontSize: 14,
-                        fontWeight: FontWeight.w500,
-                        fontFamily: 'Gotham',
+              Container(
+                padding: EdgeInsets.symmetric(
+                    horizontal: 20.0), // Ajusta el padding según sea necesario
+                child: Row(
+                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                  children: [
+                    Expanded(
+                      child: Text(
+                        'Precio Total (10 Productos)',
+                        style: TextStyle(
+                          color: subs,
+                          fontSize: 14,
+                          fontWeight: FontWeight.w500,
+                          fontFamily: 'Gotham',
                         ),
+                      ),
                     ),
-                  ),
-                  Expanded(
-                    child: Text(
-                      '\$1000.00', // Reemplaza con el monto real
-                      style: TextStyle(
-                        color: iconColor,
-                        fontSize: 18,
-                        fontWeight: FontWeight.w500,
-                        fontFamily: 'Gotham',
+                    Expanded(
+                      child: Text(
+                        '\$1000.00', // Reemplaza con el monto real
+                        style: TextStyle(
+                          color: iconColor,
+                          fontSize: 18,
+                          fontWeight: FontWeight.w500,
+                          fontFamily: 'Gotham',
                         ),
-                      textAlign: TextAlign.end,
+                        textAlign: TextAlign.end,
+                      ),
                     ),
-                  ),
-                ],
+                  ],
+                ),
               ),
-            ),
             ],
           ),
       ],
     );
   }
 }
-
 
 class RegistroTotal extends StatelessWidget {
   @override
@@ -279,7 +280,7 @@ class RegistroTotal extends StatelessWidget {
                   fontSize: 16,
                   fontWeight: FontWeight.w500,
                   fontFamily: 'Gotham',
-                  ),
+                ),
               ),
               Text(
                 'S/250', // Reemplaza con el monto real
@@ -297,7 +298,6 @@ class RegistroTotal extends StatelessWidget {
     );
   }
 }
-
 
 class EnviarProducto extends StatelessWidget {
   @override
@@ -338,7 +338,7 @@ class EnviarProducto extends StatelessWidget {
           margin: EdgeInsets.symmetric(horizontal: 10.0),
           decoration: BoxDecoration(
             borderRadius: BorderRadius.circular(10.0),
-            border: Border.all(color:secondaryColor, width: 2.0),
+            border: Border.all(color: secondaryColor, width: 2.0),
           ),
           child: TextButton(
             onPressed: () {
@@ -347,10 +347,10 @@ class EnviarProducto extends StatelessWidget {
             child: Text(
               'Compartir Registro',
               style: TextStyle(
-                  color: secondaryColor,
-                  fontSize: 14,
-                  fontWeight: FontWeight.w500,
-                  fontFamily: 'Gotham',
+                color: secondaryColor,
+                fontSize: 14,
+                fontWeight: FontWeight.w500,
+                fontFamily: 'Gotham',
               ),
             ),
           ),
@@ -371,10 +371,10 @@ class EnviarProducto extends StatelessWidget {
             child: Text(
               'Concluir',
               style: TextStyle(
-                  color: bgContainer,
-                  fontSize: 14,
-                  fontWeight: FontWeight.w500,
-                  fontFamily: 'Gotham',
+                color: bgContainer,
+                fontSize: 14,
+                fontWeight: FontWeight.w500,
+                fontFamily: 'Gotham',
               ),
             ),
           ),

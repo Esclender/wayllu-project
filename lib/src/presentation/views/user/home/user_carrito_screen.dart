@@ -3,12 +3,19 @@ import 'package:flutter/material.dart';
 import 'package:flutter_hooks/flutter_hooks.dart';
 import 'package:gap/gap.dart';
 import 'package:ionicons/ionicons.dart';
+import 'package:wayllu_project/src/config/router/app_router.dart';
+import 'package:wayllu_project/src/locator.dart';
 import 'package:wayllu_project/src/presentation/widgets/gradient_widgets.dart';
 import 'package:wayllu_project/src/utils/constants/colors.dart';
 
 @RoutePage()
 class CarritoScreen extends HookWidget {
   final double checkoutBtnHeight = 150.0;
+  final appRouter = getIt<AppRouter>();
+
+  void _checkoutVentaGoRecib() {
+    appRouter.navigate(const ReciboRoute());
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -52,7 +59,7 @@ class CarritoScreen extends HookWidget {
 
   Widget _buildTextHeader() {
     return GradientText(
-      text: 'Registrar venta',
+      text: 'Registro venta',
       fontSize: 25.0,
     );
   }
@@ -221,9 +228,7 @@ class CarritoScreen extends HookWidget {
           ),
           const SizedBox(height: 10),
           ElevatedButton(
-            onPressed: () {
-              // Agrega aquí la lógica para registrar la venta
-            },
+            onPressed: _checkoutVentaGoRecib,
             style: ElevatedButton.styleFrom(
               backgroundColor: thirdColor,
               padding: const EdgeInsets.symmetric(horizontal: 80, vertical: 15),
