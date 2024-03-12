@@ -1,16 +1,21 @@
 import 'package:auto_route/auto_route.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_hooks/flutter_hooks.dart';
+import 'package:gap/gap.dart';
 import 'package:ionicons/ionicons.dart';
+import 'package:wayllu_project/src/presentation/widgets/gradient_widgets.dart';
 import 'package:wayllu_project/src/utils/constants/colors.dart';
 
 @RoutePage()
 class CarritoScreen extends HookWidget {
+  final double checkoutBtnHeight = 150.0;
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
       backgroundColor: bgPrimary,
       appBar: AppBar(
+        surfaceTintColor: Colors.transparent,
         leading: InkWell(
           onTap: () {
             AutoRouter.of(context).pop();
@@ -19,38 +24,36 @@ class CarritoScreen extends HookWidget {
         ),
         backgroundColor: bgPrimary,
         title: _buildTextHeader(),
+        centerTitle: true,
       ),
-      body: Padding(
-        padding: const EdgeInsets.all(5),
-        child: ListView(
-          children: [
-            for (int i = 1; i < 4; i++)
-              _buildProduct(
+      body: Stack(
+        alignment: Alignment.bottomCenter,
+        children: [
+          Padding(
+            padding: EdgeInsets.only(
+              left: 15,
+              right: 15,
+              bottom: checkoutBtnHeight + 10,
+            ),
+            child: ListView.separated(
+              separatorBuilder: (_, __) => const Gap(25),
+              itemCount: 10,
+              itemBuilder: (_, ind) => _buildProduct(
                 productName: 'Producto',
                 productDescription: 'Descripcion',
               ),
-          ],
-        ),
+            ),
+          ),
+          _buildConfirmCheckoutBtn(),
+        ],
       ),
     );
   }
 
   Widget _buildTextHeader() {
-    return Text(
-      'Registrar Venta',
-      style: TextStyle(
-        fontSize: 23,
-        fontWeight: FontWeight.bold,
-        fontFamily: 'Gotham',
-        foreground: Paint()
-          ..shader = LinearGradient(
-            begin: Alignment.bottomCenter,
-            end: Alignment.topCenter,
-            colors: [btnprimary, btnsecondary],
-          ).createShader(
-            const Rect.fromLTRB(0.0, 0.0, 100.0, 60.0),
-          ),
-      ),
+    return GradientText(
+      text: 'Registrar venta',
+      fontSize: 25.0,
     );
   }
 
@@ -58,121 +61,186 @@ class CarritoScreen extends HookWidget {
     required String productName,
     required String productDescription,
   }) {
-    return Container(
-      padding: const EdgeInsets.only(bottom: 25),
-      child: Column(
-        children: [
-          Row(
+    return Row(
+      children: [
+        SizedBox(
+          width: 110,
+          child: ClipRRect(
+            borderRadius: BorderRadius.circular(10),
+            child: Image.asset(
+              'assets/images/img1.jpg',
+              width: 100,
+              height: 80,
+              fit: BoxFit.cover,
+            ),
+          ),
+        ),
+        const SizedBox(width: 10),
+        Expanded(
+          child: Column(
+            crossAxisAlignment: CrossAxisAlignment.start,
             children: [
-              Container(
-                width: 110,
-                margin: const EdgeInsets.only(left: 13),
-                decoration: BoxDecoration(
-                  borderRadius: BorderRadius.circular(10),
-                ),
-                child: ClipRRect(
-                  borderRadius: BorderRadius.circular(10),
-                  child: Image.asset(
-                    'assets/images/img1.jpg',
-                    width: 100,
-                    height: 80,
-                    fit: BoxFit.cover,
-                  ),
-                ),
-              ),
-              const SizedBox(width: 10),
-              Expanded(
-                child: Column(
-                  crossAxisAlignment: CrossAxisAlignment.start,
+              SizedBox(
+                height: 25,
+                child: Row(
+                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
                   children: [
-                    SizedBox(
-                      height: 25,
-                      child: Row(
-                        mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                        children: [
-                          Text(
-                            productName,
-                            style: TextStyle(
-                              fontSize: 16,
-                              fontWeight: FontWeight.bold,
-                              color: txtColor,
-                              fontFamily: 'Gotham',
-                            ),
-                          ),
-                          IconButton(
-                            icon: const Icon(Icons.close),
-                            iconSize: 18,
-                            onPressed: () {
-                              // Puedes agregar lógica para eliminar este ítem del carrito aquí
-                            },
-                          ),
-                        ],
-                      ),
-                    ),
                     Text(
-                      productDescription,
-                      style: TextStyle(
-                        fontSize: 10,
-                        color: subtxtColor,
+                      productName,
+                      style: const TextStyle(
+                        fontSize: 16,
+                        fontWeight: FontWeight.bold,
+                        color: Colors.black,
                         fontFamily: 'Gotham',
                       ),
                     ),
-                    const SizedBox(height: 15),
-                    Row(
-                      mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                      children: [
-                        Text(
-                          'S/ 20,00',
-                          style: TextStyle(
-                            fontSize: 16,
-                            fontWeight: FontWeight.bold,
-                            fontFamily: 'Gotham',
-                            color: txtColor,
-                          ),
-                        ),
-                        Container(
-                          height: 30,
-                          decoration: BoxDecoration(
-                            border: Border.all(
-                              color: const Color(0xFF919191),
-                            ),
-                            borderRadius: BorderRadius.circular(5),
-                          ),
-                          child: Row(
-                            children: [
-                              IconButton(
-                                icon: const Icon(
-                                  Icons.remove,
-                                ),
-                                iconSize: 15,
-                                onPressed: () {
-                                  // Agrega lógica para disminuir la cantidad
-                                },
-                              ),
-                              Text(
-                                '1',
-                                style: TextStyle(
-                                  fontSize: 16,
-                                  fontFamily: 'Gotham',
-                                  color: txtColor,
-                                ),
-                              ),
-                              IconButton(
-                                icon: const Icon(Icons.add),
-                                iconSize: 15,
-                                onPressed: () {
-                                  // Agrega lógica para aumentar la cantidad
-                                },
-                              ),
-                            ],
-                          ),
-                        ),
-                      ],
+                    IconButton(
+                      icon: const Icon(Icons.close),
+                      iconSize: 18,
+                      onPressed: () {
+                        // Add logic to remove item from cart
+                      },
                     ),
                   ],
                 ),
               ),
+              Text(
+                productDescription,
+                style: const TextStyle(
+                  fontSize: 10,
+                  color: Colors.grey,
+                  fontFamily: 'Gotham',
+                ),
+              ),
+              const SizedBox(height: 15),
+              Row(
+                mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                children: [
+                  const Text(
+                    'S/ 20,00',
+                    style: TextStyle(
+                      fontSize: 16,
+                      fontWeight: FontWeight.bold,
+                      fontFamily: 'Gotham',
+                      color: Colors.black,
+                    ),
+                  ),
+                  _buildQuantityControl(),
+                ],
+              ),
             ],
+          ),
+        ),
+      ],
+    );
+  }
+
+  Widget _buildQuantityControl() {
+    return Container(
+      height: 30,
+      decoration: BoxDecoration(
+        border: Border.all(
+          color: const Color(0xFF919191),
+        ),
+        borderRadius: BorderRadius.circular(5),
+      ),
+      child: Row(
+        children: [
+          IconButton(
+            icon: const Icon(
+              Icons.remove,
+            ),
+            iconSize: 15,
+            onPressed: () {
+              // Add logic to decrease quantity
+            },
+          ),
+          const Text(
+            '1',
+            style: TextStyle(
+              fontSize: 16,
+              fontFamily: 'Gotham',
+              color: Colors.black,
+            ),
+          ),
+          IconButton(
+            icon: const Icon(Icons.add),
+            iconSize: 15,
+            onPressed: () {
+              // Add logic to increase quantity
+            },
+          ),
+        ],
+      ),
+    );
+  }
+
+  Widget _buildConfirmCheckoutBtn() {
+    return Container(
+      height: checkoutBtnHeight,
+      color: bgContainer,
+      padding: const EdgeInsets.all(10.0),
+      child: Column(
+        children: [
+          Row(
+            mainAxisAlignment: MainAxisAlignment.spaceBetween,
+            children: [
+              Text(
+                'Total:',
+                style: TextStyle(
+                  fontSize: 20,
+                  fontFamily: 'Gotham',
+                  fontWeight: FontWeight.bold,
+                  color: txtColor,
+                ),
+              ),
+              Text(
+                'S/ 100.00',
+                style: TextStyle(
+                  fontSize: 20,
+                  fontFamily: 'Gotham',
+                  fontWeight: FontWeight.bold,
+                  color: txtColor,
+                ),
+              ),
+            ],
+          ),
+          const SizedBox(height: 10),
+          Row(
+            children: [
+              Text(
+                'N° productos agregados',
+                textAlign: TextAlign.center,
+                style: TextStyle(
+                  fontSize: 14,
+                  fontFamily: 'Gotham',
+                  color: subtxtColor,
+                ),
+              ),
+            ],
+          ),
+          const SizedBox(height: 10),
+          ElevatedButton(
+            onPressed: () {
+              // Agrega aquí la lógica para registrar la venta
+            },
+            style: ElevatedButton.styleFrom(
+              backgroundColor: thirdColor,
+              padding: const EdgeInsets.symmetric(horizontal: 80, vertical: 15),
+              shape: RoundedRectangleBorder(
+                borderRadius: BorderRadius.circular(
+                  10,
+                ), // Ajusta el radio de borde según tu preferencia
+              ),
+            ),
+            child: Text(
+              'Registrar Venta',
+              style: TextStyle(
+                fontFamily: 'Gotham',
+                fontSize: 16,
+                color: bgContainer,
+              ),
+            ),
           ),
         ],
       ),

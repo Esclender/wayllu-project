@@ -1,10 +1,13 @@
 import 'package:auto_route/auto_route.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_hooks/flutter_hooks.dart';
+import 'package:wayllu_project/src/domain/enums/lists_enums.dart';
 import 'package:wayllu_project/src/domain/models/graphs/chart_column_bar.dart';
+import 'package:wayllu_project/src/domain/models/list_items_model.dart';
 import 'package:wayllu_project/src/presentation/widgets/bottom_navbar.dart';
-import 'package:wayllu_project/src/presentation/widgets/gradient_text.dart';
+import 'package:wayllu_project/src/presentation/widgets/gradient_widgets.dart';
 import 'package:wayllu_project/src/presentation/widgets/graphs_components/column_bar_chart.dart';
+import 'package:wayllu_project/src/presentation/widgets/list_generator.dart';
 import 'package:wayllu_project/src/presentation/widgets/top_vector.dart';
 import 'package:wayllu_project/src/utils/constants/colors.dart';
 
@@ -16,6 +19,18 @@ class GraphicProductsScreen extends HookWidget {
   GraphicProductsScreen({
     required this.viewIndex,
   });
+
+  final List<ColorfullItem> dataToRender = [
+    ColorfullItem(
+      url:
+          'https://images.unsplash.com/profile-1446404465118-3a53b909cc82?ixlib=rb-0.3.5&q=80&fm=jpg&crop=faces&cs=tinysrgb&fit=crop&h=64&w=64&s=3ef46b07bb19f68322d027cb8f9ac99f',
+      nombre: 'Sombreros',
+      descriptions: [
+        DescriptionItem(field: 'Ventas totales', value: '145'),
+        DescriptionItem(field: 'Ingresos totales', value: 'S/ 40.000'),
+      ],
+    ),
+  ];
 
   final List<ChartBarData> data = [
     ChartBarData('Ene', 120.00),
@@ -48,10 +63,15 @@ class GraphicProductsScreen extends HookWidget {
       floatingActionButton: BottomNavBar(
         viewSelected: viewIndex,
       ),
-      body: Column(
-        children: [
-          TopVector(),
-          _buildGraphicWithFilters(),
+      body: CustomScrollView(
+        slivers: [
+          SliverList(
+            delegate: SliverChildListDelegate([
+              TopVector(),
+              _buildGraphicWithFilters(),
+              _buildMohtlyProductsList(),
+            ]),
+          ),
         ],
       ),
     );
@@ -65,12 +85,7 @@ class GraphicProductsScreen extends HookWidget {
         runSpacing: 20.0,
         children: [
           GradientText(
-            text: 'Registro de usuario',
-            gradient: LinearGradient(
-              colors: [mainColor, secondaryColor],
-              begin: Alignment.topCenter,
-              end: Alignment.bottomCenter,
-            ),
+            text: 'Registro de ventas',
             fontSize: 25.0,
           ),
           Container(
@@ -101,16 +116,48 @@ class GraphicProductsScreen extends HookWidget {
         hint: Text(hint),
         items: const [
           DropdownMenuItem(
-            child: Text('Item'),
             value: '1',
+            child: Text('Item'),
           ),
           DropdownMenuItem(
-            child: Text('Item 2'),
             value: '2',
+            child: Text('Item 2'),
           ),
         ],
         onChanged: _onDropMenuChanged,
       ),
+    );
+  }
+
+  Widget _buildMohtlyProductsList() {
+    return Padding(
+      padding: EdgeInsets.all(containersPadding),
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          _buildMohtlyProductsListTitle(title: 'Enero'),
+          ColorfullItemsList(
+            listType: ListEnums.products,
+            dataToRender: dataToRender,
+            isScrollable: false,
+          ),
+        ],
+      ),
+    );
+  }
+
+  Widget _buildMohtlyProductsListTitle({required String title}) {
+    return Column(
+      crossAxisAlignment: CrossAxisAlignment.start,
+      children: [
+        GradientText(
+          text: title,
+          fontSize: 25.0,
+        ),
+        GradientDecoration(
+          width: 40.0,
+        ),
+      ],
     );
   }
 }

@@ -60,6 +60,10 @@ class AppRouter extends _$AppRouter {
                   path: 'register',
                   page: RegisterUserRoute.page,
                 ),
+                AutoRoute(
+                  path: 'info',
+                  page: InfoUserRoute.page,
+                ),
               ],
             ),
           ],
