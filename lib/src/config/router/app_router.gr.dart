@@ -88,6 +88,12 @@ abstract class _$AppRouter extends RootStackRouter {
         child: UsersListAdminScreen(viewIndex: args.viewIndex),
       );
     },
+    CarritoScreenRoute.name: (routeData) {
+      return AutoRoutePage<dynamic>(
+        routeData: routeData,
+        child: CarritoScreen(),
+      );
+    },
   };
 }
 
@@ -311,4 +317,16 @@ class UsersListAdminRouteArgs {
   String toString() {
     return 'UsersListAdminRouteArgs{viewIndex: $viewIndex}';
   }
+}
+
+class CarritoScreenRoute extends PageRouteInfo<void> {
+  const CarritoScreenRoute({List<PageRouteInfo>? children})
+      : super(
+          CarritoScreenRoute.name,
+          initialChildren: children,
+        );
+
+  static const String name = 'CarritoScreenRoute';
+
+  static const PageInfo<void> page = PageInfo<void>(name);
 }
