@@ -69,7 +69,7 @@ class LoginExampleScreen extends HookWidget {
                     children: [
                       Row(
                         children: [
-                          Image.asset('assets/ISOTIPO.PNG'),
+                          Image.asset('assets/ISOTIPO.png'),
                         ],
                       ),
                       const Row(
