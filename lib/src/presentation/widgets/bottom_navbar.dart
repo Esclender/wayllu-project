@@ -19,20 +19,29 @@ class BottomNavBar extends HookWidget {
     OptionsIcons(
       icon: Ionicons.home,
       routes: [
-        OptionsIconsRoutes(route: '/home', rol: UserRoles.all),
+        OptionsIconsRoutes(route: HomeRoute(viewIndex: 0), rol: UserRoles.all),
       ],
     ),
     OptionsIcons(
       icon: Ionicons.bar_chart,
       routes: [
-        OptionsIconsRoutes(route: '/carrito', rol: UserRoles.admin),
+        OptionsIconsRoutes(
+          route: GraphicProductsRoute(viewIndex: 1),
+          rol: UserRoles.admin,
+        ),
       ],
     ),
     OptionsIcons(
       icon: Ionicons.person,
       routes: [
-        OptionsIconsRoutes(route: '/user/info', rol: UserRoles.artesano),
-        OptionsIconsRoutes(route: '/admin/users-list', rol: UserRoles.admin),
+        OptionsIconsRoutes(
+          route: InfoUserRoute(viewIndex: 2),
+          rol: UserRoles.artesano,
+        ),
+        OptionsIconsRoutes(
+          route: UsersListAdminRoute(viewIndex: 2),
+          rol: UserRoles.admin,
+        ),
       ],
     ),
   ];
@@ -105,7 +114,7 @@ class BottomNavBar extends HookWidget {
     return Flexible(
       child: InkWell(
         onTap: () {
-          appRouter.navigateNamed(optionForThisRol.route);
+          appRouter.navigate(optionForThisRol.route);
         },
         child: Container(
           margin: const EdgeInsets.symmetric(horizontal: 7.5, vertical: 10.0),

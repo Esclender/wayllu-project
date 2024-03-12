@@ -1,11 +1,12 @@
 import 'dart:io';
-
 import 'package:auto_route/auto_route.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_hooks/flutter_hooks.dart';
 import 'package:image_picker/image_picker.dart';
 import 'package:ionicons/ionicons.dart';
+import 'package:wayllu_project/src/config/router/app_router.dart';
 import 'package:wayllu_project/src/domain/models/user_info_model.dart';
+import 'package:wayllu_project/src/locator.dart';
 import 'package:wayllu_project/src/presentation/widgets/bottom_navbar.dart';
 import 'package:wayllu_project/src/presentation/widgets/top_vector.dart';
 import 'package:wayllu_project/src/utils/constants/colors.dart';
@@ -13,18 +14,22 @@ import 'package:wayllu_project/src/utils/constants/colors.dart';
 @RoutePage()
 class InfoUserScreen extends HookWidget {
   final bool isAdmin;
+  final int viewIndex;
 
-  InfoUserScreen({this.isAdmin = false});
-
+  final appRouter = getIt<AppRouter>();
   final ImagePicker imagePicker = ImagePicker();
 
-  final int viewIndex = 2;
+  InfoUserScreen({
+    required this.viewIndex,
+    this.isAdmin = false,
+  });
 
   final PersonalInfo person = PersonalInfo(
     dni: '123456789',
     nombre: 'Maria Jose Fernandez',
     comunidad: 'Grupo 1',
     clave: 'Enero20.',
+    isAdmin: true,
   );
 
   final ContactInfo contact = ContactInfo(telefono: '928590695');
@@ -37,6 +42,17 @@ class InfoUserScreen extends HookWidget {
         viewSelected: viewIndex,
       ),
       backgroundColor: bgPrimary,
+      appBar: isAdmin
+          ? AppBar(
+              backgroundColor: bgPrimary,
+              surfaceTintColor: Colors.transparent,
+              leading: InkWell(
+                onTap: () => {appRouter.pop()},
+                child: const Icon(Ionicons.arrow_back),
+              ),
+              centerTitle: true,
+            )
+          : null,
       body: Column(
         children: [
           TopVector(),

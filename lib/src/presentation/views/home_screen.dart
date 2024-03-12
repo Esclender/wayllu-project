@@ -16,9 +16,11 @@ import 'package:wayllu_project/src/utils/constants/colors.dart';
 
 @RoutePage()
 class HomeScreen extends HookWidget {
-  HomeScreen();
+  final int viewIndex;
 
-  int get viewIndex => 0;
+  HomeScreen({
+    required this.viewIndex,
+  });
 
   final appRouter = getIt<AppRouter>();
 
@@ -280,15 +282,15 @@ class HomeScreen extends HookWidget {
           ? Container(
               margin: const EdgeInsets.symmetric(horizontal: 24, vertical: 6),
               width: MediaQuery.of(context).size.width,
-              height: MediaQuery.of(context).size.height * 0.24,
+              height: MediaQuery.of(context).size.height * 0.23,
               decoration: BoxDecoration(
                 color: bottomNavBar,
                 boxShadow: [
                   BoxShadow(
                     color: const Color.fromARGB(255, 95, 95, 95)
-                        .withOpacity(0.08), // Color de la sombra y su opacidad
-                    spreadRadius: 2, // Radio de propagación de la sombra
-                    blurRadius: 4, // Radio de desenfoque de la sombra
+                        .withOpacity(0.08), 
+                    spreadRadius: 2, 
+                    blurRadius: 4, 
                     offset: const Offset(
                       0,
                       1,
@@ -303,7 +305,7 @@ class HomeScreen extends HookWidget {
                     children: [
                       Container(
                         width: MediaQuery.of(context).size.width,
-                        height: MediaQuery.of(context).size.height * 0.09,
+                        height: MediaQuery.of(context).size.height * 0.08,
                         padding: const EdgeInsets.symmetric(horizontal: 12),
                         decoration: BoxDecoration(
                           color: iconColor.withOpacity(0.7),
@@ -348,7 +350,7 @@ class HomeScreen extends HookWidget {
                   Padding(
                     padding: const EdgeInsets.symmetric(
                       horizontal: 8.0,
-                      vertical: 10,
+                      vertical: 6,
                     ),
                     child: SizedBox(
                       width: MediaQuery.of(context).size.width * 0.72,
@@ -452,7 +454,7 @@ class HomeScreen extends HookWidget {
                             child: Container(
                               margin: const EdgeInsets.only(top: 4),
                               width: MediaQuery.of(context).size.width,
-                              height: 36,
+                              height: MediaQuery.of(context).size.height*0.05,
                               decoration: ShapeDecoration(
                                 color: secondary,
                                 shape: RoundedRectangleBorder(
@@ -464,7 +466,7 @@ class HomeScreen extends HookWidget {
                                   'Nuevo informe',
                                   style: TextStyle(
                                     fontFamily: 'Gotham',
-                                    fontSize: 12,
+                                    fontSize: 14,
                                     fontWeight: FontWeight.w300,
                                     color: Colors.white,
                                   ),
@@ -683,7 +685,7 @@ Container categoriesProducts(
               alignment: Alignment.center,
               child: Image.asset(
                 image,
-                width: 80,
+                width: MediaQuery.of(context).size.width *0.2,
               ),),
           Container(
             alignment: Alignment.bottomCenter,

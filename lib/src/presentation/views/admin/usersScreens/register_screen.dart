@@ -1,42 +1,24 @@
+import 'package:auto_route/auto_route.dart';
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:hexcolor/hexcolor.dart';
+import 'package:ionicons/ionicons.dart';
+import 'package:wayllu_project/src/config/router/app_router.dart';
 import 'package:wayllu_project/src/domain/models/community_model.dart';
+import 'package:wayllu_project/src/locator.dart';
+import 'package:wayllu_project/src/presentation/widgets/gradient_widgets.dart';
 import 'package:wayllu_project/src/presentation/widgets/register_user/info_label_modal.dart';
 import 'package:wayllu_project/src/presentation/widgets/register_user/my_text_label.dart';
 import 'package:wayllu_project/src/presentation/widgets/register_user/my_textfield.dart';
 import 'package:wayllu_project/src/presentation/widgets/register_user/space_y.dart';
+import 'package:wayllu_project/src/utils/constants/colors.dart';
 
+@RoutePage()
 class RegisterUserScreen extends StatefulWidget {
   const RegisterUserScreen({super.key});
 
   @override
   State<RegisterUserScreen> createState() => _RegisterUserScreenState();
-}
-
-String? validateNotEmpty(String? value, String message) {
-  if (value == null || value.isEmpty) {
-    return message;
-  }
-
-  return null;
-}
-
-String? validateMinMaxLength(
-  String? value,
-  int minLength,
-  int maxLength,
-) {
-  if (value != null) {
-    if (value.length < minLength) {
-      return 'La longitud no puede ser menor a $minLength';
-    }
-
-    if (value.length > maxLength) {
-      return 'La longitud no puede ser mayor a $maxLength';
-    }
-  }
-  return null;
 }
 
 class _RegisterUserScreenState extends State<RegisterUserScreen> {
@@ -58,7 +40,10 @@ class _RegisterUserScreenState extends State<RegisterUserScreen> {
     super.dispose();
   }
 
+  bool isEmailCorrect = false;
   final _formKey = GlobalKey<FormState>();
+
+  final appRouter = getIt<AppRouter>();
 
   List<DropdownMenuItem<String>> communityDropdownItems =
       list_community.map((community) {
@@ -123,9 +108,7 @@ class _RegisterUserScreenState extends State<RegisterUserScreen> {
                     ),
                   ),
                   child: const Text('Volver'),
-                  onPressed: () {
-                    Navigator.of(context).pop();
-                  },
+                  onPressed: () {},
                 ),
                 TextButton(
                   style: TextButton.styleFrom(
@@ -152,12 +135,25 @@ class _RegisterUserScreenState extends State<RegisterUserScreen> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
+      backgroundColor: bgPrimary,
+      appBar: AppBar(
+        backgroundColor: bgPrimary,
+        surfaceTintColor: Colors.transparent,
+        leading: InkWell(
+          onTap: () => {appRouter.pop()},
+          child: const Icon(Ionicons.arrow_back),
+        ),
+        title: GradientText(
+          text: 'Grafico de ventas',
+          fontSize: 25.0,
+        ),
+        centerTitle: true,
+      ),
       body: Padding(
         padding: const EdgeInsets.all(
-          10.0,
+          30.0,
         ),
         child: Form(
-          autovalidateMode: AutovalidateMode.onUserInteraction,
           key: _formKey,
           child: ListView(
             children: [
@@ -169,20 +165,6 @@ class _RegisterUserScreenState extends State<RegisterUserScreen> {
                   ),
                   MyTextField(
                     onChanged: (text) {},
-                    validator: (value) {
-                      final String? notEmptyValidation = validateNotEmpty(
-                          value, 'El nombre de usuario no puede estar vacío');
-                      if (notEmptyValidation != null) {
-                        return notEmptyValidation;
-                      }
-
-                      final String? minMaxLengthValidation =
-                          validateMinMaxLength(value, 3, 10);
-                      if (minMaxLengthValidation != null) {
-                        return minMaxLengthValidation;
-                      }
-                      return null;
-                    },
                     onSaved: (val) => {
                       setState(() {
                         username = val;
@@ -201,20 +183,6 @@ class _RegisterUserScreenState extends State<RegisterUserScreen> {
                       ),
                       MyTextField(
                         onChanged: (text) {},
-                        validator: (value) {
-                          final String? notEmptyValidation = validateNotEmpty(
-                              value, 'El campo DNI no puede estar vacío');
-                          if (notEmptyValidation != null) {
-                            return notEmptyValidation;
-                          }
-
-                          final String? minMaxLengthValidation =
-                              validateMinMaxLength(value, 8, 8);
-                          if (minMaxLengthValidation != null) {
-                            return minMaxLengthValidation;
-                          }
-                          return null;
-                        },
                         onSaved: (val) => {
                           setState(() {
                             dni = val;
@@ -241,20 +209,6 @@ class _RegisterUserScreenState extends State<RegisterUserScreen> {
                           setState(() {
                             phone = val;
                           }),
-                        },
-                        validator: (value) {
-                          final String? notEmptyValidation = validateNotEmpty(
-                              value, 'El telefono no puede estar vacío');
-                          if (notEmptyValidation != null) {
-                            return notEmptyValidation;
-                          }
-
-                          final String? minMaxLengthValidation =
-                              validateMinMaxLength(value, 9, 9);
-                          if (minMaxLengthValidation != null) {
-                            return minMaxLengthValidation;
-                          }
-                          return null;
                         },
                         hintText: '987654321',
                         obscureText: false,
@@ -331,11 +285,6 @@ class _RegisterUserScreenState extends State<RegisterUserScreen> {
                             ),
                           ),
                         ),
-                        validator: (value) {
-                          if (value == null) {
-                            return 'Debes seleccionar una comunidad';
-                          }
-                        },
                         onChanged: (value) {
                           setState(() {
                             community_select = value;
@@ -367,32 +316,10 @@ class _RegisterUserScreenState extends State<RegisterUserScreen> {
                             height: 10,
                           ),
                           MyTextField(
-                            onChanged: (val) => {
-                              setState(() {
-                                password = val;
-                              }),
-                            },
                             onSaved: (val) => {
                               setState(() {
                                 password = val;
                               }),
-                            },
-                            validator: (value) {
-                              final String? notEmptyValidation =
-                                  validateNotEmpty(
-                                value,
-                                'La contraseña no puede estar vacío',
-                              );
-                              if (notEmptyValidation != null) {
-                                return notEmptyValidation;
-                              }
-
-                              final String? minMaxLengthValidation =
-                                  validateMinMaxLength(value, 6, 15);
-                              if (minMaxLengthValidation != null) {
-                                return minMaxLengthValidation;
-                              }
-                              return null;
                             },
                             hintText: '12345678',
                             obscureText: true,
@@ -412,29 +339,6 @@ class _RegisterUserScreenState extends State<RegisterUserScreen> {
                             height: 10,
                           ),
                           MyTextField(
-                            validator: (value) {
-                              final String? notEmptyValidation =
-                                  validateNotEmpty(
-                                value,
-                                'La confirmación no puede estar vacío',
-                              );
-
-                              if (notEmptyValidation != null) {
-                                return notEmptyValidation;
-                              }
-
-                              final String? minMaxLengthValidation =
-                                  validateMinMaxLength(value, 6, 15);
-                              if (minMaxLengthValidation != null) {
-                                return minMaxLengthValidation;
-                              }
-
-                              if (value != password) {
-                                return 'No son iguales';
-                              }
-
-                              return null;
-                            },
                             onSaved: (val) => {
                               setState(() {
                                 confirmPassword = val;
@@ -449,7 +353,6 @@ class _RegisterUserScreenState extends State<RegisterUserScreen> {
                   ],
                 ),
               ),
-              const SpaceY(),
               Padding(
                 padding: const EdgeInsets.fromLTRB(8, 0, 0, 0),
                 child: Text(
@@ -489,4 +392,3 @@ class _RegisterUserScreenState extends State<RegisterUserScreen> {
     );
   }
 }
-

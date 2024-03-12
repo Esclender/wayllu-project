@@ -1,36 +1,29 @@
-import 'dart:math';
-
 import 'package:flutter/material.dart';
 import 'package:flutter_hooks/flutter_hooks.dart';
 import 'package:gap/gap.dart';
 import 'package:ionicons/ionicons.dart';
+import 'package:wayllu_project/src/config/router/app_router.dart';
 import 'package:wayllu_project/src/domain/enums/lists_enums.dart';
 import 'package:wayllu_project/src/domain/models/list_items_model.dart';
+import 'package:wayllu_project/src/locator.dart';
 import 'package:wayllu_project/src/utils/constants/colors.dart';
 
 class ColorfullItemsList extends HookWidget {
   final ListEnums listType;
+  final List<ColorfullItem> dataToRender;
+  final bool isScrollable;
+
+  //Dependencies Injection
+  final appRouter = getIt<AppRouter>();
 
   ColorfullItemsList({
     required this.listType,
+    required this.dataToRender,
+    this.isScrollable = true,
   });
 
   final double navBarHeight = 60.0;
   final double registerUserBtnHeight = 60.0;
-
-  final List<ColorfullItem> data = [
-    ColorfullItem(
-      url:
-          'https://images.unsplash.com/profile-1446404465118-3a53b909cc82?ixlib=rb-0.3.5&q=80&fm=jpg&crop=faces&cs=tinysrgb&fit=crop&h=64&w=64&s=3ef46b07bb19f68322d027cb8f9ac99f',
-      nombre: 'Random 1',
-      descriptions: [
-        DescriptionItem(field: 'DNI', value: '45678932'),
-        DescriptionItem(field: 'Comunidad', value: 'Grupo 1'),
-        DescriptionItem(field: 'Tlf', value: '928590695'),
-        DescriptionItem(field: 'Registrado', value: '23/05/2023'),
-      ],
-    ),
-  ];
 
   //[gradient, color]
   final List<List> gradients = [
@@ -40,22 +33,28 @@ class ColorfullItemsList extends HookWidget {
     [gradientFourth, fourthColor],
   ];
 
+  void _navigateToEditUser() {
+    appRouter.navigate(InfoUserRoute(viewIndex: 2));
+  }
+
   @override
   Widget build(BuildContext context) {
     return ListView.separated(
       separatorBuilder: (context, index) => const Gap(35),
+      physics: isScrollable ? null : const NeverScrollableScrollPhysics(),
       shrinkWrap: true,
-      itemCount: 20,
+      itemCount: dataToRender.length,
       itemBuilder: (BuildContext c, int ind) {
         return Padding(
           padding: EdgeInsets.only(
-            left: 20.0,
-            right: 20.0,
-            bottom:
-                ind == 19 ? navBarHeight + (registerUserBtnHeight * 2) : 0.0,
+            bottom: ind == dataToRender.length - 1
+                ? listType == ListEnums.users
+                    ? navBarHeight + (registerUserBtnHeight * 2)
+                    : navBarHeight + 10
+                : 0.0,
           ),
           child: _buildItemContainer(
-            itemData: data[0],
+            itemData: dataToRender[0],
           ),
         );
       },
@@ -65,13 +64,11 @@ class ColorfullItemsList extends HookWidget {
   Widget _buildItemContainer({
     required ColorfullItem itemData,
   }) {
-    final int random = Random().nextInt(3);
-
     final BoxDecoration decoration = BoxDecoration(
       boxShadow: [
         simpleShadow,
       ],
-      gradient: gradients[random][0] as Gradient,
+      gradient: gradients[itemData.gradient][0] as Gradient,
       borderRadius: const BorderRadius.all(
         Radius.circular(20),
       ),
@@ -86,16 +83,13 @@ class ColorfullItemsList extends HookWidget {
               padding: const EdgeInsets.all(30),
               decoration: decoration,
               child: _listTile(
-                leading: CircleAvatar(
-                  radius: 40,
-                  backgroundImage: NetworkImage(itemData.url),
-                ),
+                leading: _buildImageAvatar(itemData.url),
                 title: Text(itemData.nombre),
                 fields: itemData.descriptions,
               ),
             ),
             _itemMarker(
-              gradients[random][1] as Color,
+              gradients[itemData.gradient][1] as Color,
             ),
           ],
         ),
@@ -104,18 +98,35 @@ class ColorfullItemsList extends HookWidget {
     );
   }
 
-  Widget _itemEdit() {
+  Widget _buildImageAvatar(String url) {
     return Container(
-      width: 40,
-      height: 40,
-      margin: const EdgeInsets.all(8),
+      width: 75,
+      height: 75,
       decoration: BoxDecoration(
-        gradient: gradientOrange,
-        borderRadius: BorderRadius.circular(10),
+        borderRadius: BorderRadius.circular(20.0),
+        image: DecorationImage(
+          image: NetworkImage(url),
+          fit: BoxFit.cover,
+        ),
       ),
-      child: const Icon(
-        Ionicons.pencil,
-        color: Colors.white,
+    );
+  }
+
+  Widget _itemEdit() {
+    return InkWell(
+      onTap: _navigateToEditUser,
+      child: Container(
+        width: 40,
+        height: 40,
+        margin: const EdgeInsets.all(8),
+        decoration: BoxDecoration(
+          gradient: gradientOrange,
+          borderRadius: BorderRadius.circular(10),
+        ),
+        child: const Icon(
+          Ionicons.pencil,
+          color: Colors.white,
+        ),
       ),
     );
   }

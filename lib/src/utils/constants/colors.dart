@@ -8,7 +8,6 @@ HexColor secondary = HexColor('#FFA743');
 HexColor btnprimary = HexColor('#B80000');
 HexColor btnsecondary = HexColor('#FA9C3F');
 HexColor bottomNavBar = HexColor('#FFFFFF');
-HexColor topNavBar = HexColor('#FFFFFF');
 HexColor bgContainer = HexColor('#FFFFFF');
 HexColor bottomNavBarStroke = HexColor('#919191');
 HexColor noSelectedView = HexColor('#919191');
