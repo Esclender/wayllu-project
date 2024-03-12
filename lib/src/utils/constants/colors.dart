@@ -19,6 +19,10 @@ HexColor iconColor = HexColor('#241E20');
 HexColor clearLetters = HexColor('#DADADA');
 HexColor smallWordsColor = HexColor('#0D1829');
 HexColor gradientWhite = HexColor('#F3F6FF');
+HexColor line = HexColor('#D8DBDF');
+HexColor subs = HexColor('#5A5A5A');
+HexColor buttontotal=HexColor('#A4B304');
+HexColor estadotxt=HexColor('#25924D');
 
 //Gradients
 LinearGradient gradientMain = LinearGradient(
