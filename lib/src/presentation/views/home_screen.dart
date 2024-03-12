@@ -1,8 +1,10 @@
 import 'package:auto_route/auto_route.dart';
 import 'package:auto_size_text/auto_size_text.dart';
+import 'package:badges/badges.dart' as badge;
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_hooks/flutter_hooks.dart';
+import 'package:intl/intl.dart';
 import 'package:ionicons/ionicons.dart';
 import 'package:wayllu_project/src/config/router/app_router.dart';
 import 'package:wayllu_project/src/domain/enums/user_roles.dart';
@@ -14,9 +16,11 @@ import 'package:wayllu_project/src/utils/constants/colors.dart';
 
 @RoutePage()
 class HomeScreen extends HookWidget {
-  HomeScreen();
+  final int viewIndex;
 
-  int get viewIndex => 0;
+  HomeScreen({
+    required this.viewIndex,
+  });
 
   final appRouter = getIt<AppRouter>();
 
@@ -82,6 +86,10 @@ class HomeScreen extends HookWidget {
           SliverList(
             delegate: SliverChildListDelegate(
               [
+                const SizedBox(
+                  height: 8,
+                ),
+                firstLine(context, isAdmin),
                 dashboard(context, isAdmin),
                 Container(
                   margin:
@@ -97,58 +105,13 @@ class HomeScreen extends HookWidget {
                     padding: const EdgeInsets.only(left: 4),
                     child: Row(
                       mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                      children: [
-                        categoriesProducts(
+                      children: categories.map((category) {
+                        return categoriesProducts(
                           context,
-                          'Gorros',
-                          'assets/images/product/gorro-category.png',
-                        ),
-                        categoriesProducts(
-                          context,
-                          'Ponchos',
-                          'assets/images/product/poncho-category.png',
-                        ),
-                        categoriesProducts(
-                          context,
-                          'Mantos',
-                          'assets/images/product/manto-category.png',
-                        ),
-                        categoriesProducts(
-                          context,
-                          'Ponchos',
-                          'assets/images/product/poncho-category.png',
-                        ),
-                        categoriesProducts(
-                          context,
-                          'Mantos',
-                          'assets/images/product/manto-category.png',
-                        ),
-                        categoriesProducts(
-                          context,
-                          'Gorros',
-                          'assets/images/product/gorro-category.png',
-                        ),
-                        categoriesProducts(
-                          context,
-                          'Ponchos',
-                          'assets/images/product/poncho-category.png',
-                        ),
-                        categoriesProducts(
-                          context,
-                          'Mantos',
-                          'assets/images/product/manto-category.png',
-                        ),
-                        categoriesProducts(
-                          context,
-                          'Ponchos',
-                          'assets/images/product/poncho-category.png',
-                        ),
-                        categoriesProducts(
-                          context,
-                          'Mantos',
-                          'assets/images/product/manto-category.png',
-                        ),
-                      ],
+                          category.name,
+                          category.image,
+                        );
+                      }).toList(),
                     ),
                   ),
                 ),
@@ -222,31 +185,88 @@ class HomeScreen extends HookWidget {
     );
   }
 
+  Padding firstLine(BuildContext context, UserRoles rol) {
+    final bool isAdmin = rol == UserRoles.admin;
+    final dateString =
+        DateFormat("dd 'de' MMMM yyyy", 'es').format(DateTime.now());
+
+    return Padding(
+      padding: const EdgeInsets.symmetric(horizontal: 22.0),
+      child: isAdmin
+          ? SizedBox(
+              width: MediaQuery.of(context).size.width,
+              height: 18,
+              child: Row(
+                mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                children: [
+                  const SizedBox(
+                    width: 120,
+                    height: 18,
+                    child: Text(
+                      'Actividad',
+                      style: TextStyle(
+                        color: Color(0xFF241E20),
+                        fontSize: 16,
+                        fontFamily: 'Gotham',
+                        fontWeight: FontWeight.w500,
+                        height: 0,
+                      ),
+                    ),
+                  ),
+                  SizedBox(
+                    width: 145,
+                    child: AutoSizeText(
+                      'Hoy, $dateString',
+                      textAlign: TextAlign.center,
+                      style: const TextStyle(
+                        color: Color(0xFF636369),
+                        fontFamily: 'Gotham',
+                        fontWeight: FontWeight.w300,
+                      ),
+                      maxLines: 1,
+                      minFontSize: 10,
+                      maxFontSize: 12,
+                    ),
+                  ),
+                ],
+              ),
+            )
+          : Container(),
+    );
+  }
+
   Widget shoppingCart(BuildContext context) {
     return InkWell(
       onTap: () {
         appRouter.pushNamed('/user/carrito');
       },
-      child: Container(
-        width: MediaQuery.of(context).size.width * 0.11,
-        height: MediaQuery.of(context).size.width * 0.11,
-        decoration: BoxDecoration(
-          color: bottomNavBar,
-          borderRadius: BorderRadius.circular(10),
-          boxShadow: [
-            BoxShadow(
-              color: const Color.fromARGB(255, 95, 95, 95)
-                  .withOpacity(0.08), // Color de la sombra y su opacidad
-              spreadRadius: 2, // Radio de propagación de la sombra
-              blurRadius: 4, // Radio de desenfoque de la sombra
-              offset: const Offset(
-                0,
-                1,
-              ), // Desplazamiento de la sombra (en este caso, hacia abajo)
-            ),
-          ],
+      child: badge.Badge(
+        badgeContent: const Text(
+          '4',
+          style: TextStyle(color: Colors.white),
         ),
-        child: const Icon(Ionicons.bag_handle_outline),
+        position: badge.BadgePosition.topEnd(end: -8),
+        child: Container(
+          width: MediaQuery.of(context).size.width * 0.11,
+          height: MediaQuery.of(context).size.width * 0.11,
+          decoration: BoxDecoration(
+            color: bottomNavBar,
+            borderRadius: BorderRadius.circular(10),
+            boxShadow: [
+              BoxShadow(
+                color: const Color.fromARGB(255, 95, 95, 95)
+                    .withOpacity(0.08), // Color de la sombra y su opacidad
+                spreadRadius: 2, // Radio de propagación de la sombra
+                blurRadius: 4, // Radio de desenfoque de la sombra
+                offset: const Offset(
+                  0,
+                  1,
+                ), // Desplazamiento de la sombra (en este caso, hacia abajo)
+              ),
+            ],
+          ),
+          child: const Icon(Ionicons.bag_handle_outline),
+        ),
       ),
     );
   }
@@ -257,7 +277,7 @@ class HomeScreen extends HookWidget {
     return Center(
       child: isAdmin
           ? Container(
-              margin: const EdgeInsets.symmetric(horizontal: 22, vertical: 6),
+              margin: const EdgeInsets.symmetric(horizontal: 24, vertical: 6),
               width: MediaQuery.of(context).size.width,
               height: MediaQuery.of(context).size.height * 0.24,
               decoration: BoxDecoration(
@@ -325,9 +345,12 @@ class HomeScreen extends HookWidget {
                     ],
                   ),
                   Padding(
-                    padding: const EdgeInsets.all(8.0),
+                    padding: const EdgeInsets.symmetric(
+                      horizontal: 8.0,
+                      vertical: 10,
+                    ),
                     child: SizedBox(
-                      width: MediaQuery.of(context).size.width * 0.75,
+                      width: MediaQuery.of(context).size.width * 0.72,
                       child: Column(
                         children: [
                           Row(
@@ -348,7 +371,7 @@ class HomeScreen extends HookWidget {
                                     ),
                                   ),
                                   const SizedBox(
-                                    width: 8,
+                                    width: 4,
                                   ),
                                   Column(
                                     crossAxisAlignment:
@@ -422,26 +445,28 @@ class HomeScreen extends HookWidget {
                             ],
                           ),
                           TextButton(
-                            onPressed: () {},
+                            // ignore: avoid_returning_null_for_void
+                            onPressed: () => null,
                             child: Container(
-                              width: 200,
-                              height: 40,
-                              decoration: BoxDecoration(
-                                gradient: LinearGradient(
-                                  colors: [
-                                    mainColor.withOpacity(0.5),
-                                    secondaryColor.withOpacity(0.5),
-                                    secondaryColor,
-                                  ],
-                                  stops: const [
-                                    0.0,
-                                    0.4,
-                                    0.6,
-                                  ],
-                                  begin: Alignment.bottomCenter,
-                                  end: Alignment.topCenter,
+                              margin: const EdgeInsets.only(top: 6),
+                              width: MediaQuery.of(context).size.width,
+                              height: 36,
+                              decoration: ShapeDecoration(
+                                color: secondary,
+                                shape: RoundedRectangleBorder(
+                                  borderRadius: BorderRadius.circular(5),
                                 ),
-                                borderRadius: BorderRadius.circular(5),
+                              ),
+                              child: const Center(
+                                child: Text(
+                                  'Nuevo informe',
+                                  style: TextStyle(
+                                    fontFamily: 'Gotham',
+                                    fontSize: 12,
+                                    fontWeight: FontWeight.w300,
+                                    color: Colors.white,
+                                  ),
+                                ),
                               ),
                             ),
                           ),
@@ -461,8 +486,8 @@ Container productsHome(BuildContext context, Producto producto, UserRoles rol) {
   final bool isAdmin = rol == UserRoles.admin;
 
   return Container(
-    width: MediaQuery.of(context).size.width * 0.45,
-    height: MediaQuery.of(context).size.height * 0.285,
+    width: MediaQuery.of(context).size.width * 0.40,
+    height: MediaQuery.of(context).size.height * 0.26,
     decoration: BoxDecoration(
       color: bottomNavBar,
       boxShadow: [
@@ -485,7 +510,7 @@ Container productsHome(BuildContext context, Producto producto, UserRoles rol) {
           children: [
             Container(
               width: MediaQuery.of(context).size.width * 0.45,
-              height: MediaQuery.of(context).size.height * 0.19,
+              height: MediaQuery.of(context).size.height * 0.17,
               decoration: BoxDecoration(
                 borderRadius: const BorderRadius.only(
                   topLeft: Radius.circular(10),
@@ -502,7 +527,7 @@ Container productsHome(BuildContext context, Producto producto, UserRoles rol) {
               right: 8.0,
               child: !isAdmin
                   ? Container(
-                      padding: const EdgeInsets.all(4.5),
+                      padding: const EdgeInsets.all(4),
                       decoration: BoxDecoration(
                         color: bottomNavBar,
                         borderRadius: BorderRadius.circular(5),
@@ -527,7 +552,7 @@ Container productsHome(BuildContext context, Producto producto, UserRoles rol) {
                 producto.name,
                 style: const TextStyle(
                   fontFamily: 'Gotham',
-                  fontSize: 16,
+                  fontSize: 14,
                   fontWeight: FontWeight.w500,
                 ),
               ),
@@ -631,8 +656,8 @@ Container categoriesProducts(
     child: Container(
       margin: const EdgeInsets.symmetric(horizontal: 4),
       padding: const EdgeInsets.only(top: 15, bottom: 8),
-      height: MediaQuery.of(context).size.height * 0.20,
-      width: MediaQuery.of(context).size.width * 0.35,
+      height: MediaQuery.of(context).size.height * 0.18,
+      width: MediaQuery.of(context).size.width * 0.32,
       decoration: BoxDecoration(
         color: bottomNavBar,
         borderRadius: const BorderRadius.all(Radius.circular(10)),
@@ -652,7 +677,13 @@ Container categoriesProducts(
       child: Column(
         mainAxisAlignment: MainAxisAlignment.spaceBetween,
         children: [
-          Container(alignment: Alignment.center, child: Image.asset(image)),
+          Container(
+            alignment: Alignment.center,
+            child: Image.asset(
+              image,
+              width: 80,
+            ),
+          ),
           Container(
             alignment: Alignment.bottomCenter,
             child: Text(

@@ -61,5 +61,41 @@ final List<Producto> productos = [
     description: 'Descripción del Producto 2',
     price: 25.0,
   ),
-  // Agrega más productos según sea necesario
+];
+
+class Categories {
+  final String image;
+  final String name;
+
+  Categories({
+    required this.image,
+    required this.name,
+  });
+}
+
+final List<Categories> categories = [
+  Categories(
+    image: 'assets/images/product/gorro-category.png',
+    name: 'Gorros',
+  ),
+  Categories(
+    image: 'assets/images/product/poncho-category.png',
+    name: 'Ponchos',
+  ),
+  Categories(
+    image: 'assets/images/product/manto-category.png',
+    name: 'Mantos',
+  ),
+  Categories(
+    image: 'assets/images/product/gorro-category.png',
+    name: 'Gorros',
+  ),
+  Categories(
+    image: 'assets/images/product/poncho-category.png',
+    name: 'Ponchos',
+  ),
+  Categories(
+    image: 'assets/images/product/manto-category.png',
+    name: 'Mantos',
+  ),
 ];

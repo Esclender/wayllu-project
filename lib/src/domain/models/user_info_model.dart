@@ -18,12 +18,14 @@ class PersonalInfo extends InfoBase {
   String comunidad;
   String clave;
   String? urlProfile;
+  bool isAdmin;
 
   PersonalInfo({
     required this.dni,
     required this.nombre,
     required this.comunidad,
     required this.clave,
+    required this.isAdmin,
     this.urlProfile,
   });
 

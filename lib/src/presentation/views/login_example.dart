@@ -2,10 +2,15 @@ import 'package:auto_route/auto_route.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_hooks/flutter_hooks.dart';
+import 'package:hexcolor/hexcolor.dart';
 import 'package:wayllu_project/src/config/router/app_router.dart';
 import 'package:wayllu_project/src/domain/dtos/user_credentials_rep.dart';
 import 'package:wayllu_project/src/locator.dart';
 import 'package:wayllu_project/src/presentation/cubit/is_admin_cubit.dart';
+import 'package:wayllu_project/src/presentation/widgets/login/text_login.dart';
+import 'package:wayllu_project/src/presentation/widgets/login/text_login_field.dart';
+import 'package:wayllu_project/src/presentation/widgets/register_user/my_text_label.dart';
+import 'package:wayllu_project/src/presentation/widgets/register_user/space_y.dart';
 import 'package:wayllu_project/src/utils/constants/colors.dart';
 
 @RoutePage()
@@ -30,45 +35,109 @@ class LoginExampleScreen extends HookWidget {
     );
 
     context.read<UserLoggedCubit>().isAdmin(credentialsUser);
-    appRouter.navigateNamed('/home');
+    appRouter.navigate(HomeRoute(viewIndex: 0));
   }
 
   @override
   Widget build(BuildContext context) {
-    final controllerEmail = useTextEditingController(text: 'user');
-    final controllerClave = useTextEditingController(text: 'user');
+    final controllerEmail = useTextEditingController(text: 'admin');
+    final controllerClave = useTextEditingController(text: 'admin');
 
     return Scaffold(
       backgroundColor: bgPrimary,
-      body: Padding(
-        padding: const EdgeInsets.all(20.0),
-        child: Column(
-          mainAxisAlignment: MainAxisAlignment.center,
-          children: [
-            TextFormField(
-              controller: controllerEmail,
-              decoration: const InputDecoration(
-                label: Text('Email'),
+      body: Container(
+        decoration: const BoxDecoration(
+          gradient: LinearGradient(
+            stops: [0.01, 1],
+            begin: FractionalOffset.bottomLeft,
+            end: FractionalOffset.topRight,
+            colors: [
+              Color(0xFFFFA743),
+              Color(0xFFB80000),
+            ],
+          ),
+        ),
+        child: Padding(
+          padding:
+              const EdgeInsets.only(top: 40, left: 20, bottom: 40, right: 20),
+          child: ListView(
+            children: [
+              Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  Column(
+                    children: [
+                      Row(
+                        children: [
+                          Image.asset('assets/ISOTIPO.PNG'),
+                        ],
+                      ),
+                      const Row(
+                        children: [
+                          TextLogin(
+                            text: 'BIENVENIDO 👋',
+                          ),
+                        ],
+                      ),
+                      const Row(
+                        children: [
+                          TextLogin(text: 'A '),
+                          TextLogin(
+                            text: 'WAYLLU',
+                            colorText: Colors.amber,
+                          ),
+                        ],
+                      ),
+                    ],
+                  ),
+                  const SpaceY(
+                    value: 40,
+                  ),
+                  Column(
+                    mainAxisAlignment: MainAxisAlignment.center,
+                    children: [
+                      const MyTextLabel(hintText: 'DNI'),
+                      const SpaceY(),
+                      TextLoginField(
+                        controller: controllerEmail,
+                        hintText: 'Ingrese su DNI',
+                        obscureText: false,
+                      ),
+                      const SizedBox(
+                        height: 20,
+                      ),
+                      const MyTextLabel(hintText: 'Password'),
+                      const SpaceY(),
+                      TextLoginField(
+                        controller: controllerClave,
+                        hintText: 'Ingrese con su correo',
+                        obscureText: true,
+                      ),
+                      const SpaceY(),
+                      ElevatedButton(
+                        style: ElevatedButton.styleFrom(
+                          shape: RoundedRectangleBorder(
+                            borderRadius: BorderRadius.circular(8.58),
+                          ),
+                          backgroundColor: HexColor('#B80000'),
+                          minimumSize: const Size.fromHeight(60),
+                        ),
+                        onPressed: () => _loginEvent(
+                          controllerEmail.text,
+                          controllerClave.text,
+                          context,
+                        ),
+                        child: const Text(
+                          'Ingresar',
+                          style: TextStyle(color: Colors.white),
+                        ),
+                      ),
+                    ],
+                  ),
+                ],
               ),
-            ),
-            const SizedBox(
-              height: 20,
-            ),
-            TextFormField(
-              controller: controllerClave,
-              decoration: const InputDecoration(
-                label: Text('Clave'),
-              ),
-            ),
-            ElevatedButton(
-              onPressed: () => _loginEvent(
-                controllerEmail.text,
-                controllerClave.text,
-                context,
-              ),
-              child: const Text('Login'),
-            ),
-          ],
+            ],
+          ),
         ),
       ),
     );
