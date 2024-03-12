@@ -2,6 +2,7 @@ import 'package:auto_route/auto_route.dart';
 import 'package:auto_size_text/auto_size_text.dart';
 import 'package:badges/badges.dart' as badge;
 import 'package:flutter/material.dart';
+import 'package:flutter/widgets.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_hooks/flutter_hooks.dart';
 import 'package:intl/intl.dart';
@@ -282,7 +283,7 @@ class HomeScreen extends HookWidget {
           ? Container(
               margin: const EdgeInsets.symmetric(horizontal: 24, vertical: 6),
               width: MediaQuery.of(context).size.width,
-              height: MediaQuery.of(context).size.height * 0.23,
+              height: MediaQuery.of(context).size.height * 0.22,
               decoration: BoxDecoration(
                 color: bottomNavBar,
                 boxShadow: [
@@ -348,104 +349,108 @@ class HomeScreen extends HookWidget {
                     ],
                   ),
                   Padding(
-                    padding: const EdgeInsets.symmetric(
-                      horizontal: 8.0,
-                      vertical: 6,
+                    padding: const EdgeInsets.only(
+                      left: 8.0,
+                      right: 8.0,
+                      top: 8.0,
                     ),
                     child: SizedBox(
-                      width: MediaQuery.of(context).size.width * 0.72,
+                      width: MediaQuery.of(context).size.width * 0.8,
                       child: Column(
                         children: [
-                          Row(
-                            mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                            children: [
-                              Row(
-                                children: [
-                                  Container(
-                                    width: 30,
-                                    height: 30,
-                                    decoration: BoxDecoration(
-                                      color: thirdColor.withOpacity(0.4),
-                                      shape: BoxShape.circle,
-                                    ),
-                                    child: Icon(
-                                      Ionicons.checkmark,
-                                      color: thirdColor,
-                                    ),
-                                  ),
-                                  const SizedBox(
-                                    width: 4,
-                                  ),
-                                  Column(
-                                    crossAxisAlignment:
-                                        CrossAxisAlignment.start,
-                                    children: [
-                                      Text(
-                                        'Entrada',
-                                        style: TextStyle(
-                                          fontFamily: 'Gotham',
-                                          fontSize: 11,
-                                          color: iconColor,
-                                          fontWeight: FontWeight.w300,
-                                        ),
+                          SizedBox(
+                            width: MediaQuery.of(context).size.width * 0.72,
+                            child: Row(
+                              mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                              children: [
+                                Row(
+                                  children: [
+                                    Container(
+                                      width: 30,
+                                      height: 30,
+                                      decoration: BoxDecoration(
+                                        color: thirdColor.withOpacity(0.4),
+                                        shape: BoxShape.circle,
                                       ),
-                                      Text(
-                                        'S/ 2.000,50',
-                                        style: TextStyle(
-                                          fontFamily: 'Gotham',
-                                          fontSize: 16,
-                                          color: iconColor,
-                                          fontWeight: FontWeight.w500,
-                                        ),
+                                      child: Icon(
+                                        Ionicons.checkmark,
+                                        color: thirdColor,
                                       ),
-                                    ],
-                                  ),
-                                ],
-                              ),
-                              Row(
-                                children: [
-                                  Container(
-                                    width: 30,
-                                    height: 30,
-                                    decoration: BoxDecoration(
-                                      color: mainColor.withOpacity(0.4),
-                                      shape: BoxShape.circle,
                                     ),
-                                    child: Icon(
-                                      Ionicons.caret_down_outline,
-                                      color: mainColor,
+                                    const SizedBox(
+                                      width: 4,
                                     ),
-                                  ),
-                                  const SizedBox(
-                                    width: 8,
-                                  ),
-                                  Column(
-                                    crossAxisAlignment:
-                                        CrossAxisAlignment.start,
-                                    children: [
-                                      Text(
-                                        'Salida',
-                                        style: TextStyle(
-                                          fontFamily: 'Gotham',
-                                          fontSize: 11,
-                                          color: iconColor,
-                                          fontWeight: FontWeight.w300,
+                                    Column(
+                                      crossAxisAlignment:
+                                          CrossAxisAlignment.start,
+                                      children: [
+                                        Text(
+                                          'Entrada',
+                                          style: TextStyle(
+                                            fontFamily: 'Gotham',
+                                            fontSize: 11,
+                                            color: iconColor,
+                                            fontWeight: FontWeight.w300,
+                                          ),
                                         ),
-                                      ),
-                                      Text(
-                                        'S/ 800,00',
-                                        style: TextStyle(
-                                          fontFamily: 'Gotham',
-                                          fontSize: 16,
-                                          color: iconColor,
-                                          fontWeight: FontWeight.w500,
+                                        Text(
+                                          'S/ 2.000,50',
+                                          style: TextStyle(
+                                            fontFamily: 'Gotham',
+                                            fontSize: 16,
+                                            color: iconColor,
+                                            fontWeight: FontWeight.w500,
+                                          ),
                                         ),
+                                      ],
+                                    ),
+                                  ],
+                                ),
+                                Row(
+                                  children: [
+                                    Container(
+                                      width: 30,
+                                      height: 30,
+                                      decoration: BoxDecoration(
+                                        color: mainColor.withOpacity(0.4),
+                                        shape: BoxShape.circle,
                                       ),
-                                    ],
-                                  ),
-                                ],
-                              ),
-                            ],
+                                      child: Icon(
+                                        Ionicons.caret_down_outline,
+                                        color: mainColor,
+                                      ),
+                                    ),
+                                    const SizedBox(
+                                      width: 8,
+                                    ),
+                                    Column(
+                                      crossAxisAlignment:
+                                          CrossAxisAlignment.start,
+                                      children: [
+                                        Text(
+                                          'Salida',
+                                          style: TextStyle(
+                                            fontFamily: 'Gotham',
+                                            fontSize: 11,
+                                            color: iconColor,
+                                            fontWeight: FontWeight.w300,
+                                          ),
+                                        ),
+                                        Text(
+                                          'S/ 800,00',
+                                          style: TextStyle(
+                                            fontFamily: 'Gotham',
+                                            fontSize: 16,
+                                            color: iconColor,
+                                            fontWeight: FontWeight.w500,
+                                          ),
+                                        ),
+                                      ],
+                                    ),
+                                  ],
+                                ),
+                              ],
+                            ),
                           ),
                           TextButton(
                             onPressed: () {
