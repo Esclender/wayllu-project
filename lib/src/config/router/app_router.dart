@@ -4,7 +4,7 @@ import 'package:wayllu_project/src/presentation/views/admin/usersScreens/admin_u
 import 'package:wayllu_project/src/presentation/views/admin/usersScreens/register_screen.dart';
 import 'package:wayllu_project/src/presentation/views/admin/usersScreens/user_list_admin.dart';
 import 'package:wayllu_project/src/presentation/views/home_screen.dart';
-import 'package:wayllu_project/src/presentation/views/login_example.dart';
+import 'package:wayllu_project/src/presentation/views/login_screen.dart';
 import 'package:wayllu_project/src/presentation/views/mainNavigationsRoles/admin_navigation.dart';
 import 'package:wayllu_project/src/presentation/views/mainNavigationsRoles/main_navigation.dart';
 import 'package:wayllu_project/src/presentation/views/mainNavigationsRoles/user_navigation.dart';
