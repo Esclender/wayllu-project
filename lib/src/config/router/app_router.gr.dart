@@ -88,10 +88,10 @@ abstract class _$AppRouter extends RootStackRouter {
         child: UsersListAdminScreen(viewIndex: args.viewIndex),
       );
     },
-    CarritoScreenRoute.name: (routeData) {
+    ReciboRoute.name: (routeData) {
       return AutoRoutePage<dynamic>(
         routeData: routeData,
-        child: CarritoScreen(),
+        child: ReciboScreen(),
       );
     },
   };
@@ -319,14 +319,14 @@ class UsersListAdminRouteArgs {
   }
 }
 
-class CarritoScreenRoute extends PageRouteInfo<void> {
-  const CarritoScreenRoute({List<PageRouteInfo>? children})
+class ReciboRoute extends PageRouteInfo<void> {
+  const ReciboRoute({List<PageRouteInfo>? children})
       : super(
-          CarritoScreenRoute.name,
+          ReciboRoute.name,
           initialChildren: children,
         );
 
-  static const String name = 'CarritoScreenRoute';
+  static const String name = 'ReciboRoute';
 
   static const PageInfo<void> page = PageInfo<void>(name);
 }

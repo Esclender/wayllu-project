@@ -8,6 +8,7 @@ import 'package:wayllu_project/src/presentation/views/login_screen.dart';
 import 'package:wayllu_project/src/presentation/views/mainNavigationsRoles/admin_navigation.dart';
 import 'package:wayllu_project/src/presentation/views/mainNavigationsRoles/main_navigation.dart';
 import 'package:wayllu_project/src/presentation/views/mainNavigationsRoles/user_navigation.dart';
+import 'package:wayllu_project/src/presentation/views/recibo_screen.dart';
 import 'package:wayllu_project/src/presentation/views/user/home/user_carrito_screen.dart';
 import 'package:wayllu_project/src/presentation/widgets/info_user_screen.dart';
 
