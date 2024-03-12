@@ -5,6 +5,9 @@ import 'package:wayllu_project/src/config/router/app_router.dart';
 import 'package:wayllu_project/src/config/theme/app_theme.dart';
 import 'package:wayllu_project/src/locator.dart';
 import 'package:wayllu_project/src/presentation/cubit/is_admin_cubit.dart';
+import 'package:wayllu_project/src/presentation/views/home_screen.dart';
+import 'package:wayllu_project/src/presentation/views/usersAdmin/register_products.dart';
+import 'package:wayllu_project/src/presentation/views/usersAdmin/report.dart';
 
 Future<void> main() async {
  await initializeDateFormatting('es');
@@ -39,7 +42,7 @@ class MyApp extends StatelessWidget {
     return MaterialApp.router(
       debugShowCheckedModeBanner: false,
       theme: ThemeApp.light,
-      routerConfig: _appRouter.config(),
+    routerConfig: _appRouter.config(),
     );
   }
 }

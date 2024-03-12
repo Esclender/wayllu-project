@@ -69,6 +69,7 @@ class AppRouter extends _$AppRouter {
                   path: 'info',
                   page: InfoUserRoute.page,
                 ),
+              
               ],
             ),
           ],

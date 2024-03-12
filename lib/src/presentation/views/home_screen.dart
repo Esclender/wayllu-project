@@ -2,6 +2,7 @@ import 'package:auto_route/auto_route.dart';
 import 'package:auto_size_text/auto_size_text.dart';
 import 'package:badges/badges.dart' as badge;
 import 'package:flutter/material.dart';
+import 'package:flutter/widgets.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_hooks/flutter_hooks.dart';
 import 'package:intl/intl.dart';
@@ -173,6 +174,9 @@ class HomeScreen extends HookWidget {
                     ),
                   ),
                 ),
+                const SizedBox(
+                  height: kBottomNavigationBarHeight + 16.0,
+                ),
               ],
             ),
           ),
@@ -255,14 +259,14 @@ class HomeScreen extends HookWidget {
             boxShadow: [
               BoxShadow(
                 color: const Color.fromARGB(255, 95, 95, 95)
-                    .withOpacity(0.08), // Color de la sombra y su opacidad
-                spreadRadius: 2, // Radio de propagación de la sombra
-                blurRadius: 4, // Radio de desenfoque de la sombra
+                    .withOpacity(0.08), 
+                spreadRadius: 2, 
+                blurRadius: 4, 
                 offset: const Offset(
                   0,
                   1,
-                ), // Desplazamiento de la sombra (en este caso, hacia abajo)
-              ),
+                ), 
+                 ),
             ],
           ),
           child: const Icon(Ionicons.bag_handle_outline),
@@ -279,15 +283,15 @@ class HomeScreen extends HookWidget {
           ? Container(
               margin: const EdgeInsets.symmetric(horizontal: 24, vertical: 6),
               width: MediaQuery.of(context).size.width,
-              height: MediaQuery.of(context).size.height * 0.24,
+              height: MediaQuery.of(context).size.height * 0.22,
               decoration: BoxDecoration(
                 color: bottomNavBar,
                 boxShadow: [
                   BoxShadow(
                     color: const Color.fromARGB(255, 95, 95, 95)
-                        .withOpacity(0.08), // Color de la sombra y su opacidad
-                    spreadRadius: 2, // Radio de propagación de la sombra
-                    blurRadius: 4, // Radio de desenfoque de la sombra
+                        .withOpacity(0.08), 
+                    spreadRadius: 2, 
+                    blurRadius: 4, 
                     offset: const Offset(
                       0,
                       1,
@@ -302,7 +306,7 @@ class HomeScreen extends HookWidget {
                     children: [
                       Container(
                         width: MediaQuery.of(context).size.width,
-                        height: MediaQuery.of(context).size.height * 0.09,
+                        height: MediaQuery.of(context).size.height * 0.08,
                         padding: const EdgeInsets.symmetric(horizontal: 12),
                         decoration: BoxDecoration(
                           color: iconColor.withOpacity(0.7),
@@ -345,112 +349,117 @@ class HomeScreen extends HookWidget {
                     ],
                   ),
                   Padding(
-                    padding: const EdgeInsets.symmetric(
-                      horizontal: 8.0,
-                      vertical: 10,
+                    padding: const EdgeInsets.only(
+                      left: 8.0,
+                      right: 8.0,
+                      top: 8.0,
                     ),
                     child: SizedBox(
-                      width: MediaQuery.of(context).size.width * 0.72,
+                      width: MediaQuery.of(context).size.width * 0.8,
                       child: Column(
                         children: [
-                          Row(
-                            mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                            children: [
-                              Row(
-                                children: [
-                                  Container(
-                                    width: 30,
-                                    height: 30,
-                                    decoration: BoxDecoration(
-                                      color: thirdColor.withOpacity(0.4),
-                                      shape: BoxShape.circle,
-                                    ),
-                                    child: Icon(
-                                      Ionicons.checkmark,
-                                      color: thirdColor,
-                                    ),
-                                  ),
-                                  const SizedBox(
-                                    width: 4,
-                                  ),
-                                  Column(
-                                    crossAxisAlignment:
-                                        CrossAxisAlignment.start,
-                                    children: [
-                                      Text(
-                                        'Entrada',
-                                        style: TextStyle(
-                                          fontFamily: 'Gotham',
-                                          fontSize: 11,
-                                          color: iconColor,
-                                          fontWeight: FontWeight.w300,
-                                        ),
+                          SizedBox(
+                            width: MediaQuery.of(context).size.width * 0.72,
+                            child: Row(
+                              mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                              children: [
+                                Row(
+                                  children: [
+                                    Container(
+                                      width: 30,
+                                      height: 30,
+                                      decoration: BoxDecoration(
+                                        color: thirdColor.withOpacity(0.4),
+                                        shape: BoxShape.circle,
                                       ),
-                                      Text(
-                                        'S/ 2.000,50',
-                                        style: TextStyle(
-                                          fontFamily: 'Gotham',
-                                          fontSize: 16,
-                                          color: iconColor,
-                                          fontWeight: FontWeight.w500,
-                                        ),
+                                      child: Icon(
+                                        Ionicons.checkmark,
+                                        color: thirdColor,
                                       ),
-                                    ],
-                                  ),
-                                ],
-                              ),
-                              Row(
-                                children: [
-                                  Container(
-                                    width: 30,
-                                    height: 30,
-                                    decoration: BoxDecoration(
-                                      color: mainColor.withOpacity(0.4),
-                                      shape: BoxShape.circle,
                                     ),
-                                    child: Icon(
-                                      Ionicons.caret_down_outline,
-                                      color: mainColor,
+                                    const SizedBox(
+                                      width: 4,
                                     ),
-                                  ),
-                                  const SizedBox(
-                                    width: 8,
-                                  ),
-                                  Column(
-                                    crossAxisAlignment:
-                                        CrossAxisAlignment.start,
-                                    children: [
-                                      Text(
-                                        'Salida',
-                                        style: TextStyle(
-                                          fontFamily: 'Gotham',
-                                          fontSize: 11,
-                                          color: iconColor,
-                                          fontWeight: FontWeight.w300,
+                                    Column(
+                                      crossAxisAlignment:
+                                          CrossAxisAlignment.start,
+                                      children: [
+                                        Text(
+                                          'Entrada',
+                                          style: TextStyle(
+                                            fontFamily: 'Gotham',
+                                            fontSize: 11,
+                                            color: iconColor,
+                                            fontWeight: FontWeight.w300,
+                                          ),
                                         ),
-                                      ),
-                                      Text(
-                                        'S/ 800,00',
-                                        style: TextStyle(
-                                          fontFamily: 'Gotham',
-                                          fontSize: 16,
-                                          color: iconColor,
-                                          fontWeight: FontWeight.w500,
+                                        Text(
+                                          'S/ 2.000,50',
+                                          style: TextStyle(
+                                            fontFamily: 'Gotham',
+                                            fontSize: 16,
+                                            color: iconColor,
+                                            fontWeight: FontWeight.w500,
+                                          ),
                                         ),
+                                      ],
+                                    ),
+                                  ],
+                                ),
+                                Row(
+                                  children: [
+                                    Container(
+                                      width: 30,
+                                      height: 30,
+                                      decoration: BoxDecoration(
+                                        color: mainColor.withOpacity(0.4),
+                                        shape: BoxShape.circle,
                                       ),
-                                    ],
-                                  ),
-                                ],
-                              ),
-                            ],
+                                      child: Icon(
+                                        Ionicons.caret_down_outline,
+                                        color: mainColor,
+                                      ),
+                                    ),
+                                    const SizedBox(
+                                      width: 8,
+                                    ),
+                                    Column(
+                                      crossAxisAlignment:
+                                          CrossAxisAlignment.start,
+                                      children: [
+                                        Text(
+                                          'Salida',
+                                          style: TextStyle(
+                                            fontFamily: 'Gotham',
+                                            fontSize: 11,
+                                            color: iconColor,
+                                            fontWeight: FontWeight.w300,
+                                          ),
+                                        ),
+                                        Text(
+                                          'S/ 800,00',
+                                          style: TextStyle(
+                                            fontFamily: 'Gotham',
+                                            fontSize: 16,
+                                            color: iconColor,
+                                            fontWeight: FontWeight.w500,
+                                          ),
+                                        ),
+                                      ],
+                                    ),
+                                  ],
+                                ),
+                              ],
+                            ),
                           ),
                           TextButton(
-                            // ignore: avoid_returning_null_for_void
-                            onPressed: () => null,
+                            onPressed: () {
+                              appRouter.pushNamed('usersAdmin/report.dart');
+                            },
                             child: Container(
-                              margin: const EdgeInsets.only(top: 6),
+                              margin: const EdgeInsets.only(top: 4),
                               width: MediaQuery.of(context).size.width,
-                              height: 36,
+                              height: MediaQuery.of(context).size.height*0.05,
                               decoration: ShapeDecoration(
                                 color: secondary,
                                 shape: RoundedRectangleBorder(
@@ -462,7 +471,7 @@ class HomeScreen extends HookWidget {
                                   'Nuevo informe',
                                   style: TextStyle(
                                     fontFamily: 'Gotham',
-                                    fontSize: 12,
+                                    fontSize: 14,
                                     fontWeight: FontWeight.w300,
                                     color: Colors.white,
                                   ),
@@ -665,12 +674,12 @@ Container categoriesProducts(
           BoxShadow(
             color: const Color.fromARGB(255, 95, 95, 95)
                 .withOpacity(0.08), // Color de la sombra y su opacidad
-            spreadRadius: 2, // Radio de propagación de la sombra
-            blurRadius: 4, // Radio de desenfoque de la sombra
+            spreadRadius: 2, 
+            blurRadius: 4, 
             offset: const Offset(
               0,
               1,
-            ), // Desplazamiento de la sombra (en este caso, hacia abajo)
+            ), 
           ),
         ],
       ),
@@ -678,12 +687,11 @@ Container categoriesProducts(
         mainAxisAlignment: MainAxisAlignment.spaceBetween,
         children: [
           Container(
-            alignment: Alignment.center,
-            child: Image.asset(
-              image,
-              width: 80,
-            ),
-          ),
+              alignment: Alignment.center,
+              child: Image.asset(
+                image,
+                width: MediaQuery.of(context).size.width *0.2,
+              ),),
           Container(
             alignment: Alignment.bottomCenter,
             child: Text(
