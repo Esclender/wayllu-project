@@ -452,33 +452,7 @@ class HomeScreen extends HookWidget {
                               ],
                             ),
                           ),
-                          TextButton(
-                            onPressed: () {
-                              appRouter.pushNamed('usersAdmin/report.dart');
-                            },
-                            child: Container(
-                              margin: const EdgeInsets.only(top: 4),
-                              width: MediaQuery.of(context).size.width,
-                              height: MediaQuery.of(context).size.height*0.05,
-                              decoration: ShapeDecoration(
-                                color: secondary,
-                                shape: RoundedRectangleBorder(
-                                  borderRadius: BorderRadius.circular(5),
-                                ),
-                              ),
-                              child: const Center(
-                                child: Text(
-                                  'Nuevo informe',
-                                  style: TextStyle(
-                                    fontFamily: 'Gotham',
-                                    fontSize: 14,
-                                    fontWeight: FontWeight.w300,
-                                    color: Colors.white,
-                                  ),
-                                ),
-                              ),
-                            ),
-                          ),
+                          btnNewReport(context),
                         ],
                       ),
                     ),
@@ -488,6 +462,36 @@ class HomeScreen extends HookWidget {
             )
           : Container(),
     );
+  }
+
+  TextButton btnNewReport(BuildContext context) {
+    return TextButton(
+                          onPressed: () {
+                            appRouter.pushNamed('usersAdmin/report.dart');
+                          },
+                          child: Container(
+                            margin: const EdgeInsets.only(top: 4),
+                            width: MediaQuery.of(context).size.width,
+                            height: MediaQuery.of(context).size.height*0.05,
+                            decoration: ShapeDecoration(
+                              color: secondary,
+                              shape: RoundedRectangleBorder(
+                                borderRadius: BorderRadius.circular(5),
+                              ),
+                            ),
+                            child: const Center(
+                              child: Text(
+                                'Nuevo informe',
+                                style: TextStyle(
+                                  fontFamily: 'Gotham',
+                                  fontSize: 14,
+                                  fontWeight: FontWeight.w300,
+                                  color: Colors.white,
+                                ),
+                              ),
+                            ),
+                          ),
+                        );
   }
 }
 

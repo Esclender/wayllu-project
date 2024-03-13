@@ -39,10 +39,11 @@ class MyApp extends StatelessWidget {
   // This widget is the root of your application.
   @override
   Widget build(BuildContext context) {
-    return MaterialApp.router(
+    return MaterialApp/*.router*/(
       debugShowCheckedModeBanner: false,
       theme: ThemeApp.light,
-    routerConfig: _appRouter.config(),
+    //routerConfig: _appRouter.config(),
+    home: RegisterProducts(),
     );
   }
 }
