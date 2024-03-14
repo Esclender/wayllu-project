@@ -51,7 +51,7 @@ class BottomNavBar extends HookWidget {
 
   final double blur = 1.5;
   final BorderRadiusGeometry borderRadiusBotNav = const BorderRadius.only(
-   topLeft: Radius.circular(10), topRight: Radius.circular(10)
+   topLeft: Radius.circular(10), topRight: Radius.circular(10),
   );
   final BorderRadiusGeometry containersBorder = const BorderRadius.all(
     Radius.circular(10), 

@@ -11,7 +11,7 @@ class TextLoginField extends StatelessWidget {
       this.validator,
       this.maxLength,
       this.onChanged,
-      required this.controller});
+      required this.controller,});
 
   final String? Function(String?)? validator;
   final String hintText;

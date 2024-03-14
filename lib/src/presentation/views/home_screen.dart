@@ -2,7 +2,6 @@ import 'package:auto_route/auto_route.dart';
 import 'package:auto_size_text/auto_size_text.dart';
 import 'package:badges/badges.dart' as badge;
 import 'package:flutter/material.dart';
-import 'package:flutter/widgets.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_hooks/flutter_hooks.dart';
 import 'package:intl/intl.dart';
@@ -37,6 +36,7 @@ class HomeScreen extends HookWidget {
       body: CustomScrollView(
         slivers: [
           SliverAppBar(
+            leading: Container(),
             expandedHeight: 68.0,
             backgroundColor: Colors.transparent,
             flexibleSpace: FlexibleSpaceBar(
@@ -258,15 +258,14 @@ class HomeScreen extends HookWidget {
             borderRadius: BorderRadius.circular(10),
             boxShadow: [
               BoxShadow(
-                color: const Color.fromARGB(255, 95, 95, 95)
-                    .withOpacity(0.08), 
-                spreadRadius: 2, 
-                blurRadius: 4, 
+                color: const Color.fromARGB(255, 95, 95, 95).withOpacity(0.08),
+                spreadRadius: 2,
+                blurRadius: 4,
                 offset: const Offset(
                   0,
                   1,
-                ), 
-                 ),
+                ),
+              ),
             ],
           ),
           child: const Icon(Ionicons.bag_handle_outline),
@@ -288,10 +287,10 @@ class HomeScreen extends HookWidget {
                 color: bottomNavBar,
                 boxShadow: [
                   BoxShadow(
-                    color: const Color.fromARGB(255, 95, 95, 95)
-                        .withOpacity(0.08), 
-                    spreadRadius: 2, 
-                    blurRadius: 4, 
+                    color:
+                        const Color.fromARGB(255, 95, 95, 95).withOpacity(0.08),
+                    spreadRadius: 2,
+                    blurRadius: 4,
                     offset: const Offset(
                       0,
                       1,
@@ -459,7 +458,7 @@ class HomeScreen extends HookWidget {
                             child: Container(
                               margin: const EdgeInsets.only(top: 4),
                               width: MediaQuery.of(context).size.width,
-                              height: MediaQuery.of(context).size.height*0.05,
+                              height: MediaQuery.of(context).size.height * 0.05,
                               decoration: ShapeDecoration(
                                 color: secondary,
                                 shape: RoundedRectangleBorder(
@@ -674,12 +673,12 @@ Container categoriesProducts(
           BoxShadow(
             color: const Color.fromARGB(255, 95, 95, 95)
                 .withOpacity(0.08), // Color de la sombra y su opacidad
-            spreadRadius: 2, 
-            blurRadius: 4, 
+            spreadRadius: 2,
+            blurRadius: 4,
             offset: const Offset(
               0,
               1,
-            ), 
+            ),
           ),
         ],
       ),
@@ -687,11 +686,12 @@ Container categoriesProducts(
         mainAxisAlignment: MainAxisAlignment.spaceBetween,
         children: [
           Container(
-              alignment: Alignment.center,
-              child: Image.asset(
-                image,
-                width: MediaQuery.of(context).size.width *0.2,
-              ),),
+            alignment: Alignment.center,
+            child: Image.asset(
+              image,
+              width: MediaQuery.of(context).size.width * 0.2,
+            ),
+          ),
           Container(
             alignment: Alignment.bottomCenter,
             child: Text(

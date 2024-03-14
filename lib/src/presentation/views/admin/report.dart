@@ -23,7 +23,7 @@ class _ReportState extends State<Report> {
       appBar: AppBar(
         leading: InkWell(
           onTap: () {
-            AutoRouter.of(context).navigateBack(); ;
+            AutoRouter.of(context).navigateBack();
           },
           child: const Icon(Ionicons.arrow_back),
         ),
