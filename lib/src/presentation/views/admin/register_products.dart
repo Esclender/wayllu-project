@@ -4,10 +4,29 @@ import 'package:ionicons/ionicons.dart';
 import 'package:wayllu_project/src/presentation/widgets/bottom_navbar.dart';
 import 'package:wayllu_project/src/utils/constants/colors.dart';
 
-class RegisterProducts extends StatelessWidget {
+class RegisterProducts extends StatefulWidget {
   const RegisterProducts({super.key});
 
-  void _navigateBack() {}
+  @override
+  State<RegisterProducts> createState() => _RegisterProductsState();
+}
+
+class _RegisterProductsState extends State<RegisterProducts> {
+  double _counter = 0.00;
+
+  void _incrementCounter() {
+    setState(() {
+      _counter++;
+    });
+  }
+
+  void _decrementCounter() {
+    setState(() {
+      if (_counter > 0.00) {
+        _counter--;
+      }
+    });
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -18,7 +37,7 @@ class RegisterProducts extends StatelessWidget {
       appBar: AppBar(
         leading: InkWell(
           onTap: () {
-            AutoRouter.of(context).back();
+            AutoRouter.of(context).navigateBack();
           },
           child: const Icon(Ionicons.arrow_back),
         ),
@@ -31,17 +50,245 @@ class RegisterProducts extends StatelessWidget {
             height: 8,
           ),
           photoUser(context),
+          const SizedBox(
+            height: 8,
+          ),
           containerTextForm(context, 'Nombre de Producto', 'Ingrese producto'),
           containerTextForm(context, 'Descripción', 'Ingrese descripción'),
+          priceCounter(context),
+          categoriesList(context),
+          btnNewReport(context),
         ],
       ),
     );
   }
 
-  SizedBox containerTextForm(
-      BuildContext context, String title, String description) {
+  SizedBox priceCounter(BuildContext context) {
     return SizedBox(
-      width: MediaQuery.of(context).size.width * 0.8,
+      width: MediaQuery.of(context).size.width * 0.85,
+      height: MediaQuery.of(context).size.height * 0.11,
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          const SizedBox(
+            height: 8,
+          ),
+          const Text(
+            'Precio',
+            style: TextStyle(
+              color: Color(0xFF241E20),
+              fontSize: 16,
+              fontFamily: 'Gotham',
+              fontWeight: FontWeight.w500,
+              height: 0,
+            ),
+          ),
+          Row(
+            children: [
+              Container(
+                width: MediaQuery.of(context).size.width * 0.3,
+                height: MediaQuery.of(context).size.height * 0.06,
+                margin: const EdgeInsets.only(top: 6),
+                padding: const EdgeInsets.symmetric(horizontal: 10),
+                decoration: BoxDecoration(
+                  color: bottomNavBar,
+                  borderRadius: BorderRadius.circular(10),
+                  boxShadow: [
+                    BoxShadow(
+                      color: const Color.fromARGB(255, 95, 95, 95)
+                          .withOpacity(0.08),
+                      spreadRadius: 2,
+                      blurRadius: 4,
+                    ),
+                  ],
+                ),
+                child: Row(
+                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                  children: [
+                    Text(
+                      '$_counter',
+                      style: const TextStyle(
+                        fontSize: 16.0,
+                        color: Color(0xff919191),
+                      ),
+                    ),
+                    Column(
+                      mainAxisAlignment: MainAxisAlignment.center,
+                      children: [
+                        const SizedBox(width: 16.0),
+                        GestureDetector(
+                          onTap: _incrementCounter,
+                          child: Icon(
+                            Ionicons.chevron_up,
+                            size: 16,
+                            color: bottomNavBarStroke,
+                          ),
+                        ),
+                        const SizedBox(height: 1), // Espacio entre los botones
+                        GestureDetector(
+                          onTap: _decrementCounter,
+                          child: Icon(
+                            Ionicons.chevron_down,
+                            size: 16,
+                            color: bottomNavBarStroke,
+                          ),
+                        ),
+                      ],
+                    ),
+                  ],
+                ),
+              ),
+              const SizedBox(
+                width: 4,
+              ),
+              Container(
+                width: MediaQuery.of(context).size.width * 0.25,
+                height: MediaQuery.of(context).size.height * 0.06,
+                margin: const EdgeInsets.only(top: 6),
+                padding: const EdgeInsets.symmetric(horizontal: 10),
+                decoration: BoxDecoration(
+                  color: bottomNavBar,
+                  borderRadius: BorderRadius.circular(10),
+                  boxShadow: [
+                    BoxShadow(
+                      color: const Color.fromARGB(255, 95, 95, 95)
+                          .withOpacity(0.08),
+                      spreadRadius: 2,
+                      blurRadius: 4,
+                    ),
+                  ],
+                ),
+                child: const Row(
+                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                  children: [
+                    Text(
+                      'S/.',
+                      style: TextStyle(fontSize: 16.0),
+                    ),
+                  ],
+                ),
+              ),
+            ],
+          ),
+        ],
+      ),
+    );
+  }
+
+  SizedBox categoriesList(BuildContext context) {
+    return SizedBox(
+      width: MediaQuery.of(context).size.width * 0.85,
+      height: MediaQuery.of(context).size.height * 0.11,
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          const SizedBox(
+            height: 8,
+          ),
+          const Text(
+            'Categoria',
+            style: TextStyle(
+              color: Color(0xFF241E20),
+              fontSize: 16,
+              fontFamily: 'Gotham',
+              fontWeight: FontWeight.w500,
+              height: 0,
+            ),
+          ),
+          Container(
+            width: MediaQuery.of(context).size.width * 0.56,
+            height: MediaQuery.of(context).size.height * 0.06,
+            margin: const EdgeInsets.only(top: 6),
+            padding: const EdgeInsets.symmetric(horizontal: 10),
+            decoration: BoxDecoration(
+              color: bottomNavBar,
+              borderRadius: BorderRadius.circular(10),
+              boxShadow: [
+                BoxShadow(
+                  color:
+                      const Color.fromARGB(255, 95, 95, 95).withOpacity(0.08),
+                  spreadRadius: 2,
+                  blurRadius: 4,
+                ),
+              ],
+            ),
+            child: Row(
+              mainAxisAlignment: MainAxisAlignment.spaceBetween,
+              children: [
+                const Text(
+                  'Poncho',
+                  style: TextStyle(
+                    fontSize: 16.0,
+                    color: Color(0xff919191),
+                  ),
+                ),
+                Column(
+                  mainAxisAlignment: MainAxisAlignment.center,
+                  children: [
+                    const SizedBox(width: 16.0),
+                    GestureDetector(
+                      onTap: null,
+                      child: Icon(
+                        Ionicons.chevron_up,
+                        size: 16,
+                        color: bottomNavBarStroke,
+                      ),
+                    ),
+                    const SizedBox(height: 1.0), // Espacio entre los botones
+                    GestureDetector(
+                      // ignore: avoid_redundant_argument_values
+                      onTap: null,
+                      child: Icon(
+                        Ionicons.chevron_down,
+                        size: 16,
+                        color: bottomNavBarStroke,
+                      ),
+                    ),
+                  ],
+                ),
+              ],
+            ),
+          ),
+        ],
+      ),
+    );
+  }
+
+  TextButton btnNewReport(BuildContext context) {
+    return TextButton(
+      onPressed: () {},
+      child: Container(
+        margin: const EdgeInsets.only(top: 4),
+        width: MediaQuery.of(context).size.width * 0.85,
+        height: MediaQuery.of(context).size.height * 0.06,
+        decoration: ShapeDecoration(
+          color: mainColor,
+          shape: RoundedRectangleBorder(
+            borderRadius: BorderRadius.circular(10),
+          ),
+        ),
+        child: const Center(
+          child: Text(
+            'Registrar',
+            style: TextStyle(
+              fontFamily: 'Gotham',
+              fontSize: 16,
+              fontWeight: FontWeight.w500,
+              color: Colors.white,
+            ),
+          ),
+        ),
+      ),
+    );
+  }
+
+  SizedBox containerTextForm(
+    BuildContext context,
+    String title,
+    String description,
+  ) {
+    return SizedBox(
+      width: MediaQuery.of(context).size.width * 0.85,
       height: MediaQuery.of(context).size.height * 0.11,
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
@@ -61,7 +308,6 @@ class RegisterProducts extends StatelessWidget {
           ),
           Container(
             margin: const EdgeInsets.only(top: 6),
-            padding: const EdgeInsets.only(right: 4),
             decoration: BoxDecoration(
               border: Border.all(
                 color: bottomNavBarStroke,
@@ -74,7 +320,7 @@ class RegisterProducts extends StatelessWidget {
                 border: const OutlineInputBorder(
                   borderSide: BorderSide.none,
                 ),
-                contentPadding: const EdgeInsets.only(left: 6),
+                contentPadding: const EdgeInsets.only(left: 12),
                 hintStyle: const TextStyle(
                   color: Color(0xFF241E20),
                   fontSize: 14,
@@ -97,8 +343,8 @@ class RegisterProducts extends StatelessWidget {
       child: Column(
         children: [
           Container(
-            height: MediaQuery.of(context).size.height * 0.23,
-            width: MediaQuery.of(context).size.width * 0.8,
+            height: MediaQuery.of(context).size.height * 0.22,
+            width: MediaQuery.of(context).size.width * 0.85,
             decoration: BoxDecoration(
               border: Border.all(color: iconColor, width: 2),
               borderRadius: BorderRadius.circular(10),
