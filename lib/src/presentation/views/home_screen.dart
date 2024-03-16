@@ -29,7 +29,15 @@ class HomeScreen extends HookWidget {
     final DateTime now = DateTime.now();
     final int hour = now.hour;
     final String greeting = getGreeting(hour);
-    final isAdmin = context.read<UserLoggedCubit>().state;
+    final loggedUserRol = context.read<UserLoggedCubit>().state;
+
+    void goToRegisterOfProductOrVentaCondition() {
+      if (loggedUserRol == UserRoles.admin) {
+        appRouter.navigate(const RegisterProductsRoute());
+      } else {
+        appRouter.navigate(const CarritoRoute());
+      }
+    }
 
     return Scaffold(
       backgroundColor: bgPrimary,
@@ -90,14 +98,20 @@ class HomeScreen extends HookWidget {
                 const SizedBox(
                   height: 8,
                 ),
-                firstLine(context, isAdmin),
-                dashboard(context, isAdmin),
+                firstLine(context, loggedUserRol),
+                dashboard(context, loggedUserRol),
                 Container(
                   margin:
                       const EdgeInsets.symmetric(horizontal: 24, vertical: 6),
                   child: Row(
                     mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                    children: [barSearch(context), shoppingCart(context)],
+                    children: [
+                      barSearch(context),
+                      shoppingCart(
+                        context,
+                        goToRegisterOfProductOrVentaCondition,
+                      ),
+                    ],
                   ),
                 ),
                 SingleChildScrollView(
@@ -148,7 +162,7 @@ class HomeScreen extends HookWidget {
                                   child: productsHome(
                                     context,
                                     productos[evenIndex],
-                                    isAdmin,
+                                    loggedUserRol,
                                   ),
                                 ),
                                 const SizedBox(
@@ -159,7 +173,7 @@ class HomeScreen extends HookWidget {
                                       ? productsHome(
                                           context,
                                           productos[oddIndex],
-                                          isAdmin,
+                                          loggedUserRol,
                                         )
                                       : Container(),
                                 ),
@@ -190,13 +204,13 @@ class HomeScreen extends HookWidget {
   }
 
   Padding firstLine(BuildContext context, UserRoles rol) {
-    final bool isAdmin = rol == UserRoles.admin;
+    final bool loggedUserRol = rol == UserRoles.admin;
     final dateString =
         DateFormat("dd 'de' MMMM yyyy", 'es').format(DateTime.now());
 
     return Padding(
       padding: const EdgeInsets.symmetric(horizontal: 22.0),
-      child: isAdmin
+      child: loggedUserRol
           ? SizedBox(
               width: MediaQuery.of(context).size.width,
               height: 18,
@@ -239,11 +253,12 @@ class HomeScreen extends HookWidget {
     );
   }
 
-  Widget shoppingCart(BuildContext context) {
+  Widget shoppingCart(
+    BuildContext context,
+    void Function() onTap,
+  ) {
     return InkWell(
-      onTap: () {
-        appRouter.pushNamed('/user/carrito');
-      },
+      onTap: onTap,
       child: badge.Badge(
         badgeContent: const Text(
           '4',
@@ -275,10 +290,16 @@ class HomeScreen extends HookWidget {
   }
 
   Center dashboard(BuildContext context, UserRoles rol) {
-    final bool isAdmin = rol == UserRoles.admin;
+    final bool loggedUserRol = rol == UserRoles.admin;
+
+    void goToReport() {
+      if (rol == UserRoles.admin) {
+        appRouter.navigate(const ReportRoute());
+      }
+    }
 
     return Center(
-      child: isAdmin
+      child: loggedUserRol
           ? Container(
               margin: const EdgeInsets.symmetric(horizontal: 24, vertical: 6),
               width: MediaQuery.of(context).size.width,
@@ -451,7 +472,10 @@ class HomeScreen extends HookWidget {
                               ],
                             ),
                           ),
-                          btnNewReport(context),
+                          btnNewReport(
+                            context,
+                            goToReport,
+                          ),
                         ],
                       ),
                     ),
@@ -463,11 +487,12 @@ class HomeScreen extends HookWidget {
     );
   }
 
-  TextButton btnNewReport(BuildContext context) {
+  TextButton btnNewReport(
+    BuildContext context,
+    void Function() onPressed,
+  ) {
     return TextButton(
-      onPressed: () {
-        appRouter.pushNamed('usersAdmin/report.dart');
-      },
+      onPressed: onPressed,
       child: Container(
         margin: const EdgeInsets.only(top: 4),
         width: MediaQuery.of(context).size.width,
@@ -494,8 +519,12 @@ class HomeScreen extends HookWidget {
   }
 }
 
-Container productsHome(BuildContext context, Producto producto, UserRoles rol) {
-  final bool isAdmin = rol == UserRoles.admin;
+Container productsHome(
+  BuildContext context,
+  Producto producto,
+  UserRoles rol,
+) {
+  final bool loggedUserRol = rol == UserRoles.admin;
 
   return Container(
     width: MediaQuery.of(context).size.width * 0.40,
@@ -537,7 +566,7 @@ Container productsHome(BuildContext context, Producto producto, UserRoles rol) {
             Positioned(
               top: 8.0, // Ajusta la posición del botón según sea necesario
               right: 8.0,
-              child: !isAdmin
+              child: !loggedUserRol
                   ? Container(
                       padding: const EdgeInsets.all(4),
                       decoration: BoxDecoration(
@@ -591,7 +620,7 @@ Container productsHome(BuildContext context, Producto producto, UserRoles rol) {
                       fontWeight: FontWeight.w500,
                     ),
                   ),
-                  if (isAdmin)
+                  if (loggedUserRol)
                     Container(
                       padding: const EdgeInsets.symmetric(
                         vertical: 4,

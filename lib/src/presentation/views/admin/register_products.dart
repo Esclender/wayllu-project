@@ -1,35 +1,26 @@
 import 'package:auto_route/auto_route.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_hooks/flutter_hooks.dart';
 import 'package:ionicons/ionicons.dart';
 import 'package:wayllu_project/src/presentation/widgets/bottom_navbar.dart';
 import 'package:wayllu_project/src/utils/constants/colors.dart';
 
-class RegisterProducts extends StatefulWidget {
-  const RegisterProducts({super.key});
-
-  @override
-  State<RegisterProducts> createState() => _RegisterProductsState();
-}
-
-class _RegisterProductsState extends State<RegisterProducts> {
-  double _counter = 0.00;
-
-  void _incrementCounter() {
-    setState(() {
-      _counter++;
-    });
-  }
-
-  void _decrementCounter() {
-    setState(() {
-      if (_counter > 0.00) {
-        _counter--;
-      }
-    });
-  }
-
+@RoutePage()
+class RegisterProductsScreen extends HookWidget {
   @override
   Widget build(BuildContext context) {
+    final counter = useState(0.0);
+
+    void _incrementCounter() {
+      counter.value++;
+    }
+
+    void _decrementCounter() {
+      if (counter.value > 0.00) {
+        counter.value--;
+      }
+    }
+
     return Scaffold(
       floatingActionButtonLocation: FloatingActionButtonLocation.centerDocked,
       floatingActionButton: BottomNavBar(),
@@ -37,7 +28,7 @@ class _RegisterProductsState extends State<RegisterProducts> {
       appBar: AppBar(
         leading: InkWell(
           onTap: () {
-            AutoRouter.of(context).navigateBack();
+            AutoRouter.of(context).back();
           },
           child: const Icon(Ionicons.arrow_back),
         ),
@@ -55,7 +46,12 @@ class _RegisterProductsState extends State<RegisterProducts> {
           ),
           containerTextForm(context, 'Nombre de Producto', 'Ingrese producto'),
           containerTextForm(context, 'Descripción', 'Ingrese descripción'),
-          priceCounter(context),
+          priceCounter(
+            context,
+            counter.value,
+            _incrementCounter,
+            _decrementCounter,
+          ),
           categoriesList(context),
           btnNewReport(context),
         ],
@@ -63,7 +59,12 @@ class _RegisterProductsState extends State<RegisterProducts> {
     );
   }
 
-  SizedBox priceCounter(BuildContext context) {
+  SizedBox priceCounter(
+    BuildContext context,
+    double counter,
+    void Function() incrementCounter,
+    void Function() decrementCounter,
+  ) {
     return SizedBox(
       width: MediaQuery.of(context).size.width * 0.85,
       height: MediaQuery.of(context).size.height * 0.11,
@@ -106,7 +107,7 @@ class _RegisterProductsState extends State<RegisterProducts> {
                   mainAxisAlignment: MainAxisAlignment.spaceBetween,
                   children: [
                     Text(
-                      '$_counter',
+                      '$counter',
                       style: const TextStyle(
                         fontSize: 16.0,
                         color: Color(0xff919191),
@@ -117,7 +118,7 @@ class _RegisterProductsState extends State<RegisterProducts> {
                       children: [
                         const SizedBox(width: 16.0),
                         GestureDetector(
-                          onTap: _incrementCounter,
+                          onTap: incrementCounter,
                           child: Icon(
                             Ionicons.chevron_up,
                             size: 16,
@@ -126,7 +127,7 @@ class _RegisterProductsState extends State<RegisterProducts> {
                         ),
                         const SizedBox(height: 1), // Espacio entre los botones
                         GestureDetector(
-                          onTap: _decrementCounter,
+                          onTap: decrementCounter,
                           child: Icon(
                             Ionicons.chevron_down,
                             size: 16,
