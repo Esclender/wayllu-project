@@ -1,3 +1,5 @@
+
+
 class UserInfo {
   PersonalInfo userInfo;
   ContactInfo userContactInfo;
@@ -29,13 +31,9 @@ class PersonalInfo extends InfoBase {
     this.urlProfile,
   });
 
-  @override
-  List<List> get entries => [
-        ['DNI', dni],
-        ['Nombre', nombre],
-        ['Comunidad', comunidad],
-        ['Clave', clave],
-      ];
+  static fromJson(json) {}
+
+
 }
 
 class ContactInfo extends InfoBase {

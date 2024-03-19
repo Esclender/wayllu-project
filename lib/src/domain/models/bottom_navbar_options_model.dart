@@ -5,12 +5,16 @@ import 'package:wayllu_project/src/domain/enums/user_roles.dart';
 class OptionsIcons {
   IconData icon;
   List<OptionsIconsRoutes> routes;
+  
 
   OptionsIcons({
     required this.icon,
     required this.routes,
+    
   });
+  
 }
+
 
 class OptionsIconsRoutes {
   PageRouteInfo route;

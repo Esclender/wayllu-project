@@ -1,6 +1,7 @@
 import 'package:auto_route/auto_route.dart';
 import 'package:auto_size_text/auto_size_text.dart';
 import 'package:badges/badges.dart' as badge;
+import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/widgets.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
@@ -94,10 +95,10 @@ class HomeScreen extends HookWidget {
                 dashboard(context, isAdmin),
                 Container(
                   margin:
-                      const EdgeInsets.symmetric(horizontal: 24, vertical: 6),
+                      const EdgeInsets.symmetric(horizontal: 18, vertical: 6),
                   child: Row(
                     mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                    children: [barSearch(context), shoppingCart(context)],
+                    children: [barSearch(context), optionsAndLogout(context)],
                   ),
                 ),
                 SingleChildScrollView(
@@ -182,11 +183,47 @@ class HomeScreen extends HookWidget {
           ),
         ],
       ),
-      floatingActionButtonLocation: FloatingActionButtonLocation.centerDocked,
-      floatingActionButton: BottomNavBar(
-        viewSelected: viewIndex,
+      floatingActionButtonLocation:FloatingActionButtonLocation.centerDocked,
+      floatingActionButton: Column(
+        mainAxisAlignment: MainAxisAlignment.end,
+        children:[
+          
+          shoppingCart(context),
+          const SizedBox(height: 8,),
+          BottomNavBar(
+          viewSelected: viewIndex,
+        ),
+       
+        ], 
       ),
     );
+  }
+
+  InkWell shoppingCart(BuildContext context) {
+    return InkWell(
+          onTap: () {
+      appRouter.pushNamed('/user/carrito');
+    },
+    child: badge.Badge(
+      badgeContent: const Text(
+        '4',
+        style: TextStyle(color: Colors.white),
+      ),
+      position: badge.BadgePosition.topEnd(end: 4),
+          child: Container(
+            width: MediaQuery.of(context).size.width,
+            alignment: Alignment.bottomRight,
+            margin: const EdgeInsets.symmetric(horizontal: 10),
+            child: FloatingActionButton(
+              backgroundColor: bottomNavBar,
+              shape: const CircleBorder(),
+                    onPressed: () {  
+                      appRouter.pushNamed('/user/carrito');
+                       },
+                    child: Icon(Ionicons.bag_handle_outline, size: 28, color: iconColor,),
+                  ),
+          ),),
+        );
   }
 
   Padding firstLine(BuildContext context, UserRoles rol) {
@@ -239,41 +276,54 @@ class HomeScreen extends HookWidget {
     );
   }
 
-  Widget shoppingCart(BuildContext context) {
-    return InkWell(
-      onTap: () {
-        appRouter.pushNamed('/user/carrito');
-      },
-      child: badge.Badge(
-        badgeContent: const Text(
-          '4',
-          style: TextStyle(color: Colors.white),
-        ),
-        position: badge.BadgePosition.topEnd(end: -8),
-        child: Container(
-          width: MediaQuery.of(context).size.width * 0.11,
-          height: MediaQuery.of(context).size.width * 0.11,
-          decoration: BoxDecoration(
-            color: bottomNavBar,
-            borderRadius: BorderRadius.circular(10),
-            boxShadow: [
-              BoxShadow(
-                color: const Color.fromARGB(255, 95, 95, 95)
-                    .withOpacity(0.08), 
-                spreadRadius: 2, 
-                blurRadius: 4, 
-                offset: const Offset(
-                  0,
-                  1,
-                ), 
-                 ),
-            ],
+  Widget optionsAndLogout(BuildContext context) {
+    return Container(
+      //margin: EdgeInsets.only(left: 4),
+      width: MediaQuery.of(context).size.width*0.12,
+      height:MediaQuery.of(context).size.width*0.10,
+      decoration: BoxDecoration(color: bottomNavBar,
+      borderRadius: BorderRadius.circular(10),
+       boxShadow:[
+                  BoxShadow(
+                    color: const Color.fromARGB(255, 95, 95, 95)
+                        .withOpacity(0.08), 
+                    spreadRadius: 2, 
+                    blurRadius: 4, 
+                    offset: const Offset(
+                      0,
+                      1,
+                    ),
+                  ),
+                ], ),
+      child: PopupMenuButton<String>(
+        color: bottomNavBar.withOpacity(0.9),
+        
+        offset: Offset(1,  MediaQuery.of(context).size.width * 0.11),
+        icon: const Icon(Ionicons.menu_outline, size: 24,),
+        itemBuilder: (context) => [
+          const PopupMenuItem(
+            value: 'Ver carrito',
+            child: ListTile(
+                        leading: Icon(Ionicons.bag_handle_outline),
+                        title: Text('Ver carrito'),
+                      ),
           ),
-          child: const Icon(Ionicons.bag_handle_outline),
-        ),
+          const PopupMenuDivider(),
+          PopupMenuItem(
+            value: 'opcion2',
+            child: ListTile(
+                        leading: Icon(Ionicons.exit_outline, color: mainColor,),
+                        title: const Text('Cerrar sesión'),
+                      ),
+          ),
+       
+        ],
+        onSelected: (value) {
+        },
       ),
     );
   }
+  
 
   Center dashboard(BuildContext context, UserRoles rol) {
     final bool isAdmin = rol == UserRoles.admin;
@@ -281,7 +331,7 @@ class HomeScreen extends HookWidget {
     return Center(
       child: isAdmin
           ? Container(
-              margin: const EdgeInsets.symmetric(horizontal: 24, vertical: 6),
+              margin: const EdgeInsets.symmetric(horizontal: 18, vertical: 6),
               width: MediaQuery.of(context).size.width,
               height: MediaQuery.of(context).size.height * 0.22,
               decoration: BoxDecoration(
@@ -359,7 +409,7 @@ class HomeScreen extends HookWidget {
                       child: Column(
                         children: [
                           SizedBox(
-                            width: MediaQuery.of(context).size.width * 0.72,
+                            width: MediaQuery.of(context).size.width * 0.74,
                             child: Row(
                               mainAxisAlignment: MainAxisAlignment.spaceBetween,
                               children: [
@@ -624,7 +674,7 @@ Container productsHome(BuildContext context, Producto producto, UserRoles rol) {
 
 Container barSearch(BuildContext context) {
   return Container(
-    width: MediaQuery.of(context).size.width * 0.75,
+    width: MediaQuery.of(context).size.width * 0.76,
     padding: const EdgeInsets.symmetric(vertical: 8, horizontal: 4),
     decoration: BoxDecoration(
       color: bottomNavBar,
