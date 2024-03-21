@@ -9,6 +9,7 @@ import 'package:wayllu_project/src/config/api_config.dart';
 import 'package:wayllu_project/src/config/router/app_router.dart';
 import 'package:wayllu_project/src/domain/enums/lists_enums.dart';
 import 'package:wayllu_project/src/domain/models/list_items_model.dart';
+import 'package:wayllu_project/src/domain/models/user_info_model.dart';
 import 'package:wayllu_project/src/locator.dart';
 import 'package:wayllu_project/src/presentation/widgets/bottom_navbar.dart';
 import 'package:wayllu_project/src/presentation/widgets/gradient_widgets.dart';
@@ -21,13 +22,13 @@ import 'package:http/http.dart' as http;
 class UsersListAdminScreen extends HookWidget {
   final int viewIndex;
   final double navbarHeight = 60;
-  late Future<List<Artisan>> _artisansLists;
+  late Future<List<PersonalInfo>> _artisansLists;
 
-  Future<List<Artisan>> _getDataArtisans() async {
+  Future<List<PersonalInfo>> _getDataArtisans() async {
     final response =
-        await http.get(Uri.parse("http://localhost:5036/api/artesanos"));
+        await http.get(Uri.parse('http://localhost:5036/api/artesanos'));
 
-    List<Artisan> artisan = [];
+    List<PersonalInfo> artisan = [];
     if (response.statusCode == 200) {
       String body = utf8.decode(response.bodyBytes);
       final jsonData = jsonDecode(body);
@@ -44,6 +45,7 @@ class UsersListAdminScreen extends HookWidget {
       throw Exception("Fallo la conexion");
     }
   }
+  
 
   UsersListAdminScreen({
     required this.viewIndex,
@@ -71,18 +73,13 @@ class UsersListAdminScreen extends HookWidget {
 
   @override
   Widget build(BuildContext contex) {
-     useEffect(() {
-    final future = _getDataArtisans();
-    future.then((value) {
-      // Asigna el valor obtenido a una variable local
-      final _artisansLists = value;
-      // Haz lo que necesites con _artisansLists
-    }).catchError((error) {
-      // Maneja los errores si es necesario
-    });
-    return null; // No hay limpieza necesaria
-  }, []);
-  
+      useEffect(() {
+    _getDataArtisans(); // Llama a la función de inicialización
+    return null; // No es necesario realizar limpieza
+  }, []); // El segundo argumento es una lista de dependencias, aquí se deja vacía para que solo se ejecute una vez al inicio
+
+  // Resto del código de la construcción del widget...
+
     return Scaffold(
       floatingActionButtonLocation: FloatingActionButtonLocation.centerDocked,
       floatingActionButton: BottomNavBar(

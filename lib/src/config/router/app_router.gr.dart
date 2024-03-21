@@ -69,10 +69,28 @@ abstract class _$AppRouter extends RootStackRouter {
         child: MainNavigationScreen(),
       );
     },
+    ReciboRoute.name: (routeData) {
+      return AutoRoutePage<dynamic>(
+        routeData: routeData,
+        child: const ReciboScreen(),
+      );
+    },
+    RegisterProductsRoute.name: (routeData) {
+      return AutoRoutePage<dynamic>(
+        routeData: routeData,
+        child: RegisterProductsScreen(),
+      );
+    },
     RegisterUserRoute.name: (routeData) {
       return AutoRoutePage<dynamic>(
         routeData: routeData,
         child: const RegisterUserScreen(),
+      );
+    },
+    ReportRoute.name: (routeData) {
+      return AutoRoutePage<dynamic>(
+        routeData: routeData,
+        child: ReportScreen(),
       );
     },
     UserNavigationRoute.name: (routeData) {
@@ -86,12 +104,6 @@ abstract class _$AppRouter extends RootStackRouter {
       return AutoRoutePage<dynamic>(
         routeData: routeData,
         child: UsersListAdminScreen(viewIndex: args.viewIndex),
-      );
-    },
-    CarritoScreenRoute.name: (routeData) {
-      return AutoRoutePage<dynamic>(
-        routeData: routeData,
-        child: CarritoScreen(),
       );
     },
   };
@@ -263,6 +275,34 @@ class MainNavigationRoute extends PageRouteInfo<void> {
 }
 
 /// generated route for
+/// [ReciboScreen]
+class ReciboRoute extends PageRouteInfo<void> {
+  const ReciboRoute({List<PageRouteInfo>? children})
+      : super(
+          ReciboRoute.name,
+          initialChildren: children,
+        );
+
+  static const String name = 'ReciboRoute';
+
+  static const PageInfo<void> page = PageInfo<void>(name);
+}
+
+/// generated route for
+/// [RegisterProductsScreen]
+class RegisterProductsRoute extends PageRouteInfo<void> {
+  const RegisterProductsRoute({List<PageRouteInfo>? children})
+      : super(
+          RegisterProductsRoute.name,
+          initialChildren: children,
+        );
+
+  static const String name = 'RegisterProductsRoute';
+
+  static const PageInfo<void> page = PageInfo<void>(name);
+}
+
+/// generated route for
 /// [RegisterUserScreen]
 class RegisterUserRoute extends PageRouteInfo<void> {
   const RegisterUserRoute({List<PageRouteInfo>? children})
@@ -272,6 +312,20 @@ class RegisterUserRoute extends PageRouteInfo<void> {
         );
 
   static const String name = 'RegisterUserRoute';
+
+  static const PageInfo<void> page = PageInfo<void>(name);
+}
+
+/// generated route for
+/// [ReportScreen]
+class ReportRoute extends PageRouteInfo<void> {
+  const ReportRoute({List<PageRouteInfo>? children})
+      : super(
+          ReportRoute.name,
+          initialChildren: children,
+        );
+
+  static const String name = 'ReportRoute';
 
   static const PageInfo<void> page = PageInfo<void>(name);
 }
@@ -317,16 +371,4 @@ class UsersListAdminRouteArgs {
   String toString() {
     return 'UsersListAdminRouteArgs{viewIndex: $viewIndex}';
   }
-}
-
-class CarritoScreenRoute extends PageRouteInfo<void> {
-  const CarritoScreenRoute({List<PageRouteInfo>? children})
-      : super(
-          CarritoScreenRoute.name,
-          initialChildren: children,
-        );
-
-  static const String name = 'CarritoScreenRoute';
-
-  static const PageInfo<void> page = PageInfo<void>(name);
 }

@@ -5,6 +5,7 @@ HexColor bgPrimary = HexColor('#FCF6F0');
 HexColor txtColor = HexColor('#241E20');
 HexColor subtxtColor = HexColor('#919191');
 HexColor secondary = HexColor('#FFA743');
+HexColor loginBottom = HexColor('#f7963c');
 HexColor btnprimary = HexColor('#B80000');
 HexColor btnsecondary = HexColor('#FA9C3F');
 HexColor bottomNavBar = HexColor('#FFFFFF');
@@ -19,6 +20,10 @@ HexColor iconColor = HexColor('#241E20');
 HexColor clearLetters = HexColor('#DADADA');
 HexColor smallWordsColor = HexColor('#0D1829');
 HexColor gradientWhite = HexColor('#F3F6FF');
+HexColor line = HexColor('#D8DBDF');
+HexColor subs = HexColor('#5A5A5A');
+HexColor buttontotal = HexColor('#A4B304');
+HexColor estadotxt = HexColor('#25924D');
 
 //Gradients
 LinearGradient gradientMain = LinearGradient(
@@ -53,6 +58,16 @@ LinearGradient gradientOrange = LinearGradient(
   colors: [
     HexColor('#B80000'),
     HexColor('#FFA743'),
+  ],
+);
+
+LinearGradient gradientLogin = const LinearGradient(
+  stops: [0.01, 1],
+  begin: FractionalOffset.bottomLeft,
+  end: FractionalOffset.topRight,
+  colors: [
+    Color(0xFFFFA743),
+    Color(0xFFB80000),
   ],
 );
 

@@ -13,7 +13,7 @@ class TextLogin extends StatelessWidget {
       style: TextStyle(
           fontFamily: 'Portofino',
           color: colorText ?? Colors.white,
-          fontSize: 30),
+          fontSize: 30,),
     );
   }
 }

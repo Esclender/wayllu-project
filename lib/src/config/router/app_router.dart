@@ -1,13 +1,16 @@
 import 'package:auto_route/auto_route.dart';
 import 'package:wayllu_project/src/presentation/views/admin/graphs/graph_screen.dart';
-import 'package:wayllu_project/src/presentation/views/admin/usersScreens/admin_users_navigation.dart';
+import 'package:wayllu_project/src/presentation/views/admin/register_products.dart';
+import 'package:wayllu_project/src/presentation/views/admin/report.dart';
 import 'package:wayllu_project/src/presentation/views/admin/usersScreens/register_screen.dart';
 import 'package:wayllu_project/src/presentation/views/admin/usersScreens/user_list_admin.dart';
 import 'package:wayllu_project/src/presentation/views/home_screen.dart';
-import 'package:wayllu_project/src/presentation/views/login_example.dart';
+import 'package:wayllu_project/src/presentation/views/login_screen.dart';
+import 'package:wayllu_project/src/presentation/views/mainNavigationsRoles/admin_users_navigation.dart';
 import 'package:wayllu_project/src/presentation/views/mainNavigationsRoles/admin_navigation.dart';
 import 'package:wayllu_project/src/presentation/views/mainNavigationsRoles/main_navigation.dart';
 import 'package:wayllu_project/src/presentation/views/mainNavigationsRoles/user_navigation.dart';
+import 'package:wayllu_project/src/presentation/views/user/home/recibo_screen.dart';
 import 'package:wayllu_project/src/presentation/views/user/home/user_carrito_screen.dart';
 import 'package:wayllu_project/src/presentation/widgets/info_user_screen.dart';
 
@@ -46,6 +49,10 @@ class AppRouter extends _$AppRouter {
                   path: 'carrito',
                   page: CarritoRoute.page,
                 ),
+                AutoRoute(
+                  path: 'recibo',
+                  page: ReciboRoute.page,
+                ),
               ],
             ),
             AutoRoute(
@@ -64,7 +71,14 @@ class AppRouter extends _$AppRouter {
                   path: 'info',
                   page: InfoUserRoute.page,
                 ),
-              
+                AutoRoute(
+                  path: 'reporte',
+                  page: ReportRoute.page,
+                ),
+                AutoRoute(
+                  path: 'registroProducto',
+                  page: RegisterProductsRoute.page,
+                ),
               ],
             ),
           ],

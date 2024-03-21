@@ -3,7 +3,6 @@ import 'package:auto_size_text/auto_size_text.dart';
 import 'package:badges/badges.dart' as badge;
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
-import 'package:flutter/widgets.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_hooks/flutter_hooks.dart';
 import 'package:intl/intl.dart';
@@ -31,13 +30,22 @@ class HomeScreen extends HookWidget {
     final DateTime now = DateTime.now();
     final int hour = now.hour;
     final String greeting = getGreeting(hour);
-    final isAdmin = context.read<UserLoggedCubit>().state;
+    final loggedUserRol = context.read<UserLoggedCubit>().state;
+
+    void goToRegisterOfProductOrVentaCondition() {
+      if (loggedUserRol == UserRoles.admin) {
+        appRouter.navigate(const RegisterProductsRoute());
+      } else {
+        appRouter.navigate(const CarritoRoute());
+      }
+    }
 
     return Scaffold(
       backgroundColor: bgPrimary,
       body: CustomScrollView(
         slivers: [
           SliverAppBar(
+            leading: Container(),
             expandedHeight: 68.0,
             backgroundColor: Colors.transparent,
             flexibleSpace: FlexibleSpaceBar(
@@ -91,14 +99,20 @@ class HomeScreen extends HookWidget {
                 const SizedBox(
                   height: 8,
                 ),
-                firstLine(context, isAdmin),
-                dashboard(context, isAdmin),
+                firstLine(context, loggedUserRol),
+                dashboard(context, loggedUserRol),
                 Container(
                   margin:
                       const EdgeInsets.symmetric(horizontal: 18, vertical: 6),
                   child: Row(
                     mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                    children: [barSearch(context), optionsAndLogout(context)],
+                    children: [
+                      barSearch(context),
+                      menu(
+                        context,
+                        //goToRegisterOfProductOrVentaCondition,
+                      ),
+                    ],
                   ),
                 ),
                 SingleChildScrollView(
@@ -149,7 +163,7 @@ class HomeScreen extends HookWidget {
                                   child: productsHome(
                                     context,
                                     productos[evenIndex],
-                                    isAdmin,
+                                    loggedUserRol,
                                   ),
                                 ),
                                 const SizedBox(
@@ -160,7 +174,7 @@ class HomeScreen extends HookWidget {
                                       ? productsHome(
                                           context,
                                           productos[oddIndex],
-                                          isAdmin,
+                                          loggedUserRol,
                                         )
                                       : Container(),
                                 ),
@@ -227,13 +241,13 @@ class HomeScreen extends HookWidget {
   }
 
   Padding firstLine(BuildContext context, UserRoles rol) {
-    final bool isAdmin = rol == UserRoles.admin;
+    final bool loggedUserRol = rol == UserRoles.admin;
     final dateString =
         DateFormat("dd 'de' MMMM yyyy", 'es').format(DateTime.now());
 
     return Padding(
       padding: const EdgeInsets.symmetric(horizontal: 22.0),
-      child: isAdmin
+      child: loggedUserRol
           ? SizedBox(
               width: MediaQuery.of(context).size.width,
               height: 18,
@@ -275,61 +289,55 @@ class HomeScreen extends HookWidget {
           : Container(),
     );
   }
-
-  Widget optionsAndLogout(BuildContext context) {
-    return Container(
-      //margin: EdgeInsets.only(left: 4),
-      width: MediaQuery.of(context).size.width*0.12,
-      height:MediaQuery.of(context).size.width*0.10,
-      decoration: BoxDecoration(color: bottomNavBar,
-      borderRadius: BorderRadius.circular(10),
-       boxShadow:[
-                  BoxShadow(
-                    color: const Color.fromARGB(255, 95, 95, 95)
-                        .withOpacity(0.08), 
-                    spreadRadius: 2, 
-                    blurRadius: 4, 
-                    offset: const Offset(
-                      0,
-                      1,
-                    ),
-                  ),
-                ], ),
-      child: PopupMenuButton<String>(
-        color: bottomNavBar.withOpacity(0.9),
-        
-        offset: Offset(1,  MediaQuery.of(context).size.width * 0.11),
-        icon: const Icon(Ionicons.menu_outline, size: 24,),
-        itemBuilder: (context) => [
-          const PopupMenuItem(
-            value: 'Ver carrito',
-            child: ListTile(
-                        leading: Icon(Ionicons.bag_handle_outline),
-                        title: Text('Ver carrito'),
-                      ),
+/*
+  Widget shoppingCart(BuildContext context) {
+    return InkWell(
+      onTap: () {
+        appRouter.pushNamed('/user/carrito');
+      },
+      child: badge.Badge(
+        badgeContent: const Text(
+          '4',
+          style: TextStyle(color: Colors.white),
+        ),
+        position: badge.BadgePosition.topEnd(end: -8),
+        child: Container(
+          width: MediaQuery.of(context).size.width * 0.11,
+          height: MediaQuery.of(context).size.width * 0.11,
+          decoration: BoxDecoration(
+            color: bottomNavBar,
+            borderRadius: BorderRadius.circular(10),
+            boxShadow: [
+              BoxShadow(
+                color: const Color.fromARGB(255, 95, 95, 95)
+                    .withOpacity(0.08), 
+                spreadRadius: 2, 
+                blurRadius: 4, 
+                offset: const Offset(
+                  0,
+                  1,
+                ), 
+                 ),
+            ],
           ),
-          const PopupMenuDivider(),
-          PopupMenuItem(
-            value: 'opcion2',
-            child: ListTile(
-                        leading: Icon(Ionicons.exit_outline, color: mainColor,),
-                        title: const Text('Cerrar sesión'),
-                      ),
-          ),
-       
-        ],
-        onSelected: (value) {
-        },
+          child: const Icon(Ionicons.bag_handle_outline),
+        ),
       ),
     );
   }
-  
-
+ 
+*/
   Center dashboard(BuildContext context, UserRoles rol) {
-    final bool isAdmin = rol == UserRoles.admin;
+    final bool loggedUserRol = rol == UserRoles.admin;
+
+    void goToReport() {
+      if (rol == UserRoles.admin) {
+        appRouter.navigate(const ReportRoute());
+      }
+    }
 
     return Center(
-      child: isAdmin
+      child: loggedUserRol
           ? Container(
               margin: const EdgeInsets.symmetric(horizontal: 18, vertical: 6),
               width: MediaQuery.of(context).size.width,
@@ -338,10 +346,10 @@ class HomeScreen extends HookWidget {
                 color: bottomNavBar,
                 boxShadow: [
                   BoxShadow(
-                    color: const Color.fromARGB(255, 95, 95, 95)
-                        .withOpacity(0.08), 
-                    spreadRadius: 2, 
-                    blurRadius: 4, 
+                    color:
+                        const Color.fromARGB(255, 95, 95, 95).withOpacity(0.08),
+                    spreadRadius: 2,
+                    blurRadius: 4,
                     offset: const Offset(
                       0,
                       1,
@@ -502,7 +510,10 @@ class HomeScreen extends HookWidget {
                               ],
                             ),
                           ),
-                          btnNewReport(context),
+                          btnNewReport(
+                            context,
+                            goToReport,
+                          ),
                         ],
                       ),
                     ),
@@ -514,39 +525,44 @@ class HomeScreen extends HookWidget {
     );
   }
 
-  TextButton btnNewReport(BuildContext context) {
+  TextButton btnNewReport(
+    BuildContext context,
+    void Function() onPressed,
+  ) {
     return TextButton(
-                          onPressed: () {
-                            appRouter.pushNamed('usersAdmin/report.dart');
-                          },
-                          child: Container(
-                            margin: const EdgeInsets.only(top: 4),
-                            width: MediaQuery.of(context).size.width,
-                            height: MediaQuery.of(context).size.height*0.05,
-                            decoration: ShapeDecoration(
-                              color: secondary,
-                              shape: RoundedRectangleBorder(
-                                borderRadius: BorderRadius.circular(5),
-                              ),
-                            ),
-                            child: const Center(
-                              child: Text(
-                                'Nuevo informe',
-                                style: TextStyle(
-                                  fontFamily: 'Gotham',
-                                  fontSize: 14,
-                                  fontWeight: FontWeight.w300,
-                                  color: Colors.white,
-                                ),
-                              ),
-                            ),
-                          ),
-                        );
+      onPressed: onPressed,
+      child: Container(
+        margin: const EdgeInsets.only(top: 4),
+        width: MediaQuery.of(context).size.width,
+        height: MediaQuery.of(context).size.height * 0.05,
+        decoration: ShapeDecoration(
+          color: secondary,
+          shape: RoundedRectangleBorder(
+            borderRadius: BorderRadius.circular(5),
+          ),
+        ),
+        child: const Center(
+          child: Text(
+            'Nuevo informe',
+            style: TextStyle(
+              fontFamily: 'Gotham',
+              fontSize: 14,
+              fontWeight: FontWeight.w300,
+              color: Colors.white,
+            ),
+          ),
+        ),
+      ),
+    );
   }
 }
 
-Container productsHome(BuildContext context, Producto producto, UserRoles rol) {
-  final bool isAdmin = rol == UserRoles.admin;
+Container productsHome(
+  BuildContext context,
+  Producto producto,
+  UserRoles rol,
+) {
+  final bool loggedUserRol = rol == UserRoles.admin;
 
   return Container(
     width: MediaQuery.of(context).size.width * 0.40,
@@ -588,7 +604,7 @@ Container productsHome(BuildContext context, Producto producto, UserRoles rol) {
             Positioned(
               top: 8.0, // Ajusta la posición del botón según sea necesario
               right: 8.0,
-              child: !isAdmin
+              child: !loggedUserRol
                   ? Container(
                       padding: const EdgeInsets.all(4),
                       decoration: BoxDecoration(
@@ -642,7 +658,7 @@ Container productsHome(BuildContext context, Producto producto, UserRoles rol) {
                       fontWeight: FontWeight.w500,
                     ),
                   ),
-                  if (isAdmin)
+                  if (loggedUserRol)
                     Container(
                       padding: const EdgeInsets.symmetric(
                         vertical: 4,
@@ -728,12 +744,12 @@ Container categoriesProducts(
           BoxShadow(
             color: const Color.fromARGB(255, 95, 95, 95)
                 .withOpacity(0.08), // Color de la sombra y su opacidad
-            spreadRadius: 2, 
-            blurRadius: 4, 
+            spreadRadius: 2,
+            blurRadius: 4,
             offset: const Offset(
               0,
               1,
-            ), 
+            ),
           ),
         ],
       ),
@@ -741,11 +757,12 @@ Container categoriesProducts(
         mainAxisAlignment: MainAxisAlignment.spaceBetween,
         children: [
           Container(
-              alignment: Alignment.center,
-              child: Image.asset(
-                image,
-                width: MediaQuery.of(context).size.width *0.2,
-              ),),
+            alignment: Alignment.center,
+            child: Image.asset(
+              image,
+              width: MediaQuery.of(context).size.width * 0.2,
+            ),
+          ),
           Container(
             alignment: Alignment.bottomCenter,
             child: Text(
