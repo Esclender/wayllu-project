@@ -512,31 +512,4 @@ class Artisan {
     required this.urlImage,
   });
 
-  factory Artisan.fromJson(Map<String, dynamic> json) {
-    return Artisan(
-      nombreCompleto: json['NOMBRE_COMPLETO'] != null ? json['NOMBRE_COMPLETO'] as String : '',
-      dni: json['DNI'] != null ? json['DNI'] as int : 0,
-      comunidad: json['COMUNIDAD'] != null ? json['COMUNIDAD'] as String : '',
-      cdgComunidad: json['CDG_COMUNIDAD'] != null ? json['CDG_COMUNIDAD'] as int : 0,
-      codigo: json['CODIGO'] != null ? json['CODIGO'] as int : 0,
-      urlImage: json['URL_IMAGE'] != null ? json['URL_IMAGE'] as String : '',
-    );
-  }
 }
-/*
-Future<List<Artisan>> fetchData() async {
-  final response = await http.get(Uri.parse('URL_DEL_BACKEND/api/artisans'));
-
-  if (response.statusCode == 200) {
-    try {
-      final List<dynamic> jsonData = json.decode(response.body);
-      final List<Artisan> artisans = jsonData.map((data) => Artisan.fromJson(data)).toList();
-      return artisans;
-    } catch (e) {
-      print('Error decoding JSON: $e');
-      throw Exception('Failed to decode JSON');
-    }
-  } else {
-    throw Exception('Failed to load data: ${response.statusCode}');
-  }
-}*/

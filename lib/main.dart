@@ -7,10 +7,9 @@ import 'package:wayllu_project/src/locator.dart';
 import 'package:wayllu_project/src/presentation/cubit/is_admin_cubit.dart';
 
 Future<void> main() async {
- await initializeDateFormatting('es');
+  await initializeDateFormatting('es');
 
   initializeDependecies();
-  
   runApp(BlocSettup());
 }
 
@@ -39,7 +38,7 @@ class MyApp extends StatelessWidget {
     return MaterialApp.router(
       debugShowCheckedModeBanner: false,
       theme: ThemeApp.light,
-    routerConfig: _appRouter.config(),
+      routerConfig: _appRouter.config(),
     );
   }
 }
