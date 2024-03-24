@@ -5,6 +5,7 @@ import 'package:ionicons/ionicons.dart';
 import 'package:wayllu_project/src/config/router/app_router.dart';
 import 'package:wayllu_project/src/domain/enums/lists_enums.dart';
 import 'package:wayllu_project/src/domain/models/list_items_model.dart';
+import 'package:wayllu_project/src/domain/models/user_info/user_info_model.dart';
 import 'package:wayllu_project/src/locator.dart';
 import 'package:wayllu_project/src/utils/constants/colors.dart';
 
@@ -33,8 +34,8 @@ class ColorfullItemsList extends HookWidget {
     [gradientFourth, fourthColor],
   ];
 
-  void _navigateToEditUser() {
-    appRouter.navigate(InfoUserRoute(viewIndex: 2));
+  void _navigateToEditUser(UserInfo user) {
+    appRouter.navigate(InfoUserRoute(viewIndex: 2, user: user));
   }
 
   @override
@@ -54,7 +55,7 @@ class ColorfullItemsList extends HookWidget {
                 : 0.0,
           ),
           child: _buildItemContainer(
-            itemData: dataToRender[0],
+            itemData: dataToRender[ind],
           ),
         );
       },
@@ -114,7 +115,7 @@ class ColorfullItemsList extends HookWidget {
 
   Widget _itemEdit() {
     return InkWell(
-      onTap: _navigateToEditUser,
+      //onTap: () => {_navigateToEditUser()},
       child: Container(
         width: 40,
         height: 40,

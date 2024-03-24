@@ -34,10 +34,10 @@ class BottomNavBar extends HookWidget {
     OptionsIcons(
       icon: Ionicons.person,
       routes: [
-        OptionsIconsRoutes(
-          route: InfoUserRoute(viewIndex: 2),
-          rol: UserRoles.artesano,
-        ),
+        // OptionsIconsRoutes(
+        //   route: InfoUserRoute(viewIndex: 2),
+        //   rol: UserRoles.artesano,
+        // ),
         OptionsIconsRoutes(
           route: UsersListAdminRoute(viewIndex: 2),
           rol: UserRoles.admin,
@@ -51,10 +51,11 @@ class BottomNavBar extends HookWidget {
 
   final double blur = 1.5;
   final BorderRadiusGeometry borderRadiusBotNav = const BorderRadius.only(
-   topLeft: Radius.circular(10), topRight: Radius.circular(10),
+    topLeft: Radius.circular(10),
+    topRight: Radius.circular(10),
   );
   final BorderRadiusGeometry containersBorder = const BorderRadius.all(
-    Radius.circular(10), 
+    Radius.circular(10),
   );
 
   @override
@@ -66,7 +67,9 @@ class BottomNavBar extends HookWidget {
       decoration: BoxDecoration(
         color: bottomNavBar.withOpacity(0.8),
         borderRadius: borderRadiusBotNav,
-        border: Border( top: BorderSide(color: bottomNavBarStroke, width: 0.2),),
+        border: Border(
+          top: BorderSide(color: bottomNavBarStroke, width: 0.2),
+        ),
       ),
       child: ClipRRect(
         borderRadius: containersBorder,
@@ -125,7 +128,8 @@ class BottomNavBar extends HookWidget {
           ),
           alignment: Alignment.center,
           child: Icon(
-            icon, size: 22,
+            icon,
+            size: 22,
             color: viewSelected == index ? secondaryColor : noSelectedView,
           ),
         ),

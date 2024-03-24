@@ -197,8 +197,17 @@ class HomeScreen extends HookWidget {
         ],
       ),
       floatingActionButtonLocation: FloatingActionButtonLocation.centerDocked,
-      floatingActionButton: BottomNavBar(
-        viewSelected: viewIndex,
+      floatingActionButton: Column(
+        mainAxisAlignment: MainAxisAlignment.end,
+        children: [
+          // shoppingCart(context),
+          const SizedBox(
+            height: 8,
+          ),
+          BottomNavBar(
+            viewSelected: viewIndex,
+          ),
+        ],
       ),
     );
   }
