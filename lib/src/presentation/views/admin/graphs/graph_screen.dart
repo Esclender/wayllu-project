@@ -20,8 +20,8 @@ class GraphicProductsScreen extends HookWidget {
     required this.viewIndex,
   });
 
-  final List<ColorfullItem> dataToRender = [
-    ColorfullItem(
+  final List<CardTemplate> dataToRender = [
+    CardTemplate(
       url:
           'https://images.unsplash.com/profile-1446404465118-3a53b909cc82?ixlib=rb-0.3.5&q=80&fm=jpg&crop=faces&cs=tinysrgb&fit=crop&h=64&w=64&s=3ef46b07bb19f68322d027cb8f9ac99f',
       nombre: 'Sombreros',
@@ -136,7 +136,7 @@ class GraphicProductsScreen extends HookWidget {
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
           _buildMohtlyProductsListTitle(title: 'Enero'),
-          ColorfullItemsList(
+          CardTemplateItemsList(
             listType: ListEnums.products,
             dataToRender: dataToRender,
             isScrollable: false,

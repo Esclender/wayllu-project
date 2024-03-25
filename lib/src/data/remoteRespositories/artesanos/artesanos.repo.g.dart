@@ -13,7 +13,7 @@ class _ArtesansApiServices implements ArtesansApiServices {
     this._dio, {
     this.baseUrl,
   }) {
-    baseUrl ??= 'http://localhost:3001';
+    baseUrl ??= 'https://23qnp6pm-3001.brs.devtunnels.ms';
   }
 
   final Dio _dio;
@@ -21,13 +21,13 @@ class _ArtesansApiServices implements ArtesansApiServices {
   String? baseUrl;
 
   @override
-  Future<List<UserInfo>> getTasks() async {
+  Future<HttpResponse<List<UserInfo>?>> getArtisans() async {
     final _extra = <String, dynamic>{};
     final queryParameters = <String, dynamic>{};
     final _headers = <String, dynamic>{};
     const Map<String, dynamic>? _data = null;
-    final _result =
-        await _dio.fetch<List<dynamic>>(_setStreamType<List<UserInfo>>(Options(
+    final _result = await _dio.fetch<List<dynamic>>(
+        _setStreamType<HttpResponse<List<UserInfo>>>(Options(
       method: 'GET',
       headers: _headers,
       extra: _extra,
@@ -43,10 +43,11 @@ class _ArtesansApiServices implements ArtesansApiServices {
               _dio.options.baseUrl,
               baseUrl,
             ))));
-    var value = _result.data!
-        .map((dynamic i) => UserInfo.fromJson(i as Map<String, dynamic>))
+    var value = _result.data
+        ?.map((dynamic i) => UserInfo.fromJson(i as Map<String, dynamic>))
         .toList();
-    return value;
+    final httpResponse = HttpResponse(value, _result);
+    return httpResponse;
   }
 
   RequestOptions _setStreamType<T>(RequestOptions requestOptions) {

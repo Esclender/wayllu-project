@@ -5,7 +5,7 @@ import 'package:flutter_hooks/flutter_hooks.dart';
 import 'package:image_picker/image_picker.dart';
 import 'package:ionicons/ionicons.dart';
 import 'package:wayllu_project/src/config/router/app_router.dart';
-import 'package:wayllu_project/src/domain/models/user_info_model.dart';
+import 'package:wayllu_project/src/domain/models/user_info/user_info_model.dart';
 import 'package:wayllu_project/src/locator.dart';
 import 'package:wayllu_project/src/presentation/widgets/bottom_navbar.dart';
 import 'package:wayllu_project/src/presentation/widgets/top_vector.dart';
@@ -15,24 +15,16 @@ import 'package:wayllu_project/src/utils/constants/colors.dart';
 class InfoUserScreen extends HookWidget {
   final bool isAdmin;
   final int viewIndex;
+  final UserInfo user;
 
   final appRouter = getIt<AppRouter>();
   final ImagePicker imagePicker = ImagePicker();
 
   InfoUserScreen({
     required this.viewIndex,
+    required this.user,
     this.isAdmin = false,
   });
-
-  final PersonalInfo person = PersonalInfo(
-    dni: '123456789',
-    nombre: 'Maria Jose Fernandez',
-    comunidad: 'Grupo 1',
-    clave: 'Enero20.',
-    isAdmin: true,
-  );
-
-  final ContactInfo contact = ContactInfo(telefono: '928590695');
 
   @override
   Widget build(BuildContext context) {
@@ -59,13 +51,16 @@ class InfoUserScreen extends HookWidget {
           Row(
             mainAxisAlignment: MainAxisAlignment.center,
             children: [
-              _buildAvatar(person),
+              _buildAvatar(user.userInfo),
             ],
           ),
           Column(
             children: [
-              _buildInfoContainer('Informacion Personal', person),
-              _buildInfoContainer('Informacion de Contacto', contact),
+              _buildInfoContainer('Informacion Personal', user.userInfo),
+              _buildInfoContainer(
+                'Informacion de Contacto',
+                user.userContactInfo,
+              ),
               if (isAdmin) _buildInhabilitButton(context) else Container(),
             ],
           ),
@@ -114,13 +109,13 @@ class InfoUserScreen extends HookWidget {
         CircleAvatar(
           radius: 80.0,
           backgroundImage:
-              profileImage.value != null || person.urlProfile != null
+              profileImage.value != null || person.URL_IMAGE != null
                   ? profileImage.value != null
                       ? FileImage(profileImage.value!) as ImageProvider
-                      : NetworkImage(person.urlProfile!)
+                      : NetworkImage(person.URL_IMAGE!)
                   : null,
           backgroundColor: Colors.grey,
-          child: profileImage.value != null || person.urlProfile != null
+          child: profileImage.value != null || person.URL_IMAGE != null
               ? null
               : const Icon(
                   Ionicons.person,

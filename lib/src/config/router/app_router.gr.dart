@@ -53,6 +53,7 @@ abstract class _$AppRouter extends RootStackRouter {
         routeData: routeData,
         child: InfoUserScreen(
           viewIndex: args.viewIndex,
+          user: args.user,
           isAdmin: args.isAdmin,
         ),
       );
@@ -213,12 +214,14 @@ class HomeRouteArgs {
 class InfoUserRoute extends PageRouteInfo<InfoUserRouteArgs> {
   InfoUserRoute({
     required int viewIndex,
+    required UserInfo user,
     bool isAdmin = false,
     List<PageRouteInfo>? children,
   }) : super(
           InfoUserRoute.name,
           args: InfoUserRouteArgs(
             viewIndex: viewIndex,
+            user: user,
             isAdmin: isAdmin,
           ),
           initialChildren: children,
@@ -233,16 +236,19 @@ class InfoUserRoute extends PageRouteInfo<InfoUserRouteArgs> {
 class InfoUserRouteArgs {
   const InfoUserRouteArgs({
     required this.viewIndex,
+    required this.user,
     this.isAdmin = false,
   });
 
   final int viewIndex;
 
+  final UserInfo user;
+
   final bool isAdmin;
 
   @override
   String toString() {
-    return 'InfoUserRouteArgs{viewIndex: $viewIndex, isAdmin: $isAdmin}';
+    return 'InfoUserRouteArgs{viewIndex: $viewIndex, user: $user, isAdmin: $isAdmin}';
   }
 }
 

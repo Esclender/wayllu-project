@@ -2,13 +2,12 @@ import 'dart:math';
 
 import 'package:wayllu_project/src/providers/user_provider.dart';
 
-class ColorfullItem {
+class CardTemplate {
   String nombre;
   String url;
-  int gradient = Random().nextInt(3);
   List<DescriptionItem> descriptions;
 
-  ColorfullItem({
+  CardTemplate({
     required this.nombre,
     required this.url,
     required this.descriptions,

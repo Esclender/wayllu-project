@@ -2,9 +2,7 @@ import 'dart:ui';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_hooks/flutter_hooks.dart';
-import 'package:get/get.dart';
 import 'package:ionicons/ionicons.dart';
-import 'package:wayllu_project/src/config/api_config.dart';
 import 'package:wayllu_project/src/config/router/app_router.dart';
 import 'package:wayllu_project/src/domain/enums/user_roles.dart';
 import 'package:wayllu_project/src/domain/models/bottom_navbar_options_model.dart';
@@ -36,14 +34,14 @@ class BottomNavBar extends HookWidget {
     OptionsIcons(
       icon: Ionicons.person,
       routes: [
+        // OptionsIconsRoutes(
+        //   route: InfoUserRoute(viewIndex: 2),
+        //   rol: UserRoles.artesano,
+        // ),
         OptionsIconsRoutes(
-          route: InfoUserRoute(viewIndex: 2),
-          rol: UserRoles.artesano,
+          route: UsersListAdminRoute(viewIndex: 2),
+          rol: UserRoles.admin,
         ),
-        OptionsIconsRoutes(
-            route: UsersListAdminRoute(viewIndex: 2),
-            rol: UserRoles.admin,
-           ),
       ],
     ),
   ];
@@ -53,7 +51,8 @@ class BottomNavBar extends HookWidget {
 
   final double blur = 1.5;
   final BorderRadiusGeometry borderRadiusBotNav = const BorderRadius.only(
-   topLeft: Radius.circular(10), topRight: Radius.circular(10),
+    topLeft: Radius.circular(10),
+    topRight: Radius.circular(10),
   );
   final BorderRadiusGeometry containersBorder = const BorderRadius.all(
     Radius.circular(10),

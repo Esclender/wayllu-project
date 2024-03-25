@@ -108,10 +108,7 @@ class HomeScreen extends HookWidget {
                     mainAxisAlignment: MainAxisAlignment.spaceBetween,
                     children: [
                       barSearch(context),
-                      menu(
-                        context,
-                        //goToRegisterOfProductOrVentaCondition,
-                      ),
+                      optionsAndLogout(context)
                     ],
                   ),
                 ),
@@ -209,6 +206,53 @@ class HomeScreen extends HookWidget {
         ),
        
         ], 
+      ),
+    );
+  }
+ Widget optionsAndLogout(BuildContext context) {
+    return Container(
+      //margin: EdgeInsets.only(left: 4),
+      width: MediaQuery.of(context).size.width*0.12,
+      height:MediaQuery.of(context).size.width*0.10,
+      decoration: BoxDecoration(color: bottomNavBar,
+      borderRadius: BorderRadius.circular(10),
+       boxShadow:[
+                  BoxShadow(
+                    color: const Color.fromARGB(255, 95, 95, 95)
+                        .withOpacity(0.08), 
+                    spreadRadius: 2, 
+                    blurRadius: 4, 
+                    offset: const Offset(
+                      0,
+                      1,
+                    ),
+                  ),
+                ], ),
+      child: PopupMenuButton<String>(
+        color: bottomNavBar.withOpacity(0.9),
+        
+        offset: Offset(1,  MediaQuery.of(context).size.width * 0.11),
+        icon: const Icon(Ionicons.menu_outline, size: 24,),
+        itemBuilder: (context) => [
+          const PopupMenuItem(
+            value: 'Ver carrito',
+            child: ListTile(
+                        leading: Icon(Ionicons.bag_handle_outline),
+                        title: Text('Ver carrito'),
+                      ),
+          ),
+          const PopupMenuDivider(),
+          PopupMenuItem(
+            value: 'opcion2',
+            child: ListTile(
+                        leading: Icon(Ionicons.exit_outline, color: mainColor,),
+                        title: const Text('Cerrar sesión'),
+                      ),
+          ),
+       
+        ],
+        onSelected: (value) {
+        },
       ),
     );
   }
