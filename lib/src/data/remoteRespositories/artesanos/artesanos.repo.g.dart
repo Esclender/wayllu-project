@@ -13,7 +13,7 @@ class _ArtesansApiServices implements ArtesansApiServices {
     this._dio, {
     this.baseUrl,
   }) {
-    baseUrl ??= 'https://23qnp6pm-3001.brs.devtunnels.ms';
+    baseUrl ??= 'https://796c9tvd-5036.brs.devtunnels.ms/';
   }
 
   final Dio _dio;

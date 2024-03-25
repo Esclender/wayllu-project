@@ -1,6 +1,3 @@
-import 'dart:math';
-
-import 'package:wayllu_project/src/providers/user_provider.dart';
 
 class CardTemplate {
   String nombre;

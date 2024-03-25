@@ -36,8 +36,8 @@ class UserInfo {
 
   Map<String, dynamic> toJson() => _$UserInfoToJson(this);
 
-    CardTemplate toCardTemplate() {
-    return  CardTemplate(
+  CardTemplate toCardTemplate() {
+    return CardTemplate(
       url: URL_IMAGE ?? '',
       nombre: NOMBRE_COMPLETO,
       descriptions: [
