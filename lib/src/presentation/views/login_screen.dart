@@ -47,10 +47,10 @@ class LoginExampleScreen extends HookWidget {
     return AnnotatedRegion(
       value: SystemStyles.login,
       child: Scaffold(
-        backgroundColor: bgPrimary,
+        backgroundColor: Colors.transparent,
         body: Container(
           decoration: BoxDecoration(
-            gradient: gradientLogin,
+            gradient: loginGradient,
           ),
           child: Padding(
             padding:
@@ -67,6 +67,7 @@ class LoginExampleScreen extends HookWidget {
                             Image.asset('assets/ISOTIPO.png'),
                           ],
                         ),
+                        SizedBox(height: 10,),
                         const Row(
                           children: [
                             TextLogin(
@@ -86,21 +87,20 @@ class LoginExampleScreen extends HookWidget {
                       ],
                     ),
                     const SpaceY(
-                      value: 40,
+                      value: 20,
                     ),
                     Column(
                       mainAxisAlignment: MainAxisAlignment.center,
                       children: [
                         const MyTextLabel(hintText: 'DNI'),
-                        const SpaceY(),
+                        SizedBox(height: 10,),
                         TextLoginField(
                           controller: controllerEmail,
                           hintText: 'Ingrese su DNI',
                           obscureText: false,
+                          
                         ),
-                        const SizedBox(
-                          height: 20,
-                        ),
+                        SizedBox(height: 10,),
                         const MyTextLabel(hintText: 'Password'),
                         const SpaceY(),
                         TextLoginField(
@@ -108,14 +108,14 @@ class LoginExampleScreen extends HookWidget {
                           hintText: 'Ingrese con su correo',
                           obscureText: true,
                         ),
-                        const SpaceY(),
+                       SizedBox(height: 20,),
                         ElevatedButton(
                           style: ElevatedButton.styleFrom(
                             shape: RoundedRectangleBorder(
                               borderRadius: BorderRadius.circular(8.58),
                             ),
                             backgroundColor: HexColor('#B80000'),
-                            minimumSize: const Size.fromHeight(60),
+                            minimumSize: const Size.fromHeight(50),
                           ),
                           onPressed: () => _loginEvent(
                             controllerEmail.text,
@@ -124,7 +124,7 @@ class LoginExampleScreen extends HookWidget {
                           ),
                           child: const Text(
                             'Ingresar',
-                            style: TextStyle(color: Colors.white),
+                            style: TextStyle(color: Colors.white, fontSize: 16),
                           ),
                         ),
                       ],

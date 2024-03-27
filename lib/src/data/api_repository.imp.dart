@@ -13,9 +13,9 @@ class ArtisansApiRepositoryImpl extends BaseApiRepository
   //Se define una capara para obtener los datos desde api
   //Con el proposito de validaciones o otro manejo de datos
   @override
-  Future<ArtesansListHttpResponse> getArtisans() async {
+  Future<ArtesansListHttpResponse> getArtisans(String searchText) async {
     final responseHttp = await getStateOf<ArtesansListHttpResponse>(
-      request: () => _apiServices.getArtisans(),
+      request: () => _apiServices.getArtisans(searchText),
     );
 
     return responseHttp.data;

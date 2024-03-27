@@ -13,6 +13,7 @@ class CardTemplateItemsList extends HookWidget {
   final ListEnums listType;
   final List<CardTemplate> dataToRender;
   final bool isScrollable;
+  final String query;
 
   //Dependencies Injection
   final appRouter = getIt<AppRouter>();
@@ -21,6 +22,7 @@ class CardTemplateItemsList extends HookWidget {
     required this.listType,
     required this.dataToRender,
     this.isScrollable = true,
+    this.query= '',
   });
 
   final double navBarHeight = 60.0;
@@ -40,22 +42,27 @@ class CardTemplateItemsList extends HookWidget {
 
   @override
   Widget build(BuildContext context) {
+    final filteredData = dataToRender
+        .where(
+            (item) => item.nombre.toLowerCase().contains(query.toLowerCase()))
+        .toList();
+
     return ListView.separated(
-      separatorBuilder: (context, index) => const Gap(35),
+      separatorBuilder: (context, index) => const Gap(8),
       physics: isScrollable ? null : const NeverScrollableScrollPhysics(),
       shrinkWrap: true,
       itemCount: dataToRender.length,
       itemBuilder: (BuildContext c, int ind) {
         return Padding(
           padding: EdgeInsets.only(
-            bottom: ind == dataToRender.length - 1
+            bottom: ind == filteredData.length - 1
                 ? listType == ListEnums.users
                     ? navBarHeight + (registerUserBtnHeight * 2)
                     : navBarHeight + 10
                 : 0.0,
           ),
           child: _buildItemContainer(
-            itemData: dataToRender[ind],
+            itemData: filteredData[ind],
           ),
         );
       },
@@ -66,21 +73,22 @@ class CardTemplateItemsList extends HookWidget {
     required CardTemplate itemData,
   }) {
     final BoxDecoration decoration = BoxDecoration(
+      color: bottomNavBar,
       boxShadow: [
         simpleShadow,
       ],
       borderRadius: const BorderRadius.all(
-        Radius.circular(20),
+        Radius.circular(5),
       ),
     );
 
     return Stack(
-      alignment: Alignment.bottomRight,
+      alignment: Alignment.topRight,
       children: [
         Stack(
           children: [
             Container(
-              padding: const EdgeInsets.all(30),
+              padding: const EdgeInsets.only(left: 15, top: 5, bottom: 5),
               decoration: decoration,
               child: _listTile(
                 leading: _buildImageAvatar(itemData.url),
@@ -100,10 +108,10 @@ class CardTemplateItemsList extends HookWidget {
 
   Widget _buildImageAvatar(String url) {
     return Container(
-      width: 75,
-      height: 75,
+      width: 55,
+      height: 55,
       decoration: BoxDecoration(
-        borderRadius: BorderRadius.circular(20.0),
+        borderRadius: BorderRadius.circular(5.0),
         image: DecorationImage(
           image: NetworkImage(url),
           fit: BoxFit.cover,
@@ -116,16 +124,17 @@ class CardTemplateItemsList extends HookWidget {
     return InkWell(
       //onTap: () => {_navigateToEditUser()},
       child: Container(
-        width: 40,
-        height: 40,
+        width: 30,
+        height: 25,
         margin: const EdgeInsets.all(8),
         decoration: BoxDecoration(
-          gradient: gradientOrange,
-          borderRadius: BorderRadius.circular(10),
+          color: secondary,
+          borderRadius: BorderRadius.circular(2),
         ),
         child: const Icon(
           Ionicons.pencil,
           color: Colors.white,
+          size: 18,
         ),
       ),
     );
@@ -135,9 +144,9 @@ class CardTemplateItemsList extends HookWidget {
     Color colorMarker,
   ) {
     return Container(
-      margin: const EdgeInsets.only(top: 20),
+      margin: const EdgeInsets.only(top: 10),
       width: 5.0,
-      height: 30.0,
+      height: 20.0,
       decoration: BoxDecoration(
         color: colorMarker,
         borderRadius: const BorderRadius.only(
@@ -156,7 +165,7 @@ class CardTemplateItemsList extends HookWidget {
     return Row(
       children: [
         leading,
-        const Gap(24),
+        const Gap(20),
         Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [

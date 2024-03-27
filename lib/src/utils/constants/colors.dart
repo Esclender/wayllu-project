@@ -61,21 +61,33 @@ LinearGradient gradientOrange = LinearGradient(
   ],
 );
 
-LinearGradient gradientLogin = const LinearGradient(
-  stops: [0.01, 1],
-  begin: FractionalOffset.bottomLeft,
-  end: FractionalOffset.topRight,
+LinearGradient loginGradient = LinearGradient(
+  begin: Alignment.bottomLeft,
+  end: Alignment.topRight,
   colors: [
-    Color(0xFFFFA743),
-    Color(0xFFB80000),
+    Color(0xFFFE8769), 
+    
+    Color(0xFFEF4736),
+    Color(0xFFF76510), 
   ],
+  stops: [0.0, 0.5, 1.0],
 );
 
 //Box shadows
 
 BoxShadow simpleShadow = BoxShadow(
-  color: Colors.grey.withOpacity(0.5), // Color of the shadow
-  spreadRadius: 1, // Spread radius of the shadow
-  blurRadius: 7, // Blur radius of the shadow
-  offset: const Offset(0, 3), // Offset of the shadow
+  color: const Color.fromARGB(255, 95, 95, 95).withOpacity(0.08),
+  spreadRadius: 2,
+  blurRadius: 4,
+  offset: const Offset(
+    0,
+    1,
+  ),
+);
+BoxShadow strongShadow = BoxShadow(
+  color: const Color.fromARGB(255, 95, 95, 95)
+      .withOpacity(0.15), // Color y opacidad de la sombra
+  spreadRadius: 3, // Radio de expansión de la sombra
+  blurRadius: 8, // Radio de difuminado de la sombra
+  offset: const Offset(0, 2), // Desplazamiento de la sombra
 );

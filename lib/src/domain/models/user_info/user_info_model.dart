@@ -45,7 +45,7 @@ class UserInfo {
         DescriptionItem(field: 'Comunidad', value: COMUNIDAD),
         DescriptionItem(field: 'Tlf', value: TELEFONO ?? ''),
         DescriptionItem(field: 'Registrado', value: formattingDate()),
-      ],
+      ], 
     );
   }
 

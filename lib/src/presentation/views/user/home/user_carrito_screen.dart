@@ -43,7 +43,7 @@ class CarritoScreen extends HookWidget {
               bottom: checkoutBtnHeight + 10,
             ),
             child: ListView.separated(
-              separatorBuilder: (_, __) => const Gap(25),
+              separatorBuilder: (_, __) => const Gap(5),
               itemCount: 10,
               itemBuilder: (_, ind) => _buildProduct(
                 productName: 'Producto',

@@ -21,7 +21,7 @@ class _ArtesansApiServices implements ArtesansApiServices {
   String? baseUrl;
 
   @override
-  Future<HttpResponse<List<UserInfo>?>> getArtisans() async {
+  Future<HttpResponse<List<UserInfo>?>> getArtisans(dynamic searchText) async {
     final _extra = <String, dynamic>{};
     final queryParameters = <String, dynamic>{};
     final _headers = <String, dynamic>{};

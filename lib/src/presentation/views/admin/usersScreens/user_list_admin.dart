@@ -4,10 +4,14 @@ import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_hooks/flutter_hooks.dart';
 import 'package:ionicons/ionicons.dart';
 import 'package:wayllu_project/src/config/router/app_router.dart';
+import 'package:wayllu_project/src/data/api_repository.imp.dart';
+import 'package:wayllu_project/src/data/remoteRespositories/artesanos/artesanos.repo.dart';
 import 'package:wayllu_project/src/domain/enums/lists_enums.dart';
 import 'package:wayllu_project/src/domain/models/list_items_model.dart';
 import 'package:wayllu_project/src/locator.dart';
 import 'package:wayllu_project/src/presentation/cubit/users_list_cubit.dart';
+import 'package:wayllu_project/src/presentation/views/home_screen.dart';
+import 'package:wayllu_project/src/presentation/widgets/bar_search.dart';
 import 'package:wayllu_project/src/presentation/widgets/bottom_navbar.dart';
 import 'package:wayllu_project/src/presentation/widgets/gradient_widgets.dart';
 import 'package:wayllu_project/src/presentation/widgets/list_generator.dart';
@@ -24,6 +28,7 @@ class UsersListAdminScreen extends HookWidget {
   });
 
   final appRouter = getIt<AppRouter>();
+  // Controlador para el campo de búsqueda
 
   void _navigateRegisterUser() {
     appRouter.pushNamed('/admin/register');
@@ -31,8 +36,10 @@ class UsersListAdminScreen extends HookWidget {
 
   @override
   Widget build(BuildContext contex) {
-    final usersListCubit = contex.watch<UsersListCubit>();
+    final TextEditingController searchController = useTextEditingController();
+    final ValueNotifier<List<CardTemplate>> searchResults = useState([]);
 
+    final usersListCubit = contex.watch<UsersListCubit>();
     useEffect(
       () {
         usersListCubit.getUserLists();
@@ -43,25 +50,36 @@ class UsersListAdminScreen extends HookWidget {
     );
 
     return Scaffold(
+      backgroundColor: bgPrimary,
       floatingActionButtonLocation: FloatingActionButtonLocation.centerDocked,
       floatingActionButton: BottomNavBar(
         viewSelected: viewIndex,
       ),
-      body: BlocBuilder<UsersListCubit, List<CardTemplate>?>(
-        builder: (_, state) {
-          if (state == null) {
-            return const Center(
-              child: CircularProgressIndicator(),
-            );
-          }
-
-          return _buildScrollableLayer(state);
-        },
+      body: Column(
+        children: [
+          Expanded(
+            child: BlocBuilder<UsersListCubit, List<CardTemplate>?>(
+              builder: (_, state) {
+                if (state == null) {
+                  return Center(
+                    child: CircularProgressIndicator(),
+                  );
+                } else {
+                  return _buildScrollableLayer(state, contex);
+                }
+              },
+            ),
+          ),
+        ],
       ),
     );
   }
 
-  Widget _buildScrollableLayer(List<CardTemplate> usersToRender) {
+  Widget _buildScrollableLayer(
+      List<CardTemplate> usersToRender, BuildContext context) {
+    final usersListCubit = UsersListCubit(
+        ArtisansApiRepositoryImpl(getIt.get<ArtesansApiServices>()));
+    final searchController = TextEditingController();
     return Stack(
       alignment: Alignment.bottomRight,
       children: [
@@ -69,7 +87,7 @@ class UsersListAdminScreen extends HookWidget {
           [
             TopVector(),
             Padding(
-              padding: const EdgeInsets.all(20.0),
+              padding: const EdgeInsets.all(10.0),
               child: Column(
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
@@ -77,11 +95,14 @@ class UsersListAdminScreen extends HookWidget {
                     text: 'Usuarios',
                     fontSize: 25.0,
                   ),
-                  CardTemplateItemsList(
+                  SizedBox(height: 8,),
+                  CustomSearchWidget(allData: usersToRender,),
+
+                  /*CardTemplateItemsList(
                     listType: ListEnums.users,
                     dataToRender: usersToRender,
                     isScrollable: false,
-                  ),
+                  ),*/
                 ],
               ),
             ),
@@ -92,6 +113,29 @@ class UsersListAdminScreen extends HookWidget {
     );
   }
 
+/*
+Widget _buildSearchBar(BuildContext context, UsersListCubit usersListCubit, List<CardTemplate> usersToRender) {
+  return TextButton(
+    onPressed: () {
+      showSearch(
+        context: context,
+        delegate: CustomSearchDelegate(usersListCubit: usersListCubit, usersToRender: usersToRender),
+      );
+    },
+    child: Container(
+      // Aquí puedes agregar estilos y decoraciones según sea necesario
+      padding: const EdgeInsets.all(8.0),
+      child: Row(
+        children: [
+          Icon(Icons.search),
+          SizedBox(width: 8), // Espacio entre el ícono y el texto
+          Text('Buscar'),
+        ],
+      ),
+    ),
+  );
+}
+*/
   Widget _buildScrollableWidgets(List<Widget> children) {
     return CustomScrollView(
       slivers: [
@@ -106,20 +150,20 @@ class UsersListAdminScreen extends HookWidget {
 
   Widget _buildRegisterUserBtn() {
     return Container(
-      margin: EdgeInsets.only(bottom: navbarHeight + 10, right: 10),
+      margin: EdgeInsets.only(bottom: navbarHeight + 5, right: 10),
       child: InkWell(
         onTap: _navigateRegisterUser,
         child: Container(
-          width: 90,
-          height: 90,
+          width: 60,
+          height: 60,
           decoration: BoxDecoration(
-            gradient: gradientOrange,
-            borderRadius: BorderRadius.circular(50),
-          ),
+              color: thirdColor,
+              borderRadius: BorderRadius.circular(50),
+              boxShadow: [strongShadow]),
           child: const Icon(
             Ionicons.person_add,
             color: Colors.white,
-            size: 40,
+            size: 30,
           ),
         ),
       ),

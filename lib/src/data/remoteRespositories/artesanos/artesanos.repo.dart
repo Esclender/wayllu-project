@@ -17,5 +17,5 @@ abstract class ArtesansApiServices {
   //Aqui definimos todos nuestros endpoints
   //estos endpoints seran los que se conecten con la api
   @GET('/api/artesanos')
-  Future<HttpResponse<ArtesansListHttpResponse>> getArtisans();
+  Future<HttpResponse<ArtesansListHttpResponse>> getArtisans(searchText);
 }

@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:hexcolor/hexcolor.dart';
+import 'package:wayllu_project/src/utils/constants/colors.dart';
 
 // ignore: must_be_immutable
 class TextLoginField extends StatelessWidget {
@@ -31,18 +32,18 @@ class TextLoginField extends StatelessWidget {
       validator: validator,
       decoration: InputDecoration(
         hintText: hintText,
-        fillColor: HexColor('#D16363'),
+        fillColor: iconColor.withOpacity(0.15),
         contentPadding: const EdgeInsets.fromLTRB(20, 20, 20, 20),
         hintStyle: GoogleFonts.poppins(
-          fontSize: 15,
-          color: const Color.fromARGB(128, 0, 0, 0),
+          fontSize: 14,
+          color: Colors.black,
         ),
         border: OutlineInputBorder(
-          borderSide: const BorderSide(color: Color.fromARGB(120, 0, 0, 0)),
+          borderSide: const BorderSide(color: Color.fromARGB(120, 0, 0, 0), width: 0.5),
           borderRadius: BorderRadius.circular(10),
         ),
         enabledBorder: OutlineInputBorder(
-          borderSide: const BorderSide(color: Color.fromARGB(120, 0, 0, 0)),
+          borderSide: const BorderSide(color: Color.fromARGB(120, 0, 0, 0), width: 0.5),
           borderRadius: BorderRadius.circular(10),
         ),
         filled: true,
