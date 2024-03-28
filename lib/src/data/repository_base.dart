@@ -19,7 +19,7 @@ abstract class BaseApiRepository {
   Future<DataState<T>> getStateOf<T>({
     required Future<HttpResponse<T>> Function() request,
   }) async {
-    Logger log = Logger();
+    final Logger log = Logger();
 
     try {
       final httpResponse = await request();

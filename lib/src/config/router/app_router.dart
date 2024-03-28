@@ -1,5 +1,4 @@
 import 'package:auto_route/auto_route.dart';
-import 'package:wayllu_project/src/domain/models/list_items_model.dart';
 import 'package:wayllu_project/src/domain/models/user_info/user_info_model.dart';
 import 'package:wayllu_project/src/presentation/views/admin/graphs/graph_screen.dart';
 import 'package:wayllu_project/src/presentation/views/admin/register_products.dart';
@@ -8,8 +7,8 @@ import 'package:wayllu_project/src/presentation/views/admin/usersScreens/registe
 import 'package:wayllu_project/src/presentation/views/admin/usersScreens/user_list_admin.dart';
 import 'package:wayllu_project/src/presentation/views/home_screen.dart';
 import 'package:wayllu_project/src/presentation/views/login_screen.dart';
-import 'package:wayllu_project/src/presentation/views/mainNavigationsRoles/admin_users_navigation.dart';
 import 'package:wayllu_project/src/presentation/views/mainNavigationsRoles/admin_navigation.dart';
+import 'package:wayllu_project/src/presentation/views/mainNavigationsRoles/admin_users_navigation.dart';
 import 'package:wayllu_project/src/presentation/views/mainNavigationsRoles/main_navigation.dart';
 import 'package:wayllu_project/src/presentation/views/mainNavigationsRoles/user_navigation.dart';
 import 'package:wayllu_project/src/presentation/views/user/home/recibo_screen.dart';

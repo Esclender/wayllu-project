@@ -14,20 +14,18 @@ class ReciboScreen extends HookWidget {
       backgroundColor: bgContainer,
       body: SingleChildScrollView(
         child: Center(
-          child: Container(
-            child: Column(
-              children: [
-                RegistroExitoso(),
-                const SizedBox(height: 40),
-                FechaRegistro(),
-                const SizedBox(height: 40),
-                ProductosRegistrados(),
-                const SizedBox(height: 40),
-                RegistroTotal(),
-                const SizedBox(height: 50),
-                EnviarProducto(),
-              ],
-            ),
+          child: Column(
+            children: [
+              RegistroExitoso(),
+              const SizedBox(height: 40),
+              FechaRegistro(),
+              const SizedBox(height: 40),
+              ProductosRegistrados(),
+              const SizedBox(height: 40),
+              RegistroTotal(),
+              const SizedBox(height: 50),
+              EnviarProducto(),
+            ],
           ),
         ),
       ),

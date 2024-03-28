@@ -33,6 +33,7 @@ dependencies:
   auto_size_text: ^3.0.0
   awesome_dio_interceptor: ^1.1.0
   dio: ^5.4.1
+  badges: ^3.1.2
   equatable: ^2.0.5
   flutter:
     sdk: flutter
@@ -50,7 +51,6 @@ dependencies:
   logger: ^2.0.2+1
   lottie: ^3.1.0
   retrofit: ^4.1.0
-  badges: ^3.1.2
   syncfusion_flutter_charts: ^24.2.9
   validators: ^3.0.0
 

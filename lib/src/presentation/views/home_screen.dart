@@ -1,7 +1,6 @@
 import 'package:auto_route/auto_route.dart';
 import 'package:auto_size_text/auto_size_text.dart';
 import 'package:badges/badges.dart' as badge;
-import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_hooks/flutter_hooks.dart';
@@ -108,7 +107,7 @@ class HomeScreen extends HookWidget {
                     mainAxisAlignment: MainAxisAlignment.spaceBetween,
                     children: [
                       barSearch(context),
-                      optionsAndLogout(context)
+                      optionsAndLogout(context),
                     ],
                   ),
                 ),
@@ -333,44 +332,6 @@ class HomeScreen extends HookWidget {
           : Container(),
     );
   }
-/*
-  Widget shoppingCart(BuildContext context) {
-    return InkWell(
-      onTap: () {
-        appRouter.pushNamed('/user/carrito');
-      },
-      child: badge.Badge(
-        badgeContent: const Text(
-          '4',
-          style: TextStyle(color: Colors.white),
-        ),
-        position: badge.BadgePosition.topEnd(end: -8),
-        child: Container(
-          width: MediaQuery.of(context).size.width * 0.11,
-          height: MediaQuery.of(context).size.width * 0.11,
-          decoration: BoxDecoration(
-            color: bottomNavBar,
-            borderRadius: BorderRadius.circular(10),
-            boxShadow: [
-              BoxShadow(
-                color: const Color.fromARGB(255, 95, 95, 95)
-                    .withOpacity(0.08), 
-                spreadRadius: 2, 
-                blurRadius: 4, 
-                offset: const Offset(
-                  0,
-                  1,
-                ), 
-                 ),
-            ],
-          ),
-          child: const Icon(Ionicons.bag_handle_outline),
-        ),
-      ),
-    );
-  }
- 
-*/
   Center dashboard(BuildContext context, UserRoles rol) {
     final bool loggedUserRol = rol == UserRoles.admin;
 

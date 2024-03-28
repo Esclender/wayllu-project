@@ -11,11 +11,11 @@ class RegisterProductsScreen extends HookWidget {
   Widget build(BuildContext context) {
     final counter = useState(0.0);
 
-    void _incrementCounter() {
+    void incrementCounter() {
       counter.value++;
     }
 
-    void _decrementCounter() {
+    void decrementCounter() {
       if (counter.value > 0.00) {
         counter.value--;
       }
@@ -49,8 +49,8 @@ class RegisterProductsScreen extends HookWidget {
           priceCounter(
             context,
             counter.value,
-            _incrementCounter,
-            _decrementCounter,
+            incrementCounter,
+            decrementCounter,
           ),
           categoriesList(context),
           btnNewReport(context),
@@ -228,7 +228,7 @@ class RegisterProductsScreen extends HookWidget {
                   children: [
                     const SizedBox(width: 16.0),
                     GestureDetector(
-                      onTap: null,
+                      onTap: null, //
                       child: Icon(
                         Ionicons.chevron_up,
                         size: 16,

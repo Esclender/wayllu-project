@@ -67,7 +67,7 @@ class LoginExampleScreen extends HookWidget {
                             Image.asset('assets/ISOTIPO.png'),
                           ],
                         ),
-                        SizedBox(height: 10,),
+                        const SizedBox(height: 10,),
                         const Row(
                           children: [
                             TextLogin(
@@ -93,14 +93,14 @@ class LoginExampleScreen extends HookWidget {
                       mainAxisAlignment: MainAxisAlignment.center,
                       children: [
                         const MyTextLabel(hintText: 'DNI'),
-                        SizedBox(height: 10,),
+                        const SizedBox(height: 10,),
                         TextLoginField(
                           controller: controllerEmail,
                           hintText: 'Ingrese su DNI',
                           obscureText: false,
                           
                         ),
-                        SizedBox(height: 10,),
+                        const SizedBox(height: 10,),
                         const MyTextLabel(hintText: 'Password'),
                         const SpaceY(),
                         TextLoginField(
@@ -108,7 +108,7 @@ class LoginExampleScreen extends HookWidget {
                           hintText: 'Ingrese con su correo',
                           obscureText: true,
                         ),
-                       SizedBox(height: 20,),
+                       const SizedBox(height: 20,),
                         ElevatedButton(
                           style: ElevatedButton.styleFrom(
                             shape: RoundedRectangleBorder(

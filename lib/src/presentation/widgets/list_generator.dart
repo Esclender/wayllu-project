@@ -44,7 +44,7 @@ class CardTemplateItemsList extends HookWidget {
   Widget build(BuildContext context) {
     final filteredData = dataToRender
         .where(
-            (item) => item.nombre.toLowerCase().contains(query.toLowerCase()))
+            (item) => item.nombre.toLowerCase().contains(query.toLowerCase()),)
         .toList();
 
     return ListView.separated(

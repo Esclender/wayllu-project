@@ -61,12 +61,11 @@ LinearGradient gradientOrange = LinearGradient(
   ],
 );
 
-LinearGradient loginGradient = LinearGradient(
+LinearGradient loginGradient = const LinearGradient(
   begin: Alignment.bottomLeft,
   end: Alignment.topRight,
   colors: [
     Color(0xFFFE8769), 
-    
     Color(0xFFEF4736),
     Color(0xFFF76510), 
   ],

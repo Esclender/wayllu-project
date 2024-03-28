@@ -1,17 +1,14 @@
 import 'package:flutter/material.dart';
-import 'package:flutter_bloc/flutter_bloc.dart';
-import 'package:get/get.dart';
 import 'package:ionicons/ionicons.dart';
 import 'package:wayllu_project/src/domain/enums/lists_enums.dart';
 import 'package:wayllu_project/src/domain/models/list_items_model.dart';
-import 'package:wayllu_project/src/presentation/cubit/users_list_cubit.dart';
 import 'package:wayllu_project/src/presentation/widgets/list_generator.dart';
 import 'package:wayllu_project/src/utils/constants/colors.dart';
 
 class CustomSearchWidget extends StatefulWidget {
   final List<CardTemplate> allData;
 
-  CustomSearchWidget({
+  const CustomSearchWidget({
     required this.allData,
   });
 
@@ -22,8 +19,6 @@ class CustomSearchWidget extends StatefulWidget {
 class _CustomSearchWidgetState extends State<CustomSearchWidget> {
   late TextEditingController _searchController;
   List<CardTemplate> _filteredData = [];
-  List<CardTemplate> _suggestions = [];
-
   @override
   void initState() {
     super.initState();
@@ -41,17 +36,14 @@ class _CustomSearchWidgetState extends State<CustomSearchWidget> {
 
   void _onSearchChanged() {
     final query = _searchController.text.toLowerCase();
-    List<CardTemplate> filteredList = widget.allData.where((item) {
+    final List<CardTemplate> filteredList = widget.allData.where((item) {
       final name = item.nombre.toLowerCase();
       return name.contains(query);
     }).toList();
 
     setState(() {
       _filteredData = filteredList;
-      _suggestions = filteredList.length < 5
-          ? filteredList
-          : filteredList.sublist(
-              0, 6); // Mostrar solo las primeras 5 sugerencias
+// Mostrar solo las primeras 5 sugerencias
     });
    
   }
@@ -59,7 +51,7 @@ class _CustomSearchWidgetState extends State<CustomSearchWidget> {
   @override
   Widget build(BuildContext context) {
     
-    return Container(
+    return SizedBox(
       width: MediaQuery.of(context).size.width,
       height: MediaQuery.of(context).size.height,
       child: Column(
@@ -68,12 +60,11 @@ class _CustomSearchWidgetState extends State<CustomSearchWidget> {
             decoration: BoxDecoration(
                 color: bottomNavBar,
                 borderRadius: BorderRadius.circular(10),
-                boxShadow: [simpleShadow]),
+                boxShadow: [simpleShadow],),
             child: Row(
-              mainAxisAlignment: MainAxisAlignment.start,
               children: [
-                Padding(
-                  padding: const EdgeInsets.symmetric(horizontal: 8.0),
+                const Padding(
+                  padding: EdgeInsets.symmetric(horizontal: 8.0),
                   child: Icon(Ionicons.search),
                 ),
                 SizedBox(
@@ -87,7 +78,7 @@ class _CustomSearchWidgetState extends State<CustomSearchWidget> {
                       hintText: 'Busca por nombre',
                       suffixIcon:  _searchController.text.isNotEmpty
                       ? IconButton(
-                              icon: Icon(Icons.clear),
+                              icon: const Icon(Icons.clear),
                               onPressed: () {
                                 _searchController.clear();
                               },
@@ -115,12 +106,11 @@ class _CustomSearchWidgetState extends State<CustomSearchWidget> {
         isScrollable: false,
       );
     } else if (_filteredData.isEmpty) {
-      return Center(child: Text('No se encontraron resultados'));
+      return const Center(child: Text('No se encontraron resultados'));
     } else {
       return ListView.builder(
         itemCount: _filteredData.length,
         itemBuilder: (context, index) {
-          final user = _filteredData[index];
           return CardTemplateItemsList(
             listType: ListEnums.users,
             dataToRender: _filteredData,
@@ -302,5 +292,5 @@ Widget _buildSearchResults(List<CardTemplate> filteredData, List<CardTemplate> s
     }
   }
 
-*/
-}*/
+
+}*/*/

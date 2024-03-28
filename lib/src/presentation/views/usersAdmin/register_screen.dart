@@ -1,16 +1,13 @@
-import 'dart:convert';
-import 'dart:ffi';
 
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:hexcolor/hexcolor.dart';
-import 'package:wayllu_project/src/config/api_config.dart';
 import 'package:wayllu_project/src/domain/models/community_model.dart';
 import 'package:wayllu_project/src/presentation/widgets/register_user/info_label_modal.dart';
 import 'package:wayllu_project/src/presentation/widgets/register_user/my_text_label.dart';
 import 'package:wayllu_project/src/presentation/widgets/register_user/my_textfield.dart';
 import 'package:wayllu_project/src/presentation/widgets/register_user/space_y.dart';
-import 'package:http/http.dart' as http;
+
 
 class RegisterUserScreen extends StatefulWidget {
   const RegisterUserScreen({super.key});
@@ -176,7 +173,7 @@ class _RegisterUserScreenState extends State<RegisterUserScreen> {
                     onChanged: (text) {},
                     validator: (value) {
                       final String? notEmptyValidation = validateNotEmpty(
-                          value, 'El nombre de usuario no puede estar vacío');
+                          value, 'El nombre de usuario no puede estar vacío',);
                       if (notEmptyValidation != null) {
                         return notEmptyValidation;
                       }
@@ -208,7 +205,7 @@ class _RegisterUserScreenState extends State<RegisterUserScreen> {
                         onChanged: (text) {},
                         validator: (value) {
                           final String? notEmptyValidation = validateNotEmpty(
-                              value, 'El campo DNI no puede estar vacío');
+                              value, 'El campo DNI no puede estar vacío',);
                           if (notEmptyValidation != null) {
                             return notEmptyValidation;
                           }
@@ -249,7 +246,7 @@ class _RegisterUserScreenState extends State<RegisterUserScreen> {
                         },
                         validator: (value) {
                           final String? notEmptyValidation = validateNotEmpty(
-                              value, 'El telefono no puede estar vacío');
+                              value, 'El telefono no puede estar vacío',);
                           if (notEmptyValidation != null) {
                             return notEmptyValidation;
                           }
@@ -340,6 +337,7 @@ class _RegisterUserScreenState extends State<RegisterUserScreen> {
                           if (value == null) {
                             return 'Debes seleccionar una comunidad';
                           }
+                          return null;
                         },
                         onChanged: (value) {
                           setState(() {
