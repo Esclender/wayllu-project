@@ -16,11 +16,15 @@ class UsersListCubit extends Cubit<List<CardTemplate>?> {
       responseState?.map((user) => user.toCardTemplate()).toList(),
     );
   }
-   void searchUsers(String searchText)  {
-  final filteredUsers = searchText.isEmpty
-      ? state // Si la búsqueda está vacía, mostrar todos los usuarios
-      : state?.where((user) => user.nombre.toLowerCase().contains(searchText.toLowerCase())).toList();
 
-  emit(filteredUsers);
-}
+  void searchUsers(String searchText) {
+    final filteredUsers = searchText.isEmpty
+        ? state // Si la búsqueda está vacía, mostrar todos los usuarios
+        : state
+            ?.where((user) =>
+                user.nombre.toLowerCase().contains(searchText.toLowerCase()))
+            .toList();
+
+    emit(filteredUsers);
+  }
 }

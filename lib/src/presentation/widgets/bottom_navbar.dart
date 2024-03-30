@@ -7,7 +7,7 @@ import 'package:wayllu_project/src/config/router/app_router.dart';
 import 'package:wayllu_project/src/domain/enums/user_roles.dart';
 import 'package:wayllu_project/src/domain/models/bottom_navbar_options_model.dart';
 import 'package:wayllu_project/src/locator.dart';
-import 'package:wayllu_project/src/presentation/cubit/is_admin_cubit.dart';
+import 'package:wayllu_project/src/presentation/cubit/user_logged_cubit.dart';
 import 'package:wayllu_project/src/utils/constants/colors.dart';
 
 class BottomNavBar extends HookWidget {
