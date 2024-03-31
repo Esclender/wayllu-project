@@ -10,7 +10,7 @@ import 'package:wayllu_project/src/config/router/app_router.dart';
 import 'package:wayllu_project/src/domain/enums/user_roles.dart';
 import 'package:wayllu_project/src/domain/models/models_products.dart';
 import 'package:wayllu_project/src/locator.dart';
-import 'package:wayllu_project/src/presentation/cubit/is_admin_cubit.dart';
+import 'package:wayllu_project/src/presentation/cubit/user_logged_cubit.dart';
 import 'package:wayllu_project/src/presentation/widgets/bottom_navbar.dart';
 import 'package:wayllu_project/src/utils/constants/colors.dart';
 
@@ -193,94 +193,104 @@ class HomeScreen extends HookWidget {
           ),
         ],
       ),
-      floatingActionButtonLocation:FloatingActionButtonLocation.centerDocked,
+      floatingActionButtonLocation: FloatingActionButtonLocation.centerDocked,
       floatingActionButton: Column(
         mainAxisAlignment: MainAxisAlignment.end,
-        children:[
-          
+        children: [
           shoppingCart(context),
-          const SizedBox(height: 8,),
+          const SizedBox(
+            height: 8,
+          ),
           BottomNavBar(
-          viewSelected: viewIndex,
-        ),
-       
-        ], 
+            viewSelected: viewIndex,
+          ),
+        ],
       ),
     );
   }
- Widget optionsAndLogout(BuildContext context) {
+
+  Widget optionsAndLogout(BuildContext context) {
     return Container(
       //margin: EdgeInsets.only(left: 4),
-      width: MediaQuery.of(context).size.width*0.12,
-      height:MediaQuery.of(context).size.width*0.10,
-      decoration: BoxDecoration(color: bottomNavBar,
-      borderRadius: BorderRadius.circular(10),
-       boxShadow:[
-                  BoxShadow(
-                    color: const Color.fromARGB(255, 95, 95, 95)
-                        .withOpacity(0.08), 
-                    spreadRadius: 2, 
-                    blurRadius: 4, 
-                    offset: const Offset(
-                      0,
-                      1,
-                    ),
-                  ),
-                ], ),
+      width: MediaQuery.of(context).size.width * 0.12,
+      height: MediaQuery.of(context).size.width * 0.10,
+      decoration: BoxDecoration(
+        color: bottomNavBar,
+        borderRadius: BorderRadius.circular(10),
+        boxShadow: [
+          BoxShadow(
+            color: const Color.fromARGB(255, 95, 95, 95).withOpacity(0.08),
+            spreadRadius: 2,
+            blurRadius: 4,
+            offset: const Offset(
+              0,
+              1,
+            ),
+          ),
+        ],
+      ),
       child: PopupMenuButton<String>(
         color: bottomNavBar.withOpacity(0.9),
-        
-        offset: Offset(1,  MediaQuery.of(context).size.width * 0.11),
-        icon: const Icon(Ionicons.menu_outline, size: 24,),
+        offset: Offset(1, MediaQuery.of(context).size.width * 0.11),
+        icon: const Icon(
+          Ionicons.menu_outline,
+          size: 24,
+        ),
         itemBuilder: (context) => [
           const PopupMenuItem(
             value: 'Ver carrito',
             child: ListTile(
-                        leading: Icon(Ionicons.bag_handle_outline),
-                        title: Text('Ver carrito'),
-                      ),
+              leading: Icon(Ionicons.bag_handle_outline),
+              title: Text('Ver carrito'),
+            ),
           ),
           const PopupMenuDivider(),
           PopupMenuItem(
             value: 'opcion2',
             child: ListTile(
-                        leading: Icon(Ionicons.exit_outline, color: mainColor,),
-                        title: const Text('Cerrar sesión'),
-                      ),
+              leading: Icon(
+                Ionicons.exit_outline,
+                color: mainColor,
+              ),
+              title: const Text('Cerrar sesión'),
+            ),
           ),
-       
         ],
-        onSelected: (value) {
-        },
+        onSelected: (value) {},
       ),
     );
   }
 
   InkWell shoppingCart(BuildContext context) {
     return InkWell(
-          onTap: () {
-      appRouter.pushNamed('/user/carrito');
-    },
-    child: badge.Badge(
-      badgeContent: const Text(
-        '4',
-        style: TextStyle(color: Colors.white),
+      onTap: () {
+        appRouter.pushNamed('/user/carrito');
+      },
+      child: badge.Badge(
+        badgeContent: const Text(
+          '4',
+          style: TextStyle(color: Colors.white),
+        ),
+        position: badge.BadgePosition.topEnd(end: 4),
+        child: Container(
+          width: MediaQuery.of(context).size.width,
+          alignment: Alignment.bottomRight,
+          margin: const EdgeInsets.symmetric(horizontal: 10),
+          child: FloatingActionButton(
+            backgroundColor: bottomNavBar,
+            shape: const CircleBorder(),
+            onPressed: () {
+              appRouter.pushNamed('/user/carrito');
+            },
+            child: Icon(
+              Ionicons.bag_handle_outline,
+              size: 28,
+              color: iconColor,
+            ),
+          ),
+        ),
       ),
-      position: badge.BadgePosition.topEnd(end: 4),
-          child: Container(
-            width: MediaQuery.of(context).size.width,
-            alignment: Alignment.bottomRight,
-            margin: const EdgeInsets.symmetric(horizontal: 10),
-            child: FloatingActionButton(
-              backgroundColor: bottomNavBar,
-              shape: const CircleBorder(),
-                    onPressed: () {  
-                      appRouter.pushNamed('/user/carrito');
-                       },
-                    child: Icon(Ionicons.bag_handle_outline, size: 28, color: iconColor,),
-                  ),
-          ),),
-        );
+    );
   }
 
   Padding firstLine(BuildContext context, UserRoles rol) {
@@ -332,6 +342,7 @@ class HomeScreen extends HookWidget {
           : Container(),
     );
   }
+
   Center dashboard(BuildContext context, UserRoles rol) {
     final bool loggedUserRol = rol == UserRoles.admin;
 

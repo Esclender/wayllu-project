@@ -3,11 +3,12 @@ import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_hooks/flutter_hooks.dart';
 import 'package:hexcolor/hexcolor.dart';
+import 'package:logger/logger.dart';
 import 'package:wayllu_project/src/config/router/app_router.dart';
 import 'package:wayllu_project/src/config/theme/app_theme.dart';
 import 'package:wayllu_project/src/domain/dtos/user_credentials_rep.dart';
 import 'package:wayllu_project/src/locator.dart';
-import 'package:wayllu_project/src/presentation/cubit/is_admin_cubit.dart';
+import 'package:wayllu_project/src/presentation/cubit/user_logged_cubit.dart';
 import 'package:wayllu_project/src/presentation/widgets/login/text_login.dart';
 import 'package:wayllu_project/src/presentation/widgets/login/text_login_field.dart';
 import 'package:wayllu_project/src/presentation/widgets/register_user/my_text_label.dart';
@@ -16,33 +17,37 @@ import 'package:wayllu_project/src/utils/constants/colors.dart';
 
 @RoutePage()
 class LoginExampleScreen extends HookWidget {
-  final credentialsAdmin = const UserCredentialDto(
-    dni: 'admin',
-    clave: 'admin',
-  );
-
-  final credentialsUser = const UserCredentialDto(
-    dni: 'user',
-    clave: 'user',
-  );
-
   //Dependencies Injection
   final appRouter = getIt<AppRouter>();
 
-  void _loginEvent(String dni, String clave, BuildContext context) {
+  Future<void> _loginEvent(
+    String dni,
+    String clave,
+    BuildContext context,
+  ) async {
     final credentialsUser = UserCredentialDto(
-      dni: dni,
-      clave: clave,
+      DNI: int.parse(dni),
+      CLAVE: clave,
     );
 
-    context.read<UserLoggedCubit>().isAdmin(credentialsUser);
-    appRouter.navigate(HomeRoute(viewIndex: 0));
+    final token = await context
+        .read<UserLoggedCubit>()
+        .getAccessTokenAndSetRol(credentialsUser)
+        .catchError((e) {
+      Logger().e(e);
+      return null;
+    });
+
+    if (token != null) {
+      initializeEndpoints(token);
+      appRouter.navigate(HomeRoute(viewIndex: 0));
+    }
   }
 
   @override
   Widget build(BuildContext context) {
-    final controllerEmail = useTextEditingController(text: 'admin');
-    final controllerClave = useTextEditingController(text: 'admin');
+    final controllerEmail = useTextEditingController(text: '');
+    final controllerClave = useTextEditingController(text: '');
 
     return AnnotatedRegion(
       value: SystemStyles.login,
@@ -67,7 +72,9 @@ class LoginExampleScreen extends HookWidget {
                             Image.asset('assets/ISOTIPO.png'),
                           ],
                         ),
-                        const SizedBox(height: 10,),
+                        const SizedBox(
+                          height: 10,
+                        ),
                         const Row(
                           children: [
                             TextLogin(
@@ -93,14 +100,17 @@ class LoginExampleScreen extends HookWidget {
                       mainAxisAlignment: MainAxisAlignment.center,
                       children: [
                         const MyTextLabel(hintText: 'DNI'),
-                        const SizedBox(height: 10,),
+                        const SizedBox(
+                          height: 10,
+                        ),
                         TextLoginField(
                           controller: controllerEmail,
                           hintText: 'Ingrese su DNI',
                           obscureText: false,
-                          
                         ),
-                        const SizedBox(height: 10,),
+                        const SizedBox(
+                          height: 10,
+                        ),
                         const MyTextLabel(hintText: 'Password'),
                         const SpaceY(),
                         TextLoginField(
@@ -108,7 +118,9 @@ class LoginExampleScreen extends HookWidget {
                           hintText: 'Ingrese con su correo',
                           obscureText: true,
                         ),
-                       const SizedBox(height: 20,),
+                        const SizedBox(
+                          height: 20,
+                        ),
                         ElevatedButton(
                           style: ElevatedButton.styleFrom(
                             shape: RoundedRectangleBorder(

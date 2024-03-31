@@ -5,7 +5,7 @@ HexColor bgPrimary = HexColor('#FCF6F0');
 HexColor txtColor = HexColor('#241E20');
 HexColor subtxtColor = HexColor('#919191');
 HexColor secondary = HexColor('#FFA743');
-HexColor loginBottom = HexColor('#f7963c');
+HexColor loginBottom = HexColor('##f97a5c');
 HexColor btnprimary = HexColor('#B80000');
 HexColor btnsecondary = HexColor('#FA9C3F');
 HexColor bottomNavBar = HexColor('#FFFFFF');
@@ -65,9 +65,9 @@ LinearGradient loginGradient = const LinearGradient(
   begin: Alignment.bottomLeft,
   end: Alignment.topRight,
   colors: [
-    Color(0xFFFE8769), 
+    Color(0xFFFE8769),
     Color(0xFFEF4736),
-    Color(0xFFF76510), 
+    Color(0xFFF76510),
   ],
   stops: [0.0, 0.5, 1.0],
 );
