@@ -106,27 +106,30 @@ class HomeScreen extends HookWidget {
                   child: Row(
                     mainAxisAlignment: MainAxisAlignment.spaceBetween,
                     children: [
-                      barSearch(context),
-                      optionsAndLogout(context),
+                      // barSearch(context),
+                      if (loggedUserRol == UserRoles.admin)
+                        optionsAndLogout(context)
+                      else
+                        Container(),
                     ],
                   ),
                 ),
-                SingleChildScrollView(
-                  scrollDirection: Axis.horizontal,
-                  child: Padding(
-                    padding: const EdgeInsets.only(left: 4),
-                    child: Row(
-                      mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                      children: categories.map((category) {
-                        return categoriesProducts(
-                          context,
-                          category.name,
-                          category.image,
-                        );
-                      }).toList(),
-                    ),
-                  ),
-                ),
+                // SingleChildScrollView(
+                //   scrollDirection: Axis.horizontal,
+                //   child: Padding(
+                //     padding: const EdgeInsets.only(left: 4),
+                //     child: Row(
+                //       mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                //       children: categories.map((category) {
+                //         return categoriesProducts(
+                //           context,
+                //           category.name,
+                //           category.image,
+                //         );
+                //       }).toList(),
+                //     ),
+                //   ),
+                // ),
                 const SizedBox(
                   height: 6,
                 ),

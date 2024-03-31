@@ -22,7 +22,7 @@ class CardTemplateItemsList extends HookWidget {
     required this.listType,
     required this.dataToRender,
     this.isScrollable = true,
-    this.query= '',
+    this.query = '',
   });
 
   final double navBarHeight = 60.0;
@@ -44,7 +44,8 @@ class CardTemplateItemsList extends HookWidget {
   Widget build(BuildContext context) {
     final filteredData = dataToRender
         .where(
-            (item) => item.nombre.toLowerCase().contains(query.toLowerCase()),)
+          (item) => item.nombre.toLowerCase().contains(query.toLowerCase()),
+        )
         .toList();
 
     return ListView.separated(
@@ -57,7 +58,7 @@ class CardTemplateItemsList extends HookWidget {
           padding: EdgeInsets.only(
             bottom: ind == filteredData.length - 1
                 ? listType == ListEnums.users
-                    ? navBarHeight + (registerUserBtnHeight * 2)
+                    ? navBarHeight + registerUserBtnHeight
                     : navBarHeight + 10
                 : 0.0,
           ),

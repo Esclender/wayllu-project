@@ -27,7 +27,7 @@ class _AuthApiServices implements AuthApiServices {
     final queryParameters = <String, dynamic>{};
     final _headers = <String, dynamic>{};
     final _data = <String, dynamic>{};
-    _data.addAll(credentials.toMap());
+    _data.addAll(credentials.toJson());
     final _result = await _dio.fetch<Map<String, dynamic>?>(
         _setStreamType<HttpResponse<AuthLoginResponse>>(Options(
       method: 'POST',

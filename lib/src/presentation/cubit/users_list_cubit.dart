@@ -8,23 +8,17 @@ class UsersListCubit extends Cubit<List<CardTemplate>?> {
 
   UsersListCubit(this._apiRepository) : super(null);
 
-  Future<void> getUserLists() async {
+  Future<void> getUserLists({int pagina = 1}) async {
     final ArtesansListHttpResponse responseState =
-        await _apiRepository.getArtisans('');
+        await _apiRepository.getArtisans(pagina);
 
     emit(
-      responseState?.map((user) => user.toCardTemplate()).toList(),
+      state == null
+          ? responseState?.map((user) => user.toCardTemplate()).toList()
+          : [
+              ...state!,
+              ...responseState!.map((user) => user.toCardTemplate()),
+            ],
     );
-  }
-
-  void searchUsers(String searchText) {
-    final filteredUsers = searchText.isEmpty
-        ? state // Si la búsqueda está vacía, mostrar todos los usuarios
-        : state
-            ?.where((user) =>
-                user.nombre.toLowerCase().contains(searchText.toLowerCase()))
-            .toList();
-
-    emit(filteredUsers);
   }
 }

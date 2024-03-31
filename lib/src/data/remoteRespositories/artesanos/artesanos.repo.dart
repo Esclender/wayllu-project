@@ -14,5 +14,7 @@ abstract class ArtesansApiServices {
   //Aqui definimos todos nuestros endpoints
   //estos endpoints seran los que se conecten con la api
   @GET('/')
-  Future<HttpResponse<ArtesansListHttpResponse>> getArtisans(String searchText);
+  Future<HttpResponse<ArtesansListHttpResponse>> getArtisans(
+    @Query('pagina') int pagina,
+  );
 }
