@@ -12,6 +12,7 @@ import 'package:wayllu_project/src/presentation/widgets/bottom_navbar.dart';
 import 'package:wayllu_project/src/presentation/widgets/gradient_widgets.dart';
 import 'package:wayllu_project/src/presentation/widgets/top_vector.dart';
 import 'package:wayllu_project/src/utils/constants/colors.dart';
+import 'package:wayllu_project/src/utils/extensions/scroll_controller_extension.dart';
 
 @RoutePage()
 class UsersListAdminScreen extends HookWidget {
@@ -32,13 +33,22 @@ class UsersListAdminScreen extends HookWidget {
   @override
   Widget build(BuildContext contex) {
     final usersListCubit = contex.watch<UsersListCubit>();
+    final scrollController = useScrollController();
+
+    final pagina = useState(1);
+
     useEffect(
       () {
         usersListCubit.getUserLists();
 
-        return () {};
+        scrollController.onScrollEndsListener(() {
+          pagina.value++;
+          usersListCubit.getUserLists(pagina: pagina.value);
+        });
+
+        return scrollController.dispose;
       },
-      const [],
+      [],
     );
 
     return Scaffold(
@@ -57,7 +67,11 @@ class UsersListAdminScreen extends HookWidget {
                     child: CircularProgressIndicator(),
                   );
                 } else {
-                  return _buildScrollableLayer(state, contex);
+                  return _buildScrollableLayer(
+                    state,
+                    contex,
+                    scrollController,
+                  );
                 }
               },
             ),
@@ -68,7 +82,10 @@ class UsersListAdminScreen extends HookWidget {
   }
 
   Widget _buildScrollableLayer(
-      List<CardTemplate> usersToRender, BuildContext context,) {
+    List<CardTemplate> usersToRender,
+    BuildContext context,
+    ScrollController controller,
+  ) {
     return Stack(
       alignment: Alignment.bottomRight,
       children: [
@@ -84,25 +101,29 @@ class UsersListAdminScreen extends HookWidget {
                     text: 'Usuarios',
                     fontSize: 25.0,
                   ),
-                  const SizedBox(height: 8,),
-                  CustomSearchWidget(allData: usersToRender,),
-                  /*CardTemplateItemsList(
-                    listType: ListEnums.users,
-                    dataToRender: usersToRender,
-                    isScrollable: false,
-                  ),*/
+                  const SizedBox(
+                    height: 8,
+                  ),
+                  CustomSearchWidget(
+                    allData: usersToRender,
+                  ),
                 ],
               ),
             ),
           ],
+          controller,
         ),
         _buildRegisterUserBtn(),
       ],
     );
   }
 
-  Widget _buildScrollableWidgets(List<Widget> children) {
+  Widget _buildScrollableWidgets(
+    List<Widget> children,
+    ScrollController controller,
+  ) {
     return CustomScrollView(
+      controller: controller,
       slivers: [
         SliverList(
           delegate: SliverChildListDelegate(
@@ -122,9 +143,10 @@ class UsersListAdminScreen extends HookWidget {
           width: 60,
           height: 60,
           decoration: BoxDecoration(
-              color: thirdColor,
-              borderRadius: BorderRadius.circular(50),
-              boxShadow: [strongShadow],),
+            color: thirdColor,
+            borderRadius: BorderRadius.circular(50),
+            boxShadow: [strongShadow],
+          ),
           child: const Icon(
             Ionicons.person_add,
             color: Colors.white,

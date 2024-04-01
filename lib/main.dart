@@ -7,6 +7,7 @@ import 'package:wayllu_project/src/config/router/app_router.dart';
 import 'package:wayllu_project/src/config/theme/app_theme.dart';
 import 'package:wayllu_project/src/data/api_repository.imp.dart';
 import 'package:wayllu_project/src/locator.dart';
+import 'package:wayllu_project/src/presentation/cubit/products_list_cubit.dart';
 import 'package:wayllu_project/src/presentation/cubit/user_logged_cubit.dart';
 import 'package:wayllu_project/src/presentation/cubit/users_list_cubit.dart';
 
@@ -33,6 +34,11 @@ class BlocSettup extends StatelessWidget {
         BlocProvider<UsersListCubit>(
           create: (BuildContext context) => UsersListCubit(
             locator<ArtisansApiRepositoryImpl>(),
+          ),
+        ),
+        BlocProvider<ProductListCubit>(
+          create: (BuildContext context) => ProductListCubit(
+            locator<ProductsApiRepositoryImpl>(),
           ),
         ),
       ],

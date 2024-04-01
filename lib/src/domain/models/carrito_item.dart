@@ -9,5 +9,5 @@ class CarritoItem {
     required this.quantity,
   });
 
-  String get totalToString => 'S/ ${item.price * quantity}';
+ // String get totalToString => 'S/ ${item.price * quantity}';
 }

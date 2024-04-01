@@ -10,6 +10,7 @@ import 'package:wayllu_project/src/config/router/app_router.dart';
 import 'package:wayllu_project/src/domain/enums/user_roles.dart';
 import 'package:wayllu_project/src/domain/models/models_products.dart';
 import 'package:wayllu_project/src/locator.dart';
+import 'package:wayllu_project/src/presentation/cubit/products_list_cubit.dart';
 import 'package:wayllu_project/src/presentation/cubit/user_logged_cubit.dart';
 import 'package:wayllu_project/src/presentation/widgets/bottom_navbar.dart';
 import 'package:wayllu_project/src/utils/constants/colors.dart';
@@ -25,11 +26,11 @@ class HomeScreen extends HookWidget {
   final appRouter = getIt<AppRouter>();
 
   @override
-  Widget build(BuildContext context) {
+  Widget build(BuildContext contex) {
     final DateTime now = DateTime.now();
     final int hour = now.hour;
     final String greeting = getGreeting(hour);
-    final loggedUserRol = context.read<UserLoggedCubit>().state;
+    final loggedUserRol = contex.read<UserLoggedCubit>().state;
 
     void goToRegisterOfProductOrVentaCondition() {
       if (loggedUserRol == UserRoles.admin) {
@@ -38,6 +39,17 @@ class HomeScreen extends HookWidget {
         appRouter.navigate(const CarritoRoute());
       }
     }
+
+    final productsListCubit = contex.watch<ProductListCubit>();
+
+    useEffect(
+      () {
+        productsListCubit.getUserLists();
+
+        return () {};
+      },
+      [],
+    );
 
     return Scaffold(
       backgroundColor: bgPrimary,
@@ -48,7 +60,7 @@ class HomeScreen extends HookWidget {
             expandedHeight: 68.0,
             backgroundColor: Colors.transparent,
             flexibleSpace: FlexibleSpaceBar(
-              background: topVector(context),
+              background: topVector(contex),
             ),
             bottom: PreferredSize(
               preferredSize: const Size.fromHeight(20),
@@ -98,35 +110,38 @@ class HomeScreen extends HookWidget {
                 const SizedBox(
                   height: 8,
                 ),
-                firstLine(context, loggedUserRol),
-                dashboard(context, loggedUserRol),
+                firstLine(contex, loggedUserRol),
+                dashboard(contex, loggedUserRol),
                 Container(
                   margin:
                       const EdgeInsets.symmetric(horizontal: 18, vertical: 6),
                   child: Row(
                     mainAxisAlignment: MainAxisAlignment.spaceBetween,
                     children: [
-                      barSearch(context),
-                      optionsAndLogout(context),
+                      // barSearch(context),
+                      if (loggedUserRol == UserRoles.admin)
+                        optionsAndLogout(contex)
+                      else
+                        Container(),
                     ],
                   ),
                 ),
-                SingleChildScrollView(
-                  scrollDirection: Axis.horizontal,
-                  child: Padding(
-                    padding: const EdgeInsets.only(left: 4),
-                    child: Row(
-                      mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                      children: categories.map((category) {
-                        return categoriesProducts(
-                          context,
-                          category.name,
-                          category.image,
-                        );
-                      }).toList(),
-                    ),
-                  ),
-                ),
+                // SingleChildScrollView(
+                //   scrollDirection: Axis.horizontal,
+                //   child: Padding(
+                //     padding: const EdgeInsets.only(left: 4),
+                //     child: Row(
+                //       mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                //       children: categories.map((category) {
+                //         return categoriesProducts(
+                //           context,
+                //           category.name,
+                //           category.image,
+                //         );
+                //       }).toList(),
+                //     ),
+                //   ),
+                // ),
                 const SizedBox(
                   height: 6,
                 ),
@@ -146,8 +161,23 @@ class HomeScreen extends HookWidget {
                   margin:
                       const EdgeInsets.symmetric(vertical: 4, horizontal: 16),
                   child: Column(
-                    children: List.generate(
-                      productos.length ~/ 2, // Usar la mitad de la longitud
+                    children: [
+                      Expanded(
+            child: BlocBuilder<ProductListCubit, List<Producto>?>(
+              builder: (_, state) {
+                if (state == null) {
+                  return const Center(
+                    child: CircularProgressIndicator(),
+                  );
+                } else {
+                  return Container();
+                  
+                }
+              },
+            ),
+          ),
+                      //List.generate(
+                      /*productos.length ~/ 2, // Usar la mitad de la longitud
                       (index) {
                         final evenIndex = index * 2;
                         final oddIndex = evenIndex + 1;
@@ -181,8 +211,8 @@ class HomeScreen extends HookWidget {
                             ),
                           ],
                         );
-                      },
-                    ),
+                      },*/
+              ]
                   ),
                 ),
                 const SizedBox(
@@ -197,7 +227,7 @@ class HomeScreen extends HookWidget {
       floatingActionButton: Column(
         mainAxisAlignment: MainAxisAlignment.end,
         children: [
-          shoppingCart(context),
+          shoppingCart(contex),
           const SizedBox(
             height: 8,
           ),
@@ -644,7 +674,7 @@ Container productsHome(
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
               Text(
-                producto.name,
+                producto.product_code,
                 style: const TextStyle(
                   fontFamily: 'Gotham',
                   fontSize: 14,
@@ -652,7 +682,7 @@ Container productsHome(
                 ),
               ),
               Text(
-                producto.description,
+                producto.descriptions as String,
                 style: const TextStyle(
                   fontFamily: 'Gotham',
                   fontSize: 10,
@@ -666,14 +696,14 @@ Container productsHome(
                 mainAxisAlignment: MainAxisAlignment.spaceBetween,
                 crossAxisAlignment: CrossAxisAlignment.end,
                 children: [
-                  Text(
+                  /*Text(
                     'S/${producto.price}',
                     style: const TextStyle(
                       fontFamily: 'Gotham',
                       fontSize: 18,
                       fontWeight: FontWeight.w500,
                     ),
-                  ),
+                  ),*/
                   if (loggedUserRol)
                     Container(
                       padding: const EdgeInsets.symmetric(

@@ -1,6 +1,6 @@
 // GENERATED CODE - DO NOT MODIFY BY HAND
 
-part of 'auth.repo.dart';
+part of 'productos.repo.dart';
 
 // **************************************************************************
 // RetrofitGenerator
@@ -8,12 +8,12 @@ part of 'auth.repo.dart';
 
 // ignore_for_file: unnecessary_brace_in_string_interps,no_leading_underscores_for_local_identifiers
 
-class _AuthApiServices implements AuthApiServices {
-  _AuthApiServices(
+class _ProductsApiServices implements ProductsApiServices {
+  _ProductsApiServices(
     this._dio, {
     this.baseUrl,
   }) {
-    baseUrl ??= '/api/auth';
+    baseUrl ??= '/api/productos';
   }
 
   final Dio _dio;
@@ -21,22 +21,20 @@ class _AuthApiServices implements AuthApiServices {
   String? baseUrl;
 
   @override
-  Future<HttpResponse<AuthLoginResponse?>> getAccessToken(
-      UserCredentialDto credentials) async {
+  Future<HttpResponse<List<ProductInfo>?>> getProducts() async {
     const _extra = <String, dynamic>{};
     final queryParameters = <String, dynamic>{};
     final _headers = <String, dynamic>{};
-    final _data = <String, dynamic>{};
-    _data.addAll(credentials.toJson());
-    final _result = await _dio.fetch<Map<String, dynamic>?>(
-        _setStreamType<HttpResponse<AuthLoginResponse>>(Options(
-      method: 'POST',
+    final Map<String, dynamic>? _data = null;
+    final _result = await _dio.fetch<List<dynamic>>(
+        _setStreamType<HttpResponse<List<ProductInfo>>>(Options(
+      method: 'GET',
       headers: _headers,
       extra: _extra,
     )
             .compose(
               _dio.options,
-              '/login',
+              '/',
               queryParameters: queryParameters,
               data: _data,
             )
@@ -45,8 +43,9 @@ class _AuthApiServices implements AuthApiServices {
               _dio.options.baseUrl,
               baseUrl,
             ))));
-    final value =
-        _result.data == null ? null : AuthLoginResponse.fromJson(_result.data!);
+    var value = _result.data
+        ?.map((dynamic i) => ProductInfo.fromJson(i as Map<String, dynamic>))
+        .toList();
     final httpResponse = HttpResponse(value, _result);
     return httpResponse;
   }

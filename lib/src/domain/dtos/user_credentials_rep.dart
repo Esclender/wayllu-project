@@ -24,7 +24,7 @@ class UserCredentialDto extends Equatable {
         CLAVE,
       ];
 
-  Map<String, dynamic> toMap() {
+  Map<String, dynamic> toJson() {
     return <String, dynamic>{
       'DNI': DNI,
       'CLAVE': CLAVE,
@@ -37,8 +37,6 @@ class UserCredentialDto extends Equatable {
       CLAVE: map['CLAVE'] as String,
     );
   }
-
-  String toJson() => json.encode(toMap());
 
   factory UserCredentialDto.fromJson(String source) =>
       UserCredentialDto.fromMap(json.decode(source) as Map<String, dynamic>);
