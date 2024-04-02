@@ -129,22 +129,16 @@ class HomeScreen extends HookWidget {
                     ],
                   ),
                 ),
-                // SingleChildScrollView(
-                //   scrollDirection: Axis.horizontal,
-                //   child: Padding(
-                //     padding: const EdgeInsets.only(left: 4),
-                //     child: Row(
-                //       mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                //       children: categories.map((category) {
-                //         return categoriesProducts(
-                //           context,
-                //           category.name,
-                //           category.image,
-                //         );
-                //       }).toList(),
-                //     ),
-                //   ),
-                // ),
+                Row(
+                  mainAxisAlignment: MainAxisAlignment.center,
+                  children: categories.map((category) {
+                    return categoriesProducts(
+                      context,
+                      category.name,
+                      category.image,
+                    );
+                  }).toList(),
+                ),
                 const SizedBox(
                   height: 6,
                 ),
@@ -190,8 +184,8 @@ class HomeScreen extends HookWidget {
     return Container(
       width: MediaQuery.of(context).size.width,
       height: MediaQuery.of(context).size.height,
-      margin: const EdgeInsets.symmetric(vertical: 4, horizontal: 16),
-      child: Column(children: [
+      margin: const EdgeInsets.symmetric(vertical: 4, horizontal: 20),
+      child: Column(crossAxisAlignment: CrossAxisAlignment.center, children: [
         Expanded(
           child: BlocBuilder<ProductListCubit, List<Producto>?>(
             builder: (context, state) {
@@ -207,7 +201,6 @@ class HomeScreen extends HookWidget {
                     return ProductsCardsItemsList(
                       listType: ListEnums.products,
                       dataToRender: data,
-
                     );
                   },
                 );
@@ -631,7 +624,7 @@ Container categoriesProducts(
       margin: const EdgeInsets.symmetric(horizontal: 4),
       padding: const EdgeInsets.only(top: 15, bottom: 8),
       height: MediaQuery.of(context).size.height * 0.18,
-      width: MediaQuery.of(context).size.width * 0.32,
+      width: MediaQuery.of(context).size.width * 0.3,
       decoration: BoxDecoration(
         color: bottomNavBar,
         borderRadius: const BorderRadius.all(Radius.circular(10)),
@@ -650,23 +643,24 @@ Container categoriesProducts(
       ),
       child: Column(
         mainAxisAlignment: MainAxisAlignment.spaceBetween,
+        crossAxisAlignment: CrossAxisAlignment.center,
         children: [
           Container(
             alignment: Alignment.center,
             child: Image.asset(
               image,
-              width: MediaQuery.of(context).size.width * 0.2,
+              width: MediaQuery.of(context).size.width * 0.20,
             ),
           ),
           Container(
-            alignment: Alignment.bottomCenter,
             child: Text(
               name,
               style: const TextStyle(
                 fontFamily: 'Gotham',
                 fontWeight: FontWeight.w500,
-                fontSize: 16,
+                fontSize: 12,
               ),
+              textAlign: TextAlign.center,
             ),
           ),
         ],
