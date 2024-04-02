@@ -5,23 +5,22 @@ import 'package:ionicons/ionicons.dart';
 import 'package:wayllu_project/src/config/router/app_router.dart';
 import 'package:wayllu_project/src/domain/enums/lists_enums.dart';
 import 'package:wayllu_project/src/domain/models/list_items_model.dart';
-import 'package:wayllu_project/src/domain/models/user_info/user_info_model.dart';
+import 'package:wayllu_project/src/domain/models/models_products.dart';
+import 'package:wayllu_project/src/domain/models/products_info/product_info_model.dart';
 import 'package:wayllu_project/src/locator.dart';
 import 'package:wayllu_project/src/utils/constants/colors.dart';
 
-class CardTemplateItemsList extends HookWidget {
+class ProductsCardsItemsList extends HookWidget {
   final ListEnums listType;
-  final List<CardTemplate> dataToRender;
-  final bool isScrollable;
+  final List<Producto> dataToRender;
   final String query;
 
   //Dependencies Injection
   final appRouter = getIt<AppRouter>();
 
-  CardTemplateItemsList({
+  ProductsCardsItemsList({
     required this.listType,
     required this.dataToRender,
-    this.isScrollable = true,
     this.query = '',
   });
 
@@ -30,35 +29,30 @@ class CardTemplateItemsList extends HookWidget {
 
   //[gradient, color]
 
-
-  void _navigateToEditUser(UserInfo user) {
-    appRouter.navigate(InfoUserRoute(viewIndex: 2, user: user));
+  void _navigateToEditUser(Producto product) {
+    // appRouter.navigate(InfoUserRoute(viewIndex: 2, user: user));
   }
 
   @override
   Widget build(BuildContext context) {
-    final filteredData = dataToRender
-        .where(
-          (item) => item.nombre.toLowerCase().contains(query.toLowerCase()),
-        )
-        .toList();
+    print(dataToRender);
 
     return ListView.separated(
       separatorBuilder: (context, index) => const Gap(8),
-      physics: isScrollable ? null : const NeverScrollableScrollPhysics(),
+      //physics: isScrollable ? null : const NeverScrollableScrollPhysics(),
       shrinkWrap: true,
       itemCount: dataToRender.length,
       itemBuilder: (BuildContext c, int ind) {
         return Padding(
           padding: EdgeInsets.only(
-            bottom: ind == filteredData.length - 1
-                ? listType == ListEnums.users
-                    ? navBarHeight + registerUserBtnHeight
+            bottom: ind == dataToRender.length - 1
+                ? listType == ListEnums.products
+                    ? navBarHeight
                     : navBarHeight + 10
                 : 0.0,
           ),
           child: _buildItemContainer(
-            itemData: filteredData[ind],
+            itemData: dataToRender[ind],
           ),
         );
       },
@@ -66,7 +60,7 @@ class CardTemplateItemsList extends HookWidget {
   }
 
   Widget _buildItemContainer({
-    required CardTemplate itemData,
+    required Producto itemData,
   }) {
     final BoxDecoration decoration = BoxDecoration(
       color: bottomNavBar,
@@ -87,22 +81,18 @@ class CardTemplateItemsList extends HookWidget {
               padding: const EdgeInsets.only(left: 15, top: 5, bottom: 5),
               decoration: decoration,
               child: _listTile(
-                leading: _buildImageAvatar(itemData.url),
-                title: Text(itemData.nombre),
+                leading: _buildImageProduct(itemData.imagen),
+                title: Text(itemData.product_code),
                 fields: itemData.descriptions,
               ),
             ),
-            _itemMarker(
-              secondary,
-            ),
           ],
         ),
-        if (listType == ListEnums.users) _itemEdit() else Container(),
       ],
     );
   }
 
-  Widget _buildImageAvatar(String url) {
+  Widget _buildImageProduct(String url) {
     return Container(
       width: 55,
       height: 55,
@@ -111,43 +101,6 @@ class CardTemplateItemsList extends HookWidget {
         image: DecorationImage(
           image: NetworkImage(url),
           fit: BoxFit.cover,
-        ),
-      ),
-    );
-  }
-
-  Widget _itemEdit() {
-    return InkWell(
-      //onTap: () => {_navigateToEditUser()},
-      child: Container(
-        width: 30,
-        height: 25,
-        margin: const EdgeInsets.all(8),
-        decoration: BoxDecoration(
-          color: secondary,
-          borderRadius: BorderRadius.circular(2),
-        ),
-        child: const Icon(
-          Ionicons.pencil,
-          color: Colors.white,
-          size: 18,
-        ),
-      ),
-    );
-  }
-
-  Widget _itemMarker(
-    Color colorMarker,
-  ) {
-    return Container(
-      margin: const EdgeInsets.only(top: 10),
-      width: 5.0,
-      height: 20.0,
-      decoration: BoxDecoration(
-        color: colorMarker,
-        borderRadius: const BorderRadius.only(
-          topRight: Radius.circular(5),
-          bottomRight: Radius.circular(5),
         ),
       ),
     );

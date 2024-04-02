@@ -7,18 +7,19 @@ import 'package:flutter_hooks/flutter_hooks.dart';
 import 'package:intl/intl.dart';
 import 'package:ionicons/ionicons.dart';
 import 'package:wayllu_project/src/config/router/app_router.dart';
+import 'package:wayllu_project/src/domain/enums/lists_enums.dart';
 import 'package:wayllu_project/src/domain/enums/user_roles.dart';
 import 'package:wayllu_project/src/domain/models/models_products.dart';
 import 'package:wayllu_project/src/locator.dart';
 import 'package:wayllu_project/src/presentation/cubit/products_list_cubit.dart';
 import 'package:wayllu_project/src/presentation/cubit/user_logged_cubit.dart';
 import 'package:wayllu_project/src/presentation/widgets/bottom_navbar.dart';
+import 'package:wayllu_project/src/presentation/widgets/list_products.dart';
 import 'package:wayllu_project/src/utils/constants/colors.dart';
 
 @RoutePage()
 class HomeScreen extends HookWidget {
   final int viewIndex;
-
   HomeScreen({
     required this.viewIndex,
   });
@@ -26,11 +27,11 @@ class HomeScreen extends HookWidget {
   final appRouter = getIt<AppRouter>();
 
   @override
-  Widget build(BuildContext contex) {
+  Widget build(BuildContext context) {
     final DateTime now = DateTime.now();
     final int hour = now.hour;
     final String greeting = getGreeting(hour);
-    final loggedUserRol = contex.read<UserLoggedCubit>().state;
+    final loggedUserRol = context.read<UserLoggedCubit>().state;
 
     void goToRegisterOfProductOrVentaCondition() {
       if (loggedUserRol == UserRoles.admin) {
@@ -40,11 +41,13 @@ class HomeScreen extends HookWidget {
       }
     }
 
-    final productsListCubit = contex.watch<ProductListCubit>();
+    final productsListCubit = context.watch<ProductListCubit>();
+    // List<Producto> _data = [];
+    List<Producto> data = [];
 
     useEffect(
       () {
-        productsListCubit.getUserLists();
+        productsListCubit.getProductsLists();
 
         return () {};
       },
@@ -60,7 +63,7 @@ class HomeScreen extends HookWidget {
             expandedHeight: 68.0,
             backgroundColor: Colors.transparent,
             flexibleSpace: FlexibleSpaceBar(
-              background: topVector(contex),
+              background: topVector(context),
             ),
             bottom: PreferredSize(
               preferredSize: const Size.fromHeight(20),
@@ -110,8 +113,8 @@ class HomeScreen extends HookWidget {
                 const SizedBox(
                   height: 8,
                 ),
-                firstLine(contex, loggedUserRol),
-                dashboard(contex, loggedUserRol),
+                firstLine(context, loggedUserRol),
+                dashboard(context, loggedUserRol),
                 Container(
                   margin:
                       const EdgeInsets.symmetric(horizontal: 18, vertical: 6),
@@ -120,7 +123,7 @@ class HomeScreen extends HookWidget {
                     children: [
                       // barSearch(context),
                       if (loggedUserRol == UserRoles.admin)
-                        optionsAndLogout(contex)
+                        optionsAndLogout(context)
                       else
                         Container(),
                     ],
@@ -157,64 +160,7 @@ class HomeScreen extends HookWidget {
                     ),
                   ),
                 ),
-                Container(
-                  margin:
-                      const EdgeInsets.symmetric(vertical: 4, horizontal: 16),
-                  child: Column(
-                    children: [
-                      Expanded(
-            child: BlocBuilder<ProductListCubit, List<Producto>?>(
-              builder: (_, state) {
-                if (state == null) {
-                  return const Center(
-                    child: CircularProgressIndicator(),
-                  );
-                } else {
-                  return Container();
-                  
-                }
-              },
-            ),
-          ),
-                      //List.generate(
-                      /*productos.length ~/ 2, // Usar la mitad de la longitud
-                      (index) {
-                        final evenIndex = index * 2;
-                        final oddIndex = evenIndex + 1;
-                        return Column(
-                          children: [
-                            Row(
-                              children: [
-                                Expanded(
-                                  child: productsHome(
-                                    context,
-                                    productos[evenIndex],
-                                    loggedUserRol,
-                                  ),
-                                ),
-                                const SizedBox(
-                                  width: 8.0,
-                                ),
-                                Expanded(
-                                  child: oddIndex < productos.length
-                                      ? productsHome(
-                                          context,
-                                          productos[oddIndex],
-                                          loggedUserRol,
-                                        )
-                                      : Container(),
-                                ),
-                              ],
-                            ),
-                            const SizedBox(
-                              height: 8.0,
-                            ),
-                          ],
-                        );
-                      },*/
-              ]
-                  ),
-                ),
+                _productsHome(context, data),
                 const SizedBox(
                   height: kBottomNavigationBarHeight + 16.0,
                 ),
@@ -227,7 +173,7 @@ class HomeScreen extends HookWidget {
       floatingActionButton: Column(
         mainAxisAlignment: MainAxisAlignment.end,
         children: [
-          shoppingCart(contex),
+          shoppingCart(context),
           const SizedBox(
             height: 8,
           ),
@@ -236,6 +182,40 @@ class HomeScreen extends HookWidget {
           ),
         ],
       ),
+    );
+  }
+
+  Widget _productsHome(BuildContext context, List<Producto> data) {
+    // final bool loggedUserRol = rol == UserRoles.admin;
+    return Container(
+      width: MediaQuery.of(context).size.width,
+      height: MediaQuery.of(context).size.height,
+      margin: const EdgeInsets.symmetric(vertical: 4, horizontal: 16),
+      child: Column(children: [
+        Expanded(
+          child: BlocBuilder<ProductListCubit, List<Producto>?>(
+            builder: (context, state) {
+              if (state == null) {
+                return const Center(
+                  child: CircularProgressIndicator(),
+                );
+              } else {
+                data = state;
+                return ListView.builder(
+                  itemCount: data.length,
+                  itemBuilder: (context, index) {
+                    return ProductsCardsItemsList(
+                      listType: ListEnums.products,
+                      dataToRender: data,
+
+                    );
+                  },
+                );
+              }
+            },
+          ),
+        ),
+      ]),
     );
   }
 
@@ -601,137 +581,6 @@ class HomeScreen extends HookWidget {
       ),
     );
   }
-}
-
-Container productsHome(
-  BuildContext context,
-  Producto producto,
-  UserRoles rol,
-) {
-  final bool loggedUserRol = rol == UserRoles.admin;
-
-  return Container(
-    width: MediaQuery.of(context).size.width * 0.40,
-    height: MediaQuery.of(context).size.height * 0.26,
-    decoration: BoxDecoration(
-      color: bottomNavBar,
-      boxShadow: [
-        BoxShadow(
-          color: const Color.fromARGB(255, 95, 95, 95).withOpacity(0.08),
-          spreadRadius: 2,
-          blurRadius: 4,
-          offset: const Offset(
-            0,
-            1,
-          ),
-        ),
-      ],
-      borderRadius: BorderRadius.circular(10),
-    ),
-    child: Column(
-      crossAxisAlignment: CrossAxisAlignment.start,
-      children: [
-        Stack(
-          children: [
-            Container(
-              width: MediaQuery.of(context).size.width * 0.45,
-              height: MediaQuery.of(context).size.height * 0.17,
-              decoration: BoxDecoration(
-                borderRadius: const BorderRadius.only(
-                  topLeft: Radius.circular(10),
-                  topRight: Radius.circular(10),
-                ),
-                image: DecorationImage(
-                  image: AssetImage(producto.imagen),
-                  fit: BoxFit.cover,
-                ),
-              ),
-            ),
-            Positioned(
-              top: 8.0, // Ajusta la posición del botón según sea necesario
-              right: 8.0,
-              child: !loggedUserRol
-                  ? Container(
-                      padding: const EdgeInsets.all(4),
-                      decoration: BoxDecoration(
-                        color: bottomNavBar,
-                        borderRadius: BorderRadius.circular(5),
-                        border: Border.all(width: 0.2, color: iconColor),
-                      ),
-                      child: Icon(
-                        Ionicons.add,
-                        color: iconColor,
-                      ),
-                    )
-                  : Container(),
-            ),
-          ],
-        ),
-        Container(
-          margin: const EdgeInsets.symmetric(horizontal: 4),
-          padding: const EdgeInsets.only(right: 4),
-          child: Column(
-            crossAxisAlignment: CrossAxisAlignment.start,
-            children: [
-              Text(
-                producto.product_code,
-                style: const TextStyle(
-                  fontFamily: 'Gotham',
-                  fontSize: 14,
-                  fontWeight: FontWeight.w500,
-                ),
-              ),
-              Text(
-                producto.descriptions as String,
-                style: const TextStyle(
-                  fontFamily: 'Gotham',
-                  fontSize: 10,
-                  fontWeight: FontWeight.w300,
-                ),
-              ),
-              const SizedBox(
-                height: 6,
-              ),
-              Row(
-                mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                crossAxisAlignment: CrossAxisAlignment.end,
-                children: [
-                  /*Text(
-                    'S/${producto.price}',
-                    style: const TextStyle(
-                      fontFamily: 'Gotham',
-                      fontSize: 18,
-                      fontWeight: FontWeight.w500,
-                    ),
-                  ),*/
-                  if (loggedUserRol)
-                    Container(
-                      padding: const EdgeInsets.symmetric(
-                        vertical: 4,
-                        horizontal: 6,
-                      ),
-                      decoration: BoxDecoration(
-                        color:
-                            secondaryColor, // Puedes cambiar el color según tus necesidades
-                        borderRadius: BorderRadius.circular(5),
-                      ),
-                      child: const Text(
-                        'Editar',
-                        style: TextStyle(
-                          color: Colors.white,
-                          fontSize: 11,
-                          fontWeight: FontWeight.bold,
-                        ),
-                      ),
-                    ),
-                ],
-              ),
-            ],
-          ),
-        ),
-      ],
-    ),
-  );
 }
 
 Container barSearch(BuildContext context) {

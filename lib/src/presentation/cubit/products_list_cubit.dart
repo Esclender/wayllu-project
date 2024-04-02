@@ -8,16 +8,16 @@ class ProductListCubit extends Cubit<List<Producto>?> {
 
   ProductListCubit(this._apiRepository) : super(null);
 
-  Future<void> getUserLists({int pagina = 1}) async {
+  Future<void> getProductsLists() async {
     final ProductsListHttpResponse responseState =
         await _apiRepository.getProducts();
 
     emit(
       state == null
-          ? responseState?.map((user) => user.toProduct()).toList()
+          ? responseState?.map((producto) => producto.toProduct()).toList()
           : [
               ...state!,
-              ...responseState!.map((user) => user.toProduct()),
+              ...responseState!.map((producto) => producto.toProduct()),
             ],
     );
   }

@@ -53,7 +53,7 @@ class ProductInfo {
   Producto toProduct() {
     return Producto(
       imagen: IMAGEN ?? '',
-      product_code: COD_PRODUCTO as String,
+      product_code: '$COD_PRODUCTO' ,
       descriptions: [
         DescriptionItem(field: 'Descripción', value: DESCRIPCION),
       ], 

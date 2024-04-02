@@ -99,7 +99,7 @@ class _CustomSearchWidgetState extends State<CustomSearchWidget> {
     if (_searchController.text.isEmpty) {
       return CardTemplateItemsList(
         listType: ListEnums.users,
-        dataToRender: dataToRender, //_filteredData
+        dataToRender: dataToRender, 
         isScrollable: false,
       );
     } else if (_filteredData.isEmpty) {
