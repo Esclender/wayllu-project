@@ -6,6 +6,7 @@ import 'package:ionicons/ionicons.dart';
 import 'package:wayllu_project/src/config/router/app_router.dart';
 import 'package:wayllu_project/src/domain/enums/user_roles.dart';
 import 'package:wayllu_project/src/domain/models/bottom_navbar_options_model.dart';
+import 'package:wayllu_project/src/domain/models/user_info/user_info_model.dart';
 import 'package:wayllu_project/src/locator.dart';
 import 'package:wayllu_project/src/presentation/cubit/user_logged_cubit.dart';
 import 'package:wayllu_project/src/utils/constants/colors.dart';
@@ -14,37 +15,6 @@ class BottomNavBar extends HookWidget {
   final int viewSelected;
 
   BottomNavBar({super.key, this.viewSelected = 0});
-
-  final List<OptionsIcons> optionsIcons = [
-    OptionsIcons(
-      icon: Ionicons.home,
-      routes: [
-        OptionsIconsRoutes(route: HomeRoute(viewIndex: 0), rol: UserRoles.all),
-      ],
-    ),
-    OptionsIcons(
-      icon: Ionicons.bar_chart,
-      routes: [
-        OptionsIconsRoutes(
-          route: GraphicProductsRoute(viewIndex: 1),
-          rol: UserRoles.admin,
-        ),
-      ],
-    ),
-    OptionsIcons(
-      icon: Ionicons.person,
-      routes: [
-        // OptionsIconsRoutes(
-        //   route: InfoUserRoute(viewIndex: 2),
-        //   rol: UserRoles.artesano,
-        // ),
-        OptionsIconsRoutes(
-          route: UsersListAdminRoute(viewIndex: 2),
-          rol: UserRoles.admin,
-        ),
-      ],
-    ),
-  ];
 
   //Dependencies Injection
   final appRouter = getIt<AppRouter>();
@@ -61,6 +31,44 @@ class BottomNavBar extends HookWidget {
   @override
   Widget build(BuildContext context) {
     final UserRoles rol = context.read<UserLoggedCubit>().state;
+    final UserInfo? userLoggedInfo = context.read<UserLoggedInfoCubit>().state;
+
+    final List<OptionsIcons> optionsIcons = [
+      OptionsIcons(
+        icon: Ionicons.home,
+        routes: [
+          OptionsIconsRoutes(
+            route: HomeRoute(viewIndex: 0),
+            rol: UserRoles.all,
+          ),
+        ],
+      ),
+      OptionsIcons(
+        icon: Ionicons.bar_chart,
+        routes: [
+          OptionsIconsRoutes(
+            route: GraphicProductsRoute(viewIndex: 1),
+            rol: UserRoles.admin,
+          ),
+        ],
+      ),
+      OptionsIcons(
+        icon: Ionicons.person,
+        routes: [
+          OptionsIconsRoutes(
+            route: InfoUserRoute(
+              viewIndex: 2,
+              user: userLoggedInfo,
+            ),
+            rol: UserRoles.artesano,
+          ),
+          OptionsIconsRoutes(
+            route: UsersListAdminRoute(viewIndex: 2),
+            rol: UserRoles.admin,
+          ),
+        ],
+      ),
+    ];
 
     return Container(
       height: 50,

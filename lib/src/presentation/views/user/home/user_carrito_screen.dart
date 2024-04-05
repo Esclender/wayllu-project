@@ -1,10 +1,14 @@
+// ignore_for_file: avoid_dynamic_calls
+
 import 'package:auto_route/auto_route.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_hooks/flutter_hooks.dart';
-import 'package:gap/gap.dart';
 import 'package:ionicons/ionicons.dart';
 import 'package:wayllu_project/src/config/router/app_router.dart';
+import 'package:wayllu_project/src/domain/models/carrito_item.dart';
 import 'package:wayllu_project/src/locator.dart';
+import 'package:wayllu_project/src/presentation/cubit/productos_carrito_cubit.dart';
 import 'package:wayllu_project/src/presentation/widgets/gradient_widgets.dart';
 import 'package:wayllu_project/src/utils/constants/colors.dart';
 
@@ -42,18 +46,33 @@ class CarritoScreen extends HookWidget {
               right: 15,
               bottom: checkoutBtnHeight + 10,
             ),
-            child: ListView.separated(
-              separatorBuilder: (_, __) => const Gap(5),
-              itemCount: 10,
-              itemBuilder: (_, ind) => _buildProduct(
-                productName: 'Producto',
-                productDescription: 'Descripcion',
-              ),
-            ),
+            child: _buildBlocBuilderWithList(),
           ),
           _buildConfirmCheckoutBtn(),
         ],
       ),
+    );
+  }
+
+  Widget _buildBlocBuilderWithList() {
+    return BlocBuilder<ProductsCarrito, List<CarritoItem>>(
+      builder: (context, listCarritoItem) {
+        return ListView.builder(
+          itemCount: listCarritoItem.length,
+          itemBuilder: (context, index) {
+            final carritoItem = listCarritoItem[index];
+
+            return _buildProduct(
+              productName: carritoItem.info.ITEM.toString(),
+              productDescription: carritoItem.info.DESCRIPCION,
+              productImage: 'assets/images/img1.jpg',
+              actualValue: carritoItem.quantity,
+              increase: carritoItem.increase,
+              decrease: carritoItem.decrease,
+            );
+          },
+        );
+      },
     );
   }
 
@@ -67,6 +86,10 @@ class CarritoScreen extends HookWidget {
   Widget _buildProduct({
     required String productName,
     required String productDescription,
+    required String productImage,
+    required int actualValue,
+    required void Function() increase,
+    required void Function() decrease,
   }) {
     return Row(
       children: [
@@ -75,7 +98,7 @@ class CarritoScreen extends HookWidget {
           child: ClipRRect(
             borderRadius: BorderRadius.circular(10),
             child: Image.asset(
-              'assets/images/img1.jpg',
+              productImage,
               width: 100,
               height: 80,
               fit: BoxFit.cover,
@@ -123,16 +146,11 @@ class CarritoScreen extends HookWidget {
               Row(
                 mainAxisAlignment: MainAxisAlignment.spaceBetween,
                 children: [
-                  const Text(
-                    'S/ 20,00',
-                    style: TextStyle(
-                      fontSize: 16,
-                      fontWeight: FontWeight.bold,
-                      fontFamily: 'Gotham',
-                      color: Colors.black,
-                    ),
+                  _buildQuantityControl(
+                    increase: increase,
+                    decrease: decrease,
+                    value: actualValue,
                   ),
-                  _buildQuantityControl(),
                 ],
               ),
             ],
@@ -142,7 +160,11 @@ class CarritoScreen extends HookWidget {
     );
   }
 
-  Widget _buildQuantityControl() {
+  Widget _buildQuantityControl({
+    required int value,
+    required void Function() increase,
+    required void Function() decrease,
+  }) {
     return Container(
       height: 30,
       decoration: BoxDecoration(
@@ -158,13 +180,11 @@ class CarritoScreen extends HookWidget {
               Icons.remove,
             ),
             iconSize: 15,
-            onPressed: () {
-              // Add logic to decrease quantity
-            },
+            onPressed: decrease,
           ),
-          const Text(
-            '1',
-            style: TextStyle(
+          Text(
+            value.toString(),
+            style: const TextStyle(
               fontSize: 16,
               fontFamily: 'Gotham',
               color: Colors.black,
@@ -173,9 +193,7 @@ class CarritoScreen extends HookWidget {
           IconButton(
             icon: const Icon(Icons.add),
             iconSize: 15,
-            onPressed: () {
-              // Add logic to increase quantity
-            },
+            onPressed: increase,
           ),
         ],
       ),

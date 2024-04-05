@@ -6,7 +6,6 @@ import 'package:json_annotation/json_annotation.dart';
 import 'package:wayllu_project/src/domain/models/list_items_model.dart';
 import 'package:wayllu_project/src/domain/models/models_products.dart';
 
-
 part 'product_info_model.g.dart';
 
 @JsonSerializable()
@@ -28,6 +27,10 @@ class ProductInfo {
     this.ANCHO,
     this.ALTO,
   });
+
+  List<DescriptionItem> get descriptionsFields => [
+        DescriptionItem(field: 'Descripción', value: DESCRIPCION),
+      ];
 
   factory ProductInfo.fromJson(Map<String, dynamic> json) =>
       _$ProductInfoFromJson(json);
@@ -53,19 +56,18 @@ class ProductInfo {
   Producto toProduct() {
     return Producto(
       imagen: IMAGEN ?? '',
-      product_code: '$COD_PRODUCTO' ,
+      product_code: '$COD_PRODUCTO',
       descriptions: [
         DescriptionItem(field: 'Descripción', value: DESCRIPCION),
-      ], 
+      ],
     );
   }
 
   MoreInfo get productInfo => MoreInfo(
-      COD_PRODUCTO: COD_PRODUCTO,
-      DESCRIPCION: DESCRIPCION,
-      CATEGORIA: CATEGORIA,
+        COD_PRODUCTO: COD_PRODUCTO,
+        DESCRIPCION: DESCRIPCION,
+        CATEGORIA: CATEGORIA,
       );
-
 
   String formattingDate() {
     final DateTime dateTime = DateTime.parse(FECHA_INGRESO);
@@ -84,16 +86,10 @@ class MoreInfo extends InfoBase {
   int COD_PRODUCTO;
   String DESCRIPCION;
   String CATEGORIA;
-  
- 
 
   MoreInfo({
     required this.COD_PRODUCTO,
     required this.DESCRIPCION,
     required this.CATEGORIA,
   });
-
- 
 }
-
-

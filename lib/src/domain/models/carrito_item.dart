@@ -1,13 +1,15 @@
-import 'package:wayllu_project/src/domain/models/models_products.dart';
+import 'package:wayllu_project/src/domain/models/products_info/product_info_model.dart';
 
 class CarritoItem {
-  Producto item;
+  ProductInfo info;
   int quantity;
+  void Function() increase;
+  void Function() decrease;
 
   CarritoItem({
-    required this.item,
+    required this.info,
     required this.quantity,
+    required this.decrease,
+    required this.increase,
   });
-
- // String get totalToString => 'S/ ${item.price * quantity}';
 }

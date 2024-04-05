@@ -12,8 +12,6 @@ class Producto {
   });
 }
 
-
-
 class Categories {
   final String image;
   final String name;
@@ -37,5 +35,4 @@ final List<Categories> categories = [
     image: 'assets/images/product/manto-category.png',
     name: 'Bolsos y Monederos',
   ),
- 
 ];

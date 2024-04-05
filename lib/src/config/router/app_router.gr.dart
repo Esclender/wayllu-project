@@ -214,7 +214,7 @@ class HomeRouteArgs {
 class InfoUserRoute extends PageRouteInfo<InfoUserRouteArgs> {
   InfoUserRoute({
     required int viewIndex,
-    required UserInfo user,
+    UserInfo? user,
     bool isAdmin = false,
     List<PageRouteInfo>? children,
   }) : super(
@@ -236,13 +236,13 @@ class InfoUserRoute extends PageRouteInfo<InfoUserRouteArgs> {
 class InfoUserRouteArgs {
   const InfoUserRouteArgs({
     required this.viewIndex,
-    required this.user,
+    this.user,
     this.isAdmin = false,
   });
 
   final int viewIndex;
 
-  final UserInfo user;
+  final UserInfo? user;
 
   final bool isAdmin;
 

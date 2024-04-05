@@ -10,7 +10,9 @@ import 'package:wayllu_project/src/config/router/app_router.dart';
 import 'package:wayllu_project/src/domain/enums/lists_enums.dart';
 import 'package:wayllu_project/src/domain/enums/user_roles.dart';
 import 'package:wayllu_project/src/domain/models/models_products.dart';
+import 'package:wayllu_project/src/domain/models/products_info/product_info_model.dart';
 import 'package:wayllu_project/src/locator.dart';
+import 'package:wayllu_project/src/presentation/cubit/productos_carrito_cubit.dart';
 import 'package:wayllu_project/src/presentation/cubit/products_list_cubit.dart';
 import 'package:wayllu_project/src/presentation/cubit/user_logged_cubit.dart';
 import 'package:wayllu_project/src/presentation/widgets/bottom_navbar.dart';
@@ -43,7 +45,7 @@ class HomeScreen extends HookWidget {
 
     final productsListCubit = context.watch<ProductListCubit>();
     // List<Producto> _data = [];
-    List<Producto> data = [];
+    final List<ProductInfo> data = [];
 
     useEffect(
       () {
@@ -179,36 +181,38 @@ class HomeScreen extends HookWidget {
     );
   }
 
-  Widget _productsHome(BuildContext context, List<Producto> data) {
+  Widget _productsHome(BuildContext context, List<ProductInfo> data) {
     // final bool loggedUserRol = rol == UserRoles.admin;
     return Container(
       width: MediaQuery.of(context).size.width,
       height: MediaQuery.of(context).size.height,
       margin: const EdgeInsets.symmetric(vertical: 4, horizontal: 20),
-      child: Column(crossAxisAlignment: CrossAxisAlignment.center, children: [
-        Expanded(
-          child: BlocBuilder<ProductListCubit, List<Producto>?>(
-            builder: (context, state) {
-              if (state == null) {
-                return const Center(
-                  child: CircularProgressIndicator(),
-                );
-              } else {
-                data = state;
-                return ListView.builder(
-                  itemCount: data.length,
-                  itemBuilder: (context, index) {
-                    return ProductsCardsItemsList(
-                      listType: ListEnums.products,
-                      dataToRender: data,
-                    );
-                  },
-                );
-              }
-            },
+      child: Column(
+        children: [
+          Expanded(
+            child: BlocBuilder<ProductListCubit, List<ProductInfo>?>(
+              builder: (context, state) {
+                if (state == null) {
+                  return const Center(
+                    child: CircularProgressIndicator(),
+                  );
+                } else {
+                  data = state;
+                  return ListView.builder(
+                    itemCount: data.length,
+                    itemBuilder: (context, index) {
+                      return ProductsCardsItemsList(
+                        listType: ListEnums.products,
+                        dataToRender: data,
+                      );
+                    },
+                  );
+                }
+              },
+            ),
           ),
-        ),
-      ]),
+        ],
+      ),
     );
   }
 
@@ -265,14 +269,41 @@ class HomeScreen extends HookWidget {
   }
 
   InkWell shoppingCart(BuildContext context) {
+    final itemsInCart = context.watch<ProductsCarrito>();
+
+    if (itemsInCart.state.isEmpty) {
+      return InkWell(
+        onTap: () {
+          appRouter.pushNamed('/user/carrito');
+        },
+        child: Container(
+          width: MediaQuery.of(context).size.width,
+          alignment: Alignment.bottomRight,
+          margin: const EdgeInsets.symmetric(horizontal: 10),
+          child: FloatingActionButton(
+            backgroundColor: bottomNavBar,
+            shape: const CircleBorder(),
+            onPressed: () {
+              appRouter.pushNamed('/user/carrito');
+            },
+            child: Icon(
+              Ionicons.bag_handle_outline,
+              size: 28,
+              color: iconColor,
+            ),
+          ),
+        ),
+      );
+    }
+
     return InkWell(
       onTap: () {
         appRouter.pushNamed('/user/carrito');
       },
       child: badge.Badge(
-        badgeContent: const Text(
-          '4',
-          style: TextStyle(color: Colors.white),
+        badgeContent: Text(
+          itemsInCart.state.length.toString(),
+          style: const TextStyle(color: Colors.white),
         ),
         position: badge.BadgePosition.topEnd(end: 4),
         child: Container(
@@ -643,7 +674,6 @@ Container categoriesProducts(
       ),
       child: Column(
         mainAxisAlignment: MainAxisAlignment.spaceBetween,
-        crossAxisAlignment: CrossAxisAlignment.center,
         children: [
           Container(
             alignment: Alignment.center,
