@@ -16,8 +16,10 @@ class ProductsCardsItemsList extends HookWidget {
   final List<Producto> dataToRender;
   final String query;
   final bool isScrollable;
+  final String?
+      categoriaSeleccionada; // Nuevo parámetro para la categoría seleccionada
 
-  //Dependencies Injection
+  // Dependencies Injection
   final appRouter = getIt<AppRouter>();
 
   ProductsCardsItemsList({
@@ -25,57 +27,58 @@ class ProductsCardsItemsList extends HookWidget {
     required this.dataToRender,
     this.isScrollable = true,
     this.query = '',
+    this.categoriaSeleccionada,
   });
-
-  final double navBarHeight = 60.0;
-  final double registerUserBtnHeight = 60.0;
-
-  //[gradient, color]
-
-  void _navigateToEditUser(Producto product) {
-    // appRouter.navigate(InfoUserRoute(viewIndex: 2, user: user));
-  }
 
   @override
   Widget build(BuildContext context) {
-    print(dataToRender);
+    final productosFiltrados = categoriaSeleccionada != null
+      ? dataToRender
+          .where((producto) => producto.category == categoriaSeleccionada)
+          .toList()
+      : dataToRender;
 
     return ListView.separated(
-        separatorBuilder: (context, index) => const Gap(8),
-        shrinkWrap: true,
-        itemCount: dataToRender.length,
-        itemBuilder: (BuildContext c, int ind) {
-          return Row(
-            mainAxisAlignment: MainAxisAlignment.center,
-            children: [
-              Expanded(
-                child: GridView.builder(
-                  shrinkWrap: true,
-                  gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
-                    crossAxisCount: 2,
-                    crossAxisSpacing: 8,
-                    mainAxisSpacing: 8,
-                  ),
-                  physics: isScrollable
-                      ? null
-                      : const NeverScrollableScrollPhysics(),
-                  itemCount: ind == (dataToRender.length / 2).ceil() - 1
-                      ? dataToRender.length % 2
-                      : 2,
-                  itemBuilder: (BuildContext context, int index) {
-                    final dataIndex = ind * 2 + index;
-                    if (dataIndex < dataToRender.length) {
-                      final producto = dataToRender[dataIndex];
-                      return _buildItemContainer(itemData: producto, context);
-                    } else {
-                      return const SizedBox(); // No hay más datos para mostrar
-                    }
-                  },
+      separatorBuilder: (context, index) => SizedBox(height: 8),
+      padding: EdgeInsets.zero,
+      shrinkWrap: true,
+      physics: NeverScrollableScrollPhysics(),
+      itemCount: productosFiltrados.length,
+      itemBuilder: (BuildContext c, int ind) {
+        return Row(
+          mainAxisAlignment: MainAxisAlignment.center,
+          children: [
+            Expanded(
+              child: GridView.builder(
+                shrinkWrap: true,
+                gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
+                  crossAxisCount: 2,
+                  crossAxisSpacing: 8,
+                  mainAxisSpacing: 8,
                 ),
-              )
-            ],
-          );
-        });
+                physics:
+                    isScrollable ? null : const NeverScrollableScrollPhysics(),
+                itemCount: ind == (productosFiltrados.length / 2).ceil() - 1
+                    ? productosFiltrados.length % 2
+                    : 2,
+                itemBuilder: (BuildContext context, int index) {
+                  final dataIndex = ind * 2 + index;
+                  if (dataIndex < productosFiltrados.length) {
+                    final producto = productosFiltrados[dataIndex];
+                    return _buildItemContainer(
+                      context,
+                      itemData: producto,
+                    );
+                  } else {
+                    return const SizedBox(); // No hay más datos para mostrar
+                  }
+                },
+              ),
+            )
+          ],
+        );
+      },
+    );
   }
 
   Widget _buildItemContainer(
@@ -104,6 +107,7 @@ class ProductsCardsItemsList extends HookWidget {
                 leading: _buildImageProduct(context, itemData.imagen),
                 title: Text(itemData.product_code),
                 fields: itemData.descriptions,
+                category: Text(itemData.category ?? ''),
               ),
             ),
           ],
@@ -118,7 +122,9 @@ class ProductsCardsItemsList extends HookWidget {
       height: MediaQuery.of(context).size.width * 0.26,
       decoration: BoxDecoration(
         borderRadius: const BorderRadius.only(
-            topLeft: Radius.circular(10), topRight: Radius.circular(10),),
+          topLeft: Radius.circular(10),
+          topRight: Radius.circular(10),
+        ),
         image: DecorationImage(
           image: NetworkImage(url),
           fit: BoxFit.cover,
@@ -131,6 +137,7 @@ class ProductsCardsItemsList extends HookWidget {
     required Widget leading,
     required Widget title,
     required List<DescriptionItem> fields,
+    required Widget category,
   }) {
     const rol = UserRoles.admin;
     const bool loggedUserRol = rol == UserRoles.admin;
@@ -154,10 +161,22 @@ class ProductsCardsItemsList extends HookWidget {
                   ),
                 ),
               ),
+              /*  ...fields.map(
+                (f) => Text(
+                  '${category}',
+                  style: TextStyle(
+                    color: smallWordsColor.withOpacity(0.7),
+                    fontSize: 6,
+                  ),
+                ),
+               
+              ),*/
               Gap(5),
-              if (loggedUserRol) Container(
-                alignment: Alignment.bottomRight,
-                child: _buildEditButton(),)
+              if (loggedUserRol)
+                Container(
+                  alignment: Alignment.bottomRight,
+                  child: _buildEditButton(),
+                )
             ],
           ),
         ),
@@ -177,12 +196,12 @@ class ProductsCardsItemsList extends HookWidget {
       ),
       child: GestureDetector(
         onTap: () {},
-        behavior: HitTestBehavior .translucent, 
+        behavior: HitTestBehavior.translucent,
         child: const Text(
           'Editar',
           style: TextStyle(
             color: Colors.white,
-            fontSize: 10, 
+            fontSize: 10,
             fontWeight: FontWeight.bold,
           ),
         ),

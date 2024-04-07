@@ -1,7 +1,10 @@
+import 'dart:ui';
+
 import 'package:auto_route/auto_route.dart';
 import 'package:auto_size_text/auto_size_text.dart';
 import 'package:badges/badges.dart' as badge;
 import 'package:flutter/material.dart';
+import 'package:flutter/widgets.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_hooks/flutter_hooks.dart';
 import 'package:intl/intl.dart';
@@ -29,10 +32,10 @@ class HomeScreen extends HookWidget {
   @override
   Widget build(BuildContext context) {
     final DateTime now = DateTime.now();
+    const double blur = 1.5;
     final int hour = now.hour;
     final String greeting = getGreeting(hour);
     final loggedUserRol = context.read<UserLoggedCubit>().state;
-
     void goToRegisterOfProductOrVentaCondition() {
       if (loggedUserRol == UserRoles.admin) {
         appRouter.navigate(const RegisterProductsRoute());
@@ -53,7 +56,7 @@ class HomeScreen extends HookWidget {
       },
       [],
     );
-
+    final categoriaSeleccionada = useState<String?>(null);
     return Scaffold(
       backgroundColor: bgPrimary,
       body: CustomScrollView(
@@ -129,35 +132,75 @@ class HomeScreen extends HookWidget {
                     ],
                   ),
                 ),
-                Row(
-                  mainAxisAlignment: MainAxisAlignment.center,
-                  children: categories.map((category) {
-                    return categoriesProducts(
-                      context,
-                      category.name,
-                      category.image,
-                    );
-                  }).toList(),
+                SingleChildScrollView(
+                  // scrollDirection: Axis.horizontal,
+                  child: Row(
+                    mainAxisAlignment: MainAxisAlignment.center,
+                    children: categories.map((category) {
+                      return categoriesProducts(
+                        context,
+                        category.name,
+                        category.image,
+                        (selectedCategory) {
+                          if (selectedCategory == categoriaSeleccionada.value) {
+                            categoriaSeleccionada.value = null;
+                          } else {
+                            categoriaSeleccionada.value = selectedCategory;
+                          }
+                        },
+                      );
+                    }).toList(),
+                  ),
                 ),
                 const SizedBox(
                   height: 6,
                 ),
                 Container(
-                  padding: const EdgeInsets.symmetric(horizontal: 16),
+                  padding: const EdgeInsets.symmetric(horizontal: 22),
                   alignment: Alignment.centerLeft,
-                  child: const Text(
-                    'Todos los productos',
-                    style: TextStyle(
-                      fontFamily: 'Gotham',
-                      fontSize: 24,
-                      fontWeight: FontWeight.w500,
-                    ),
-                  ),
+                  child: categoriaSeleccionada.value == null
+                      ? const Text(
+                          'Todos los productos',
+                          style: TextStyle(
+                            fontFamily: 'Gotham',
+                            fontSize: 24,
+                            fontWeight: FontWeight.w500,
+                          ),
+                        )
+                      : Container(
+                          width: MediaQuery.of(context).size.width * 0.32,
+                          decoration: BoxDecoration(
+                              borderRadius: BorderRadius.circular(5),
+                              color: iconColor.withOpacity(0.5),
+                              border: Border.all(
+                                  color: bottomNavBarStroke, width: 0.5)),
+                          child: GestureDetector(
+                            onTap: () {
+                              categoriaSeleccionada.value = null;
+                            },
+                            child:  Padding(
+                              padding: EdgeInsets.all(4.0),
+                              child: Row(
+                                mainAxisAlignment: MainAxisAlignment.center,
+                                children: [
+                                  Icon(Icons.filter_alt_outlined,
+                                      color: bottomNavBar,
+                                      size: 16,),
+                                  const SizedBox(width: 8),
+                                  Text(
+                                    'Quitar filtro',
+                                    style: TextStyle(color: bottomNavBar,
+                                    fontFamily: 'Gotham',
+                                    fontWeight: FontWeight.w300,
+                                    fontSize: 14),
+                                  ),
+                                ],
+                              ),
+                            ),
+                          ),
+                        ),
                 ),
-                _productsHome(context, data),
-                const SizedBox(
-                  height: kBottomNavigationBarHeight + 16.0,
-                ),
+                _productsHome(context, data, categoriaSeleccionada.value),
               ],
             ),
           ),
@@ -179,13 +222,14 @@ class HomeScreen extends HookWidget {
     );
   }
 
-  Widget _productsHome(BuildContext context, List<Producto> data) {
+  Widget _productsHome(
+      BuildContext context, List<Producto> data, String? categorySeleccionada) {
     // final bool loggedUserRol = rol == UserRoles.admin;
     return Container(
       width: MediaQuery.of(context).size.width,
       height: MediaQuery.of(context).size.height,
       margin: const EdgeInsets.symmetric(vertical: 4, horizontal: 20),
-      child: Column(crossAxisAlignment: CrossAxisAlignment.center, children: [
+      child: Column(children: [
         Expanded(
           child: BlocBuilder<ProductListCubit, List<Producto>?>(
             builder: (context, state) {
@@ -193,9 +237,23 @@ class HomeScreen extends HookWidget {
                 return const Center(
                   child: CircularProgressIndicator(),
                 );
+              } else if (categorySeleccionada != null) {
+                data = state;
+                return ListView.builder(
+                  physics: const NeverScrollableScrollPhysics(),
+                  itemCount: data.length,
+                  itemBuilder: (context, index) {
+                    return ProductsCardsItemsList(
+                      listType: ListEnums.products,
+                      dataToRender: data,
+                      categoriaSeleccionada: categorySeleccionada ?? '',
+                    );
+                  },
+                );
               } else {
                 data = state;
                 return ListView.builder(
+                  physics: const NeverScrollableScrollPhysics(),
                   itemCount: data.length,
                   itemBuilder: (context, index) {
                     return ProductsCardsItemsList(
@@ -208,7 +266,7 @@ class HomeScreen extends HookWidget {
             },
           ),
         ),
-      ]),
+      ],),
     );
   }
 
@@ -615,45 +673,50 @@ Container categoriesProducts(
   BuildContext context,
   String name,
   String image,
+  void Function(String)? onSelectCategory,
 ) {
   return Container(
     padding: const EdgeInsets.symmetric(
       vertical: 8,
     ),
-    child: Container(
-      margin: const EdgeInsets.symmetric(horizontal: 4),
-      padding: const EdgeInsets.only(top: 15, bottom: 8),
-      height: MediaQuery.of(context).size.height * 0.18,
-      width: MediaQuery.of(context).size.width * 0.3,
-      decoration: BoxDecoration(
-        color: bottomNavBar,
-        borderRadius: const BorderRadius.all(Radius.circular(10)),
-        boxShadow: [
-          BoxShadow(
-            color: const Color.fromARGB(255, 95, 95, 95)
-                .withOpacity(0.08), // Color de la sombra y su opacidad
-            spreadRadius: 2,
-            blurRadius: 4,
-            offset: const Offset(
-              0,
-              1,
+    child: GestureDetector(
+      onTap: () {
+        if (onSelectCategory != null) {
+          onSelectCategory(name.toUpperCase());
+        }
+      },
+      child: Container(
+        margin: const EdgeInsets.symmetric(horizontal: 4),
+        padding: const EdgeInsets.only(top: 15, bottom: 8),
+        height: MediaQuery.of(context).size.height * 0.15,
+        width: MediaQuery.of(context).size.width * 0.282,
+        decoration: BoxDecoration(
+          color: bottomNavBar,
+          borderRadius: const BorderRadius.all(Radius.circular(10)),
+          boxShadow: [
+            BoxShadow(
+              color: const Color.fromARGB(255, 95, 95, 95)
+                  .withOpacity(0.08), // Color de la sombra y su opacidad
+              spreadRadius: 2,
+              blurRadius: 4,
+              offset: const Offset(
+                0,
+                1,
+              ),
             ),
-          ),
-        ],
-      ),
-      child: Column(
-        mainAxisAlignment: MainAxisAlignment.spaceBetween,
-        crossAxisAlignment: CrossAxisAlignment.center,
-        children: [
-          Container(
-            alignment: Alignment.center,
-            child: Image.asset(
-              image,
-              width: MediaQuery.of(context).size.width * 0.20,
+          ],
+        ),
+        child: Column(
+          mainAxisAlignment: MainAxisAlignment.spaceBetween,
+          children: [
+            Container(
+              alignment: Alignment.center,
+              child: Image.asset(
+                image,
+                width: MediaQuery.of(context).size.width * 0.15,
+              ),
             ),
-          ),
-          Container(
-            child: Text(
+            Text(
               name,
               style: const TextStyle(
                 fontFamily: 'Gotham',
@@ -662,8 +725,8 @@ Container categoriesProducts(
               ),
               textAlign: TextAlign.center,
             ),
-          ),
-        ],
+          ],
+        ),
       ),
     ),
   );
