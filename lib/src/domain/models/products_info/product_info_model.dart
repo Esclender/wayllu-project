@@ -1,6 +1,5 @@
 // ignore_for_file: public_member_api_docs, sort_constructors_first, must_be_immutable
 // ignore_for_file: non_constant_identifier_names
-
 import 'package:intl/intl.dart';
 import 'package:json_annotation/json_annotation.dart';
 import 'package:wayllu_project/src/domain/models/list_items_model.dart';
@@ -53,6 +52,10 @@ class ProductInfo {
 
   Map<String, dynamic> toJson() => _$ProductInfoToJson(this);
 
+  String getCategoryName() {
+    return CATEGORIA;
+  }
+
   Producto toProduct() {
     return Producto(
       imagen: IMAGEN ?? '',
@@ -60,8 +63,11 @@ class ProductInfo {
       descriptions: [
         DescriptionItem(field: 'Descripción', value: DESCRIPCION),
       ],
+      category: CATEGORIA,
     );
   }
+
+  String get category => CATEGORIA;
 
   MoreInfo get productInfo => MoreInfo(
         COD_PRODUCTO: COD_PRODUCTO,

@@ -7,10 +7,10 @@ import 'package:wayllu_project/src/config/router/app_router.dart';
 import 'package:wayllu_project/src/domain/enums/lists_enums.dart';
 import 'package:wayllu_project/src/domain/enums/user_roles.dart';
 import 'package:wayllu_project/src/domain/models/list_items_model.dart';
-import 'package:wayllu_project/src/domain/models/models_products.dart';
 import 'package:wayllu_project/src/domain/models/products_info/product_info_model.dart';
 import 'package:wayllu_project/src/locator.dart';
 import 'package:wayllu_project/src/presentation/cubit/productos_carrito_cubit.dart';
+import 'package:wayllu_project/src/presentation/cubit/user_logged_cubit.dart';
 import 'package:wayllu_project/src/utils/constants/colors.dart';
 
 class ProductsCardsItemsList extends HookWidget {
@@ -18,8 +18,10 @@ class ProductsCardsItemsList extends HookWidget {
   final List<ProductInfo> dataToRender;
   final String query;
   final bool isScrollable;
+  final String?
+      categoriaSeleccionada; // Nuevo parámetro para la categoría seleccionada
 
-  //Dependencies Injection
+  // Dependencies Injection
   final appRouter = getIt<AppRouter>();
 
   ProductsCardsItemsList({
@@ -27,14 +29,8 @@ class ProductsCardsItemsList extends HookWidget {
     required this.dataToRender,
     this.isScrollable = true,
     this.query = '',
+    this.categoriaSeleccionada,
   });
-
-  final double navBarHeight = 60.0;
-  final double registerUserBtnHeight = 60.0;
-
-  void _navigateToEditUser(Producto product) {
-    // appRouter.navigate(InfoUserRoute(viewIndex: 2, user: user));
-  }
 
   void _addItemToCarrito(BuildContext context, ProductInfo product) {
     context.read<ProductsCarrito>().addNewProductToCarrito(
@@ -44,10 +40,20 @@ class ProductsCardsItemsList extends HookWidget {
 
   @override
   Widget build(BuildContext context) {
+    final rol = context.read<UserLoggedCubit>().state;
+
+    final productosFiltrados = categoriaSeleccionada != null
+        ? dataToRender
+            .where((producto) => producto.category == categoriaSeleccionada)
+            .toList()
+        : dataToRender;
+
     return ListView.separated(
-      separatorBuilder: (context, index) => const Gap(8),
+      separatorBuilder: (context, index) => SizedBox(height: 8),
+      padding: EdgeInsets.zero,
       shrinkWrap: true,
-      itemCount: dataToRender.length,
+      physics: NeverScrollableScrollPhysics(),
+      itemCount: productosFiltrados.length,
       itemBuilder: (BuildContext c, int ind) {
         return Row(
           mainAxisAlignment: MainAxisAlignment.center,
@@ -62,20 +68,24 @@ class ProductsCardsItemsList extends HookWidget {
                 ),
                 physics:
                     isScrollable ? null : const NeverScrollableScrollPhysics(),
-                itemCount: ind == (dataToRender.length / 2).ceil() - 1
-                    ? dataToRender.length % 2
+                itemCount: ind == (productosFiltrados.length / 2).ceil() - 1
+                    ? productosFiltrados.length % 2
                     : 2,
                 itemBuilder: (BuildContext context, int index) {
                   final dataIndex = ind * 2 + index;
-                  if (dataIndex < dataToRender.length) {
-                    final producto = dataToRender[dataIndex];
-                    return _buildItemContainer(itemData: producto, context);
+                  if (dataIndex < productosFiltrados.length) {
+                    final producto = productosFiltrados[dataIndex];
+                    return _buildItemContainer(
+                      context,
+                      itemData: producto,
+                      rol: rol,
+                    );
                   } else {
                     return const SizedBox(); // No hay más datos para mostrar
                   }
                 },
               ),
-            ),
+            )
           ],
         );
       },
@@ -85,6 +95,7 @@ class ProductsCardsItemsList extends HookWidget {
   Widget _buildItemContainer(
     BuildContext context, {
     required ProductInfo itemData,
+    required UserRoles rol,
   }) {
     final BoxDecoration decoration = BoxDecoration(
       color: bottomNavBar,
@@ -106,20 +117,24 @@ class ProductsCardsItemsList extends HookWidget {
               height: MediaQuery.of(context).size.width * 0.44,
               decoration: decoration,
               child: _listTile(
+                context: context,
+                rol: rol,
                 leading: _buildImageProduct(context, itemData.IMAGEN!),
                 title: Text(itemData.COD_PRODUCTO.toString()),
                 fields: itemData.descriptionsFields,
+                category: Text(itemData.category),
               ),
             ),
-            IconButton(
-              onPressed: () {
-                _addItemToCarrito(context, itemData);
-              },
-              icon: const Icon(
-                Ionicons.add,
-                size: 30,
+            if (rol == UserRoles.artesano)
+              IconButton(
+                onPressed: () {
+                  _addItemToCarrito(context, itemData);
+                },
+                icon: const Icon(
+                  Ionicons.add,
+                  size: 30,
+                ),
               ),
-            ),
           ],
         ),
       ],
@@ -144,12 +159,14 @@ class ProductsCardsItemsList extends HookWidget {
   }
 
   Widget _listTile({
+    required BuildContext context,
     required Widget leading,
     required Widget title,
     required List<DescriptionItem> fields,
+    required Widget category,
+    required UserRoles rol,
   }) {
-    const rol = UserRoles.admin;
-    const bool loggedUserRol = rol == UserRoles.admin;
+    final bool loggedUserRol = rol == UserRoles.admin;
     return Column(
       children: [
         leading,
@@ -170,6 +187,16 @@ class ProductsCardsItemsList extends HookWidget {
                   ),
                 ),
               ),
+              /*  ...fields.map(
+                (f) => Text(
+                  '${category}',
+                  style: TextStyle(
+                    color: smallWordsColor.withOpacity(0.7),
+                    fontSize: 6,
+                  ),
+                ),
+               
+              ),*/
               const Gap(5),
               if (loggedUserRol)
                 Container(

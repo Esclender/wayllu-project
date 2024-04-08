@@ -47,7 +47,6 @@ class CarritoScreen extends HookWidget {
 
   @override
   Widget build(BuildContext context) {
-    Logger().i('Rebuild');
     return Scaffold(
       backgroundColor: bgPrimary,
       appBar: AppBar(
@@ -75,7 +74,7 @@ class CarritoScreen extends HookWidget {
               context,
             ),
           ),
-          _buildConfirmCheckoutBtn(),
+          _buildConfirmCheckoutBtn(context),
         ],
       ),
     );
@@ -241,7 +240,8 @@ class CarritoScreen extends HookWidget {
     );
   }
 
-  Widget _buildConfirmCheckoutBtn() {
+  Widget _buildConfirmCheckoutBtn(BuildContext context) {
+    final itemsInCart = context.watch<ProductsCarrito>();
     return Container(
       height: checkoutBtnHeight,
       color: bgContainer,
@@ -249,33 +249,19 @@ class CarritoScreen extends HookWidget {
       child: Column(
         children: [
           Row(
-            mainAxisAlignment: MainAxisAlignment.spaceBetween,
+            mainAxisAlignment: MainAxisAlignment.spaceAround,
             children: [
               Text(
-                'Total:',
+                'N° productos agregados:',
+                textAlign: TextAlign.center,
                 style: TextStyle(
-                  fontSize: 20,
+                  fontSize: 14,
                   fontFamily: 'Gotham',
-                  fontWeight: FontWeight.bold,
-                  color: txtColor,
+                  color: subtxtColor,
                 ),
               ),
               Text(
-                'S/ 100.00',
-                style: TextStyle(
-                  fontSize: 20,
-                  fontFamily: 'Gotham',
-                  fontWeight: FontWeight.bold,
-                  color: txtColor,
-                ),
-              ),
-            ],
-          ),
-          const SizedBox(height: 10),
-          Row(
-            children: [
-              Text(
-                'N° productos agregados',
+                itemsInCart.totalItems,
                 textAlign: TextAlign.center,
                 style: TextStyle(
                   fontSize: 14,
@@ -294,7 +280,7 @@ class CarritoScreen extends HookWidget {
               shape: RoundedRectangleBorder(
                 borderRadius: BorderRadius.circular(
                   10,
-                ), // Ajusta el radio de borde según tu preferencia
+                ),
               ),
             ),
             child: Text(
