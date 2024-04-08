@@ -5,8 +5,10 @@ import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_hooks/flutter_hooks.dart';
 import 'package:ionicons/ionicons.dart';
+import 'package:logger/logger.dart';
 import 'package:wayllu_project/src/config/router/app_router.dart';
 import 'package:wayllu_project/src/domain/models/carrito_item.dart';
+import 'package:wayllu_project/src/domain/models/products_info/product_info_model.dart';
 import 'package:wayllu_project/src/locator.dart';
 import 'package:wayllu_project/src/presentation/cubit/productos_carrito_cubit.dart';
 import 'package:wayllu_project/src/presentation/widgets/gradient_widgets.dart';
@@ -21,8 +23,31 @@ class CarritoScreen extends HookWidget {
     appRouter.navigate(const ReciboRoute());
   }
 
+  void _increaseQuantity(
+    BuildContext context,
+    ProductInfo product,
+    int quantity,
+  ) {
+    context.read<ProductsCarrito>().addNewProductToCarrito(
+          product: product,
+          quantity: quantity + 1,
+        );
+  }
+
+  void _decreaseQuantity(
+    BuildContext context,
+    ProductInfo product,
+    int quantity,
+  ) {
+    context.read<ProductsCarrito>().addNewProductToCarrito(
+          product: product,
+          quantity: quantity - 1,
+        );
+  }
+
   @override
   Widget build(BuildContext context) {
+    Logger().i('Rebuild');
     return Scaffold(
       backgroundColor: bgPrimary,
       appBar: AppBar(
@@ -46,7 +71,9 @@ class CarritoScreen extends HookWidget {
               right: 15,
               bottom: checkoutBtnHeight + 10,
             ),
-            child: _buildBlocBuilderWithList(),
+            child: _buildBlocBuilderWithList(
+              context,
+            ),
           ),
           _buildConfirmCheckoutBtn(),
         ],
@@ -54,21 +81,35 @@ class CarritoScreen extends HookWidget {
     );
   }
 
-  Widget _buildBlocBuilderWithList() {
+  Widget _buildBlocBuilderWithList(BuildContext contextF) {
+    // final listCarritoItem = context.watch<ProductsCarrito>();
+
     return BlocBuilder<ProductsCarrito, List<CarritoItem>>(
-      builder: (context, listCarritoItem) {
+      builder: (BuildContext context, list) {
         return ListView.builder(
-          itemCount: listCarritoItem.length,
+          itemCount: list.length,
           itemBuilder: (context, index) {
-            final carritoItem = listCarritoItem[index];
+            final carritoItem = list[index];
 
             return _buildProduct(
               productName: carritoItem.info.ITEM.toString(),
               productDescription: carritoItem.info.DESCRIPCION,
-              productImage: 'assets/images/img1.jpg',
+              productImage: carritoItem.info.IMAGEN!,
               actualValue: carritoItem.quantity,
-              increase: carritoItem.increase,
-              decrease: carritoItem.decrease,
+              increase: () {
+                _increaseQuantity(
+                  contextF,
+                  carritoItem.info,
+                  carritoItem.quantity,
+                );
+              },
+              decrease: () {
+                _decreaseQuantity(
+                  contextF,
+                  carritoItem.info,
+                  carritoItem.quantity,
+                );
+              },
             );
           },
         );
@@ -97,7 +138,7 @@ class CarritoScreen extends HookWidget {
           width: 110,
           child: ClipRRect(
             borderRadius: BorderRadius.circular(10),
-            child: Image.asset(
+            child: Image.network(
               productImage,
               width: 100,
               height: 80,
