@@ -5,7 +5,6 @@ import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_hooks/flutter_hooks.dart';
 import 'package:ionicons/ionicons.dart';
-import 'package:logger/logger.dart';
 import 'package:wayllu_project/src/config/router/app_router.dart';
 import 'package:wayllu_project/src/domain/models/carrito_item.dart';
 import 'package:wayllu_project/src/domain/models/products_info/product_info_model.dart';
@@ -45,6 +44,13 @@ class CarritoScreen extends HookWidget {
         );
   }
 
+  void _removeProduct(
+    BuildContext context,
+    ProductInfo product,
+  ) {
+    context.read<ProductsCarrito>().removeProduct(product: product);
+  }
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -81,8 +87,6 @@ class CarritoScreen extends HookWidget {
   }
 
   Widget _buildBlocBuilderWithList(BuildContext contextF) {
-    // final listCarritoItem = context.watch<ProductsCarrito>();
-
     return BlocBuilder<ProductsCarrito, List<CarritoItem>>(
       builder: (BuildContext context, list) {
         return ListView.builder(
@@ -91,9 +95,8 @@ class CarritoScreen extends HookWidget {
             final carritoItem = list[index];
 
             return _buildProduct(
-              productName: carritoItem.info.ITEM.toString(),
-              productDescription: carritoItem.info.DESCRIPCION,
-              productImage: carritoItem.info.IMAGEN!,
+              context: context,
+              product: carritoItem.info,
               actualValue: carritoItem.quantity,
               increase: () {
                 _increaseQuantity(
@@ -124,9 +127,8 @@ class CarritoScreen extends HookWidget {
   }
 
   Widget _buildProduct({
-    required String productName,
-    required String productDescription,
-    required String productImage,
+    required BuildContext context,
+    required ProductInfo product,
     required int actualValue,
     required void Function() increase,
     required void Function() decrease,
@@ -138,7 +140,7 @@ class CarritoScreen extends HookWidget {
           child: ClipRRect(
             borderRadius: BorderRadius.circular(10),
             child: Image.network(
-              productImage,
+              product.IMAGEN!,
               width: 100,
               height: 80,
               fit: BoxFit.cover,
@@ -156,7 +158,7 @@ class CarritoScreen extends HookWidget {
                   mainAxisAlignment: MainAxisAlignment.spaceBetween,
                   children: [
                     Text(
-                      productName,
+                      product.ITEM.toString(),
                       style: const TextStyle(
                         fontSize: 16,
                         fontWeight: FontWeight.bold,
@@ -168,14 +170,14 @@ class CarritoScreen extends HookWidget {
                       icon: const Icon(Icons.close),
                       iconSize: 18,
                       onPressed: () {
-                        // Add logic to remove item from cart
+                        _removeProduct(context, product);
                       },
                     ),
                   ],
                 ),
               ),
               Text(
-                productDescription,
+                product.DESCRIPCION,
                 style: const TextStyle(
                   fontSize: 10,
                   color: Colors.grey,

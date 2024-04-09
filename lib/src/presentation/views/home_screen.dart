@@ -9,6 +9,7 @@ import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_hooks/flutter_hooks.dart';
 import 'package:intl/intl.dart';
 import 'package:ionicons/ionicons.dart';
+import 'package:logger/logger.dart';
 import 'package:wayllu_project/src/config/router/app_router.dart';
 import 'package:wayllu_project/src/domain/enums/lists_enums.dart';
 import 'package:wayllu_project/src/domain/enums/user_roles.dart';
@@ -227,12 +228,15 @@ class HomeScreen extends HookWidget {
     );
   }
 
-  Widget _productsHome(BuildContext context, List<ProductInfo> data,
-      String? categorySeleccionada) {
+  Widget _productsHome(
+    BuildContext contextF,
+    List<ProductInfo> data,
+    String? categorySeleccionada,
+  ) {
     // final bool loggedUserRol = rol == UserRoles.admin;
     return Container(
-      width: MediaQuery.of(context).size.width,
-      height: MediaQuery.of(context).size.height,
+      width: MediaQuery.of(contextF).size.width,
+      height: MediaQuery.of(contextF).size.height,
       margin: const EdgeInsets.symmetric(vertical: 4, horizontal: 20),
       child: Column(
         children: [
@@ -250,6 +254,7 @@ class HomeScreen extends HookWidget {
                     itemCount: data.length,
                     itemBuilder: (context, index) {
                       return ProductsCardsItemsList(
+                        contextF: contextF,
                         listType: ListEnums.products,
                         dataToRender: data,
                         categoriaSeleccionada: categorySeleccionada ?? '',
@@ -263,6 +268,7 @@ class HomeScreen extends HookWidget {
                     itemCount: data.length,
                     itemBuilder: (context, index) {
                       return ProductsCardsItemsList(
+                        contextF: contextF,
                         listType: ListEnums.products,
                         dataToRender: data,
                       );
@@ -329,16 +335,16 @@ class HomeScreen extends HookWidget {
     );
   }
 
-  InkWell shoppingCart(BuildContext context) {
-    final itemsInCart = context.watch<ProductsCarrito>();
+  Widget shoppingCart(BuildContext contextF) {
+    final productsCubit = contextF.watch<ProductsCarrito>();
 
-    if (itemsInCart.state.isEmpty) {
+    if (productsCubit.itemsInCartInt == 0) {
       return InkWell(
         onTap: () {
           appRouter.pushNamed('/user/carrito');
         },
         child: Container(
-          width: MediaQuery.of(context).size.width,
+          width: MediaQuery.of(contextF).size.width,
           alignment: Alignment.bottomRight,
           margin: const EdgeInsets.symmetric(horizontal: 10),
           child: FloatingActionButton(
@@ -357,34 +363,33 @@ class HomeScreen extends HookWidget {
       );
     }
 
-    return InkWell(
-      onTap: () {
-        appRouter.pushNamed('/user/carrito');
-      },
-      child: badge.Badge(
-        badgeContent: Text(
-          itemsInCart.state.length.toString(),
-          style: const TextStyle(color: Colors.white),
-        ),
-        position: badge.BadgePosition.topEnd(end: 4),
-        child: Container(
-          width: MediaQuery.of(context).size.width,
-          alignment: Alignment.bottomRight,
-          margin: const EdgeInsets.symmetric(horizontal: 10),
-          child: FloatingActionButton(
-            backgroundColor: bottomNavBar,
-            shape: const CircleBorder(),
-            onPressed: () {
-              appRouter.pushNamed('/user/carrito');
-            },
-            child: Icon(
-              Ionicons.bag_handle_outline,
-              size: 28,
-              color: iconColor,
+    return BlocBuilder<ProductsCarrito, List>(
+      builder: (context, state) {
+        return badge.Badge(
+          badgeContent: Text(
+            state.length.toString(),
+            style: const TextStyle(color: Colors.white),
+          ),
+          position: badge.BadgePosition.topEnd(end: 4),
+          child: Container(
+            width: MediaQuery.of(context).size.width,
+            alignment: Alignment.bottomRight,
+            margin: const EdgeInsets.symmetric(horizontal: 10),
+            child: FloatingActionButton(
+              backgroundColor: bottomNavBar,
+              shape: const CircleBorder(),
+              onPressed: () {
+                appRouter.pushNamed('/user/carrito');
+              },
+              child: Icon(
+                Ionicons.bag_handle_outline,
+                size: 28,
+                color: iconColor,
+              ),
             ),
           ),
-        ),
-      ),
+        );
+      },
     );
   }
 

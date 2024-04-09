@@ -14,6 +14,7 @@ import 'package:wayllu_project/src/presentation/cubit/user_logged_cubit.dart';
 import 'package:wayllu_project/src/utils/constants/colors.dart';
 
 class ProductsCardsItemsList extends HookWidget {
+  final BuildContext contextF;
   final ListEnums listType;
   final List<ProductInfo> dataToRender;
   final String query;
@@ -25,6 +26,7 @@ class ProductsCardsItemsList extends HookWidget {
   final appRouter = getIt<AppRouter>();
 
   ProductsCardsItemsList({
+    required this.contextF,
     required this.listType,
     required this.dataToRender,
     this.isScrollable = true,
@@ -32,8 +34,8 @@ class ProductsCardsItemsList extends HookWidget {
     this.categoriaSeleccionada,
   });
 
-  void _addItemToCarrito(BuildContext context, ProductInfo product) {
-    context.read<ProductsCarrito>().addNewProductToCarrito(
+  void _addItemToCarrito(ProductInfo product) {
+    contextF.read<ProductsCarrito>().addNewProductToCarrito(
           product: product,
         );
   }
@@ -128,7 +130,7 @@ class ProductsCardsItemsList extends HookWidget {
             if (rol == UserRoles.artesano)
               IconButton(
                 onPressed: () {
-                  _addItemToCarrito(context, itemData);
+                  _addItemToCarrito(itemData);
                 },
                 icon: const Icon(
                   Ionicons.add,

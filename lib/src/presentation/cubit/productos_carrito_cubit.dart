@@ -11,14 +11,25 @@ class ProductsCarrito extends Cubit<List<CarritoItem>> {
     required ProductInfo product,
     int quantity = 0,
   }) {
-    //TODO: VALIDATION IF PRODUCT IS NOT ALREADY REGISTER
+    if (state.any((element) => element.info.ITEM == product.ITEM) &&
+        quantity == 0) {
+      return;
+    }
+
     if (quantity > 0) {
       state.firstWhere((item) => item.info == product).quantity = quantity;
       emit(List.from(state));
       return;
     }
     state.add(CarritoItem(info: product, quantity: quantity));
-    emit(state);
+    emit(List.from(state));
+  }
+
+  void removeProduct({
+    required ProductInfo product,
+  }) {
+    state.removeWhere((item) => item.info.ITEM == product.ITEM);
+    emit(List.from(state));
   }
 
   String get totalItems => state
@@ -27,4 +38,7 @@ class ProductsCarrito extends Cubit<List<CarritoItem>> {
         (previousValue, element) => previousValue + element.quantity,
       )
       .toString();
+
+  String get itemsInCart => state.length.toString();
+  int get itemsInCartInt => state.length;
 }
