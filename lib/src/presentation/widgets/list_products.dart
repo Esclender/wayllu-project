@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import 'package:flutter/widgets.dart';
+import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_hooks/flutter_hooks.dart';
 import 'package:gap/gap.dart';
 import 'package:ionicons/ionicons.dart';
@@ -7,42 +7,56 @@ import 'package:wayllu_project/src/config/router/app_router.dart';
 import 'package:wayllu_project/src/domain/enums/lists_enums.dart';
 import 'package:wayllu_project/src/domain/enums/user_roles.dart';
 import 'package:wayllu_project/src/domain/models/list_items_model.dart';
-import 'package:wayllu_project/src/domain/models/models_products.dart';
+import 'package:wayllu_project/src/domain/models/products_info/product_info_model.dart';
 import 'package:wayllu_project/src/locator.dart';
+import 'package:wayllu_project/src/presentation/cubit/productos_carrito_cubit.dart';
+import 'package:wayllu_project/src/presentation/cubit/user_logged_cubit.dart';
 import 'package:wayllu_project/src/utils/constants/colors.dart';
 
 class ProductsCardsItemsList extends HookWidget {
+  final BuildContext contextF;
   final ListEnums listType;
-  final List<Producto> dataToRender;
+  final List<ProductInfo> dataToRender;
   final String query;
-  final bool isScrollable;
-  final String?
-      categoriaSeleccionada; // Nuevo parámetro para la categoría seleccionada
+  final ScrollController? scrollController;
+  final String? categoriaSeleccionada;
 
-  // Dependencies Injection
   final appRouter = getIt<AppRouter>();
 
   ProductsCardsItemsList({
+    required this.contextF,
     required this.listType,
     required this.dataToRender,
-    this.isScrollable = true,
     this.query = '',
     this.categoriaSeleccionada,
+    this.scrollController,
   });
+
+  void _addItemToCarrito(ProductInfo product) {
+    contextF.read<ProductsCarrito>().addNewProductToCarrito(
+          product: product,
+        );
+  }
 
   @override
   Widget build(BuildContext context) {
-    final productosFiltrados = categoriaSeleccionada != null
-      ? dataToRender
-          .where((producto) => producto.category == categoriaSeleccionada)
-          .toList()
-      : dataToRender;
+    final rol = context.read<UserLoggedCubit>().state;
 
+    final productosFiltrados = categoriaSeleccionada != null
+        ? dataToRender
+            .where((producto) => producto.category == categoriaSeleccionada)
+            .toList()
+        : dataToRender;
+
+    return _buildScrollableList(productosFiltrados, rol);
+  }
+
+  Widget _buildScrollableList(
+      List<ProductInfo> productosFiltrados, UserRoles rol) {
     return ListView.separated(
-      separatorBuilder: (context, index) => SizedBox(height: 8),
-      padding: EdgeInsets.zero,
+      separatorBuilder: (context, index) => const SizedBox(height: 8),
       shrinkWrap: true,
-      physics: NeverScrollableScrollPhysics(),
+      physics: const NeverScrollableScrollPhysics(),
       itemCount: productosFiltrados.length,
       itemBuilder: (BuildContext c, int ind) {
         return Row(
@@ -56,8 +70,7 @@ class ProductsCardsItemsList extends HookWidget {
                   crossAxisSpacing: 8,
                   mainAxisSpacing: 8,
                 ),
-                physics:
-                    isScrollable ? null : const NeverScrollableScrollPhysics(),
+                physics: const NeverScrollableScrollPhysics(),
                 itemCount: ind == (productosFiltrados.length / 2).ceil() - 1
                     ? productosFiltrados.length % 2
                     : 2,
@@ -68,13 +81,14 @@ class ProductsCardsItemsList extends HookWidget {
                     return _buildItemContainer(
                       context,
                       itemData: producto,
+                      rol: rol,
                     );
                   } else {
                     return const SizedBox(); // No hay más datos para mostrar
                   }
                 },
               ),
-            )
+            ),
           ],
         );
       },
@@ -83,8 +97,69 @@ class ProductsCardsItemsList extends HookWidget {
 
   Widget _buildItemContainer(
     BuildContext context, {
-    required Producto itemData,
+    required ProductInfo itemData,
+    required UserRoles rol,
   }) {
+    final bool loggedUserRol = rol == UserRoles.admin;
+
+    return Stack(
+      children: [
+        Stack(
+          alignment: Alignment.topRight,
+          children: [
+            Container(
+              width: MediaQuery.of(context).size.width * 0.43,
+              height: MediaQuery.of(context).size.width * 0.44,
+           
+              decoration: BoxDecoration(
+                color: bottomNavBar,
+                boxShadow: [
+                  simpleShadow,
+                ],
+                borderRadius: const BorderRadius.all(
+                  Radius.circular(10),
+                ),
+              ),
+              child: _buildListTile(context, itemData, rol),
+            ),
+            if (rol == UserRoles.artesano)
+              Padding(
+                padding: const EdgeInsets.all(4.0),
+                child: IconButton(
+                  padding: const EdgeInsets.symmetric(horizontal: 6, vertical: 2),
+                  style: ButtonStyle(
+                      shape: MaterialStateProperty.all<OutlinedBorder>(
+                        RoundedRectangleBorder(
+                          borderRadius:
+                              BorderRadius.circular(7), 
+                          side: BorderSide(
+                            color: iconColor.withOpacity(0.6), 
+                            width: 0.5, 
+                          ),
+                        ),
+                      ),
+                      backgroundColor: MaterialStatePropertyAll(
+                          bottomNavBar.withOpacity(0.4))),
+                  onPressed: () {
+                    _addItemToCarrito(itemData);
+                  },
+                  icon: const Icon(
+                    Ionicons.add,
+                    size: 24,
+                  ),
+                ),
+              ),
+          ],
+        ),
+      ],
+    );
+  }
+
+  Widget _buildListTile(
+    BuildContext context,
+    ProductInfo itemData,
+    UserRoles rol,
+  ) {
     final BoxDecoration decoration = BoxDecoration(
       color: bottomNavBar,
       boxShadow: [
@@ -95,24 +170,18 @@ class ProductsCardsItemsList extends HookWidget {
       ),
     );
 
-    return Stack(
-      children: [
-        Stack(
-          children: [
-            Container(
-              width: MediaQuery.of(context).size.width * 0.43,
-              height: MediaQuery.of(context).size.width * 0.44,
-              decoration: decoration,
-              child: _listTile(
-                leading: _buildImageProduct(context, itemData.imagen),
-                title: Text(itemData.product_code),
-                fields: itemData.descriptions,
-                category: Text(itemData.category ?? ''),
-              ),
-            ),
-          ],
-        ),
-      ],
+    return Container(
+      width: MediaQuery.of(context).size.width * 0.43,
+      height: MediaQuery.of(context).size.width * 0.44,
+      decoration: decoration,
+      child: _listTile(
+        context: context,
+        rol: rol,
+        leading: _buildImageProduct(context, itemData.IMAGEN!),
+        title: Text(itemData.COD_PRODUCTO.toString()),
+        fields: itemData.descriptionsFields,
+        category: Text(itemData.category),
+      ),
     );
   }
 
@@ -134,13 +203,15 @@ class ProductsCardsItemsList extends HookWidget {
   }
 
   Widget _listTile({
+    required BuildContext context,
     required Widget leading,
     required Widget title,
     required List<DescriptionItem> fields,
     required Widget category,
+    required UserRoles rol,
   }) {
-    const rol = UserRoles.admin;
-    const bool loggedUserRol = rol == UserRoles.admin;
+    final bool loggedUserRol = rol == UserRoles.admin;
+
     return Column(
       children: [
         leading,
@@ -150,33 +221,23 @@ class ProductsCardsItemsList extends HookWidget {
             crossAxisAlignment: CrossAxisAlignment.start,
             mainAxisAlignment: MainAxisAlignment.spaceBetween,
             children: [
-              Gap(5),
+              const Gap(5),
               title,
               ...fields.map(
                 (f) => Text(
-                  '${f.value}',
+                  f.value,
                   style: TextStyle(
                     color: smallWordsColor.withOpacity(0.7),
                     fontSize: 8,
                   ),
                 ),
               ),
-              /*  ...fields.map(
-                (f) => Text(
-                  '${category}',
-                  style: TextStyle(
-                    color: smallWordsColor.withOpacity(0.7),
-                    fontSize: 6,
-                  ),
-                ),
-               
-              ),*/
-              Gap(5),
+              const Gap(5),
               if (loggedUserRol)
                 Container(
                   alignment: Alignment.bottomRight,
                   child: _buildEditButton(),
-                )
+                ),
             ],
           ),
         ),

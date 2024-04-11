@@ -3,6 +3,7 @@ import 'package:wayllu_project/src/data/api_repository.imp.dart';
 import 'package:wayllu_project/src/domain/dtos/user_credentials_rep.dart';
 import 'package:wayllu_project/src/domain/enums/user_roles.dart';
 import 'package:wayllu_project/src/domain/models/auth/auth_login_response.model.dart';
+import 'package:wayllu_project/src/domain/models/user_info/user_info_model.dart';
 
 class UserLoggedCubit extends Cubit<UserRoles> {
   final AuthApiRepositoryImpl _authRepository;
@@ -22,5 +23,17 @@ class UserLoggedCubit extends Cubit<UserRoles> {
     }
 
     return response.tokenAccesso;
+  }
+}
+
+class UserLoggedInfoCubit extends Cubit<UserInfo?> {
+  final AuthApiRepositoryImpl _authRepository;
+
+  UserLoggedInfoCubit(this._authRepository) : super(null);
+
+  Future<void> setUserInfo() async {
+    final UserInfo? response = await _authRepository.getLoggedUserInfo();
+
+    emit(response);
   }
 }

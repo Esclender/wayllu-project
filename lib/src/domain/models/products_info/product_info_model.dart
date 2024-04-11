@@ -1,12 +1,9 @@
 // ignore_for_file: public_member_api_docs, sort_constructors_first, must_be_immutable
 // ignore_for_file: non_constant_identifier_names
-
-import 'package:flutter/material.dart';
 import 'package:intl/intl.dart';
 import 'package:json_annotation/json_annotation.dart';
 import 'package:wayllu_project/src/domain/models/list_items_model.dart';
 import 'package:wayllu_project/src/domain/models/models_products.dart';
-
 
 part 'product_info_model.g.dart';
 
@@ -30,6 +27,10 @@ class ProductInfo {
     this.ALTO,
   });
 
+  List<DescriptionItem> get descriptionsFields => [
+        DescriptionItem(field: 'Descripción', value: DESCRIPCION),
+      ];
+
   factory ProductInfo.fromJson(Map<String, dynamic> json) =>
       _$ProductInfoFromJson(json);
 
@@ -51,27 +52,28 @@ class ProductInfo {
 
   Map<String, dynamic> toJson() => _$ProductInfoToJson(this);
 
-   String getCategoryName() {
+  String getCategoryName() {
     return CATEGORIA;
-  } 
+  }
 
   Producto toProduct() {
     return Producto(
       imagen: IMAGEN ?? '',
-      product_code: '$COD_PRODUCTO' ,
+      product_code: '$COD_PRODUCTO',
       descriptions: [
         DescriptionItem(field: 'Descripción', value: DESCRIPCION),
-      ], 
-      category: CATEGORIA ?? '',
+      ],
+      category: CATEGORIA,
     );
   }
 
-  MoreInfo get productInfo => MoreInfo(
-      COD_PRODUCTO: COD_PRODUCTO,
-      DESCRIPCION: DESCRIPCION,
-      CATEGORIA: CATEGORIA,
-      );
+  String get category => CATEGORIA;
 
+  MoreInfo get productInfo => MoreInfo(
+        COD_PRODUCTO: COD_PRODUCTO,
+        DESCRIPCION: DESCRIPCION,
+        CATEGORIA: CATEGORIA,
+      );
 
   String formattingDate() {
     final DateTime dateTime = DateTime.parse(FECHA_INGRESO);
@@ -90,14 +92,10 @@ class MoreInfo extends InfoBase {
   int COD_PRODUCTO;
   String DESCRIPCION;
   String CATEGORIA;
-  
- 
 
   MoreInfo({
     required this.COD_PRODUCTO,
     required this.DESCRIPCION,
     required this.CATEGORIA,
   });
-
- 
 }

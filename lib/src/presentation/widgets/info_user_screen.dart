@@ -15,19 +15,25 @@ import 'package:wayllu_project/src/utils/constants/colors.dart';
 class InfoUserScreen extends HookWidget {
   final bool isAdmin;
   final int viewIndex;
-  final UserInfo user;
+  final UserInfo? user;
 
   final appRouter = getIt<AppRouter>();
   final ImagePicker imagePicker = ImagePicker();
 
   InfoUserScreen({
     required this.viewIndex,
-    required this.user,
+    this.user,
     this.isAdmin = false,
   });
 
   @override
   Widget build(BuildContext context) {
+    if (user == null) {
+      return const Center(
+        child: CircularProgressIndicator(),
+      );
+    }
+
     return Scaffold(
       floatingActionButtonLocation: FloatingActionButtonLocation.centerDocked,
       floatingActionButton: BottomNavBar(
@@ -51,15 +57,15 @@ class InfoUserScreen extends HookWidget {
           Row(
             mainAxisAlignment: MainAxisAlignment.center,
             children: [
-              _buildAvatar(user.userInfo),
+              _buildAvatar(user!.userInfo),
             ],
           ),
           Column(
             children: [
-              _buildInfoContainer('Informacion Personal', user.userInfo),
+              _buildInfoContainer('Informacion Personal', user!.userInfo),
               _buildInfoContainer(
                 'Informacion de Contacto',
-                user.userContactInfo,
+                user!.userContactInfo,
               ),
               if (isAdmin) _buildInhabilitButton(context) else Container(),
             ],

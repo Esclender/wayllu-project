@@ -228,7 +228,6 @@ class RegisterProductsScreen extends HookWidget {
                   children: [
                     const SizedBox(width: 16.0),
                     GestureDetector(
-                      onTap: null, //
                       child: Icon(
                         Ionicons.chevron_up,
                         size: 16,

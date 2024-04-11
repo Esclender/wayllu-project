@@ -28,37 +28,34 @@ class Categories {
   });
 }
 
- final List<Categories> categories = [
-    Categories(
-      image: 'assets/images/product/manto-category.png',
-      name: 'Textiles para el hogar',
-      categoryName: 'TEXTILES PARA EL HOGAR', // Nombre de la categoría específica
-    ),
-    Categories(
-      image: 'assets/images/product/accesorios-category.png',
-      name: 'Accesorios',
-      categoryName: 'ACCESORIOS', // Nombre de la categoría específica
-    ),
-    Categories(
-      image: 'assets/images/product/bolso-category.png',
-      name: 'Bolsos y Monederos',
-      categoryName: 'BOLSOS Y MONEDEROS', // Nombre de la categoría específica
-    ),
-  ];
+final List<Categories> categories = [
+  Categories(
+    image: 'assets/images/product/manto-category.png',
+    name: 'Textiles para el hogar',
+    categoryName: 'TEXTILES PARA EL HOGAR', // Nombre de la categoría específica
+  ),
+  Categories(
+    image: 'assets/images/product/accesorios-category.png',
+    name: 'Accesorios',
+    categoryName: 'ACCESORIOS', // Nombre de la categoría específica
+  ),
+  Categories(
+    image: 'assets/images/product/bolso-category.png',
+    name: 'Bolsos y Monederos',
+    categoryName: 'BOLSOS Y MONEDEROS', // Nombre de la categoría específica
+  ),
+];
 
-  // Crear un mapa que mapee los nombres de categorías a las categorías correspondientes
-  final Map<String, Categories> categoriesMap = {
-    'TEXTILES PARA EL HOGAR': categories[0],
-    'ACCESORIOS': categories[1],
-    'BOLSOS Y MONEDEROS': categories[2],
-  };
+// Crear un mapa que mapee los nombres de categorías a las categorías correspondientes
+final Map<String, Categories> categoriesMap = {
+  'TEXTILES PARA EL HOGAR': categories[0],
+  'ACCESORIOS': categories[1],
+  'BOLSOS Y MONEDEROS': categories[2],
+};
 
-  // Utilizar las claves del mapa para definir el enum Category
-  enum Category {
-    TEXTILES_PARA_EL_HOGAR,
-    ACCESORIOS,
-    BOLSOS_Y_MONEDEROS,
-  }
-
- 
-  
+// Utilizar las claves del mapa para definir el enum Category
+enum Category {
+  TEXTILES_PARA_EL_HOGAR,
+  ACCESORIOS,
+  BOLSOS_Y_MONEDEROS,
+}

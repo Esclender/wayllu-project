@@ -32,9 +32,17 @@ void initializeEndpoints(String token) {
   getIt.registerSingleton<ArtisansApiRepositoryImpl>(
     ArtisansApiRepositoryImpl(getIt.get<ArtesansApiServices>()),
   );
-  
+
   getIt.registerSingleton<ProductsApiServices>(ProductsApiServices(dio));
   getIt.registerSingleton<ProductsApiRepositoryImpl>(
     ProductsApiRepositoryImpl(getIt.get<ProductsApiServices>()),
+  );
+
+  getIt.unregister<AuthApiServices>();
+  getIt.unregister<AuthApiRepositoryImpl>();
+
+  getIt.registerSingleton<AuthApiServices>(AuthApiServices(dio));
+  getIt.registerSingleton<AuthApiRepositoryImpl>(
+    AuthApiRepositoryImpl(getIt.get<AuthApiServices>()),
   );
 }

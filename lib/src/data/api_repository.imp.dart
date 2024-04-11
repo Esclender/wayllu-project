@@ -4,6 +4,7 @@ import 'package:wayllu_project/src/data/remoteRespositories/auth/auth.repo.dart'
 import 'package:wayllu_project/src/data/remoteRespositories/productos/productos.repo.dart';
 import 'package:wayllu_project/src/data/repository_base.dart';
 import 'package:wayllu_project/src/domain/dtos/user_credentials_rep.dart';
+import 'package:wayllu_project/src/domain/models/user_info/user_info_model.dart';
 import 'package:wayllu_project/src/domain/repositories/artisans.api_repository.dart';
 import 'package:wayllu_project/src/domain/repositories/auth.api_repository.dart';
 import 'package:wayllu_project/src/domain/repositories/products.api_repository.dart';
@@ -42,6 +43,15 @@ class AuthApiRepositoryImpl extends BaseApiRepository
     Logger().i(credentials);
     final responseHttp = await getStateOf<AuthLoginHttpResponse>(
       request: () => _apiServices.getAccessToken(credentials),
+    );
+
+    return responseHttp.data;
+  }
+
+  @override
+  Future<UserInfo?> getLoggedUserInfo() async {
+    final responseHttp = await getStateOf<UserInfo?>(
+      request: () => _apiServices.getUserLoggedInfo(),
     );
 
     return responseHttp.data;

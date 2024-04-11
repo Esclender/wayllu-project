@@ -13,7 +13,9 @@ import 'package:wayllu_project/src/config/router/app_router.dart';
 import 'package:wayllu_project/src/domain/enums/lists_enums.dart';
 import 'package:wayllu_project/src/domain/enums/user_roles.dart';
 import 'package:wayllu_project/src/domain/models/models_products.dart';
+import 'package:wayllu_project/src/domain/models/products_info/product_info_model.dart';
 import 'package:wayllu_project/src/locator.dart';
+import 'package:wayllu_project/src/presentation/cubit/productos_carrito_cubit.dart';
 import 'package:wayllu_project/src/presentation/cubit/products_list_cubit.dart';
 import 'package:wayllu_project/src/presentation/cubit/user_logged_cubit.dart';
 import 'package:wayllu_project/src/presentation/widgets/bottom_navbar.dart';
@@ -32,10 +34,11 @@ class HomeScreen extends HookWidget {
   @override
   Widget build(BuildContext context) {
     final DateTime now = DateTime.now();
-    const double blur = 1.5;
     final int hour = now.hour;
     final String greeting = getGreeting(hour);
     final loggedUserRol = context.read<UserLoggedCubit>().state;
+    final scrollController = useScrollController();
+
     void goToRegisterOfProductOrVentaCondition() {
       if (loggedUserRol == UserRoles.admin) {
         appRouter.navigate(const RegisterProductsRoute());
@@ -46,7 +49,7 @@ class HomeScreen extends HookWidget {
 
     final productsListCubit = context.watch<ProductListCubit>();
     // List<Producto> _data = [];
-    List<Producto> data = [];
+    final List<ProductInfo> data = [];
 
     useEffect(
       () {
@@ -116,7 +119,7 @@ class HomeScreen extends HookWidget {
                 const SizedBox(
                   height: 8,
                 ),
-                firstLine(context, loggedUserRol),
+                firstLine(context,),
                 dashboard(context, loggedUserRol),
                 Container(
                   margin:
@@ -134,23 +137,26 @@ class HomeScreen extends HookWidget {
                 ),
                 SingleChildScrollView(
                   // scrollDirection: Axis.horizontal,
-                  child: Row(
+                  child: loggedUserRol==UserRoles.admin? Row(
                     mainAxisAlignment: MainAxisAlignment.center,
-                    children: categories.map((category) {
+                    children:  categories.map((category) {
                       return categoriesProducts(
                         context,
                         category.name,
                         category.image,
                         (selectedCategory) {
-                          if (selectedCategory == categoriaSeleccionada.value) {
+                          if (loggedUserRol == UserRoles.admin &&
+                              selectedCategory == categoriaSeleccionada.value) {
                             categoriaSeleccionada.value = null;
                           } else {
                             categoriaSeleccionada.value = selectedCategory;
                           }
                         },
+                        category.name.toUpperCase() == categoriaSeleccionada.value, // Verifica si la categoría está seleccionada
+      
                       );
-                    }).toList(),
-                  ),
+                    }).toList()
+                  ): SizedBox()
                 ),
                 const SizedBox(
                   height: 6,
@@ -167,40 +173,9 @@ class HomeScreen extends HookWidget {
                             fontWeight: FontWeight.w500,
                           ),
                         )
-                      : Container(
-                          width: MediaQuery.of(context).size.width * 0.32,
-                          decoration: BoxDecoration(
-                              borderRadius: BorderRadius.circular(5),
-                              color: iconColor.withOpacity(0.5),
-                              border: Border.all(
-                                  color: bottomNavBarStroke, width: 0.5)),
-                          child: GestureDetector(
-                            onTap: () {
-                              categoriaSeleccionada.value = null;
-                            },
-                            child:  Padding(
-                              padding: EdgeInsets.all(4.0),
-                              child: Row(
-                                mainAxisAlignment: MainAxisAlignment.center,
-                                children: [
-                                  Icon(Icons.filter_alt_outlined,
-                                      color: bottomNavBar,
-                                      size: 16,),
-                                  const SizedBox(width: 8),
-                                  Text(
-                                    'Quitar filtro',
-                                    style: TextStyle(color: bottomNavBar,
-                                    fontFamily: 'Gotham',
-                                    fontWeight: FontWeight.w300,
-                                    fontSize: 14),
-                                  ),
-                                ],
-                              ),
-                            ),
-                          ),
-                        ),
+                      : btnDeleteFilter(context, categoriaSeleccionada),
                 ),
-                _productsHome(context, data, categoriaSeleccionada.value),
+                _productsHome(context, data, categoriaSeleccionada.value, scrollController),
               ],
             ),
           ),
@@ -222,51 +197,98 @@ class HomeScreen extends HookWidget {
     );
   }
 
-  Widget _productsHome(
-      BuildContext context, List<Producto> data, String? categorySeleccionada) {
-    // final bool loggedUserRol = rol == UserRoles.admin;
+  Container btnDeleteFilter(BuildContext context, ValueNotifier<String?> categoriaSeleccionada) {
     return Container(
-      width: MediaQuery.of(context).size.width,
-      height: MediaQuery.of(context).size.height,
+                        width: MediaQuery.of(context).size.width * 0.32,
+                        decoration: BoxDecoration(
+                            borderRadius: BorderRadius.circular(5),
+                            color: iconColor.withOpacity(0.5),
+                            border: Border.all(
+                                color: bottomNavBarStroke, width: 0.5)),
+                        child: GestureDetector(
+                          onTap: () {
+                            categoriaSeleccionada.value = null;
+                          },
+                          child: Padding(
+                            padding: const EdgeInsets.all(4.0),
+                            child: Row(
+                              mainAxisAlignment: MainAxisAlignment.center,
+                              children: [
+                                Icon(
+                                  Icons.filter_alt_outlined,
+                                  color: bottomNavBar,
+                                  size: 16,
+                                ),
+                                const SizedBox(width: 8),
+                                Text(
+                                  'Quitar filtro',
+                                  style: TextStyle(
+                                    color: bottomNavBar,
+                                    fontFamily: 'Gotham',
+                                    fontWeight: FontWeight.w300,
+                                    fontSize: 14,
+                                  ),
+                                ),
+                              ],
+                            ),
+                          ),
+                        ),
+                      );
+  }
+
+  Widget _productsHome(
+    BuildContext contextF,
+    List<ProductInfo> data,
+    String? categorySeleccionada,
+    ScrollController scrollController
+  ) {
+    return Container(
+      width: MediaQuery.of(contextF).size.width,
+      height: MediaQuery.of(contextF).size.height,
       margin: const EdgeInsets.symmetric(vertical: 4, horizontal: 20),
-      child: Column(children: [
-        Expanded(
-          child: BlocBuilder<ProductListCubit, List<Producto>?>(
-            builder: (context, state) {
-              if (state == null) {
-                return const Center(
-                  child: CircularProgressIndicator(),
-                );
-              } else if (categorySeleccionada != null) {
-                data = state;
-                return ListView.builder(
-                  physics: const NeverScrollableScrollPhysics(),
-                  itemCount: data.length,
-                  itemBuilder: (context, index) {
-                    return ProductsCardsItemsList(
-                      listType: ListEnums.products,
-                      dataToRender: data,
-                      categoriaSeleccionada: categorySeleccionada ?? '',
-                    );
-                  },
-                );
-              } else {
-                data = state;
-                return ListView.builder(
-                  physics: const NeverScrollableScrollPhysics(),
-                  itemCount: data.length,
-                  itemBuilder: (context, index) {
-                    return ProductsCardsItemsList(
-                      listType: ListEnums.products,
-                      dataToRender: data,
-                    );
-                  },
-                );
-              }
-            },
+      child: Column(
+        children: [
+          Expanded(
+            child: BlocBuilder<ProductListCubit, List<ProductInfo>?>(
+              builder: (context, state) {
+                if (state == null) {
+                  return const Center(
+                    child: CircularProgressIndicator(),
+                  );
+                } else if (categorySeleccionada != null) {
+                  data = state;
+                  return ListView.builder(
+                    physics: const NeverScrollableScrollPhysics(),
+                    itemCount: data.length,
+                    itemBuilder: (context, index) {
+                      return ProductsCardsItemsList(
+                        contextF: contextF,
+                        listType: ListEnums.products,
+                        dataToRender: data,
+                        categoriaSeleccionada: categorySeleccionada,
+                        scrollController: scrollController,
+                      );
+                    },
+                  );
+                } else {
+                  data = state;
+                  return ListView.builder(
+                    physics: const NeverScrollableScrollPhysics(),
+                    itemCount: data.length,
+                    itemBuilder: (context, index) {
+                      return ProductsCardsItemsList(
+                        contextF: contextF,
+                        listType: ListEnums.products,
+                        dataToRender: data,
+                      );
+                    },
+                  );
+                }
+              },
+            ),
           ),
-        ),
-      ],),
+        ],
+      ),
     );
   }
 
@@ -322,19 +344,16 @@ class HomeScreen extends HookWidget {
     );
   }
 
-  InkWell shoppingCart(BuildContext context) {
-    return InkWell(
-      onTap: () {
-        appRouter.pushNamed('/user/carrito');
-      },
-      child: badge.Badge(
-        badgeContent: const Text(
-          '4',
-          style: TextStyle(color: Colors.white),
-        ),
-        position: badge.BadgePosition.topEnd(end: 4),
+  Widget shoppingCart(BuildContext contextF) {
+    final productsCubit = contextF.watch<ProductsCarrito>();
+
+    if (productsCubit.itemsInCartInt == 0) {
+      return InkWell(
+        onTap: () {
+          appRouter.pushNamed('/user/carrito');
+        },
         child: Container(
-          width: MediaQuery.of(context).size.width,
+          width: MediaQuery.of(contextF).size.width,
           alignment: Alignment.bottomRight,
           margin: const EdgeInsets.symmetric(horizontal: 10),
           child: FloatingActionButton(
@@ -350,19 +369,47 @@ class HomeScreen extends HookWidget {
             ),
           ),
         ),
-      ),
+      );
+    }
+
+    return BlocBuilder<ProductsCarrito, List>(
+      builder: (context, state) {
+        return badge.Badge(
+          badgeContent: Text(
+            state.length.toString(),
+            style: const TextStyle(color: Colors.white),
+          ),
+          position: badge.BadgePosition.topEnd(end: 4),
+          child: Container(
+            width: MediaQuery.of(context).size.width,
+            alignment: Alignment.bottomRight,
+            margin: const EdgeInsets.symmetric(horizontal: 10),
+            child: FloatingActionButton(
+              backgroundColor: bottomNavBar,
+              shape: const CircleBorder(),
+              onPressed: () {
+                appRouter.pushNamed('/user/carrito');
+              },
+              child: Icon(
+                Ionicons.bag_handle_outline,
+                size: 28,
+                color: iconColor,
+              ),
+            ),
+          ),
+        );
+      },
     );
   }
 
-  Padding firstLine(BuildContext context, UserRoles rol) {
-    final bool loggedUserRol = rol == UserRoles.admin;
+  Padding firstLine(BuildContext context,) {
+    //final bool loggedUserRol = rol == UserRoles.admin;
     final dateString =
         DateFormat("dd 'de' MMMM yyyy", 'es').format(DateTime.now());
 
     return Padding(
       padding: const EdgeInsets.symmetric(horizontal: 22.0),
-      child: loggedUserRol
-          ? SizedBox(
+      child:SizedBox(
               width: MediaQuery.of(context).size.width,
               height: 18,
               child: Row(
@@ -400,7 +447,6 @@ class HomeScreen extends HookWidget {
                 ],
               ),
             )
-          : Container(),
     );
   }
 
@@ -674,6 +720,7 @@ Container categoriesProducts(
   String name,
   String image,
   void Function(String)? onSelectCategory,
+   bool isSelected,
 ) {
   return Container(
     padding: const EdgeInsets.symmetric(
@@ -693,6 +740,7 @@ Container categoriesProducts(
         decoration: BoxDecoration(
           color: bottomNavBar,
           borderRadius: const BorderRadius.all(Radius.circular(10)),
+          border: isSelected? Border.all(color: secondary, width: 0.5): Border.all(color: Colors.transparent),
           boxShadow: [
             BoxShadow(
               color: const Color.fromARGB(255, 95, 95, 95)
@@ -753,3 +801,4 @@ String getGreeting(int hour) {
     return 'Buenas noches, ';
   }
 }
+

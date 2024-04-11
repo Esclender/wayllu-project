@@ -28,7 +28,7 @@ class CardTemplateItemsList extends HookWidget {
   final double navBarHeight = 60.0;
   final double registerUserBtnHeight = 60.0;
 
-  //[gradient, color]
+  
 
 
   void _navigateToEditUser(UserInfo user) {
