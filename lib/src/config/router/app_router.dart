@@ -1,5 +1,7 @@
 import 'package:auto_route/auto_route.dart';
+import 'package:flutter/material.dart';
 import 'package:wayllu_project/src/domain/models/user_info/user_info_model.dart';
+import 'package:wayllu_project/src/domain/models/venta/venta_repo.dart';
 import 'package:wayllu_project/src/presentation/views/admin/graphs/graph_screen.dart';
 import 'package:wayllu_project/src/presentation/views/admin/register_products.dart';
 import 'package:wayllu_project/src/presentation/views/admin/report.dart';

@@ -3,8 +3,9 @@ import 'package:wayllu_project/src/data/remoteRespositories/artesanos/artesanos.
 import 'package:wayllu_project/src/data/remoteRespositories/auth/auth.repo.dart';
 import 'package:wayllu_project/src/data/remoteRespositories/productos/productos.repo.dart';
 import 'package:wayllu_project/src/data/repository_base.dart';
-import 'package:wayllu_project/src/domain/dtos/user_credentials_rep.dart';
+import 'package:wayllu_project/src/domain/dtos/usersCredentialsDto/user_credentials_rep.dart';
 import 'package:wayllu_project/src/domain/models/user_info/user_info_model.dart';
+import 'package:wayllu_project/src/domain/models/venta/venta_repo.dart';
 import 'package:wayllu_project/src/domain/repositories/artisans.api_repository.dart';
 import 'package:wayllu_project/src/domain/repositories/auth.api_repository.dart';
 import 'package:wayllu_project/src/domain/repositories/products.api_repository.dart';
@@ -21,9 +22,12 @@ class ArtisansApiRepositoryImpl extends BaseApiRepository
   //Se define una capara para obtener los datos desde api
   //Con el proposito de validaciones o otro manejo de datos
   @override
-  Future<ArtesansListHttpResponse> getArtisans(int pagina) async {
+  Future<ArtesansListHttpResponse> getArtisans(
+    int pagina,
+    String nombre,
+  ) async {
     final responseHttp = await getStateOf<ArtesansListHttpResponse>(
-      request: () => _apiServices.getArtisans(pagina),
+      request: () => _apiServices.getArtisans(pagina, nombre),
     );
 
     return responseHttp.data;
@@ -73,5 +77,14 @@ class ProductsApiRepositoryImpl extends BaseApiRepository
     );
 
     return responseHttp.data;
+  }
+
+  @override
+  Future<VentaInfo> newVenta(Map<String, dynamic> ventaData) async {
+    final response = await getStateOf<VentaInfo>(
+      request: () => _apiServices.newVenta(ventaData),
+    );
+
+    return response.data!;
   }
 }

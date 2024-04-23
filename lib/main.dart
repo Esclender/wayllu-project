@@ -48,7 +48,9 @@ class BlocSettup extends StatelessWidget {
           ),
         ),
         BlocProvider<ProductsCarrito>(
-          create: (BuildContext context) => ProductsCarrito(),
+          create: (BuildContext context) => ProductsCarrito(
+            locator<ProductsApiRepositoryImpl>(),
+          ),
         ),
       ],
       child: MyApp(),

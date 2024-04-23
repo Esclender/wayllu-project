@@ -26,9 +26,9 @@ class UserInfo {
 
   int DNI;
   String NOMBRE_COMPLETO;
-  String COMUNIDAD;
   String CLAVE;
-  String FECHA_REGISTRO;
+  String? FECHA_REGISTRO;
+  String? COMUNIDAD;
   String? URL_IMAGE;
   String? TELEFONO;
   String? EMAIL;
@@ -42,17 +42,17 @@ class UserInfo {
       nombre: NOMBRE_COMPLETO,
       descriptions: [
         DescriptionItem(field: 'DNI', value: DNI.toString()),
-        DescriptionItem(field: 'Comunidad', value: COMUNIDAD),
+        DescriptionItem(field: 'Comunidad', value: COMUNIDAD ?? ''),
         DescriptionItem(field: 'Tlf', value: TELEFONO ?? ''),
         DescriptionItem(field: 'Registrado', value: formattingDate()),
-      ], 
+      ],
     );
   }
 
   PersonalInfo get userInfo => PersonalInfo(
         DNI: DNI,
         NOMBRE_COMPLETO: NOMBRE_COMPLETO,
-        COMUNIDAD: COMUNIDAD,
+        COMUNIDAD: COMUNIDAD ?? '',
         CLAVE: CLAVE,
       );
 
@@ -62,7 +62,9 @@ class UserInfo {
       );
 
   String formattingDate() {
-    final DateTime dateTime = DateTime.parse(FECHA_REGISTRO);
+    final DateTime dateTime = FECHA_REGISTRO != null
+        ? DateTime.parse(FECHA_REGISTRO ?? '')
+        : DateTime.now();
 
     final String formattedDate = DateFormat('yyyy-MM-dd').format(dateTime);
 

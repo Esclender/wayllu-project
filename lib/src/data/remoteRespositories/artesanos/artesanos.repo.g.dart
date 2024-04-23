@@ -21,9 +21,15 @@ class _ArtesansApiServices implements ArtesansApiServices {
   String? baseUrl;
 
   @override
-  Future<HttpResponse<List<UserInfo>?>> getArtisans(int pagina) async {
+  Future<HttpResponse<List<UserInfo>?>> getArtisans(
+    int pagina,
+    String nombre,
+  ) async {
     const _extra = <String, dynamic>{};
-    final queryParameters = <String, dynamic>{r'pagina': pagina};
+    final queryParameters = <String, dynamic>{
+      r'pagina': pagina,
+      r'nombre': nombre,
+    };
     final _headers = <String, dynamic>{};
     final Map<String, dynamic>? _data = null;
     final _result = await _dio.fetch<List<dynamic>>(

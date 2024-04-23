@@ -8,6 +8,7 @@ import 'package:ionicons/ionicons.dart';
 import 'package:wayllu_project/src/config/router/app_router.dart';
 import 'package:wayllu_project/src/domain/models/carrito_item.dart';
 import 'package:wayllu_project/src/domain/models/products_info/product_info_model.dart';
+import 'package:wayllu_project/src/domain/models/venta/venta_repo.dart';
 import 'package:wayllu_project/src/locator.dart';
 import 'package:wayllu_project/src/presentation/cubit/productos_carrito_cubit.dart';
 import 'package:wayllu_project/src/presentation/widgets/gradient_widgets.dart';
@@ -18,8 +19,10 @@ class CarritoScreen extends HookWidget {
   final double checkoutBtnHeight = 150.0;
   final appRouter = getIt<AppRouter>();
 
-  void _checkoutVentaGoRecib() {
-    appRouter.navigate(const ReciboRoute());
+  Future<void> _checkoutVentaGoRecib(ProductsCarrito carrito) async {
+    final VentaInfo ventaInfo;
+    ventaInfo = await carrito.registerVenta();
+    appRouter.navigate(ReciboRoute(ventaInfo: ventaInfo));
   }
 
   void _increaseQuantity(
@@ -244,6 +247,7 @@ class CarritoScreen extends HookWidget {
 
   Widget _buildConfirmCheckoutBtn(BuildContext context) {
     final itemsInCart = context.watch<ProductsCarrito>();
+
     return Container(
       height: checkoutBtnHeight,
       color: bgContainer,
@@ -275,7 +279,9 @@ class CarritoScreen extends HookWidget {
           ),
           const SizedBox(height: 10),
           ElevatedButton(
-            onPressed: _checkoutVentaGoRecib,
+            onPressed: () {
+              _checkoutVentaGoRecib(itemsInCart);
+            },
             style: ElevatedButton.styleFrom(
               backgroundColor: thirdColor,
               padding: const EdgeInsets.symmetric(horizontal: 80, vertical: 15),

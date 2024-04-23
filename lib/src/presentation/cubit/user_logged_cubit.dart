@@ -1,6 +1,6 @@
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:wayllu_project/src/data/api_repository.imp.dart';
-import 'package:wayllu_project/src/domain/dtos/user_credentials_rep.dart';
+import 'package:wayllu_project/src/domain/dtos/usersCredentialsDto/user_credentials_rep.dart';
 import 'package:wayllu_project/src/domain/enums/user_roles.dart';
 import 'package:wayllu_project/src/domain/models/auth/auth_login_response.model.dart';
 import 'package:wayllu_project/src/domain/models/user_info/user_info_model.dart';

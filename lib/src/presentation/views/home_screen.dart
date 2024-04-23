@@ -9,7 +9,6 @@ import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_hooks/flutter_hooks.dart';
 import 'package:intl/intl.dart';
 import 'package:ionicons/ionicons.dart';
-import 'package:logger/logger.dart';
 import 'package:wayllu_project/src/config/router/app_router.dart';
 import 'package:wayllu_project/src/domain/enums/lists_enums.dart';
 import 'package:wayllu_project/src/domain/enums/user_roles.dart';
@@ -39,6 +38,7 @@ class HomeScreen extends HookWidget {
     final int hour = now.hour;
     final String greeting = getGreeting(hour);
     final loggedUserRol = context.read<UserLoggedCubit>().state;
+
     void goToRegisterOfProductOrVentaCondition() {
       if (loggedUserRol == UserRoles.admin) {
         appRouter.navigate(const RegisterProductsRoute());
@@ -216,7 +216,10 @@ class HomeScreen extends HookWidget {
       floatingActionButton: Column(
         mainAxisAlignment: MainAxisAlignment.end,
         children: [
-          shoppingCart(context),
+          if (loggedUserRol == UserRoles.artesano)
+            shoppingCart(context)
+          else
+            Container(),
           const SizedBox(
             height: 8,
           ),
@@ -247,20 +250,6 @@ class HomeScreen extends HookWidget {
                   return const Center(
                     child: CircularProgressIndicator(),
                   );
-                } else if (categorySeleccionada != null) {
-                  data = state;
-                  return ListView.builder(
-                    physics: const NeverScrollableScrollPhysics(),
-                    itemCount: data.length,
-                    itemBuilder: (context, index) {
-                      return ProductsCardsItemsList(
-                        contextF: contextF,
-                        listType: ListEnums.products,
-                        dataToRender: data,
-                        categoriaSeleccionada: categorySeleccionada ?? '',
-                      );
-                    },
-                  );
                 } else {
                   data = state;
                   return ListView.builder(
@@ -271,6 +260,7 @@ class HomeScreen extends HookWidget {
                         contextF: contextF,
                         listType: ListEnums.products,
                         dataToRender: data,
+                        categoriaSeleccionada: categorySeleccionada,
                       );
                     },
                   );

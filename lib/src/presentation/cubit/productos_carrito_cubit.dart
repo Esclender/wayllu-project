@@ -1,11 +1,23 @@
 // ignore_for_file: parameter_assignments
 
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:wayllu_project/src/data/api_repository.imp.dart';
 import 'package:wayllu_project/src/domain/models/carrito_item.dart';
 import 'package:wayllu_project/src/domain/models/products_info/product_info_model.dart';
+import 'package:wayllu_project/src/domain/models/venta/venta_repo.dart';
 
 class ProductsCarrito extends Cubit<List<CarritoItem>> {
-  ProductsCarrito() : super([]);
+  final ProductsApiRepositoryImpl _productsApiServices;
+  ProductsCarrito(this._productsApiServices) : super([]);
+
+  Future<VentaInfo> registerVenta() async {
+    final ventaInfo = await _productsApiServices.newVenta({
+      'CANTIDAD_TOTAL_PRODUCTOS': itemsInCartInt,
+      'PRODUCTOS': mappedCarritoItems,
+    });
+
+    return ventaInfo;
+  }
 
   void addNewProductToCarrito({
     required ProductInfo product,
@@ -32,6 +44,10 @@ class ProductsCarrito extends Cubit<List<CarritoItem>> {
     emit(List.from(state));
   }
 
+  void removeAll() {
+    emit([]);
+  }
+
   String get totalItems => state
       .fold<int>(
         0,
@@ -41,4 +57,7 @@ class ProductsCarrito extends Cubit<List<CarritoItem>> {
 
   String get itemsInCart => state.length.toString();
   int get itemsInCartInt => state.length;
+  List<Map<String, dynamic>> get mappedCarritoItems {
+    return state.map((e) => e.toMap()).toList();
+  }
 }

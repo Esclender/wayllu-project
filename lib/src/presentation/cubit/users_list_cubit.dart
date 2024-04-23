@@ -8,9 +8,9 @@ class UsersListCubit extends Cubit<List<CardTemplate>?> {
 
   UsersListCubit(this._apiRepository) : super(null);
 
-  Future<void> getUserLists({int pagina = 1}) async {
+  Future<void> getUserLists({int pagina = 1, String nombre = ''}) async {
     final ArtesansListHttpResponse responseState =
-        await _apiRepository.getArtisans(pagina);
+        await _apiRepository.getArtisans(pagina, nombre);
 
     emit(
       state == null

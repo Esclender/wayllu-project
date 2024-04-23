@@ -1,12 +1,24 @@
 import 'package:auto_route/auto_route.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_hooks/flutter_hooks.dart';
+import 'package:wayllu_project/src/config/router/app_router.dart';
+import 'package:wayllu_project/src/domain/models/venta/venta_repo.dart';
+import 'package:wayllu_project/src/locator.dart';
+import 'package:wayllu_project/src/presentation/cubit/productos_carrito_cubit.dart';
 import 'package:wayllu_project/src/presentation/widgets/bottom_navbar.dart';
 import 'package:wayllu_project/src/utils/constants/colors.dart';
+import 'package:wayllu_project/src/utils/functions/date_converter.dart';
 
 @RoutePage()
 class ReciboScreen extends HookWidget {
-  const ReciboScreen({super.key});
+  final VentaInfo ventaInfo;
+  final appRouter = getIt<AppRouter>();
+
+  ReciboScreen({
+    required this.ventaInfo,
+    super.key,
+  });
 
   @override
   Widget build(BuildContext context) {
@@ -15,16 +27,13 @@ class ReciboScreen extends HookWidget {
       body: SingleChildScrollView(
         child: Center(
           child: Column(
+            mainAxisAlignment: MainAxisAlignment.spaceBetween,
             children: [
-              RegistroExitoso(),
-              const SizedBox(height: 40),
-              FechaRegistro(),
-              const SizedBox(height: 40),
-              ProductosRegistrados(),
-              const SizedBox(height: 40),
-              RegistroTotal(),
-              const SizedBox(height: 50),
-              EnviarProducto(),
+              _registroExitoso(),
+              _fechaRegistro(),
+              _productosRegistrados(),
+              _registroTotal(),
+              _enviarProducto(context),
             ],
           ),
         ),
@@ -34,18 +43,17 @@ class ReciboScreen extends HookWidget {
       ),
     );
   }
-}
 
-class RegistroExitoso extends StatelessWidget {
-  @override
-  Widget build(BuildContext context) {
+  Widget _registroExitoso() {
     return Container(
       width: double.infinity,
-      padding: const EdgeInsets.only(bottom: 30),
+      padding: const EdgeInsets.only(bottom: 30, top: 30),
       decoration: BoxDecoration(
         border: Border(
           bottom: BorderSide(
-              color: line, width: 2.0,), // Borde inferior negro de 2.0 de ancho
+            color: line,
+            width: 2.0,
+          ),
         ),
       ),
       child: Column(
@@ -58,203 +66,115 @@ class RegistroExitoso extends StatelessWidget {
           const SizedBox(height: 20.0),
           Text(
             '¡Gracias por su registro!',
-            style: TextStyle(
-              color: iconColor,
-              fontSize: 20,
-              fontWeight: FontWeight.w500,
-              fontFamily: 'Gotham',
-            ),
+            style: _textStyle(iconColor, 20, FontWeight.w500),
           ),
           const SizedBox(height: 10.0),
           Text(
-            'Registro #247596',
-            style: TextStyle(
-              color: subs,
-              fontSize: 14,
-              fontWeight: FontWeight.w400,
-              fontFamily: 'Gotham',
-            ),
+            'Registro #${ventaInfo.CODIGO_REGISTRO}',
+            style: _textStyle(subs, 14, FontWeight.w400),
           ),
         ],
       ),
     );
   }
-}
 
-class FechaRegistro extends StatelessWidget {
-  @override
-  Widget build(BuildContext context) {
+  Widget _fechaRegistro() {
     return Container(
       width: double.infinity,
-      padding: const EdgeInsets.only(bottom: 30.0, left: 30.0),
+      padding: const EdgeInsets.all(30),
       decoration: BoxDecoration(
         border: Border(
           bottom: BorderSide(
-              color: line, width: 2.0,), // Borde inferior negro de 2.0 de ancho
+            color: line,
+            width: 2.0,
+          ),
         ),
-      ), // Añade espacio alrededor del contenido
+      ),
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
           Text(
             'Fecha de registro',
-            style: TextStyle(
-              color: iconColor,
-              fontSize: 16,
-              fontWeight: FontWeight.w500,
-              fontFamily: 'Gotham',
-            ),
+            style: _textStyle(iconColor, 16, FontWeight.w500),
           ),
           const SizedBox(height: 10.0),
           Text(
-            'Agosto 9, 2023', // Puedes sustituir esto con la fecha real
-            style: TextStyle(
-              color: subs,
-              fontSize: 14,
-              fontWeight: FontWeight.w400,
-              fontFamily: 'Gotham',
-            ),
+            formatDate(ventaInfo.FECHA_REGISTRO),
+            style: _textStyle(subs, 14, FontWeight.w400),
           ),
         ],
       ),
     );
   }
-}
 
-class ProductosRegistrados extends StatelessWidget {
-  @override
-  Widget build(BuildContext context) {
+  Widget _productosRegistrados() {
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
         Padding(
-          padding: const EdgeInsets.symmetric(horizontal: 30.0),
+          padding: const EdgeInsets.symmetric(horizontal: 30.0, vertical: 10.0),
           child: Text(
             'Productos Registrados',
-            style: TextStyle(
-              color: iconColor,
-              fontSize: 16,
-              fontWeight: FontWeight.w500,
-              fontFamily: 'Gotham',
-            ),
+            style: _textStyle(iconColor, 16, FontWeight.w500),
           ),
         ),
-        for (int i = 0; i < 2; i++)
-          Column(
-            children: [
-              Container(
-                padding: const EdgeInsets.all(30.0), // Padding para el contenido
-                color: Colors.grey[200], // Color de fondo
-                child: Row(
-                  crossAxisAlignment: CrossAxisAlignment.start,
-                  children: [
-                    Container(
-                      margin: const EdgeInsets.only(left: 13),
-                      decoration: BoxDecoration(
-                        borderRadius: BorderRadius.circular(10),
-                      ),
-                      child: ClipRRect(
-                        borderRadius: BorderRadius.circular(10),
-                        child: Image.asset(
-                          'assets/images/img1.jpg',
-                          width: 100,
-                          height: 80,
-                          fit: BoxFit.cover,
-                        ),
-                      ),
-                    ),
-                    const SizedBox(width: 10.0), // Espaciador entre las columnas
-                    // Columna de la derecha con la información del producto
-                    Expanded(
-                      child: Column(
-                        crossAxisAlignment: CrossAxisAlignment.start,
-                        children: [
-                          Text(
-                            'Nombre del Producto',
-                            style: TextStyle(
-                              color: iconColor,
-                              fontSize: 16,
-                              fontWeight: FontWeight.w500,
-                              fontFamily: 'Gotham',
-                            ),
-                          ),
-                          Text(
-                            'Categoría del Producto',
-                            style: TextStyle(
-                              color: subs,
-                              fontSize: 14,
-                              fontWeight: FontWeight.w400,
-                              fontFamily: 'Gotham',
-                            ),
-                          ),
-                          Text(
-                            '\$100.00', // Reemplaza con el precio real
-                            style: TextStyle(
-                              color: iconColor,
-                              fontSize: 20,
-                              fontWeight: FontWeight.w500,
-                              fontFamily: 'Gotham',
-                            ),
-                          ),
-                          Text(
-                            'Cantidad: 10', // Reemplaza con la cantidad real
-                            style: TextStyle(
-                              color: iconColor,
-                              fontSize: 14,
-                              fontWeight: FontWeight.w400,
-                              fontFamily: 'Gotham',
-                            ),
-                          ),
-                        ],
-                      ),
-                    ),
-                  ],
-                ),
-              ),
-              // Fila con Precio Total y Monto
-              const SizedBox(height: 20),
-              Container(
-                padding: const EdgeInsets.symmetric(
-                    horizontal: 20.0,), // Ajusta el padding según sea necesario
-                child: Row(
-                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                  children: [
-                    Expanded(
-                      child: Text(
-                        'Precio Total (10 Productos)',
-                        style: TextStyle(
-                          color: subs,
-                          fontSize: 14,
-                          fontWeight: FontWeight.w500,
-                          fontFamily: 'Gotham',
-                        ),
-                      ),
-                    ),
-                    Expanded(
-                      child: Text(
-                        '\$1000.00', // Reemplaza con el monto real
-                        style: TextStyle(
-                          color: iconColor,
-                          fontSize: 18,
-                          fontWeight: FontWeight.w500,
-                          fontFamily: 'Gotham',
-                        ),
-                        textAlign: TextAlign.end,
-                      ),
-                    ),
-                  ],
-                ),
-              ),
-            ],
-          ),
+        ...getProductContainers(),
       ],
     );
   }
-}
 
-class RegistroTotal extends StatelessWidget {
-  @override
-  Widget build(BuildContext context) {
+  List<Widget> getProductContainers() {
+    return ventaInfo.PRODUCTOS.map((producto) {
+      return Container(
+        padding: const EdgeInsets.all(30.0),
+        margin: const EdgeInsets.only(bottom: 20),
+        color: Colors.grey[200],
+        child: Row(
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: [
+            Container(
+              margin: const EdgeInsets.only(left: 13),
+              decoration: BoxDecoration(
+                borderRadius: BorderRadius.circular(10),
+              ),
+              child: ClipRRect(
+                borderRadius: BorderRadius.circular(10),
+                child: Image.asset(
+                  'assets/images/img1.jpg',
+                  width: 100,
+                  height: 80,
+                  fit: BoxFit.cover,
+                ),
+              ),
+            ),
+            const SizedBox(width: 10.0),
+            Expanded(
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  Text(
+                    producto['DESCRIPCION'] as String,
+                    style: _textStyle(iconColor, 16, FontWeight.w500),
+                  ),
+                  Text(
+                    // producto['categoria'] ?? '',
+                    producto['CATEGORIA'] as String,
+                    style: _textStyle(subs, 14, FontWeight.w400),
+                  ),
+                  Text(
+                    'Cantidad: ${producto['CANTIDAD']}',
+                    style: _textStyle(iconColor, 14, FontWeight.w400),
+                  ),
+                ],
+              ),
+            ),
+          ],
+        ),
+      );
+    }).toList();
+  }
+
+  Widget _registroTotal() {
     return Column(
       children: [
         Container(
@@ -262,29 +182,19 @@ class RegistroTotal extends StatelessWidget {
           margin: const EdgeInsets.symmetric(horizontal: 20.0),
           padding: const EdgeInsets.all(15.0),
           decoration: BoxDecoration(
-            color: buttontotal.withOpacity(0.6), // Color de fondo
+            color: buttontotal.withOpacity(0.6),
             borderRadius: BorderRadius.circular(10.0),
           ),
           child: Row(
             mainAxisAlignment: MainAxisAlignment.spaceBetween,
             children: [
               Text(
-                'Gran total',
-                style: TextStyle(
-                  color: iconColor,
-                  fontSize: 16,
-                  fontWeight: FontWeight.w500,
-                  fontFamily: 'Gotham',
-                ),
+                'Productos Totales',
+                style: _textStyle(iconColor, 16, FontWeight.w500),
               ),
               Text(
-                'S/250', // Reemplaza con el monto real
-                style: TextStyle(
-                  color: iconColor,
-                  fontSize: 20,
-                  fontWeight: FontWeight.bold,
-                  fontFamily: 'Gotham',
-                ),
+                ventaInfo.CANTIDAD_TOTAL_PRODUCTOS.toString(),
+                style: _textStyle(iconColor, 20, FontWeight.bold),
               ),
             ],
           ),
@@ -292,89 +202,77 @@ class RegistroTotal extends StatelessWidget {
       ],
     );
   }
-}
 
-class EnviarProducto extends StatelessWidget {
-  @override
-  Widget build(BuildContext context) {
+  Widget _enviarProducto(BuildContext context) {
+    final cartCubit = context.read<ProductsCarrito>();
+
     return Column(
       children: [
-        // Primera fila: Registro y Exitoso
         Padding(
-          padding: const EdgeInsets.symmetric(horizontal: 20.0),
+          padding: const EdgeInsets.symmetric(horizontal: 30.0, vertical: 10.0),
           child: Row(
             mainAxisAlignment: MainAxisAlignment.spaceBetween,
             children: [
               Text(
                 'Registro',
-                style: TextStyle(
-                  color: iconColor,
-                  fontSize: 16,
-                  fontWeight: FontWeight.w500,
-                  fontFamily: 'Gotham',
-                ),
+                style: _textStyle(iconColor, 16, FontWeight.w500),
               ),
               Text(
-                'Exitoso',
-                style: TextStyle(
-                  color: estadotxt,
-                  fontSize: 16,
-                  fontWeight: FontWeight.w500,
-                  fontFamily: 'Gotham',
-                ),
+                ventaInfo.ESTADO ? 'Exitoso' : 'Sin Registrar',
+                style: _textStyle(estadotxt, 16, FontWeight.w500),
               ),
             ],
           ),
         ),
         const SizedBox(height: 20),
-        Container(
-          width: double.infinity,
-          padding: const EdgeInsets.all(15.0),
-          margin: const EdgeInsets.symmetric(horizontal: 10.0),
-          decoration: BoxDecoration(
-            borderRadius: BorderRadius.circular(10.0),
-            border: Border.all(color: secondaryColor, width: 2.0),
-          ),
-          child: TextButton(
-            onPressed: () {
-              // Acción cuando se presiona el botón
-            },
-            child: Text(
-              'Compartir Registro',
-              style: TextStyle(
-                color: secondaryColor,
-                fontSize: 14,
-                fontWeight: FontWeight.w500,
-                fontFamily: 'Gotham',
-              ),
-            ),
-          ),
-        ),
+        // Container(
+        //   width: double.infinity,
+        //   padding: const EdgeInsets.all(15.0),
+        //   margin: const EdgeInsets.symmetric(horizontal: 10.0),
+        //   decoration: BoxDecoration(
+        //     borderRadius: BorderRadius.circular(10.0),
+        //     border: Border.all(color: secondaryColor, width: 2.0),
+        //   ),
+        //   child: TextButton(
+        //     onPressed: () {
+        //       // Acción cuando se presiona el botón
+        //     },
+        //     child: Text(
+        //       'Compartir Registro',
+        //       style: _textStyle(secondaryColor, 14, FontWeight.w500),
+        //     ),
+        //   ),
+        // ),
         const SizedBox(height: 20),
         Container(
           width: double.infinity,
           padding: const EdgeInsets.all(15.0),
           margin: const EdgeInsets.symmetric(horizontal: 10.0),
           decoration: BoxDecoration(
-            color: secondaryColor, // Color de fondo
+            color: secondaryColor,
             borderRadius: BorderRadius.circular(10.0),
           ),
           child: TextButton(
             onPressed: () {
-              // Acción cuando se presiona el botón
+              cartCubit.removeAll();
+              appRouter.navigate(HomeRoute(viewIndex: 0));
             },
             child: Text(
               'Concluir',
-              style: TextStyle(
-                color: bgContainer,
-                fontSize: 14,
-                fontWeight: FontWeight.w500,
-                fontFamily: 'Gotham',
-              ),
+              style: _textStyle(bgContainer, 14, FontWeight.w500),
             ),
           ),
         ),
       ],
+    );
+  }
+
+  TextStyle _textStyle(Color color, double fontSize, FontWeight fontWeight) {
+    return TextStyle(
+      color: color,
+      fontSize: fontSize,
+      fontWeight: fontWeight,
+      fontFamily: 'Gotham',
     );
   }
 }

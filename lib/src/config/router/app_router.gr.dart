@@ -71,9 +71,13 @@ abstract class _$AppRouter extends RootStackRouter {
       );
     },
     ReciboRoute.name: (routeData) {
+      final args = routeData.argsAs<ReciboRouteArgs>();
       return AutoRoutePage<dynamic>(
         routeData: routeData,
-        child: const ReciboScreen(),
+        child: ReciboScreen(
+          ventaInfo: args.ventaInfo,
+          key: args.key,
+        ),
       );
     },
     RegisterProductsRoute.name: (routeData) {
@@ -282,16 +286,39 @@ class MainNavigationRoute extends PageRouteInfo<void> {
 
 /// generated route for
 /// [ReciboScreen]
-class ReciboRoute extends PageRouteInfo<void> {
-  const ReciboRoute({List<PageRouteInfo>? children})
-      : super(
+class ReciboRoute extends PageRouteInfo<ReciboRouteArgs> {
+  ReciboRoute({
+    required VentaInfo ventaInfo,
+    Key? key,
+    List<PageRouteInfo>? children,
+  }) : super(
           ReciboRoute.name,
+          args: ReciboRouteArgs(
+            ventaInfo: ventaInfo,
+            key: key,
+          ),
           initialChildren: children,
         );
 
   static const String name = 'ReciboRoute';
 
-  static const PageInfo<void> page = PageInfo<void>(name);
+  static const PageInfo<ReciboRouteArgs> page = PageInfo<ReciboRouteArgs>(name);
+}
+
+class ReciboRouteArgs {
+  const ReciboRouteArgs({
+    required this.ventaInfo,
+    this.key,
+  });
+
+  final VentaInfo ventaInfo;
+
+  final Key? key;
+
+  @override
+  String toString() {
+    return 'ReciboRouteArgs{ventaInfo: $ventaInfo, key: $key}';
+  }
 }
 
 /// generated route for

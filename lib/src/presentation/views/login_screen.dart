@@ -8,7 +8,7 @@ import 'package:hexcolor/hexcolor.dart';
 import 'package:logger/logger.dart';
 import 'package:wayllu_project/src/config/router/app_router.dart';
 import 'package:wayllu_project/src/config/theme/app_theme.dart';
-import 'package:wayllu_project/src/domain/dtos/user_credentials_rep.dart';
+import 'package:wayllu_project/src/domain/dtos/usersCredentialsDto/user_credentials_rep.dart';
 import 'package:wayllu_project/src/locator.dart';
 import 'package:wayllu_project/src/presentation/cubit/user_logged_cubit.dart';
 import 'package:wayllu_project/src/presentation/widgets/login/text_login.dart';
@@ -49,8 +49,8 @@ class LoginExampleScreen extends HookWidget {
 
   @override
   Widget build(BuildContext context) {
-    final controllerEmail = useTextEditingController(text: '');
-    final controllerClave = useTextEditingController(text: '');
+    final controllerEmail = useTextEditingController(text: '44750328');
+    final controllerClave = useTextEditingController(text: '1234');
 
     return AnnotatedRegion(
       value: SystemStyles.login,

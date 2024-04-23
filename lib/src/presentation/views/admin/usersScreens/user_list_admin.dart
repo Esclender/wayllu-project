@@ -3,6 +3,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_hooks/flutter_hooks.dart';
 import 'package:ionicons/ionicons.dart';
+import 'package:logger/logger.dart';
 import 'package:wayllu_project/src/config/router/app_router.dart';
 import 'package:wayllu_project/src/domain/models/list_items_model.dart';
 import 'package:wayllu_project/src/locator.dart';
@@ -28,6 +29,11 @@ class UsersListAdminScreen extends HookWidget {
 
   void _navigateRegisterUser() {
     appRouter.pushNamed('/admin/register');
+  }
+
+  Future<void> getUsersFiltered(BuildContext context, String query) async {
+    Logger().i(query);
+    await context.read<UsersListCubit>().getUserLists(nombre: query);
   }
 
   @override
@@ -105,7 +111,7 @@ class UsersListAdminScreen extends HookWidget {
                     height: 8,
                   ),
                   CustomSearchWidget(
-                    allData: usersToRender,
+                    filterDataFunction: getUsersFiltered,
                   ),
                 ],
               ),
