@@ -52,7 +52,7 @@ class ProductsCardsItemsList extends HookWidget {
   }
 
   Widget _buildScrollableList(
-      List<ProductInfo> productosFiltrados, UserRoles rol) {
+      List<ProductInfo> productosFiltrados, UserRoles rol,) {
     return ListView.separated(
       separatorBuilder: (context, index) => const SizedBox(height: 8),
       shrinkWrap: true,
@@ -60,7 +60,7 @@ class ProductsCardsItemsList extends HookWidget {
       itemCount: productosFiltrados.length,
       itemBuilder: (BuildContext c, int ind) {
         return Row(
-          mainAxisAlignment: MainAxisAlignment.center,
+          mainAxisAlignment: MainAxisAlignment.start,
           children: [
             Expanded(
               child: GridView.builder(
@@ -100,7 +100,6 @@ class ProductsCardsItemsList extends HookWidget {
     required ProductInfo itemData,
     required UserRoles rol,
   }) {
-    final bool loggedUserRol = rol == UserRoles.admin;
 
     return Stack(
       children: [
@@ -139,7 +138,7 @@ class ProductsCardsItemsList extends HookWidget {
                         ),
                       ),
                       backgroundColor: MaterialStatePropertyAll(
-                          bottomNavBar.withOpacity(0.4))),
+                          bottomNavBar.withOpacity(0.4),),),
                   onPressed: () {
                     _addItemToCarrito(itemData);
                   },
@@ -171,7 +170,7 @@ class ProductsCardsItemsList extends HookWidget {
     );
 
     return Container(
-      width: MediaQuery.of(context).size.width * 0.43,
+     width: MediaQuery.of(context).size.width * 0.43,
       height: MediaQuery.of(context).size.width * 0.44,
       decoration: decoration,
       child: _listTile(
@@ -217,30 +216,36 @@ class ProductsCardsItemsList extends HookWidget {
         leading,
         Padding(
           padding: const EdgeInsets.symmetric(horizontal: 6),
-          child: Column(
-            crossAxisAlignment: CrossAxisAlignment.start,
-            mainAxisAlignment: MainAxisAlignment.spaceBetween,
+          child: Row(
+            mainAxisAlignment: MainAxisAlignment.start,
             children: [
-              const Gap(5),
-              title,
-              ...fields.map(
-                (f) => Text(
-                  f.value,
-                  style: TextStyle(
-                    color: smallWordsColor.withOpacity(0.7),
-                    fontSize: 8,
+              Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+               mainAxisAlignment: MainAxisAlignment.start,
+                children: [
+                 const Gap(5),
+                  title,
+                  ...fields.map(
+                    (f) => Text(
+                      f.value,
+                      style: TextStyle(
+                        color: smallWordsColor.withOpacity(0.7),
+                        fontSize: 8,
+                      ),
+                    ),
                   ),
-                ),
+                ],
               ),
-              const Gap(5),
-              if (loggedUserRol)
-                Container(
-                  alignment: Alignment.bottomRight,
-                  child: _buildEditButton(),
-                ),
             ],
           ),
         ),
+        Gap(8),
+         if (loggedUserRol)
+                    Container(
+                      margin: const EdgeInsets.only(right: 4),
+                      alignment: Alignment.bottomRight,
+                      child: _buildEditButton(),
+                    ),
       ],
     );
   }

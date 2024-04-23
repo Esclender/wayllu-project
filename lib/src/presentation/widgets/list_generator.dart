@@ -161,7 +161,7 @@ class CardTemplateItemsList extends HookWidget {
     return Row(
       children: [
         leading,
-        const Gap(20),
+       const Gap(20),
         Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
