@@ -9,6 +9,7 @@ import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_hooks/flutter_hooks.dart';
 import 'package:intl/intl.dart';
 import 'package:ionicons/ionicons.dart';
+import 'package:logger/logger.dart';
 import 'package:wayllu_project/src/config/router/app_router.dart';
 import 'package:wayllu_project/src/domain/enums/lists_enums.dart';
 import 'package:wayllu_project/src/domain/enums/user_roles.dart';
@@ -215,8 +216,12 @@ class HomeScreen extends HookWidget {
                           ),
                         ),
                 ),
-                _productsHome(context, data, categoriaSeleccionada.value,
-                    scrollController),
+                _productsHome(
+                  context,
+                  data,
+                  categoriaSeleccionada.value,
+                  scrollController,
+                ),
               ],
             ),
           ),
@@ -246,7 +251,7 @@ class HomeScreen extends HookWidget {
     return Container(
       width: MediaQuery.of(contextF).size.width,
       height: MediaQuery.of(contextF).size.height,
-      margin: const EdgeInsets.symmetric(vertical: 4, horizontal: 20),
+      margin: const EdgeInsets.symmetric(horizontal: 20),
       child: Column(
         children: [
           Expanded(
@@ -258,6 +263,8 @@ class HomeScreen extends HookWidget {
                   );
                 } else if (categorySeleccionada != null) {
                   data = state;
+                  Logger().i(data);
+
                   return ListView.builder(
                     physics: const NeverScrollableScrollPhysics(),
                     itemCount: data.length,
@@ -273,6 +280,7 @@ class HomeScreen extends HookWidget {
                   );
                 } else {
                   data = state;
+                  Logger().i(data);
                   return ListView.builder(
                     physics: const NeverScrollableScrollPhysics(),
                     itemCount: data.length,
