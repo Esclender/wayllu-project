@@ -242,7 +242,7 @@ class HomeScreen extends HookWidget {
   }
 
   Widget _productsHome(BuildContext contextF, List<ProductInfo> data,
-      String? categorySeleccionada, ScrollController scrollController) {
+      String? categorySeleccionada, ScrollController scrollController,) {
     return Container(
       width: MediaQuery.of(contextF).size.width,
       height: MediaQuery.of(contextF).size.height,
@@ -272,7 +272,7 @@ class HomeScreen extends HookWidget {
                     },
                   );
                 } else {
-                  data = state;
+                 data = state;
                   return ListView.builder(
                     physics: const NeverScrollableScrollPhysics(),
                     itemCount: data.length,
