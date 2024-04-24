@@ -28,7 +28,7 @@ class CardTemplateItemsList extends HookWidget {
   final double navBarHeight = 60.0;
   final double registerUserBtnHeight = 60.0;
 
-  //[gradient, color]
+  
 
 
   void _navigateToEditUser(UserInfo user) {
@@ -161,7 +161,7 @@ class CardTemplateItemsList extends HookWidget {
     return Row(
       children: [
         leading,
-        const Gap(20),
+       const Gap(20),
         Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [

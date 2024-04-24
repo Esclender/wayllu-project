@@ -34,10 +34,11 @@ class HomeScreen extends HookWidget {
   @override
   Widget build(BuildContext context) {
     final DateTime now = DateTime.now();
-    const double blur = 1.5;
     final int hour = now.hour;
     final String greeting = getGreeting(hour);
     final loggedUserRol = context.read<UserLoggedCubit>().state;
+    final scrollController = useScrollController();
+    final bool isAdmin = loggedUserRol == UserRoles.admin;
 
     void goToRegisterOfProductOrVentaCondition() {
       if (loggedUserRol == UserRoles.admin) {
@@ -137,23 +138,31 @@ class HomeScreen extends HookWidget {
                 ),
                 SingleChildScrollView(
                   // scrollDirection: Axis.horizontal,
-                  child: Row(
-                    mainAxisAlignment: MainAxisAlignment.center,
-                    children: categories.map((category) {
-                      return categoriesProducts(
-                        context,
-                        category.name,
-                        category.image,
-                        (selectedCategory) {
-                          if (selectedCategory == categoriaSeleccionada.value) {
-                            categoriaSeleccionada.value = null;
-                          } else {
-                            categoriaSeleccionada.value = selectedCategory;
-                          }
-                        },
-                      );
-                    }).toList(),
-                  ),
+                  child: loggedUserRol == UserRoles.admin
+                      ? Row(
+                          mainAxisAlignment: MainAxisAlignment.center,
+                          children: categories.map((category) {
+                            return categoriesProducts(
+                              context,
+                              category.name,
+                              category.image,
+                              (selectedCategory) {
+                                if (loggedUserRol == UserRoles.admin &&
+                                    selectedCategory ==
+                                        categoriaSeleccionada.value) {
+                                  categoriaSeleccionada.value = null;
+                                } else {
+                                  categoriaSeleccionada.value =
+                                      selectedCategory;
+                                }
+                              },
+                              category.name.toUpperCase() ==
+                                  categoriaSeleccionada
+                                      .value, // Verifica si la categoría está seleccionada
+                            );
+                          }).toList(),
+                        )
+                      : const SizedBox(),
                 ),
                 const SizedBox(
                   height: 6,
@@ -206,7 +215,8 @@ class HomeScreen extends HookWidget {
                           ),
                         ),
                 ),
-                _productsHome(context, data, categoriaSeleccionada.value),
+                _productsHome(context, data, categoriaSeleccionada.value,
+                    scrollController),
               ],
             ),
           ),
@@ -231,12 +241,8 @@ class HomeScreen extends HookWidget {
     );
   }
 
-  Widget _productsHome(
-    BuildContext contextF,
-    List<ProductInfo> data,
-    String? categorySeleccionada,
-  ) {
-    // final bool loggedUserRol = rol == UserRoles.admin;
+  Widget _productsHome(BuildContext contextF, List<ProductInfo> data,
+      String? categorySeleccionada, ScrollController scrollController) {
     return Container(
       width: MediaQuery.of(contextF).size.width,
       height: MediaQuery.of(contextF).size.height,
@@ -249,6 +255,21 @@ class HomeScreen extends HookWidget {
                 if (state == null) {
                   return const Center(
                     child: CircularProgressIndicator(),
+                  );
+                } else if (categorySeleccionada != null) {
+                  data = state;
+                  return ListView.builder(
+                    physics: const NeverScrollableScrollPhysics(),
+                    itemCount: data.length,
+                    itemBuilder: (context, index) {
+                      return ProductsCardsItemsList(
+                        contextF: contextF,
+                        listType: ListEnums.products,
+                        dataToRender: data,
+                        categoriaSeleccionada: categorySeleccionada,
+                        scrollController: scrollController,
+                      );
+                    },
                   );
                 } else {
                   data = state;
@@ -384,53 +405,54 @@ class HomeScreen extends HookWidget {
   }
 
   Padding firstLine(BuildContext context, UserRoles rol) {
+    // ignore: unrelated_type_equality_checks
     final bool loggedUserRol = rol == UserRoles.admin;
     final dateString =
         DateFormat("dd 'de' MMMM yyyy", 'es').format(DateTime.now());
 
     return Padding(
-      padding: const EdgeInsets.symmetric(horizontal: 22.0),
-      child: loggedUserRol
-          ? SizedBox(
-              width: MediaQuery.of(context).size.width,
-              height: 18,
-              child: Row(
-                mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                children: [
-                  const SizedBox(
-                    width: 120,
-                    height: 18,
-                    child: Text(
-                      'Actividad',
-                      style: TextStyle(
-                        color: Color(0xFF241E20),
-                        fontSize: 16,
-                        fontFamily: 'Gotham',
-                        fontWeight: FontWeight.w500,
-                        height: 0,
+        padding: const EdgeInsets.symmetric(horizontal: 22.0),
+        child: loggedUserRol
+            ? SizedBox(
+                width: MediaQuery.of(context).size.width,
+                height: 18,
+                child: Row(
+                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                  children: [
+                    const SizedBox(
+                      width: 120,
+                      height: 18,
+                      child: Text(
+                        'Actividad',
+                        style: TextStyle(
+                          color: Color(0xFF241E20),
+                          fontSize: 16,
+                          fontFamily: 'Gotham',
+                          fontWeight: FontWeight.w500,
+                          height: 0,
+                        ),
                       ),
                     ),
-                  ),
-                  SizedBox(
-                    width: 145,
-                    child: AutoSizeText(
-                      'Hoy, $dateString',
-                      textAlign: TextAlign.center,
-                      style: const TextStyle(
-                        color: Color(0xFF636369),
-                        fontFamily: 'Gotham',
-                        fontWeight: FontWeight.w300,
+                    SizedBox(
+                      width: 145,
+                      child: AutoSizeText(
+                        'Hoy, $dateString',
+                        textAlign: TextAlign.center,
+                        style: const TextStyle(
+                          color: Color(0xFF636369),
+                          fontFamily: 'Gotham',
+                          fontWeight: FontWeight.w300,
+                        ),
+                        maxLines: 1,
+                        minFontSize: 10,
+                        maxFontSize: 12,
                       ),
-                      maxLines: 1,
-                      minFontSize: 10,
-                      maxFontSize: 12,
                     ),
-                  ),
-                ],
-              ),
-            )
-          : Container(),
-    );
+                  ],
+                ),
+              )
+            : // Check for artesano role here
+            bannerArtesanos(context, true));
   }
 
   Center dashboard(BuildContext context, UserRoles rol) {
@@ -703,6 +725,7 @@ Container categoriesProducts(
   String name,
   String image,
   void Function(String)? onSelectCategory,
+  bool isSelected,
 ) {
   return Container(
     padding: const EdgeInsets.symmetric(
@@ -722,6 +745,9 @@ Container categoriesProducts(
         decoration: BoxDecoration(
           color: bottomNavBar,
           borderRadius: const BorderRadius.all(Radius.circular(10)),
+          border: isSelected
+              ? Border.all(color: secondary, width: 0.5)
+              : Border.all(color: Colors.transparent),
           boxShadow: [
             BoxShadow(
               color: const Color.fromARGB(255, 95, 95, 95)
@@ -756,6 +782,23 @@ Container categoriesProducts(
             ),
           ],
         ),
+      ),
+    ),
+  );
+}
+
+Container bannerArtesanos(BuildContext context, bool rol) {
+  return Container(
+    width: MediaQuery.of(context).size.width,
+    height: MediaQuery.of(context).size.height * 0.17,
+    padding: const EdgeInsets.only(top: 12),
+    decoration: BoxDecoration(
+      borderRadius: BorderRadius.circular(10),
+      image: const DecorationImage(
+        image: AssetImage(
+          'assets/images/banner-artesanos.jpeg',
+        ),
+        fit: BoxFit.cover,
       ),
     ),
   );

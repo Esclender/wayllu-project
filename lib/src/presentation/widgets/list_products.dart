@@ -18,20 +18,18 @@ class ProductsCardsItemsList extends HookWidget {
   final ListEnums listType;
   final List<ProductInfo> dataToRender;
   final String query;
-  final bool isScrollable;
-  final String?
-      categoriaSeleccionada; // Nuevo parámetro para la categoría seleccionada
+  final ScrollController? scrollController;
+  final String? categoriaSeleccionada;
 
-  // Dependencies Injection
   final appRouter = getIt<AppRouter>();
 
   ProductsCardsItemsList({
     required this.contextF,
     required this.listType,
     required this.dataToRender,
-    this.isScrollable = true,
     this.query = '',
     this.categoriaSeleccionada,
+    this.scrollController,
   });
 
   void _addItemToCarrito(ProductInfo product) {
@@ -50,15 +48,19 @@ class ProductsCardsItemsList extends HookWidget {
             .toList()
         : dataToRender;
 
+    return _buildScrollableList(productosFiltrados, rol);
+  }
+
+  Widget _buildScrollableList(
+      List<ProductInfo> productosFiltrados, UserRoles rol,) {
     return ListView.separated(
-      separatorBuilder: (context, index) => SizedBox(height: 8),
-      padding: EdgeInsets.zero,
+      separatorBuilder: (context, index) => const SizedBox(height: 8),
       shrinkWrap: true,
-      physics: NeverScrollableScrollPhysics(),
+      physics: const NeverScrollableScrollPhysics(),
       itemCount: productosFiltrados.length,
       itemBuilder: (BuildContext c, int ind) {
         return Row(
-          mainAxisAlignment: MainAxisAlignment.center,
+          mainAxisAlignment: MainAxisAlignment.start,
           children: [
             Expanded(
               child: GridView.builder(
@@ -68,8 +70,7 @@ class ProductsCardsItemsList extends HookWidget {
                   crossAxisSpacing: 8,
                   mainAxisSpacing: 8,
                 ),
-                physics:
-                    isScrollable ? null : const NeverScrollableScrollPhysics(),
+                physics: const NeverScrollableScrollPhysics(),
                 itemCount: ind == (productosFiltrados.length / 2).ceil() - 1
                     ? productosFiltrados.length % 2
                     : 2,
@@ -87,7 +88,7 @@ class ProductsCardsItemsList extends HookWidget {
                   }
                 },
               ),
-            )
+            ),
           ],
         );
       },
@@ -99,6 +100,65 @@ class ProductsCardsItemsList extends HookWidget {
     required ProductInfo itemData,
     required UserRoles rol,
   }) {
+
+    return Stack(
+      children: [
+        Stack(
+          alignment: Alignment.topRight,
+          children: [
+            Container(
+              width: MediaQuery.of(context).size.width * 0.43,
+              height: MediaQuery.of(context).size.width * 0.44,
+           
+              decoration: BoxDecoration(
+                color: bottomNavBar,
+                boxShadow: [
+                  simpleShadow,
+                ],
+                borderRadius: const BorderRadius.all(
+                  Radius.circular(10),
+                ),
+              ),
+              child: _buildListTile(context, itemData, rol),
+            ),
+            if (rol == UserRoles.artesano)
+              Padding(
+                padding: const EdgeInsets.all(4.0),
+                child: IconButton(
+                  padding: const EdgeInsets.symmetric(horizontal: 6, vertical: 2),
+                  style: ButtonStyle(
+                      shape: MaterialStateProperty.all<OutlinedBorder>(
+                        RoundedRectangleBorder(
+                          borderRadius:
+                              BorderRadius.circular(7), 
+                          side: BorderSide(
+                            color: iconColor.withOpacity(0.6), 
+                            width: 0.5, 
+                          ),
+                        ),
+                      ),
+                      backgroundColor: MaterialStatePropertyAll(
+                          bottomNavBar.withOpacity(0.4),),),
+                  onPressed: () {
+                    _addItemToCarrito(itemData);
+                  },
+                  icon: const Icon(
+                    Ionicons.add,
+                    size: 24,
+                  ),
+                ),
+              ),
+          ],
+        ),
+      ],
+    );
+  }
+
+  Widget _buildListTile(
+    BuildContext context,
+    ProductInfo itemData,
+    UserRoles rol,
+  ) {
     final BoxDecoration decoration = BoxDecoration(
       color: bottomNavBar,
       boxShadow: [
@@ -109,37 +169,18 @@ class ProductsCardsItemsList extends HookWidget {
       ),
     );
 
-    return Stack(
-      children: [
-        Stack(
-          alignment: Alignment.topRight,
-          children: [
-            Container(
-              width: MediaQuery.of(context).size.width * 0.43,
-              height: MediaQuery.of(context).size.width * 0.44,
-              decoration: decoration,
-              child: _listTile(
-                context: context,
-                rol: rol,
-                leading: _buildImageProduct(context, itemData.IMAGEN!),
-                title: Text(itemData.COD_PRODUCTO.toString()),
-                fields: itemData.descriptionsFields,
-                category: Text(itemData.category),
-              ),
-            ),
-            if (rol == UserRoles.artesano)
-              IconButton(
-                onPressed: () {
-                  _addItemToCarrito(itemData);
-                },
-                icon: const Icon(
-                  Ionicons.add,
-                  size: 30,
-                ),
-              ),
-          ],
-        ),
-      ],
+    return Container(
+     width: MediaQuery.of(context).size.width * 0.43,
+      height: MediaQuery.of(context).size.width * 0.44,
+      decoration: decoration,
+      child: _listTile(
+        context: context,
+        rol: rol,
+        leading: _buildImageProduct(context, itemData.IMAGEN!),
+        title: Text(itemData.COD_PRODUCTO.toString()),
+        fields: itemData.descriptionsFields,
+        category: Text(itemData.category),
+      ),
     );
   }
 
@@ -169,45 +210,42 @@ class ProductsCardsItemsList extends HookWidget {
     required UserRoles rol,
   }) {
     final bool loggedUserRol = rol == UserRoles.admin;
+
     return Column(
       children: [
         leading,
         Padding(
           padding: const EdgeInsets.symmetric(horizontal: 6),
-          child: Column(
-            crossAxisAlignment: CrossAxisAlignment.start,
-            mainAxisAlignment: MainAxisAlignment.spaceBetween,
+          child: Row(
+            mainAxisAlignment: MainAxisAlignment.start,
             children: [
-              const Gap(5),
-              title,
-              ...fields.map(
-                (f) => Text(
-                  f.value,
-                  style: TextStyle(
-                    color: smallWordsColor.withOpacity(0.7),
-                    fontSize: 8,
+              Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+               mainAxisAlignment: MainAxisAlignment.start,
+                children: [
+                 const Gap(5),
+                  title,
+                  ...fields.map(
+                    (f) => Text(
+                      f.value,
+                      style: TextStyle(
+                        color: smallWordsColor.withOpacity(0.7),
+                        fontSize: 8,
+                      ),
+                    ),
                   ),
-                ),
+                ],
               ),
-              /*  ...fields.map(
-                (f) => Text(
-                  '${category}',
-                  style: TextStyle(
-                    color: smallWordsColor.withOpacity(0.7),
-                    fontSize: 6,
-                  ),
-                ),
-               
-              ),*/
-              const Gap(5),
-              if (loggedUserRol)
-                Container(
-                  alignment: Alignment.bottomRight,
-                  child: _buildEditButton(),
-                ),
             ],
           ),
         ),
+        Gap(8),
+         if (loggedUserRol)
+                    Container(
+                      margin: const EdgeInsets.only(right: 4),
+                      alignment: Alignment.bottomRight,
+                      child: _buildEditButton(),
+                    ),
       ],
     );
   }
