@@ -33,7 +33,7 @@ class ProductsCarrito extends Cubit<List<CarritoItem>> {
       emit(List.from(state));
       return;
     }
-    state.add(CarritoItem(info: product, quantity: quantity));
+    state.add(CarritoItem(info: product, quantity: 1));
     emit(List.from(state));
   }
 
