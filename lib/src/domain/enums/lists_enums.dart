@@ -1,1 +1,1 @@
-enum ListEnums { users, products }
+enum ListEnums { users, products, ventas}

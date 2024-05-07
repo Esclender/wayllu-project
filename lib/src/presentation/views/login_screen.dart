@@ -46,10 +46,10 @@ class LoginExampleScreen extends HookWidget {
       await context.read<UserLoggedInfoCubit>().setUserInfo();
     }
   }
-
+//'46694332'
   @override
   Widget build(BuildContext context) {
-    final controllerEmail = useTextEditingController(text: '44750328');
+    final controllerEmail = useTextEditingController(text: '46694332');
     final controllerClave = useTextEditingController(text: '1234');
 
     return AnnotatedRegion(

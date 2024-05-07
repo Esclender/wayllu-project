@@ -249,49 +249,53 @@ class HomeScreen extends HookWidget {
       margin: const EdgeInsets.symmetric(vertical: 4, horizontal: 20),
       child: Column(
         children: [
-          Expanded(
-            child: BlocBuilder<ProductListCubit, List<ProductInfo>?>(
-              builder: (context, state) {
-                if (state == null) {
-                  return const Center(
-                    child: CircularProgressIndicator(),
-                  );
-                } else if (categorySeleccionada != null) {
-                  data = state;
-                  return ListView.builder(
-                    physics: const NeverScrollableScrollPhysics(),
-                    itemCount: data.length,
-                    itemBuilder: (context, index) {
-                      return ProductsCardsItemsList(
-                        contextF: contextF,
-                        listType: ListEnums.products,
-                        dataToRender: data,
-                        categoriaSeleccionada: categorySeleccionada,
-                        scrollController: scrollController,
-                      );
-                    },
-                  );
-                } else {
-                  data = state;
-                  return ListView.builder(
-                    physics: const NeverScrollableScrollPhysics(),
-                    itemCount: data.length,
-                    itemBuilder: (context, index) {
-                      return ProductsCardsItemsList(
-                        contextF: contextF,
-                        listType: ListEnums.products,
-                        dataToRender: data,
-                        categoriaSeleccionada: categorySeleccionada,
-                      );
-                    },
-                  );
-                }
-              },
-            ),
-          ),
+          dataProducts(categorySeleccionada, data, contextF, scrollController),
         ],
       ),
     );
+  }
+
+  Widget dataProducts(String? categorySeleccionada, List<ProductInfo> data, BuildContext contextF, ScrollController scrollController) {
+    return Expanded(
+          child: BlocBuilder<ProductListCubit, List<ProductInfo>?>(
+            builder: (context, state) {
+              if (state == null) {
+                return const Center(
+                  child: CircularProgressIndicator(),
+                );
+              } else if (categorySeleccionada != null) {
+                data = state;
+                return ListView.builder(
+                  physics: const NeverScrollableScrollPhysics(),
+                  itemCount: data.length,
+                  itemBuilder: (context, index) {
+                    return ProductsCardsItemsList(
+                      contextF: contextF,
+                      listType: ListEnums.products,
+                      dataToRender: data,
+                      categoriaSeleccionada: categorySeleccionada,
+                      scrollController: scrollController,
+                    );
+                  },
+                );
+              } else {
+                data = state;
+                return ListView.builder(
+                  physics: const NeverScrollableScrollPhysics(),
+                  itemCount: data.length,
+                  itemBuilder: (context, index) {
+                    return ProductsCardsItemsList(
+                      contextF: contextF,
+                      listType: ListEnums.products,
+                      dataToRender: data,
+                      categoriaSeleccionada: categorySeleccionada,
+                    );
+                  },
+                );
+              }
+            },
+          ),
+        );
   }
 
   Widget optionsAndLogout(BuildContext context) {

@@ -13,7 +13,7 @@ class CarritoItem {
 
   Map<String, dynamic> toMap() {
     return <String, dynamic>{
-      'ITEM': info.ITEM,
+      'COD_PRODUCTO': info.COD_PRODUCTO,
       'DESCRIPCION': info.DESCRIPCION,
       'CATEGORIA': info.CATEGORIA,
       'IMAGEN': info.IMAGEN,
