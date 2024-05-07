@@ -14,12 +14,14 @@ VentaInfo _$VentaInfoFromJson(Map<String, dynamic> json) => VentaInfo(
       PRODUCTOS: (json['PRODUCTOS'] as List<dynamic>)
           .map((e) => e as Map<String, dynamic>)
           .toList(),
+      IMAGEN: json['IMAGEN'] as String?,
     );
 
 Map<String, dynamic> _$VentaInfoToJson(VentaInfo instance) => <String, dynamic>{
       'CANTIDAD_TOTAL_PRODUCTOS': instance.CANTIDAD_TOTAL_PRODUCTOS,
       'CODIGO_REGISTRO': instance.CODIGO_REGISTRO,
       'FECHA_REGISTRO': instance.FECHA_REGISTRO,
+      'IMAGEN': instance.IMAGEN,
       'ESTADO': instance.ESTADO,
       'PRODUCTOS': instance.PRODUCTOS,
     };

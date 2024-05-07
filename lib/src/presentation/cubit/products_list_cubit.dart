@@ -16,7 +16,7 @@ class ProductListCubit extends Cubit<List<ProductInfo>?> {
       state == null
           ? responseState?.map((producto) => producto).toList()
           : [
-            
+            //  ...state!,
               ...responseState!.map((producto) => producto),
             ],
     );

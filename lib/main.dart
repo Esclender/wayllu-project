@@ -13,6 +13,7 @@ import 'package:wayllu_project/src/presentation/cubit/productos_carrito_cubit.da
 import 'package:wayllu_project/src/presentation/cubit/products_list_cubit.dart';
 import 'package:wayllu_project/src/presentation/cubit/user_logged_cubit.dart';
 import 'package:wayllu_project/src/presentation/cubit/users_list_cubit.dart';
+import 'package:wayllu_project/src/presentation/cubit/ventas_list_cubit.dart';
 
 final locator = GetIt.instance;
 
@@ -55,6 +56,11 @@ class BlocSettup extends StatelessWidget {
         ),
         BlocProvider<ProductsCarrito>(
           create: (BuildContext context) => ProductsCarrito(
+            locator<ProductsApiRepositoryImpl>(),
+          ),
+        ),
+        BlocProvider<VentasListCubit>(
+          create: (BuildContext context) => VentasListCubit(
             locator<ProductsApiRepositoryImpl>(),
           ),
         ),

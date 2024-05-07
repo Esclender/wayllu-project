@@ -139,11 +139,12 @@ class ReciboScreen extends HookWidget {
               ),
               child: ClipRRect(
                 borderRadius: BorderRadius.circular(10),
-                child: Image.asset(
-                  'assets/images/img1.jpg',
+                child: Image.network(
+                 '${producto['IMAGEN'] ?? 'assets/images/dont-image.jpg'}',
                   width: 100,
                   height: 80,
                   fit: BoxFit.cover,
+              
                 ),
               ),
             ),

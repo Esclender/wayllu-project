@@ -95,24 +95,24 @@ class CarritoScreen extends HookWidget {
         return ListView.builder(
           itemCount: list.length,
           itemBuilder: (context, index) {
-            final carritoItem = list[index];
+            final carritoCode = list[index];
 
             return _buildProduct(
               context: context,
-              product: carritoItem.info,
-              actualValue: carritoItem.quantity,
+              product: carritoCode.info,
+              actualValue: carritoCode.quantity,
               increase: () {
                 _increaseQuantity(
                   contextF,
-                  carritoItem.info,
-                  carritoItem.quantity,
+                  carritoCode.info,
+                  carritoCode.quantity,
                 );
               },
               decrease: () {
                 _decreaseQuantity(
                   contextF,
-                  carritoItem.info,
-                  carritoItem.quantity,
+                  carritoCode.info,
+                  carritoCode.quantity,
                 );
               },
             );
@@ -161,7 +161,7 @@ class CarritoScreen extends HookWidget {
                   mainAxisAlignment: MainAxisAlignment.spaceBetween,
                   children: [
                     Text(
-                      product.ITEM.toString(),
+                      product.COD_PRODUCTO.toString(),
                       style: const TextStyle(
                         fontSize: 16,
                         fontWeight: FontWeight.bold,
