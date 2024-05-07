@@ -95,10 +95,14 @@ class PersonalInfo extends InfoBase {
 
   @override
   List<List> get entries => [
-        ['DNI', DNI],
-        ['Nombre', NOMBRE_COMPLETO],
-        ['Comunidad', COMUNIDAD],
-        ['Clave', CLAVE],
+        ['DNI', DNI, false],
+        ['Nombre', NOMBRE_COMPLETO, false],
+        ['Comunidad', COMUNIDAD, false],
+        [
+          'Clave',
+          CLAVE,
+          true,
+        ],
       ];
 }
 
@@ -113,7 +117,15 @@ class ContactInfo extends InfoBase {
 
   @override
   List<List> get entries => [
-        ['Telefono', TELEFONO],
-        ['Email', EMAIL],
+        [
+          'Telefono',
+          TELEFONO,
+          true,
+        ],
+        [
+          'Email',
+          EMAIL,
+          true,
+        ],
       ];
 }

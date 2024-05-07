@@ -16,6 +16,11 @@ abstract class AuthApiServices {
     @Body() UserCredentialDto credentials,
   );
 
+  @PUT('/update')
+  Future<HttpResponse<void>> updateUserInfo(
+    @Body() Map<String, dynamic> info,
+  );
+
   @GET('/login/info')
   Future<HttpResponse<UserInfo?>> getUserLoggedInfo();
 }

@@ -36,7 +36,6 @@ class LoginExampleScreen extends HookWidget {
         .read<UserLoggedCubit>()
         .getAccessTokenAndSetRol(credentialsUser)
         .catchError((e) {
-      Logger().e(e);
       return null;
     });
 

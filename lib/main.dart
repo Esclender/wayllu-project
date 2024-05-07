@@ -1,8 +1,10 @@
+import 'package:firebase_core/firebase_core.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_dotenv/flutter_dotenv.dart';
 import 'package:get_it/get_it.dart';
 import 'package:intl/date_symbol_data_local.dart';
+import 'package:wayllu_project/firebase_options.dart';
 import 'package:wayllu_project/src/config/router/app_router.dart';
 import 'package:wayllu_project/src/config/theme/app_theme.dart';
 import 'package:wayllu_project/src/data/api_repository.imp.dart';
@@ -15,6 +17,10 @@ import 'package:wayllu_project/src/presentation/cubit/users_list_cubit.dart';
 final locator = GetIt.instance;
 
 Future<void> main() async {
+  WidgetsFlutterBinding.ensureInitialized();
+  await Firebase.initializeApp(
+    options: DefaultFirebaseOptions.currentPlatform,
+  );
   await dotenv.load();
   await initializeDateFormatting('es');
   initializeDependecies();

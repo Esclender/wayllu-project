@@ -1,0 +1,29 @@
+{
+  "project_info": {
+    "project_number": "339751419590",
+    "project_id": "wayllu",
+    "storage_bucket": "wayllu.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:339751419590:android:ce86e7ce1a7c0637d621c7",
+        "android_client_info": {
+          "package_name": "com.example.wayllu_project"
+        }
+      },
+      "oauth_client": [],
+      "api_key": [
+        {
+          "current_key": "AIzaSyDs2BN7ZbYZY2fpgY7srs2JPc6D6GddSRk"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": []
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}

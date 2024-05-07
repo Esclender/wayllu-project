@@ -53,6 +53,13 @@ class AuthApiRepositoryImpl extends BaseApiRepository
   }
 
   @override
+  Future<void> updateUserInfo(
+    Map<String, dynamic> infoToUpdate,
+  ) async {
+    await _apiServices.updateUserInfo(infoToUpdate);
+  }
+
+  @override
   Future<UserInfo?> getLoggedUserInfo() async {
     final responseHttp = await getStateOf<UserInfo?>(
       request: () => _apiServices.getUserLoggedInfo(),
