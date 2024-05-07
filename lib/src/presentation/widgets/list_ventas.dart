@@ -4,13 +4,10 @@ import 'package:flutter_hooks/flutter_hooks.dart';
 import 'package:gap/gap.dart';
 import 'package:wayllu_project/src/config/router/app_router.dart';
 import 'package:wayllu_project/src/domain/enums/lists_enums.dart';
-import 'package:wayllu_project/src/domain/models/list_items_model.dart';
 import 'package:wayllu_project/src/domain/models/registro_ventas/registros_venta_repo.dart';
 import 'package:wayllu_project/src/locator.dart';
 import 'package:wayllu_project/src/presentation/cubit/user_logged_cubit.dart';
-import 'package:wayllu_project/src/presentation/cubit/ventas_list_cubit.dart';
 import 'package:wayllu_project/src/utils/constants/colors.dart';
-import 'package:flutter/material.dart';
 
 class VentasCardsItemsList extends HookWidget {
   final BuildContext contextF;
@@ -37,7 +34,9 @@ class VentasCardsItemsList extends HookWidget {
 
     final ventasFiltrados = dataToRender;
 
-    return _buildScrollableList(ventasFiltrados, );
+    return _buildScrollableList(
+      ventasFiltrados,
+    );
   }
 
   Widget _buildScrollableList(
@@ -107,29 +106,28 @@ class VentasCardsItemsList extends HookWidget {
               ),
               child: _buildListTile(context, itemData),
             ),
-            
-              Padding(
-                padding: const EdgeInsets.all(4.0),
-                child: IconButton(
-                  padding:
-                      const EdgeInsets.symmetric(horizontal: 6, vertical: 2),
-                  style: ButtonStyle(
-                    shape: MaterialStateProperty.all<OutlinedBorder>(
-                      RoundedRectangleBorder(
-                        borderRadius: BorderRadius.circular(7),
-                        side: BorderSide(
-                          color: iconColor.withOpacity(0.6),
-                          width: 0.5,
-                        ),
+            Padding(
+              padding: const EdgeInsets.all(4.0),
+              child: IconButton(
+                padding: const EdgeInsets.symmetric(horizontal: 6, vertical: 2),
+                style: ButtonStyle(
+                  shape: MaterialStateProperty.all<OutlinedBorder>(
+                    RoundedRectangleBorder(
+                      borderRadius: BorderRadius.circular(7),
+                      side: BorderSide(
+                        color: iconColor.withOpacity(0.6),
+                        width: 0.5,
                       ),
                     ),
-                    backgroundColor: MaterialStatePropertyAll(
-                      bottomNavBar.withOpacity(0.4),
-                    ),
-                  ), onPressed: () {  }, icon: Icon(Icons.abc),
-                 
+                  ),
+                  backgroundColor: MaterialStatePropertyAll(
+                    bottomNavBar.withOpacity(0.4),
+                  ),
                 ),
+                onPressed: () {},
+                icon: Icon(Icons.abc),
               ),
+            ),
           ],
         ),
       ],
@@ -184,9 +182,8 @@ class VentasCardsItemsList extends HookWidget {
     required BuildContext context,
     required Widget leading,
     required Widget title,
-   // required List<DescriptionItem> fields,
+    // required List<DescriptionItem> fields,
   }) {
-
     return Column(
       children: [
         leading,
@@ -201,7 +198,7 @@ class VentasCardsItemsList extends HookWidget {
                 children: [
                   const Gap(5),
                   title,
-                 /* ...fields.map(
+                  /* ...fields.map(
                     (f) => Text(
                       f.value,
                       style: TextStyle(
@@ -215,7 +212,6 @@ class VentasCardsItemsList extends HookWidget {
             ],
           ),
         ),
-      
       ],
     );
   }

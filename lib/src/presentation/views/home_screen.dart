@@ -269,38 +269,27 @@ class HomeScreen extends HookWidget {
     return Expanded(
       child: BlocBuilder<ProductListCubit, List<ProductInfo>?>(
         builder: (context, state) {
+          Logger().i(state);
           if (state == null) {
             return const Center(
               child: CircularProgressIndicator(),
             );
           } else if (categorySeleccionada != null) {
             data = state;
-            return ListView.builder(
-              physics: const NeverScrollableScrollPhysics(),
-              itemCount: data.length,
-              itemBuilder: (context, index) {
-                return ProductsCardsItemsList(
-                  contextF: contextF,
-                  listType: ListEnums.products,
-                  dataToRender: data,
-                  categoriaSeleccionada: categorySeleccionada,
-                  scrollController: scrollController,
-                );
-              },
+            return ProductsCardsItemsList(
+              contextF: contextF,
+              listType: ListEnums.products,
+              dataToRender: data,
+              categoriaSeleccionada: categorySeleccionada,
+              scrollController: scrollController,
             );
           } else {
             data = state;
-            return ListView.builder(
-              physics: const NeverScrollableScrollPhysics(),
-              itemCount: data.length,
-              itemBuilder: (context, index) {
-                return ProductsCardsItemsList(
-                  contextF: contextF,
-                  listType: ListEnums.products,
-                  dataToRender: data,
-                  categoriaSeleccionada: categorySeleccionada,
-                );
-              },
+            return ProductsCardsItemsList(
+              contextF: contextF,
+              listType: ListEnums.products,
+              dataToRender: data,
+              categoriaSeleccionada: categorySeleccionada,
             );
           }
         },
