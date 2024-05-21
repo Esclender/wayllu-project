@@ -11,8 +11,17 @@ class CustomSearchWidget<T> extends StatefulWidget {
   final Future<void> Function(BuildContext context, String query)
       filterDataFunction;
 
+  final double? width;
+  final double? height;
+  final bool? isHome;
+  final String hint;
+
   const CustomSearchWidget({
     required this.filterDataFunction,
+    this.hint = 'Buscar por Nombre',
+    this.width,
+    this.height,
+    this.isHome,
   });
 
   @override
@@ -58,7 +67,8 @@ class _CustomSearchWidgetState extends State<CustomSearchWidget> {
                     child: Icon(Ionicons.search),
                   ),
                   SizedBox(
-                    width: MediaQuery.of(context).size.width * 0.82,
+                    width: MediaQuery.of(context).size.width *
+                        (widget.width ?? 0.82),
                     height: MediaQuery.of(context).size.height * 0.06,
                     child: TextField(
                       onChanged: (q) {
@@ -67,7 +77,7 @@ class _CustomSearchWidgetState extends State<CustomSearchWidget> {
                       decoration: InputDecoration(
                         fillColor: bottomNavBar,
                         border: InputBorder.none,
-                        hintText: 'Busca por nombre',
+                        hintText: widget.hint,
                         suffixIcon: _searchController.text.isNotEmpty
                             ? IconButton(
                                 icon: const Icon(Icons.clear),
@@ -80,12 +90,15 @@ class _CustomSearchWidgetState extends State<CustomSearchWidget> {
                 ],
               ),
             ),
-            Padding(
-              padding: EdgeInsets.only(
-                top: MediaQuery.of(context).size.height * 0.04,
+            if (widget.isHome == null)
+              Container()
+            else
+              Padding(
+                padding: EdgeInsets.only(
+                  top: MediaQuery.of(context).size.height * 0.04,
+                ),
+                child: _buildSearchResults(filteredData ?? []),
               ),
-              child: _buildSearchResults(filteredData ?? []),
-            ),
           ],
         );
       },

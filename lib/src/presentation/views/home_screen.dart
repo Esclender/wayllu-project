@@ -7,6 +7,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter/widgets.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_hooks/flutter_hooks.dart';
+import 'package:gap/gap.dart';
 import 'package:intl/intl.dart';
 import 'package:ionicons/ionicons.dart';
 import 'package:logger/logger.dart';
@@ -19,6 +20,7 @@ import 'package:wayllu_project/src/locator.dart';
 import 'package:wayllu_project/src/presentation/cubit/productos_carrito_cubit.dart';
 import 'package:wayllu_project/src/presentation/cubit/products_list_cubit.dart';
 import 'package:wayllu_project/src/presentation/cubit/user_logged_cubit.dart';
+import 'package:wayllu_project/src/presentation/widgets/bar_search.dart';
 import 'package:wayllu_project/src/presentation/widgets/bottom_navbar.dart';
 import 'package:wayllu_project/src/presentation/widgets/list_products.dart';
 import 'package:wayllu_project/src/utils/constants/colors.dart';
@@ -122,16 +124,25 @@ class HomeScreen extends HookWidget {
                   height: 8,
                 ),
                 firstLine(context, loggedUserRol),
-                dashboard(context, loggedUserRol),
                 Container(
                   margin:
                       const EdgeInsets.symmetric(horizontal: 18, vertical: 6),
                   child: Row(
                     mainAxisAlignment: MainAxisAlignment.spaceBetween,
                     children: [
-                      // barSearch(context),
                       if (loggedUserRol == UserRoles.admin)
-                        optionsAndLogout(context)
+                        Row(
+                          mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                          children: [
+                            optionsAndLogout(context),
+                            const Gap(10),
+                            CustomSearchWidget(
+                              hint: 'Buscar por Codigo',
+                              width: 0.62,
+                              filterDataFunction: (c, s) async {},
+                            ),
+                          ],
+                        )
                       else
                         Container(),
                     ],
@@ -414,8 +425,10 @@ class HomeScreen extends HookWidget {
         DateFormat("dd 'de' MMMM yyyy", 'es').format(DateTime.now());
 
     return Padding(
-        padding: const EdgeInsets.symmetric(horizontal: 22.0),
-        child: loggedUserRol
+      padding: const EdgeInsets.symmetric(horizontal: 22.0),
+      child: bannerArtesanos(context, true),
+      /**
+       * loggedUserRol
             ? SizedBox(
                 width: MediaQuery.of(context).size.width,
                 height: 18,
@@ -454,205 +467,8 @@ class HomeScreen extends HookWidget {
                   ],
                 ),
               )
-            : // Check for artesano role here
-            bannerArtesanos(context, true));
-  }
-
-  Center dashboard(BuildContext context, UserRoles rol) {
-    final bool loggedUserRol = rol == UserRoles.admin;
-
-    void goToReport() {
-      if (rol == UserRoles.admin) {
-        appRouter.navigate(const ReportRoute());
-      }
-    }
-
-    return Center(
-      child: loggedUserRol
-          ? Container(
-              margin: const EdgeInsets.symmetric(horizontal: 18, vertical: 6),
-              width: MediaQuery.of(context).size.width,
-              height: MediaQuery.of(context).size.height * 0.22,
-              decoration: BoxDecoration(
-                color: bottomNavBar,
-                boxShadow: [
-                  BoxShadow(
-                    color:
-                        const Color.fromARGB(255, 95, 95, 95).withOpacity(0.08),
-                    spreadRadius: 2,
-                    blurRadius: 4,
-                    offset: const Offset(
-                      0,
-                      1,
-                    ),
-                  ),
-                ],
-                borderRadius: BorderRadius.circular(10),
-              ),
-              child: Column(
-                children: [
-                  Stack(
-                    children: [
-                      Container(
-                        width: MediaQuery.of(context).size.width,
-                        height: MediaQuery.of(context).size.height * 0.08,
-                        padding: const EdgeInsets.symmetric(horizontal: 12),
-                        decoration: BoxDecoration(
-                          color: iconColor.withOpacity(0.7),
-                          borderRadius: const BorderRadius.only(
-                            topLeft: Radius.circular(10),
-                            topRight: Radius.circular(10),
-                          ),
-                        ),
-                        child: Row(
-                          mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                          children: [
-                            Column(
-                              crossAxisAlignment: CrossAxisAlignment.start,
-                              mainAxisAlignment: MainAxisAlignment.center,
-                              children: [
-                                Text(
-                                  'Ingresos semanales',
-                                  style: TextStyle(
-                                    fontFamily: 'Gotham',
-                                    fontSize: 12,
-                                    color: clearLetters,
-                                    fontWeight: FontWeight.w300,
-                                  ),
-                                ),
-                                Text(
-                                  'S/ 1.200,00',
-                                  style: TextStyle(
-                                    fontFamily: 'Gotham',
-                                    fontSize: 24,
-                                    color: bottomNavBar,
-                                    fontWeight: FontWeight.w500,
-                                  ),
-                                ),
-                              ],
-                            ),
-                            Image.asset('assets/stacks.png'),
-                          ],
-                        ),
-                      ),
-                    ],
-                  ),
-                  Padding(
-                    padding: const EdgeInsets.only(
-                      left: 8.0,
-                      right: 8.0,
-                      top: 8.0,
-                    ),
-                    child: SizedBox(
-                      width: MediaQuery.of(context).size.width * 0.8,
-                      child: Column(
-                        children: [
-                          SizedBox(
-                            width: MediaQuery.of(context).size.width * 0.74,
-                            child: Row(
-                              mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                              children: [
-                                Row(
-                                  children: [
-                                    Container(
-                                      width: 30,
-                                      height: 30,
-                                      decoration: BoxDecoration(
-                                        color: thirdColor.withOpacity(0.4),
-                                        shape: BoxShape.circle,
-                                      ),
-                                      child: Icon(
-                                        Ionicons.checkmark,
-                                        color: thirdColor,
-                                      ),
-                                    ),
-                                    const SizedBox(
-                                      width: 4,
-                                    ),
-                                    Column(
-                                      crossAxisAlignment:
-                                          CrossAxisAlignment.start,
-                                      children: [
-                                        Text(
-                                          'Entrada',
-                                          style: TextStyle(
-                                            fontFamily: 'Gotham',
-                                            fontSize: 11,
-                                            color: iconColor,
-                                            fontWeight: FontWeight.w300,
-                                          ),
-                                        ),
-                                        Text(
-                                          'S/ 2.000,50',
-                                          style: TextStyle(
-                                            fontFamily: 'Gotham',
-                                            fontSize: 16,
-                                            color: iconColor,
-                                            fontWeight: FontWeight.w500,
-                                          ),
-                                        ),
-                                      ],
-                                    ),
-                                  ],
-                                ),
-                                Row(
-                                  children: [
-                                    Container(
-                                      width: 30,
-                                      height: 30,
-                                      decoration: BoxDecoration(
-                                        color: mainColor.withOpacity(0.4),
-                                        shape: BoxShape.circle,
-                                      ),
-                                      child: Icon(
-                                        Ionicons.caret_down_outline,
-                                        color: mainColor,
-                                      ),
-                                    ),
-                                    const SizedBox(
-                                      width: 8,
-                                    ),
-                                    Column(
-                                      crossAxisAlignment:
-                                          CrossAxisAlignment.start,
-                                      children: [
-                                        Text(
-                                          'Salida',
-                                          style: TextStyle(
-                                            fontFamily: 'Gotham',
-                                            fontSize: 11,
-                                            color: iconColor,
-                                            fontWeight: FontWeight.w300,
-                                          ),
-                                        ),
-                                        Text(
-                                          'S/ 800,00',
-                                          style: TextStyle(
-                                            fontFamily: 'Gotham',
-                                            fontSize: 16,
-                                            color: iconColor,
-                                            fontWeight: FontWeight.w500,
-                                          ),
-                                        ),
-                                      ],
-                                    ),
-                                  ],
-                                ),
-                              ],
-                            ),
-                          ),
-                          btnNewReport(
-                            context,
-                            goToReport,
-                          ),
-                        ],
-                      ),
-                    ),
-                  ),
-                ],
-              ),
-            )
-          : Container(),
+            : 
+       */
     );
   }
 

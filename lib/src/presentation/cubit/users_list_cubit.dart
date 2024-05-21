@@ -16,7 +16,7 @@ class UsersListCubit extends Cubit<List<CardTemplate>?> {
       state == null
           ? responseState?.map((user) => user.toCardTemplate()).toList()
           : [
-              ...state!,
+              // ...state!,
               ...responseState!.map((user) => user.toCardTemplate()),
             ],
     );
