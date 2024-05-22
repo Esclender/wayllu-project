@@ -23,4 +23,11 @@ class VentasListCubit extends Cubit<List<VentasList>?> {
     return null; // Devuelve null si no hay respuesta válida
   }
   }
+  
+  Future<void> getVentasByYearAndMonth(String year, String mes) async {
+    final responseState = await _apiRepository.getVentasByYearAndMonth(year, mes);
+    if (responseState != null) {
+      emit(responseState);
+    }
+  }
 }

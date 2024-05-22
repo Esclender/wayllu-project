@@ -49,7 +49,7 @@ class LoginExampleScreen extends HookWidget {
 //'46694332'
   @override
   Widget build(BuildContext context) {
-    final controllerEmail = useTextEditingController(text: '46694332');
+    final controllerEmail = useTextEditingController(text: '12345678');
     final controllerClave = useTextEditingController(text: '1234');
 
     return AnnotatedRegion(
