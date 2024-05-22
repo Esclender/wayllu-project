@@ -1,11 +1,12 @@
 // ignore_for_file: use_build_context_synchronously
 
+import 'dart:async';
+
 import 'package:auto_route/auto_route.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_hooks/flutter_hooks.dart';
 import 'package:hexcolor/hexcolor.dart';
-import 'package:logger/logger.dart';
 import 'package:wayllu_project/src/config/router/app_router.dart';
 import 'package:wayllu_project/src/config/theme/app_theme.dart';
 import 'package:wayllu_project/src/domain/dtos/usersCredentialsDto/user_credentials_rep.dart';
@@ -27,6 +28,8 @@ class LoginExampleScreen extends HookWidget {
     String clave,
     BuildContext context,
   ) async {
+    final dialogCompleter = Completer<BuildContext>();
+    showLoadingDialog(context, dialogCompleter);
     final credentialsUser = UserCredentialDto(
       DNI: int.parse(dni),
       CLAVE: clave,
@@ -36,17 +39,19 @@ class LoginExampleScreen extends HookWidget {
         .read<UserLoggedCubit>()
         .getAccessTokenAndSetRol(credentialsUser)
         .catchError((e) {
+      Navigator.pop(context);
       return null;
+    }).then((value) {
+      return value;
     });
 
     if (token != null) {
       initializeEndpoints(token);
-      appRouter.navigate(HomeRoute(viewIndex: 0));
+      appRouter.popAndPush(HomeRoute(viewIndex: 0));
       await context.read<UserLoggedInfoCubit>().setUserInfo();
     }
   }
 
-//'46694332'
   @override
   Widget build(BuildContext context) {
     final controllerEmail = useTextEditingController(text: '12345678');
@@ -151,6 +156,32 @@ class LoginExampleScreen extends HookWidget {
           ),
         ),
       ),
+    );
+  }
+
+  void showLoadingDialog(
+    BuildContext context,
+    Completer<BuildContext> completer,
+  ) {
+    showDialog(
+      context: context,
+      barrierDismissible:
+          false, // Prevents closing the dialog by tapping outside
+      builder: (BuildContext context) {
+        // completer.complete(context);
+        return AlertDialog(
+          content: Column(
+            mainAxisSize: MainAxisSize.min,
+            children: [
+              CircularProgressIndicator(
+                color: HexColor('#B80000'),
+              ),
+              const SizedBox(height: 20),
+              const Text('Cargando...'),
+            ],
+          ),
+        );
+      },
     );
   }
 }
