@@ -8,4 +8,6 @@ abstract class ProductRepository {
   Future<ProductsListHttpResponse> getProducts();
   Future<VentaInfo> newVenta(Map<String, dynamic> ventaData);
   Future<VentasListHttpResponse> getVentas();
+
+  
 }

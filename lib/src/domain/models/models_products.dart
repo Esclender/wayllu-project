@@ -1,7 +1,5 @@
-import 'package:flutter/material.dart';
-import 'package:wayllu_project/src/domain/enums/lists_enums.dart';
+
 import 'package:wayllu_project/src/domain/models/list_items_model.dart';
-import 'package:wayllu_project/src/presentation/widgets/list_products.dart';
 
 class Producto {
   final String imagen;

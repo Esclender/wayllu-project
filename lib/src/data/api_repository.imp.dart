@@ -4,7 +4,6 @@ import 'package:wayllu_project/src/data/remoteRespositories/auth/auth.repo.dart'
 import 'package:wayllu_project/src/data/remoteRespositories/productos/productos.repo.dart';
 import 'package:wayllu_project/src/data/repository_base.dart';
 import 'package:wayllu_project/src/domain/dtos/usersCredentialsDto/user_credentials_rep.dart';
-import 'package:wayllu_project/src/domain/models/registro_ventas/registros_venta_repo.dart';
 import 'package:wayllu_project/src/domain/models/user_info/user_info_model.dart';
 import 'package:wayllu_project/src/domain/models/venta/venta_repo.dart';
 import 'package:wayllu_project/src/domain/repositories/artisans.api_repository.dart';
@@ -97,13 +96,21 @@ class ProductsApiRepositoryImpl extends BaseApiRepository
     return response.data!;
   }
 
-@override
-Future<VentasListHttpResponse> getVentas() async {
-  final responseHttp = await getStateOf<VentasListHttpResponse>(
-    request: () => _apiServices.getVentas(),
-  );
+  @override
+  Future<VentasListHttpResponse> getVentas() async {
+    final responseHttp = await getStateOf<VentasListHttpResponse>(
+      request: () => _apiServices.getVentas(),
+    );
 
-  return responseHttp.data;
-}
+    return responseHttp.data;
+  }
+  Future<VentasListHttpResponse> getVentasByYearAndMonth(String year, String mes) async {
+    final responseHttp = await getStateOf<VentasListHttpResponse>(
+      request: () => _apiServices.getVentasByYearAndMonth(year, mes),
+    );
+
+    return responseHttp.data;
+  }
+
 
 }
