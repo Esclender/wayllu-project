@@ -21,9 +21,13 @@ class _ProductsApiServices implements ProductsApiServices {
   String? baseUrl;
 
   @override
-  Future<HttpResponse<List<ProductInfo>?>> getProducts() async {
+  Future<HttpResponse<List<ProductInfo>?>> getProducts(
+      String? codigoProducto) async {
     const _extra = <String, dynamic>{};
-    final queryParameters = <String, dynamic>{};
+    final queryParameters = <String, dynamic>{
+      r'codigo_producto': codigoProducto
+    };
+    queryParameters.removeWhere((k, v) => v == null);
     final _headers = <String, dynamic>{};
     final Map<String, dynamic>? _data = null;
     final _result = await _dio.fetch<List<dynamic>>(

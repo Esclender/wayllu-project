@@ -13,7 +13,9 @@ abstract class ProductsApiServices {
   factory ProductsApiServices(Dio dio, {String baseUrl}) = _ProductsApiServices;
 
   @GET('/')
-  Future<HttpResponse<ProductsListHttpResponse>> getProducts();
+  Future<HttpResponse<ProductsListHttpResponse>> getProducts(
+    @Query('codigo_producto') String? codigoProducto,
+  );
 
   @POST('/venta')
   Future<HttpResponse<VentaInfo>> newVenta(
@@ -24,6 +26,7 @@ abstract class ProductsApiServices {
 
   @GET('/ventas/{year}/{mes}')
   Future<HttpResponse<VentasListHttpResponse>> getVentasByYearAndMonth(
-    @Path('year') String? year, @Path('mes') String? mes,);
-    
+    @Path('year') String? year,
+    @Path('mes') String? mes,
+  );
 }

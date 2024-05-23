@@ -111,7 +111,7 @@ class UsersListAdminScreen extends HookWidget {
                     height: 8,
                   ),
                   CustomSearchWidget(
-                    width: MediaQuery.of(context).size.width * 0.22,
+                    isHome: false,
                     filterDataFunction: getUsersFiltered,
                   ),
                 ],

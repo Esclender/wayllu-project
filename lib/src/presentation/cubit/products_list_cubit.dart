@@ -10,15 +10,21 @@ class ProductListCubit extends Cubit<List<ProductInfo>?> {
 
   Future<void> getProductsLists() async {
     final ProductsListHttpResponse responseState =
-        await _apiRepository.getProducts();
+        await _apiRepository.getProducts(null);
 
     emit(
       state == null
           ? responseState?.map((producto) => producto).toList()
           : [
-            //  ...state!,
               ...responseState!.map((producto) => producto),
             ],
     );
+  }
+
+  Future<void> getProductsListsByCode(String? productCode) async {
+    final ProductsListHttpResponse responseState =
+        await _apiRepository.getProducts(productCode);
+
+    emit(responseState?.map((producto) => producto).toList());
   }
 }

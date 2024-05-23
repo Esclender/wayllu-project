@@ -79,9 +79,9 @@ class ProductsApiRepositoryImpl extends BaseApiRepository
   //Se define una capara para obtener los datos desde api
   //Con el proposito de validaciones u otro manejo de datos
   @override
-  Future<ProductsListHttpResponse> getProducts() async {
+  Future<ProductsListHttpResponse> getProducts(String? codigoProducto) async {
     final responseHttp = await getStateOf<ProductsListHttpResponse>(
-      request: () => _apiServices.getProducts(),
+      request: () => _apiServices.getProducts(codigoProducto),
     );
 
     return responseHttp.data;
@@ -104,13 +104,13 @@ class ProductsApiRepositoryImpl extends BaseApiRepository
 
     return responseHttp.data;
   }
-  Future<VentasListHttpResponse> getVentasByYearAndMonth(String year, String mes) async {
+
+  Future<VentasListHttpResponse> getVentasByYearAndMonth(
+      String year, String mes) async {
     final responseHttp = await getStateOf<VentasListHttpResponse>(
       request: () => _apiServices.getVentasByYearAndMonth(year, mes),
     );
 
     return responseHttp.data;
   }
-
-
 }

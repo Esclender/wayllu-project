@@ -43,18 +43,14 @@ class HomeScreen extends HookWidget {
     final scrollController = useScrollController();
     final bool isAdmin = loggedUserRol == UserRoles.admin;
 
-    void goToRegisterOfProductOrVentaCondition() {
-      if (loggedUserRol == UserRoles.admin) {
-        appRouter.navigate(const RegisterProductsRoute());
-      } else {
-        appRouter.navigate(const CarritoRoute());
-      }
+    final productsListCubit = context.watch<ProductListCubit>();
+
+    Future<void> searchProductByCode(c, String code) async {
+      Logger().i(code);
+      await productsListCubit.getProductsListsByCode(code);
     }
 
-    final productsListCubit = context.watch<ProductListCubit>();
-    // List<Producto> _data = [];
     final List<ProductInfo> data = [];
-
     useEffect(
       () {
         productsListCubit.getProductsLists();
@@ -63,6 +59,7 @@ class HomeScreen extends HookWidget {
       },
       [],
     );
+
     final categoriaSeleccionada = useState<String?>(null);
     return Scaffold(
       backgroundColor: bgPrimary,
@@ -139,7 +136,7 @@ class HomeScreen extends HookWidget {
                             CustomSearchWidget(
                               hint: 'Buscar por Codigo',
                               width: 0.62,
-                              filterDataFunction: (c, s) async {},
+                              filterDataFunction: searchProductByCode,
                             ),
                           ],
                         )
@@ -280,7 +277,7 @@ class HomeScreen extends HookWidget {
     return Expanded(
       child: BlocBuilder<ProductListCubit, List<ProductInfo>?>(
         builder: (context, state) {
-          Logger().i(state);
+          // Logger().i(state);
           if (state == null) {
             return const Center(
               child: CircularProgressIndicator(),
@@ -427,48 +424,6 @@ class HomeScreen extends HookWidget {
     return Padding(
       padding: const EdgeInsets.symmetric(horizontal: 22.0),
       child: bannerArtesanos(context, true),
-      /**
-       * loggedUserRol
-            ? SizedBox(
-                width: MediaQuery.of(context).size.width,
-                height: 18,
-                child: Row(
-                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                  children: [
-                    const SizedBox(
-                      width: 120,
-                      height: 18,
-                      child: Text(
-                        'Actividad',
-                        style: TextStyle(
-                          color: Color(0xFF241E20),
-                          fontSize: 16,
-                          fontFamily: 'Gotham',
-                          fontWeight: FontWeight.w500,
-                          height: 0,
-                        ),
-                      ),
-                    ),
-                    SizedBox(
-                      width: 145,
-                      child: AutoSizeText(
-                        'Hoy, $dateString',
-                        textAlign: TextAlign.center,
-                        style: const TextStyle(
-                          color: Color(0xFF636369),
-                          fontFamily: 'Gotham',
-                          fontWeight: FontWeight.w300,
-                        ),
-                        maxLines: 1,
-                        minFontSize: 10,
-                        maxFontSize: 12,
-                      ),
-                    ),
-                  ],
-                ),
-              )
-            : 
-       */
     );
   }
 
