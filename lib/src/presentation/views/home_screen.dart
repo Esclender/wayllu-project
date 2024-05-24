@@ -40,16 +40,18 @@ class HomeScreen extends HookWidget {
     final scrollController = useScrollController();
     final bool isAdmin = loggedUserRol == UserRoles.admin;
 
+    final userInfo = context.watch<UserLoggedInfoCubit>().state;
+
     void goToRegisterOfProductOrVentaCondition() {
       if (loggedUserRol == UserRoles.admin) {
         appRouter.navigate(const RegisterProductsRoute());
       } else {
         appRouter.navigate(const CarritoRoute());
       }
+      
     }
 
     final productsListCubit = context.watch<ProductListCubit>();
-    // List<Producto> _data = [];
     final List<ProductInfo> data = [];
 
     useEffect(
@@ -76,41 +78,48 @@ class HomeScreen extends HookWidget {
               preferredSize: const Size.fromHeight(20),
               child: Container(
                 margin: const EdgeInsets.symmetric(horizontal: 22),
-                child: Row(
-                  children: [
-                    Container(
-                      alignment: Alignment.centerLeft,
-                      child: const SizedBox(
-                        width: 45,
-                        height: 45,
-                        child: CircleAvatar(
-                          backgroundImage:
-                              AssetImage('assets/images/admin2.jpg'),
-                        ),
-                      ),
-                    ),
-                    Container(
-                      margin: const EdgeInsets.symmetric(horizontal: 10),
-                      child: Column(
-                        crossAxisAlignment: CrossAxisAlignment.start,
+                child: userInfo != null
+                    ? Row(
                         children: [
-                          AutoSizeText(
-                            '${greeting}Mariano',
-                            style: const TextStyle(
-                              fontFamily: 'Gotham',
-                              fontSize: 16,
-                              fontWeight: FontWeight.w500,
-                              height: 1,
-                              color: Color(0xff313131),
+                          Container(
+                            alignment: Alignment.centerLeft,
+                            child: SizedBox(
+                              width: 45,
+                              height: 45,
+                              child: CircleAvatar(
+                                backgroundImage: NetworkImage(
+                                  userInfo.URL_IMAGE ??'https://via.placeholder.com/150',
+                              
+                               ),
+                              ),
+                              
                             ),
-                            maxLines: 1,
-                            overflow: TextOverflow.ellipsis,
+                          ),
+                          Container(
+                            margin: const EdgeInsets.symmetric(horizontal: 10),
+                            child: Column(
+                              crossAxisAlignment: CrossAxisAlignment.start,
+                              children: [
+                                AutoSizeText(
+                                  '$greeting ${userInfo.NOMBRE_COMPLETO}',
+                                  style: const TextStyle(
+                                    fontFamily: 'Gotham',
+                                    fontSize: 16,
+                                    fontWeight: FontWeight.w500,
+                                    height: 1,
+                                    color: Color(0xff313131),
+                                  ),
+                                  maxLines: 1,
+                                  overflow: TextOverflow.ellipsis,
+                                ),
+                              ],
+                            ),
                           ),
                         ],
+                      )
+                    : const Center(
+                        child: CircularProgressIndicator(),
                       ),
-                    ),
-                  ],
-                ),
               ),
             ),
           ),
@@ -241,8 +250,12 @@ class HomeScreen extends HookWidget {
     );
   }
 
-  Widget _productsHome(BuildContext contextF, List<ProductInfo> data,
-      String? categorySeleccionada, ScrollController scrollController,) {
+  Widget _productsHome(
+    BuildContext contextF,
+    List<ProductInfo> data,
+    String? categorySeleccionada,
+    ScrollController scrollController,
+  ) {
     return Container(
       width: MediaQuery.of(contextF).size.width,
       height: MediaQuery.of(contextF).size.height,
@@ -255,47 +268,50 @@ class HomeScreen extends HookWidget {
     );
   }
 
-  Widget dataProducts(String? categorySeleccionada, List<ProductInfo> data, BuildContext contextF, ScrollController scrollController) {
+  Widget dataProducts(String? categorySeleccionada, List<ProductInfo> data,
+      BuildContext contextF, ScrollController scrollController) {
     return Expanded(
-          child: BlocBuilder<ProductListCubit, List<ProductInfo>?>(
-            builder: (context, state) {
-              if (state == null) {
-                return const Center(
-                  child: CircularProgressIndicator(),
+      child: BlocBuilder<ProductListCubit, List<ProductInfo>?>(
+        builder: (context, state) {
+          if (state == null) {
+            return const Center(
+              child: CircularProgressIndicator(),
+            );
+          } else if (categorySeleccionada != null) {
+            data = state;
+            return ListView.builder(
+              padding: EdgeInsets.zero,
+              physics: const NeverScrollableScrollPhysics(),
+              itemCount: data.length,
+              itemBuilder: (context, index) {
+                return ProductsCardsItemsList(
+                  contextF: contextF,
+                  listType: ListEnums.products,
+                  dataToRender: data,
+                  categoriaSeleccionada: categorySeleccionada,
+                  scrollController: scrollController,
                 );
-              } else if (categorySeleccionada != null) {
-                data = state;
-                return ListView.builder(
-                  physics: const NeverScrollableScrollPhysics(),
-                  itemCount: data.length,
-                  itemBuilder: (context, index) {
-                    return ProductsCardsItemsList(
-                      contextF: contextF,
-                      listType: ListEnums.products,
-                      dataToRender: data,
-                      categoriaSeleccionada: categorySeleccionada,
-                      scrollController: scrollController,
-                    );
-                  },
+              },
+            );
+          } else {
+            data = state;
+            return ListView.builder(
+              padding: EdgeInsets.zero,
+              physics: const NeverScrollableScrollPhysics(),
+              itemCount: data.length,
+              itemBuilder: (context, index) {
+                return ProductsCardsItemsList(
+                  contextF: contextF,
+                  listType: ListEnums.products,
+                  dataToRender: data,
+                  categoriaSeleccionada: categorySeleccionada,
                 );
-              } else {
-                data = state;
-                return ListView.builder(
-                  physics: const NeverScrollableScrollPhysics(),
-                  itemCount: data.length,
-                  itemBuilder: (context, index) {
-                    return ProductsCardsItemsList(
-                      contextF: contextF,
-                      listType: ListEnums.products,
-                      dataToRender: data,
-                      categoriaSeleccionada: categorySeleccionada,
-                    );
-                  },
-                );
-              }
-            },
-          ),
-        );
+              },
+            );
+          }
+        },
+      ),
+    );
   }
 
   Widget optionsAndLogout(BuildContext context) {

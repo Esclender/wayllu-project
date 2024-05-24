@@ -54,6 +54,7 @@ class UserInfo {
         NOMBRE_COMPLETO: NOMBRE_COMPLETO,
         COMUNIDAD: COMUNIDAD ?? '',
         CLAVE: CLAVE,
+        URL_IMAGE: URL_IMAGE?? '',
       );
 
   ContactInfo get userContactInfo => ContactInfo(

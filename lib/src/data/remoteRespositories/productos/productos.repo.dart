@@ -24,6 +24,7 @@ abstract class ProductsApiServices {
 
   @GET('/ventas/{year}/{mes}')
   Future<HttpResponse<VentasListHttpResponse>> getVentasByYearAndMonth(
-    @Path('year') String? year, @Path('mes') String? mes,);
-    
+    @Path('year') String? year,
+    @Path('mes') String? mes,
+  );
 }
