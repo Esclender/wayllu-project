@@ -3,6 +3,7 @@ import 'dart:ui';
 import 'package:auto_route/auto_route.dart';
 import 'package:auto_size_text/auto_size_text.dart';
 import 'package:badges/badges.dart' as badge;
+import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/widgets.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
@@ -21,6 +22,7 @@ import 'package:wayllu_project/src/presentation/cubit/user_logged_cubit.dart';
 import 'package:wayllu_project/src/presentation/widgets/bottom_navbar.dart';
 import 'package:wayllu_project/src/presentation/widgets/list_products.dart';
 import 'package:wayllu_project/src/utils/constants/colors.dart';
+import 'package:wayllu_project/src/utils/extensions/scroll_controller_extension.dart';
 
 @RoutePage()
 class HomeScreen extends HookWidget {
@@ -48,7 +50,6 @@ class HomeScreen extends HookWidget {
       } else {
         appRouter.navigate(const CarritoRoute());
       }
-      
     }
 
     final productsListCubit = context.watch<ProductListCubit>();
@@ -57,8 +58,11 @@ class HomeScreen extends HookWidget {
     useEffect(
       () {
         productsListCubit.getProductsLists();
-
-        return () {};
+        scrollController.onScrollEndsListener(
+          () {productsListCubit.getProductsLists();
+          },
+        );
+        return scrollController.dispose;
       },
       [],
     );
@@ -88,11 +92,9 @@ class HomeScreen extends HookWidget {
                               height: 45,
                               child: CircleAvatar(
                                 backgroundImage: NetworkImage(
-                                  userInfo.URL_IMAGE ??'https://via.placeholder.com/150',
-                              
-                               ),
+                                  userInfo.URL_IMAGE ?? 'https://via.placeholder.com/150',
+                                ),
                               ),
-                              
                             ),
                           ),
                           Container(
@@ -101,7 +103,7 @@ class HomeScreen extends HookWidget {
                               crossAxisAlignment: CrossAxisAlignment.start,
                               children: [
                                 AutoSizeText(
-                                  '$greeting ${userInfo.NOMBRE_COMPLETO}',
+                                  '$greeting${userInfo.NOMBRE_COMPLETO}',
                                   style: const TextStyle(
                                     fontFamily: 'Gotham',
                                     fontSize: 16,
@@ -146,7 +148,6 @@ class HomeScreen extends HookWidget {
                   ),
                 ),
                 SingleChildScrollView(
-                  // scrollDirection: Axis.horizontal,
                   child: loggedUserRol == UserRoles.admin
                       ? Row(
                           mainAxisAlignment: MainAxisAlignment.center,
@@ -194,13 +195,15 @@ class HomeScreen extends HookWidget {
                               borderRadius: BorderRadius.circular(5),
                               color: iconColor.withOpacity(0.5),
                               border: Border.all(
-                                  color: bottomNavBarStroke, width: 0.5)),
+                                color: bottomNavBarStroke,
+                                width: 0.5,
+                              )),
                           child: GestureDetector(
                             onTap: () {
                               categoriaSeleccionada.value = null;
                             },
                             child: Padding(
-                              padding: EdgeInsets.all(4.0),
+                              padding: const EdgeInsets.all(4.0),
                               child: Row(
                                 mainAxisAlignment: MainAxisAlignment.center,
                                 children: [
@@ -210,22 +213,19 @@ class HomeScreen extends HookWidget {
                                     size: 16,
                                   ),
                                   const SizedBox(width: 8),
-                                  Text(
-                                    'Quitar filtro',
-                                    style: TextStyle(
-                                        color: bottomNavBar,
-                                        fontFamily: 'Gotham',
-                                        fontWeight: FontWeight.w300,
-                                        fontSize: 14),
-                                  ),
+                                  buttonClearFilter(),
                                 ],
                               ),
                             ),
                           ),
                         ),
                 ),
-                _productsHome(context, data, categoriaSeleccionada.value,
-                    scrollController),
+                _productsHome(
+                  context,
+                  data,
+                  categoriaSeleccionada.value,
+                  scrollController,
+                ),
               ],
             ),
           ),
@@ -250,67 +250,79 @@ class HomeScreen extends HookWidget {
     );
   }
 
+  Text buttonClearFilter() {
+    return Text(
+      'Quitar filtro',
+      style: TextStyle(
+        color: bottomNavBar,
+        fontFamily: 'Gotham',
+        fontWeight: FontWeight.w300,
+        fontSize: 14,
+      ),
+    );
+  }
+
   Widget _productsHome(
-    BuildContext contextF,
+    BuildContext context,
     List<ProductInfo> data,
     String? categorySeleccionada,
     ScrollController scrollController,
   ) {
     return Container(
-      width: MediaQuery.of(contextF).size.width,
-      height: MediaQuery.of(contextF).size.height,
+      width: MediaQuery.of(context).size.width,
+      height: MediaQuery.of(context).size.height,
       margin: const EdgeInsets.symmetric(vertical: 4, horizontal: 20),
-      child: Column(
-        children: [
-          dataProducts(categorySeleccionada, data, contextF, scrollController),
-        ],
-      ),
+      child:
+          dataProducts(categorySeleccionada, data, context, scrollController),
     );
   }
 
   Widget dataProducts(String? categorySeleccionada, List<ProductInfo> data,
-      BuildContext contextF, ScrollController scrollController) {
-    return Expanded(
-      child: BlocBuilder<ProductListCubit, List<ProductInfo>?>(
-        builder: (context, state) {
-          if (state == null) {
-            return const Center(
-              child: CircularProgressIndicator(),
-            );
-          } else if (categorySeleccionada != null) {
-            data = state;
-            return ListView.builder(
-              padding: EdgeInsets.zero,
-              physics: const NeverScrollableScrollPhysics(),
-              itemCount: data.length,
-              itemBuilder: (context, index) {
-                return ProductsCardsItemsList(
-                  contextF: contextF,
-                  listType: ListEnums.products,
-                  dataToRender: data,
-                  categoriaSeleccionada: categorySeleccionada,
-                  scrollController: scrollController,
-                );
-              },
-            );
-          } else {
-            data = state;
-            return ListView.builder(
-              padding: EdgeInsets.zero,
-              physics: const NeverScrollableScrollPhysics(),
-              itemCount: data.length,
-              itemBuilder: (context, index) {
-                return ProductsCardsItemsList(
-                  contextF: contextF,
-                  listType: ListEnums.products,
-                  dataToRender: data,
-                  categoriaSeleccionada: categorySeleccionada,
-                );
-              },
-            );
-          }
-        },
-      ),
+      BuildContext context, ScrollController scrollController) {
+    return BlocBuilder<ProductListCubit, List<ProductInfo>?>(
+      builder: (context, state) {
+        if (state == null) {
+          return const Center(
+            child: CircularProgressIndicator(),
+          );
+        } else if (categorySeleccionada != null) {
+          data = state;
+          return ListView.builder(
+            controller: scrollController,
+            padding: EdgeInsets.zero,
+            shrinkWrap: true,
+            physics: const NeverScrollableScrollPhysics(),
+            itemCount: data.length,
+            itemBuilder: (context, index) {
+              return ProductsCardsItemsList(
+                context: context,
+                listType: ListEnums.products,
+                dataToRender: data,
+                categoriaSeleccionada: categorySeleccionada,
+                scrollController: scrollController,
+              );
+            },
+          );
+        } else {
+          data = state;
+          return ListView.builder(
+            controller: scrollController,
+            padding: EdgeInsets.zero,
+            physics: const NeverScrollableScrollPhysics(),
+            shrinkWrap: true,
+            itemCount: data.length,
+            itemBuilder: (context, index) {
+              return ProductsCardsItemsList(
+                context: context,
+                listType: ListEnums.products,
+                dataToRender: data,
+                categoriaSeleccionada: categorySeleccionada,
+                scrollController: scrollController,
+              );
+            },
+          );
+        }
+      },
     );
   }
 
@@ -366,8 +378,8 @@ class HomeScreen extends HookWidget {
     );
   }
 
-  Widget shoppingCart(BuildContext contextF) {
-    final productsCubit = contextF.watch<ProductsCarrito>();
+  Widget shoppingCart(BuildContext context) {
+    final productsCubit = context.watch<ProductsCarrito>();
 
     if (productsCubit.itemsInCartInt == 0) {
       return InkWell(
@@ -375,7 +387,7 @@ class HomeScreen extends HookWidget {
           appRouter.pushNamed('/user/carrito');
         },
         child: Container(
-          width: MediaQuery.of(contextF).size.width,
+          width: MediaQuery.of(context).size.width,
           alignment: Alignment.bottomRight,
           margin: const EdgeInsets.symmetric(horizontal: 10),
           child: FloatingActionButton(
