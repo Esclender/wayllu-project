@@ -29,6 +29,7 @@ class UserInfo {
   String CLAVE;
   String? FECHA_REGISTRO;
   String? COMUNIDAD;
+  int? CODIGO;
   String? URL_IMAGE;
   String? TELEFONO;
   String? EMAIL;
@@ -40,6 +41,7 @@ class UserInfo {
     return CardTemplate(
       url: URL_IMAGE ?? '',
       nombre: NOMBRE_COMPLETO,
+      codigoArtesano: CODIGO,
       descriptions: [
         DescriptionItem(field: 'DNI', value: DNI.toString()),
         DescriptionItem(field: 'Comunidad', value: COMUNIDAD ?? ''),

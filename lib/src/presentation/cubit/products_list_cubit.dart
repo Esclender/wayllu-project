@@ -21,6 +21,10 @@ class ProductListCubit extends Cubit<List<ProductInfo>?> {
     );
   }
 
+  Future<void> registerNewProduct(Map<String, dynamic> productInfo) async {
+    await _apiRepository.newProduct(productInfo);
+  }
+
   Future<void> getProductsListsByCode(String? productCode) async {
     final ProductsListHttpResponse responseState =
         await _apiRepository.getProducts(productCode);

@@ -113,4 +113,11 @@ class ProductsApiRepositoryImpl extends BaseApiRepository
 
     return responseHttp.data;
   }
+
+  @override
+  Future<void> newProduct(Map<String, dynamic> productInfo) async {
+    await getStateOf<void>(
+      request: () => _apiServices.newProducto(productInfo),
+    );
+  }
 }

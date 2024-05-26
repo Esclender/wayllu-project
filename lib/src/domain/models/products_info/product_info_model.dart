@@ -40,7 +40,7 @@ class ProductInfo {
   int COD_FAMILIA;
   int COD_ARTESANA;
   int COD_ORDEN_PRO;
-  int CANTIDAD;
+  int? CANTIDAD;
   String CATEGORIA;
   String TIPO_PESO;
   String FECHA_INGRESO;

@@ -35,23 +35,24 @@ class GraphicProductsScreen extends HookWidget {
   ];
 
   final List<String> filters = [
-    
     'Año',
     'Mes',
   ];
 
-    void _onDropMenuChanged(String? selectedValue, BuildContext context, String filterType) {
-  final ventasListCubit = context.read<VentasListCubit>();
+  void _onDropMenuChanged(
+      String? selectedValue, BuildContext context, String filterType) {
+    final ventasListCubit = context.read<VentasListCubit>();
 
-  if (filterType == 'Año') {
-    // Si se seleccionó el filtro de año, llama a la función para filtrar por año
-    ventasListCubit.getVentasByYearAndMonth(selectedValue ?? '', '');
-  } else if (filterType == 'Mes') {
-    // Si se seleccionó el filtro de mes, también necesitas el año actual para la llamada
-    final currentYear = DateTime.now().year;
-    ventasListCubit.getVentasByYearAndMonth('$currentYear/$selectedValue', '');
+    if (filterType == 'Año') {
+      // Si se seleccionó el filtro de año, llama a la función para filtrar por año
+      ventasListCubit.getVentasByYearAndMonth(selectedValue ?? '', '');
+    } else if (filterType == 'Mes') {
+      // Si se seleccionó el filtro de mes, también necesitas el año actual para la llamada
+      final currentYear = DateTime.now().year;
+      ventasListCubit.getVentasByYearAndMonth(
+          '$currentYear/$selectedValue', '');
+    }
   }
-}
 
   @override
   Widget build(BuildContext context) {
@@ -74,6 +75,7 @@ class GraphicProductsScreen extends HookWidget {
 
     final List<CardTemplate> cardData = dataVentas.value.map((venta) {
       return CardTemplate(
+        codigoArtesano: 0001,
         nombre: '${venta.COD_PRODUCTO}' ?? '',
         url: venta.IMAGEN ?? 'https://via.placeholder.com/150',
         descriptions: [
@@ -82,7 +84,6 @@ class GraphicProductsScreen extends HookWidget {
           DescriptionItem(field: 'Cantidad', value: '${venta.CANTIDAD}' ?? ''),
           DescriptionItem(
               field: 'Descripción', value: '${venta.DESCRIPCION}' ?? ''),
-  
         ],
       );
     }).toList();
@@ -104,12 +105,12 @@ class GraphicProductsScreen extends HookWidget {
                   alignment: Alignment.centerLeft,
                   margin: const EdgeInsets.symmetric(horizontal: 16),
                   child: GradientText(
-                              text: 'Todas las ventas',
-                              fontSize: 18.0,
-                            ),
+                    text: 'Todas las ventas',
+                    fontSize: 18.0,
+                  ),
                 ),
                 Container(
-                   alignment: Alignment.topCenter,
+                  alignment: Alignment.topCenter,
                   height: MediaQuery.of(context).size.height * 1.4,
                   width: MediaQuery.of(context).size.width,
                   child: ListView.builder(
@@ -165,14 +166,15 @@ class GraphicProductsScreen extends HookWidget {
     );
   }
 
- Widget _buildFilter(BuildContext context, {required String hint}) {
-   final currentYear = DateTime.now().year;
+  Widget _buildFilter(BuildContext context, {required String hint}) {
+    final currentYear = DateTime.now().year;
 
-  // Crear una lista de DropdownMenuItem para los años desde 2023 hasta el año actual
-  final List<DropdownMenuItem<String>> yearItems = [];
-  for (int year = 2023; year <= currentYear; year++) {
-    yearItems.add(DropdownMenuItem(value: year.toString(), child: Text(year.toString())));
-  }
+    // Crear una lista de DropdownMenuItem para los años desde 2023 hasta el año actual
+    final List<DropdownMenuItem<String>> yearItems = [];
+    for (int year = 2023; year <= currentYear; year++) {
+      yearItems.add(DropdownMenuItem(
+          value: year.toString(), child: Text(year.toString())));
+    }
     final List<DropdownMenuItem<String>> monthItems = [
       const DropdownMenuItem(value: '1', child: Text('Enero')),
       const DropdownMenuItem(value: '2', child: Text('Febrero')),
@@ -187,12 +189,12 @@ class GraphicProductsScreen extends HookWidget {
       const DropdownMenuItem(value: '11', child: Text('Noviembre')),
       const DropdownMenuItem(value: '12', child: Text('Diciembre')),
     ];
- List<DropdownMenuItem<String>> items = [];
-  if (hint == 'Año') {
-    items = yearItems;
-  } else {
-    items = monthItems;
-  }
+    List<DropdownMenuItem<String>> items = [];
+    if (hint == 'Año') {
+      items = yearItems;
+    } else {
+      items = monthItems;
+    }
 
     return SizedBox(
       width: MediaQuery.of(context).size.width * 0.43,

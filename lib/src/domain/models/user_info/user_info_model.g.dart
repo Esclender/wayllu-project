@@ -16,7 +16,7 @@ UserInfo _$UserInfoFromJson(Map<String, dynamic> json) => UserInfo(
       TELEFONO: json['TELEFONO'] as String?,
       EMAIL: json['EMAIL'] as String?,
       isAdmin: json['isAdmin'] as bool? ?? false,
-    );
+    )..CODIGO = json['CODIGO'] as int?;
 
 Map<String, dynamic> _$UserInfoToJson(UserInfo instance) => <String, dynamic>{
       'DNI': instance.DNI,
@@ -24,6 +24,7 @@ Map<String, dynamic> _$UserInfoToJson(UserInfo instance) => <String, dynamic>{
       'CLAVE': instance.CLAVE,
       'FECHA_REGISTRO': instance.FECHA_REGISTRO,
       'COMUNIDAD': instance.COMUNIDAD,
+      'CODIGO': instance.CODIGO,
       'URL_IMAGE': instance.URL_IMAGE,
       'TELEFONO': instance.TELEFONO,
       'EMAIL': instance.EMAIL,

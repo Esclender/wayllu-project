@@ -1,13 +1,14 @@
-
 class CardTemplate {
   String nombre;
   String url;
+  int? codigoArtesano;
   List<DescriptionItem> descriptions;
 
   CardTemplate({
     required this.nombre,
     required this.url,
     required this.descriptions,
+    required this.codigoArtesano,
   });
 }
 

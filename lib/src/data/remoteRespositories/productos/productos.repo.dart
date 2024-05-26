@@ -17,6 +17,11 @@ abstract class ProductsApiServices {
     @Query('codigo_producto') String? codigoProducto,
   );
 
+  @POST('/registro')
+  Future<HttpResponse<void>> newProducto(
+    @Body() Map<String, dynamic> productInfo,
+  );
+
   @POST('/venta')
   Future<HttpResponse<VentaInfo>> newVenta(
     @Body() Map<String, dynamic> ventaData,

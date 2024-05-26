@@ -332,12 +332,25 @@ class HomeScreen extends HookWidget {
           Ionicons.menu_outline,
           size: 24,
         ),
-        itemBuilder: (context) => [
-          const PopupMenuItem(
-            value: 'Ver carrito',
-            child: ListTile(
-              leading: Icon(Ionicons.bag_handle_outline),
-              title: Text('Ver carrito'),
+        itemBuilder: _buildPopupMenuButtonOptions(),
+        onSelected: (value) {},
+      ),
+    );
+  }
+
+  List<PopupMenuEntry<String>> Function(BuildContext)
+      _buildPopupMenuButtonOptions() {
+    return (context) => [
+          PopupMenuItem(
+            value: 'Agregar Producto',
+            child: InkWell(
+              onTap: () {
+                appRouter.navigateNamed('admin/registroProducto');
+              },
+              child: const ListTile(
+                leading: Icon(Ionicons.bag_handle_outline),
+                title: Text('Agregar Producto'),
+              ),
             ),
           ),
           const PopupMenuDivider(),
@@ -351,10 +364,7 @@ class HomeScreen extends HookWidget {
               title: const Text('Cerrar sesión'),
             ),
           ),
-        ],
-        onSelected: (value) {},
-      ),
-    );
+        ];
   }
 
   Widget shoppingCart(BuildContext contextF) {
