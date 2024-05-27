@@ -108,18 +108,12 @@ class HomeScreen extends HookWidget {
                   height: 6,
                 ),
                 titleSection(categoriaSeleccionada, context),
-            /* SizedBox(
-                  height: loggedUserRol == UserRoles.admin
-        ? MediaQuery.of(context).size.height * 25.5 // Altura inicial si no hay productos
-        : MediaQuery.of(context).size.height, 
-                  child:  _productsHome(
-                        context,
-                        data,
-                        categoriaSeleccionada.value,
-                        scrollController,
-                      )
-                   
-                )*/
+                _productsHome(
+                  context,
+                  data,
+                  categoriaSeleccionada.value,
+                  scrollController,
+                )
               ],
             ),
           ),
@@ -296,65 +290,46 @@ class HomeScreen extends HookWidget {
     );
   }
 
-  Widget dataProducts(
-    String? categorySeleccionada,
-    List<ProductInfo> data,
-    BuildContext context,
-    ScrollController scrollController,
-  ) {
-    return Column(
-      children: [
-        Expanded(
-          child: BlocBuilder<ProductListCubit, List<ProductInfo>?>(
-            builder: (_, state) {
-              if (state == null) {
-                return const Center(
-                  child: CircularProgressIndicator(),
-                );
-              } else if (categorySeleccionada != null) {
-                data = state;
-                return ListView.builder(
-                  shrinkWrap: true,
-                  controller: scrollController,
-                  padding: EdgeInsets.zero,
-                  physics: const NeverScrollableScrollPhysics(),
-                  itemCount: data.length,
-                  itemBuilder: (context, index) {
-                    return ProductsCardsItemsList(
-                      context: context,
-                      listType: ListEnums.products,
-                      dataToRender: data,
-                      categoriaSeleccionada: categorySeleccionada,
-                      scrollController: scrollController,
-                    );
-                  },
-                );
-              } else {
-                data.addAll(state);
-                //data = state;
-                return ListView.builder(
-                  controller: scrollController,
-                  shrinkWrap: true,
-                  padding: EdgeInsets.zero,
-                  physics: const NeverScrollableScrollPhysics(),
-                  itemCount: data.length,
-                  itemBuilder: (context, index) {
-                    return ProductsCardsItemsList(
-                      context: context,
-                      listType: ListEnums.products,
-                      dataToRender: data,
-                      categoriaSeleccionada: categorySeleccionada,
-                      scrollController: scrollController,
-                    );
-                  },
-                );
-              }
+Widget dataProducts(
+  String? categorySeleccionada,
+  List<ProductInfo> data,
+  BuildContext context,
+  ScrollController scrollController,
+) {
+  return BlocBuilder<ProductListCubit, List<ProductInfo>?>(
+    builder: (_, state) {
+      if (state == null) {
+        return Container(
+          height: MediaQuery.of(context).size.height * 0.2,
+          child: Center(child: CircularProgressIndicator()),
+        );
+      } else {
+        data = state;
+        return ConstrainedBox(
+          constraints: BoxConstraints(
+            maxHeight: MediaQuery.of(context).size.height * 25.5,
+          ),
+          child: ListView.builder(
+            shrinkWrap: true,
+            controller: scrollController,
+            padding: EdgeInsets.zero,
+            physics: const NeverScrollableScrollPhysics(),
+            itemCount: data.length,
+            itemBuilder: (context, index) {
+              return ProductsCardsItemsList(
+                context: context,
+                listType: ListEnums.products,
+                dataToRender: data,
+                categoriaSeleccionada: categorySeleccionada,
+                scrollController: scrollController,
+              );
             },
           ),
-        ),
-      ],
-    );
-  }
+        );
+      }
+    },
+  );
+}
 
   Widget optionsAndLogout(BuildContext context) {
     return Container(

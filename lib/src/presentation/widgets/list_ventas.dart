@@ -40,14 +40,13 @@ class VentasCardsItemsList extends HookWidget {
   Widget _buildScrollableList(
     List<VentasList> ventasFiltrados,
   ) {
-    return ListView.separated(
-      separatorBuilder: (context, index) => const SizedBox(height: 8),
+    return ListView.builder(
+      //separatorBuilder: (context, index) => const SizedBox(height: 8),
       shrinkWrap: true,
       physics: const NeverScrollableScrollPhysics(),
       itemCount: ventasFiltrados.length,
       itemBuilder: (BuildContext c, int ind) {
         return Row(
-          mainAxisAlignment: MainAxisAlignment.start,
           children: [
             Expanded(
               child: GridView.builder(
@@ -57,7 +56,7 @@ class VentasCardsItemsList extends HookWidget {
                   crossAxisSpacing: 8,
                   mainAxisSpacing: 8,
                 ),
-                physics: const NeverScrollableScrollPhysics(),
+               // physics: const NeverScrollableScrollPhysics(),
                 itemCount: ind == (ventasFiltrados.length / 2).ceil() - 1
                     ? ventasFiltrados.length % 2
                     : 2,
@@ -123,7 +122,7 @@ class VentasCardsItemsList extends HookWidget {
                     backgroundColor: MaterialStatePropertyAll(
                       bottomNavBar.withOpacity(0.4),
                     ),
-                  ), onPressed: () {  }, icon: Icon(Icons.abc),
+                  ), onPressed: () {  }, icon: const Icon(Icons.abc),
                  
                 ),
               ),
@@ -190,11 +189,9 @@ class VentasCardsItemsList extends HookWidget {
         Padding(
           padding: const EdgeInsets.symmetric(horizontal: 6),
           child: Row(
-            mainAxisAlignment: MainAxisAlignment.start,
             children: [
               Column(
                 crossAxisAlignment: CrossAxisAlignment.start,
-                mainAxisAlignment: MainAxisAlignment.start,
                 children: [
                   const Gap(5),
                   title,
