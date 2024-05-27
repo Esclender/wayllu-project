@@ -1,10 +1,11 @@
 import 'package:auto_route/auto_route.dart';
 import 'package:flutter/material.dart';
-import 'package:flutter/widgets.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_hooks/flutter_hooks.dart';
 import 'package:gap/gap.dart';
 import 'package:glassmorphism_ui/glassmorphism_ui.dart';
+import 'package:intl/date_symbol_data_local.dart';
+import 'package:intl/intl.dart';
 import 'package:wayllu_project/src/domain/models/graphs/chart_column_bar.dart';
 import 'package:wayllu_project/src/domain/models/list_items_model.dart';
 import 'package:wayllu_project/src/domain/models/registro_ventas/registros_venta_repo.dart';
@@ -14,6 +15,8 @@ import 'package:wayllu_project/src/presentation/widgets/gradient_widgets.dart';
 import 'package:wayllu_project/src/presentation/widgets/graphs_components/column_bar_chart.dart';
 import 'package:wayllu_project/src/presentation/widgets/top_vector.dart';
 import 'package:wayllu_project/src/utils/constants/colors.dart';
+import 'package:collection/collection.dart';
+import 'package:wayllu_project/src/utils/extensions/scroll_controller_extension.dart';
 
 @RoutePage()
 class GraphicProductsScreen extends HookWidget {
@@ -24,69 +27,165 @@ class GraphicProductsScreen extends HookWidget {
     required this.viewIndex,
   });
 
-  final List<ChartBarData> data = [
-    ChartBarData('Ene', 120.00),
-    ChartBarData('Feb', 150.00),
-    ChartBarData('Mar', 300.00),
-    ChartBarData('Abr', 60.40),
-    ChartBarData('May', 140.00),
-    ChartBarData('Jun', 140.00),
-    ChartBarData('Jul', 140.00),
-  ];
-
   final List<String> filters = [
     'Año',
     'Mes',
   ];
 
   void _onDropMenuChanged(
-      String? selectedValue, BuildContext context, String filterType) {
+    String? selectedValue,
+    BuildContext context,
+    String filterType,
+    ValueNotifier<String> selectedFilter,
+    Map<String, String> selectedValues,
+  ) {
     final ventasListCubit = context.read<VentasListCubit>();
 
     if (filterType == 'Año') {
-      // Si se seleccionó el filtro de año, llama a la función para filtrar por año
       ventasListCubit.getVentasByYearAndMonth(selectedValue ?? '', '');
+      selectedFilter.value = 'Año/$selectedValue';
+      selectedValues['Año'] = selectedValue ?? '';
     } else if (filterType == 'Mes') {
-      // Si se seleccionó el filtro de mes, también necesitas el año actual para la llamada
       final currentYear = DateTime.now().year;
       ventasListCubit.getVentasByYearAndMonth(
-          '$currentYear/$selectedValue', '');
+        '$currentYear/$selectedValue',
+        '',
+      );
+      selectedFilter.value = 'Mes/$selectedValue';
+      selectedValues['Mes'] = selectedValue ?? '';
     }
+  }
+
+  void _clearFilters(
+    BuildContext context,
+    ValueNotifier<String> selectedFilter,
+    Map<String, String> selectedValues,
+  ) {
+    final ventasListCubit = context.read<VentasListCubit>();
+    ventasListCubit.getVentas();
+    selectedFilter.value = '';
+    selectedValues.clear();
   }
 
   @override
   Widget build(BuildContext context) {
     final ventasListCubit = context.watch<VentasListCubit>();
     final dataVentas = useState<List<VentasList>>([]);
+    final selectedFilter = useState<String>('');
+    final selectedValues = useState<Map<String, String>>({});
+    final scrollController = useScrollController();
 
     useEffect(
       () {
-        ventasListCubit.getVentas();
+        final currentYear = DateTime.now().year;
+
+        ventasListCubit.getVentasByYearAndMonth('$currentYear', '');
+
         final subscription = ventasListCubit.stream.listen((ventas) {
           if (ventas != null) {
             dataVentas.value = ventas;
           }
         });
 
+        initializeDateFormatting('es_ES');
         return subscription.cancel;
       },
       [ventasListCubit],
     );
 
-    final List<CardTemplate> cardData = dataVentas.value.map((venta) {
+    List<ChartBarData> chartData;
+
+    if (selectedFilter.value.startsWith('Mes')) {
+      // Crear datos agrupados por día
+
+      final Map<int, double> dailySums = {};
+      for (final venta in dataVentas.value) {
+        final date = DateTime.parse(venta.FECHA_REGISTRO);
+
+        if (date.month.toString() == selectedValues.value['Mes']) {
+          final dayOfWeek = date.weekday;
+          dailySums[dayOfWeek] =
+              (dailySums[dayOfWeek] ?? 0) + (venta.CANTIDAD ?? 0);
+        }
+      }
+
+      chartData = dailySums.entries
+          .map((entry) => ChartBarData(
+                DateFormat.EEEE('es_ES').format(DateTime(1, entry.key)),
+                entry.value,
+                entry.key,
+              ))
+          .toList();
+    } else {
+      // Crear datos agrupados por mes
+      final Map<int, double> monthlySums = {};
+      for (final venta in dataVentas.value) {
+        final month = DateTime.parse(venta.FECHA_REGISTRO).month;
+        monthlySums[month] = (monthlySums[month] ?? 0) + (venta.CANTIDAD ?? 0);
+      }
+
+      chartData = monthlySums.entries
+          .map((entry) => ChartBarData(
+                DateFormat.MMMM('es_ES').format(DateTime(0, entry.key)),
+                entry.value,
+                entry.key,
+              ))
+          .toList();
+    }
+
+    chartData.sort((a, b) => a.monthNumber.compareTo(b.monthNumber));
+
+    final groupedVentas = groupBy<VentasList, String>(
+      dataVentas.value,
+      (venta) => '${venta.COD_PRODUCTO}' ?? '',
+    );
+
+    final List<CardTemplate> cardData = groupedVentas.entries.map((entry) {
+      final codigoProducto = entry.key;
+      final ventas = entry.value;
+      final totalCantidad = ventas.fold<int>(
+        0,
+        (sum, venta) => sum + (venta.CANTIDAD ?? 0),
+      );
+      final producto = ventas.first;
+
       return CardTemplate(
-        codigoArtesano: 0001,
-        nombre: '${venta.COD_PRODUCTO}' ?? '',
-        url: venta.IMAGEN ?? 'https://via.placeholder.com/150',
+        nombre: codigoProducto,
+        url: producto.IMAGEN ?? 'https://via.placeholder.com/150',
         descriptions: [
+          DescriptionItem(field: 'Total Vendido', value: '$totalCantidad'),
           DescriptionItem(
-              field: 'Fecha de Registro', value: venta.FECHA_REGISTRO ?? ''),
-          DescriptionItem(field: 'Cantidad', value: '${venta.CANTIDAD}' ?? ''),
-          DescriptionItem(
-              field: 'Descripción', value: '${venta.DESCRIPCION}' ?? ''),
+            field: 'Descripción',
+            value: producto.DESCRIPCION ?? '',
+          ),
         ],
       );
     }).toList();
+
+    // ignore: no_leading_underscores_for_local_identifiers
+    Widget _buildGroupedItemContainer(
+      BuildContext context,
+      String productCode,
+      List<VentasList> ventas,
+    ) {
+      return _buildItemContainer(
+        productCode: productCode,
+        ventas: ventas,
+      );
+    }
+
+    String getTitle() {
+      if (selectedFilter.value.isEmpty) {
+        return 'Todas las ventas';
+      } else if (selectedFilter.value.startsWith('Año')) {
+        return 'Ventas Anuales';
+      } else {
+        final parts = selectedFilter.value.split('/');
+        final month = parts[1];
+        final year = DateTime.now().year;
+        return 'Ventas de 0$month/$year';
+      }
+    }
 
     return Scaffold(
       backgroundColor: bgPrimary,
@@ -98,25 +197,76 @@ class GraphicProductsScreen extends HookWidget {
         slivers: [
           SliverToBoxAdapter(
             child: Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
               children: [
                 TopVector(),
-                _buildGraphicWithFilters(context),
+                _buildGraphicWithFilters(
+                  context,
+                  selectedFilter,
+                  selectedValues.value,
+                  chartData,
+                ),
                 Container(
                   alignment: Alignment.centerLeft,
                   margin: const EdgeInsets.symmetric(horizontal: 16),
-                  child: GradientText(
-                    text: 'Todas las ventas',
-                    fontSize: 18.0,
+                  child: Text(
+                    getTitle(),
+                    style: const TextStyle(
+                      fontSize: 20.0,
+                    ),
                   ),
                 ),
+                if (selectedFilter.value.isNotEmpty)
+                  Container(
+                    margin: const EdgeInsets.only(left: 16, bottom: 6, top: 2),
+                    width: MediaQuery.of(context).size.width * 0.32,
+                    decoration: BoxDecoration(
+                        borderRadius: BorderRadius.circular(5),
+                        color: iconColor.withOpacity(0.5),
+                        border:
+                            Border.all(color: bottomNavBarStroke, width: 0.5)),
+                    child: GestureDetector(
+                      onTap: () => _clearFilters(
+                          context, selectedFilter, selectedValues.value),
+                      child: Padding(
+                        padding: const EdgeInsets.all(4.0),
+                        child: Row(
+                          children: [
+                            Icon(
+                              Icons.filter_alt_outlined,
+                              color: bottomNavBar,
+                              size: 16,
+                            ),
+                            const SizedBox(width: 8),
+                            Text(
+                              'Quitar filtro',
+                              style: TextStyle(
+                                color: bottomNavBar,
+                                fontFamily: 'Gotham',
+                                fontWeight: FontWeight.w300,
+                                fontSize: 14,
+                              ),
+                            ),
+                          ],
+                        ),
+                      ),
+                    ),
+                  ),
                 Container(
                   alignment: Alignment.topCenter,
                   height: MediaQuery.of(context).size.height * 1.4,
                   width: MediaQuery.of(context).size.width,
                   child: ListView.builder(
+                    controller: scrollController,
+                    padding: EdgeInsets.zero,
                     itemCount: cardData.length,
                     itemBuilder: (context, index) {
-                      return _buildItemContainer(itemData: cardData[index]);
+                      final key = groupedVentas.keys.elementAt(index);
+                      return _buildGroupedItemContainer(
+                        context,
+                        key,
+                        groupedVentas[key]!,
+                      );
                     },
                   ),
                 ),
@@ -128,7 +278,11 @@ class GraphicProductsScreen extends HookWidget {
     );
   }
 
-  Widget _buildGraphicWithFilters(BuildContext context) {
+  Widget _buildGraphicWithFilters(
+      BuildContext context,
+      ValueNotifier<String> selectedFilter,
+      Map<String, String> selectedValues,
+      List<ChartBarData> data) {
     return Padding(
       padding: EdgeInsets.all(containersPadding),
       child: Wrap(
@@ -156,25 +310,34 @@ class GraphicProductsScreen extends HookWidget {
             shadowStrength: 5,
             borderRadius: BorderRadius.circular(5),
             shadowColor: Colors.white.withOpacity(0.24),
-            child: ColumnBarChartComponent(data: data),
+            child: ColumnBarChartComponent(
+              data: data,
+            ),
           ),
           ...filters.map((String filterHint) {
-            return _buildFilter(context, hint: filterHint);
+            return _buildFilter(
+              context,
+              hint: filterHint,
+              selectedFilter: selectedFilter,
+              selectedValues: selectedValues,
+            );
           }),
         ],
       ),
     );
   }
 
-  Widget _buildFilter(BuildContext context, {required String hint}) {
+  Widget _buildFilter(BuildContext context,
+      {required String hint,
+      required ValueNotifier<String> selectedFilter,
+      required Map<String, String> selectedValues}) {
     final currentYear = DateTime.now().year;
-
-    // Crear una lista de DropdownMenuItem para los años desde 2023 hasta el año actual
     final List<DropdownMenuItem<String>> yearItems = [];
     for (int year = 2023; year <= currentYear; year++) {
       yearItems.add(DropdownMenuItem(
           value: year.toString(), child: Text(year.toString())));
     }
+
     final List<DropdownMenuItem<String>> monthItems = [
       const DropdownMenuItem(value: '1', child: Text('Enero')),
       const DropdownMenuItem(value: '2', child: Text('Febrero')),
@@ -189,6 +352,7 @@ class GraphicProductsScreen extends HookWidget {
       const DropdownMenuItem(value: '11', child: Text('Noviembre')),
       const DropdownMenuItem(value: '12', child: Text('Diciembre')),
     ];
+
     List<DropdownMenuItem<String>> items = [];
     if (hint == 'Año') {
       items = yearItems;
@@ -199,6 +363,7 @@ class GraphicProductsScreen extends HookWidget {
     return SizedBox(
       width: MediaQuery.of(context).size.width * 0.43,
       child: DropdownButtonFormField(
+        value: selectedValues[hint], // Valor seleccionado
         decoration: const InputDecoration(
           border: OutlineInputBorder(),
           focusedBorder: OutlineInputBorder(),
@@ -208,7 +373,8 @@ class GraphicProductsScreen extends HookWidget {
           style: const TextStyle(fontSize: 12),
         ),
         items: items,
-        onChanged: (value) => _onDropMenuChanged(value, context, hint),
+        onChanged: (value) => _onDropMenuChanged(
+            value, context, hint, selectedFilter, selectedValues),
       ),
     );
   }
@@ -241,14 +407,19 @@ class GraphicProductsScreen extends HookWidget {
     );
   }
 
-  Widget _buildItemContainer({required CardTemplate itemData}) {
+  Widget _buildItemContainer(
+      {required String productCode, required List<VentasList> ventas}) {
     final BoxDecoration decoration = BoxDecoration(
-      color: bgPrimary,
-      boxShadow: const [
+      color: bottomNavBar,
+      boxShadow: [
         BoxShadow(
-          color: Colors.black12, // Cambia esto por tu sombra simpleShadow
-          blurRadius: 4.0,
-          spreadRadius: 2.0,
+          color: const Color.fromARGB(255, 95, 95, 95).withOpacity(0.08),
+          spreadRadius: 2,
+          blurRadius: 4,
+          offset: const Offset(
+            0,
+            1,
+          ),
         ),
       ],
       borderRadius: const BorderRadius.all(
@@ -256,35 +427,75 @@ class GraphicProductsScreen extends HookWidget {
       ),
     );
 
-    return Stack(
-      children: [
-        Stack(
+    final totalQuantity =
+        ventas.fold<int>(0, (sum, item) => sum + (item.CANTIDAD ?? 0));
+    final String imageUrl = ventas.isNotEmpty && ventas.first.IMAGEN != null
+        ? ventas.first.IMAGEN!
+        : 'https://via.placeholder.com/150'; // URL de la imagen por defecto
+
+    return ExpansionTile(
+      title: Container(
+        padding: EdgeInsets.zero,
+        margin: EdgeInsets.zero,
+        //padding: const EdgeInsets.only(bottom: 5),
+        decoration: decoration,
+
+        child: ListTile(
+          leading: _buildImageAvatar(imageUrl), // Icono para el producto
+          title: Column(
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: [
+              Text(
+                productCode,
+                style: const TextStyle(fontSize: 18),
+              ),
+              Container(
+                  margin: const EdgeInsets.only(top: 10),
+                  padding: const EdgeInsets.symmetric(horizontal: 4),
+                  decoration: BoxDecoration(
+                      color: secondary, borderRadius: BorderRadius.circular(3)),
+                  child: Text(
+                    'Total vendidos: $totalQuantity',
+                    style: TextStyle(
+                        fontSize: 13,
+                        fontWeight: FontWeight.w500,
+                        color: bgPrimary),
+                  )),
+            ],
+          ),
+        ),
+      ),
+      children: ventas.map((venta) {
+        return Column(
           children: [
-            Container(
-              margin: const EdgeInsets.symmetric(horizontal: 16, vertical: 4),
-              padding: const EdgeInsets.only(left: 15, bottom: 5),
-              decoration: decoration,
-              child: _listTile(
-                leading: _buildImageAvatar(itemData.url),
-                title: Text(itemData.nombre),
-                fields: itemData.descriptions,
+            ListTile(
+              title: Text(
+                'Fecha de Registro: ${venta.formattingDate()}',
+                style: infoCardsProducts(),
+              ),
+              subtitle: Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  Text('Cantidad: ${venta.CANTIDAD}',
+                      style: infoCardsProducts()),
+                  Text('Descripción: ${venta.DESCRIPCION}',
+                      style: infoCardsProducts()),
+                ],
               ),
             ),
-            Container(
-              margin: const EdgeInsets.symmetric(horizontal: 16, vertical: 4),
-              child: _itemMarker(secondary),
-            )
-            // Cambia esto por tu color secondary
+            Divider(),
           ],
-        ),
-      ],
+        );
+      }).toList(),
     );
   }
 
+  TextStyle infoCardsProducts() => TextStyle(fontSize: 12);
+
   Widget _buildImageAvatar(String url) {
     return Container(
-      width: 50,
-      height: 50,
+      width: 60,
+      height: 60,
       decoration: BoxDecoration(
         borderRadius: BorderRadius.circular(5.0),
         image: DecorationImage(

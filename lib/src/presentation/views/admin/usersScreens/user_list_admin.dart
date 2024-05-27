@@ -32,7 +32,6 @@ class UsersListAdminScreen extends HookWidget {
   }
 
   Future<void> getUsersFiltered(BuildContext context, String query) async {
-    Logger().i(query);
     await context.read<UsersListCubit>().getUserLists(nombre: query);
   }
 

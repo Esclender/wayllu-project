@@ -9,7 +9,7 @@ class ColumnBarChartComponent extends HookWidget {
   final TooltipBehavior _tooltipBehavior = TooltipBehavior(
     enable: true,
     canShowMarker: false,
-    format: 'point.x : S/ point.y',
+    format: 'point.y productos vendidos',
     header: '',
   );
 
@@ -39,9 +39,9 @@ class ColumnBarChartComponent extends HookWidget {
       ColumnSeries<ChartBarData, String>(
         trackBorderWidth: 0.0,
         dataSource: data,
-        xValueMapper: (ChartBarData data, _) => data.x,
-        yValueMapper: (ChartBarData data, _) => data.y,
-        borderRadius: BorderRadius.all(Radius.circular(5)),
+        xValueMapper: (ChartBarData data, _) => data.label,
+        yValueMapper: (ChartBarData data, _) => data.value,
+        borderRadius: BorderRadius.all(Radius.circular(10)),
         name: 'Gold',
         color: secondaryColor,
         opacity: 1,

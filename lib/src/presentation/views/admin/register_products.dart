@@ -58,8 +58,6 @@ class RegisterProductsScreen extends HookWidget {
   ) async {
     final productsCubit = context.watch<ProductListCubit>();
     productsCubit.registerNewProduct(productInfoToSend);
-
-    Logger().i(productInfoToSend);
   }
 
   @override
@@ -114,8 +112,8 @@ class RegisterProductsScreen extends HookWidget {
     }
 
     return Scaffold(
-      floatingActionButtonLocation: FloatingActionButtonLocation.centerDocked,
-      floatingActionButton: BottomNavBar(),
+      // floatingActionButtonLocation: FloatingActionButtonLocation.centerDocked,
+      // floatingActionButton: BottomNavBar(),
       backgroundColor: bgPrimary,
       appBar: AppBar(
         leading: InkWell(
@@ -529,7 +527,7 @@ class RegisterProductsScreen extends HookWidget {
   }) {
     showDialog(
       context: context,
-      barrierDismissible: true,
+      barrierDismissible: false,
       builder: (BuildContext context) {
         // completer.complete(context);
         return AlertDialog(
@@ -576,8 +574,8 @@ class RegisterProductsScreen extends HookWidget {
 }
 
 class DropDownMenu extends HookWidget {
-  TextEditingController? menuController;
-  ValueNotifier<String> selectedOption;
+  final TextEditingController? menuController;
+  final ValueNotifier<String> selectedOption;
 
   DropDownMenu({
     required this.menuController,
@@ -589,15 +587,18 @@ class DropDownMenu extends HookWidget {
     double width = MediaQuery.of(context).size.width - 45.0;
     final usersListCubit = context.watch<UsersListCubit>();
 
-    useEffect(
-      () {
-        usersListCubit.getUserLists();
-        // productsListCubit.getProductsLists();
+    useEffect(() {
+      usersListCubit.getUserLists();
+      // productsListCubit.getProductsLists();
 
-        return () {};
-      },
-      [],
-    );
+      return () {};
+    }, []);
+
+    void onSearchCallback(String query) {
+      if (query.isNotEmpty) {
+        usersListCubit.getUserLists(nombre: query);
+      }
+    }
 
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
@@ -612,42 +613,42 @@ class DropDownMenu extends HookWidget {
             height: 1.5, // Adjust height as needed
           ),
         ),
-        BlocBuilder<UsersListCubit, List<CardTemplate>?>(
-          builder: (_, state) {
-            return DropdownMenu(
-              hintText: 'Asignar artesano',
-              controller: menuController,
-              trailingIcon: const Icon(Ionicons.chevron_down),
-              width: width,
-              requestFocusOnTap: true,
-              enableFilter: true,
-              menuStyle: MenuStyle(
-                side: MaterialStateProperty.all<BorderSide>(
-                  const BorderSide(
-                    color: Colors.transparent,
-                  ),
-                ),
-                backgroundColor:
-                    MaterialStateProperty.all<Color>(Colors.lightBlue.shade50),
+        DropdownMenu(
+          hintText: 'Asignar artesano',
+          controller: menuController,
+          trailingIcon: const Icon(Ionicons.chevron_down),
+          width: width,
+          requestFocusOnTap: true,
+          enableFilter: true,
+          menuStyle: MenuStyle(
+            side: MaterialStateProperty.all<BorderSide>(
+              const BorderSide(
+                color: Colors.transparent,
               ),
-              onSelected: (dynamic selected) {
-                selectedOption.value = selected as String;
-              },
-              dropdownMenuEntries: state != null
-                  ? state.map<DropdownMenuEntry>((value) {
-                      return DropdownMenuEntry(
-                        value: value.codigoArtesano.toString(),
-                        label: value.nombre,
-                      );
-                    }).toList()
-                  : [].map<DropdownMenuEntry>((value) {
-                      return DropdownMenuEntry(
-                        value: value,
-                        label: value as String,
-                      );
-                    }).toList(),
-            );
+            ),
+            backgroundColor: MaterialStateProperty.all<Color>(Colors.white),
+          ),
+          onSelected: (dynamic selected) {
+            selectedOption.value = selected as String;
           },
+          searchCallback: (entries, query) {
+            onSearchCallback(query);
+            return null;
+          },
+          dropdownMenuEntries: usersListCubit.state != null
+              ? usersListCubit.state!.map<DropdownMenuEntry>((value) {
+                  return DropdownMenuEntry(
+                    value: value.codigoArtesano.toString(),
+                    label: value.nombre,
+                    labelWidget: ListTile(
+                      leading: CircleAvatar(
+                        backgroundImage: NetworkImage(value.url),
+                      ),
+                      title: Text(value.nombre),
+                    ),
+                  );
+                }).toList()
+              : [],
         ),
       ],
     );

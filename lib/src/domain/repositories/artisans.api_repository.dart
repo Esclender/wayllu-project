@@ -4,4 +4,5 @@ abstract class ArtisansRepository {
   //Aqui iran todos los metodos para llamar a los endpoints de api
   //Modificar los returns de acuerdo a que se devolvera
   Future<ArtesansListHttpResponse> getArtisans(int pagina, String nombre);
+  Future<void> registerArtisian(Map<String, dynamic> userInfo);
 }

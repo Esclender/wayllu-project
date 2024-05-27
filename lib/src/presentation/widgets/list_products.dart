@@ -14,7 +14,7 @@ import 'package:wayllu_project/src/presentation/cubit/user_logged_cubit.dart';
 import 'package:wayllu_project/src/utils/constants/colors.dart';
 
 class ProductsCardsItemsList extends HookWidget {
-  final BuildContext contextF;
+  final BuildContext context;
   final ListEnums listType;
   final List<ProductInfo> dataToRender;
   final String query;
@@ -24,7 +24,7 @@ class ProductsCardsItemsList extends HookWidget {
   final appRouter = getIt<AppRouter>();
 
   ProductsCardsItemsList({
-    required this.contextF,
+    required this.context,
     required this.listType,
     required this.dataToRender,
     this.query = '',
@@ -33,7 +33,7 @@ class ProductsCardsItemsList extends HookWidget {
   });
 
   void _addItemToCarrito(ProductInfo product) {
-    contextF.read<ProductsCarrito>().addNewProductToCarrito(
+    context.read<ProductsCarrito>().addNewProductToCarrito(
           product: product,
         );
   }
@@ -54,21 +54,21 @@ class ProductsCardsItemsList extends HookWidget {
   Widget _buildScrollableList(
       List<ProductInfo> productosFiltrados, UserRoles rol,) {
     return ListView.separated(
+      physics: const NeverScrollableScrollPhysics(),
       separatorBuilder: (context, index) => const SizedBox(height: 8),
       shrinkWrap: true,
-      physics: const NeverScrollableScrollPhysics(),
       itemCount: productosFiltrados.length,
       itemBuilder: (BuildContext c, int ind) {
         return Row(
-          mainAxisAlignment: MainAxisAlignment.start,
           children: [
             Expanded(
               child: GridView.builder(
+                padding: EdgeInsets.zero,
                 shrinkWrap: true,
                 gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
                   crossAxisCount: 2,
                   crossAxisSpacing: 8,
-                  mainAxisSpacing: 8,
+                  mainAxisSpacing: 2,
                 ),
                 physics: const NeverScrollableScrollPhysics(),
                 itemCount: ind == (productosFiltrados.length / 2).ceil() - 1
@@ -108,8 +108,7 @@ class ProductsCardsItemsList extends HookWidget {
           children: [
             Container(
               width: MediaQuery.of(context).size.width * 0.43,
-              height: MediaQuery.of(context).size.width * 0.44,
-           
+              height: double.infinity,
               decoration: BoxDecoration(
                 color: bottomNavBar,
                 boxShadow: [
@@ -217,11 +216,9 @@ class ProductsCardsItemsList extends HookWidget {
         Padding(
           padding: const EdgeInsets.symmetric(horizontal: 6),
           child: Row(
-            mainAxisAlignment: MainAxisAlignment.start,
             children: [
               Column(
                 crossAxisAlignment: CrossAxisAlignment.start,
-               mainAxisAlignment: MainAxisAlignment.start,
                 children: [
                  const Gap(5),
                   title,

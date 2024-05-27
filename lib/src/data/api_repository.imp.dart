@@ -33,6 +33,13 @@ class ArtisansApiRepositoryImpl extends BaseApiRepository
 
     return responseHttp.data;
   }
+
+  @override
+  Future<void> registerArtisian(
+    Map<String, dynamic> userInfo,
+  ) async {
+    await _apiServices.newArtisian(userInfo);
+  }
 }
 
 class AuthApiRepositoryImpl extends BaseApiRepository

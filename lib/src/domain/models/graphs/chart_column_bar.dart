@@ -1,6 +1,7 @@
 class ChartBarData {
-  ChartBarData(this.x, this.y);
+  ChartBarData(this.label, this.value, this.monthNumber);
 
-  final String x;
-  final double y;
+  final String label;
+  final double value;
+  final int monthNumber;
 }

@@ -18,4 +18,9 @@ abstract class ArtesansApiServices {
     @Query('pagina') int pagina,
     @Query('nombre') String nombre,
   );
+
+  @GET('/registro')
+  Future<HttpResponse<void>> newArtisian(
+    @Body() Map<String, dynamic> userInfo,
+  );
 }

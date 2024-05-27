@@ -8,7 +8,7 @@ class CardTemplate {
     required this.nombre,
     required this.url,
     required this.descriptions,
-    required this.codigoArtesano,
+    this.codigoArtesano,
   });
 }
 
