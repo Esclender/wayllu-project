@@ -246,12 +246,6 @@ class HomeScreen extends HookWidget {
                   categoriaSeleccionada.value,
                   scrollController,
                 ),
-                _productsHome(
-                  context,
-                  data,
-                  categoriaSeleccionada.value,
-                  scrollController,
-                ),
               ],
             ),
           ),
@@ -298,13 +292,13 @@ class HomeScreen extends HookWidget {
       width: MediaQuery.of(context).size.width,
       height: MediaQuery.of(context).size.height,
       margin: const EdgeInsets.symmetric(horizontal: 20, vertical: 4),
-      // child: Column(
-      //   children: [
-      //     dataProducts(categorySeleccionada, data, contextF, scrollController),
-      //   ],
-      // ),
-      child:
+      child: Column(
+        children: [
           dataProducts(categorySeleccionada, data, context, scrollController),
+        ],
+      ),
+      // child:
+      //     dataProducts(categorySeleccionada, data, context, scrollController),
     );
   }
 
@@ -318,6 +312,7 @@ class HomeScreen extends HookWidget {
           );
         } else if (categorySeleccionada != null) {
           data = state;
+          Logger().i(data);
           return ListView.builder(
             controller: scrollController,
             padding: EdgeInsets.zero,
@@ -336,6 +331,8 @@ class HomeScreen extends HookWidget {
           );
         } else {
           data = state;
+          Logger().i(data);
+
           return ListView.builder(
             controller: scrollController,
             padding: EdgeInsets.zero,

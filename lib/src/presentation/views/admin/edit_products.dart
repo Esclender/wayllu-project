@@ -19,7 +19,7 @@ import 'package:wayllu_project/src/utils/constants/colors.dart';
 import 'package:wayllu_project/src/utils/firebase/firebase_helper.dart';
 
 @RoutePage()
-class RegisterProductsScreen extends HookWidget {
+class EditProductsScreen extends HookWidget {
   final List<String> categoriasOptions = [
     'ACCESORIOS',
     'BOLSOS Y MONEDEROS',
@@ -49,6 +49,10 @@ class RegisterProductsScreen extends HookWidget {
   final ImagePicker imagePicker = ImagePicker();
   final appRouter = getIt<AppRouter>();
 
+  final Map<String, dynamic> productInfo;
+
+  EditProductsScreen({required this.productInfo});
+
   Future<void> registerProduct(
     Map<String, dynamic> productInfoToSend,
     BuildContext context,
@@ -61,16 +65,22 @@ class RegisterProductsScreen extends HookWidget {
   Widget build(BuildContext context) {
     final ValueNotifier<File?> profileImage = useState(null);
 
-    final ubicacionController = useTextEditingController();
-    final pesoController = useTextEditingController();
-    final altoController = useTextEditingController();
-    final anchoController = useTextEditingController();
-    final artesanoController = useTextEditingController();
+    final ubicacionController =
+        useTextEditingController(text: productInfo['UBICACION']);
+    final pesoController = useTextEditingController(text: productInfo['PESO']);
+    final altoController = useTextEditingController(text: productInfo['ALTO']);
+    final anchoController =
+        useTextEditingController(text: productInfo['ANCHO']);
+    final artesanoController =
+        useTextEditingController(text: productInfo['ARTESANO']);
 
-    final tipoPesoController = useState<String>('gramos');
-    final categoria = useState<String>(categoriasOptions[0]);
-    final codFamilia = useState<String>(codFamiliasOptions[0]['valor']!);
-    final codigoArtesano = useState<String>('');
+    final tipoPesoController =
+        useState<String>(productInfo['TIPO_PESO'] ?? 'gramos');
+    final categoria =
+        useState<String>(productInfo['CATEGORIA'] ?? categoriasOptions[0]);
+    final codFamilia = useState<String>(
+        productInfo['COD_FAMILIA'] ?? codFamiliasOptions[0]['valor']!);
+    final codigoArtesano = useState<String>(productInfo['ARTESANO'] ?? '');
 
     Future<String?> selectImage() async {
       final XFile? image =

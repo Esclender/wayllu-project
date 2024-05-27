@@ -33,6 +33,13 @@ abstract class _$AppRouter extends RootStackRouter {
         child: CarritoScreen(),
       );
     },
+    EditProductsRoute.name: (routeData) {
+      final args = routeData.argsAs<EditProductsRouteArgs>();
+      return AutoRoutePage<dynamic>(
+        routeData: routeData,
+        child: EditProductsScreen(productInfo: args.productInfo),
+      );
+    },
     GraphicProductsRoute.name: (routeData) {
       final args = routeData.argsAs<GraphicProductsRouteArgs>();
       return AutoRoutePage<dynamic>(
@@ -154,6 +161,35 @@ class CarritoRoute extends PageRouteInfo<void> {
   static const String name = 'CarritoRoute';
 
   static const PageInfo<void> page = PageInfo<void>(name);
+}
+
+/// generated route for
+/// [EditProductsScreen]
+class EditProductsRoute extends PageRouteInfo<EditProductsRouteArgs> {
+  EditProductsRoute({
+    required Map<String, dynamic> productInfo,
+    List<PageRouteInfo>? children,
+  }) : super(
+          EditProductsRoute.name,
+          args: EditProductsRouteArgs(productInfo: productInfo),
+          initialChildren: children,
+        );
+
+  static const String name = 'EditProductsRoute';
+
+  static const PageInfo<EditProductsRouteArgs> page =
+      PageInfo<EditProductsRouteArgs>(name);
+}
+
+class EditProductsRouteArgs {
+  const EditProductsRouteArgs({required this.productInfo});
+
+  final Map<String, dynamic> productInfo;
+
+  @override
+  String toString() {
+    return 'EditProductsRouteArgs{productInfo: $productInfo}';
+  }
 }
 
 /// generated route for
