@@ -40,6 +40,7 @@ dependencies:
   firebase_storage: ^11.7.4
   flutter:
     sdk: flutter
+  flutter_launcher_icons: ^0.13.1
   flutter_bloc: ^8.1.4
   flutter_dotenv: ^5.1.0
   flutter_hooks: ^0.18.5+1
@@ -53,6 +54,7 @@ dependencies:
   intl: ^0.19.0
   ionicons: ^0.2.2
   json_annotation: ^4.8.1
+  shimmer: ^3.0.0
   logger: ^2.0.2+1
   lottie: ^3.1.0
   retrofit: '>=4.0.0 <5.0.0'
@@ -79,6 +81,11 @@ flutter_launcher_icons:
   # rules and activating additional ones.
   lint: ^2.3.0
   retrofit_generator: '>=7.0.0 <8.0.0'
+
+flutter_launcher_icons:
+  android: true
+  ios: true
+  image_path: "assets/apk_icon.png"
 
 # For information on the generic Dart part of this file, see the
 # following page: https://dart.dev/tools/pub/pubspec

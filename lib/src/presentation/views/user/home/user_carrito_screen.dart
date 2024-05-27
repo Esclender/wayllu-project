@@ -20,6 +20,10 @@ class CarritoScreen extends HookWidget {
   final appRouter = getIt<AppRouter>();
 
   Future<void> _checkoutVentaGoRecib(ProductsCarrito carrito) async {
+    if (carrito.itemsInCartInt == 0) {
+      return;
+    }
+
     final VentaInfo ventaInfo;
     ventaInfo = await carrito.registerVenta();
     appRouter.navigate(ReciboRoute(ventaInfo: ventaInfo));

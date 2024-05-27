@@ -54,8 +54,8 @@ class LoginExampleScreen extends HookWidget {
 
   @override
   Widget build(BuildContext context) {
-    final controllerEmail = useTextEditingController(text: '12345678');
-    final controllerClave = useTextEditingController(text: '1234');
+    final controllerEmail = useTextEditingController();
+    final controllerClave = useTextEditingController();
 
     return AnnotatedRegion(
       value: SystemStyles.login,
@@ -119,11 +119,11 @@ class LoginExampleScreen extends HookWidget {
                         const SizedBox(
                           height: 10,
                         ),
-                        const MyTextLabel(hintText: 'Password'),
+                        const MyTextLabel(hintText: 'Contraseña'),
                         const SpaceY(),
                         TextLoginField(
                           controller: controllerClave,
-                          hintText: 'Ingrese con su correo',
+                          hintText: 'Ingrese su contraseña',
                           obscureText: true,
                         ),
                         const SizedBox(

@@ -143,7 +143,7 @@ class _RegisterUserScreenState extends State<RegisterUserScreen> {
       'CLAVE': password,
     };
 
-    await context.read<UsersListCubit>().registerUser(userInfoToSend);
+    // await context.read<UsersListCubit>().registerUser(userInfoToSend);
 
     _showLoadingDialog('Artesano registrado..');
     Timer(const Duration(seconds: 2), () {
@@ -189,6 +189,25 @@ class _RegisterUserScreenState extends State<RegisterUserScreen> {
     );
   }
 
+  Widget _buildTextHeader() {
+    return Text(
+      'Registrar Artesano',
+      style: TextStyle(
+        fontSize: 23,
+        fontWeight: FontWeight.bold,
+        fontFamily: 'Gotham',
+        foreground: Paint()
+          ..shader = LinearGradient(
+            begin: Alignment.bottomCenter,
+            end: Alignment.topCenter,
+            colors: [btnprimary, btnsecondary],
+          ).createShader(
+            const Rect.fromLTRB(0.0, 0.0, 100.0, 60.0),
+          ),
+      ),
+    );
+  }
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -200,16 +219,7 @@ class _RegisterUserScreenState extends State<RegisterUserScreen> {
           onTap: () => {appRouter.pop()},
           child: const Icon(Ionicons.arrow_back),
         ),
-        title: const Text(
-          'Registrar Usuario',
-          style: TextStyle(
-            color: Colors.black,
-            fontSize: 18,
-            fontFamily: 'Gotham',
-            fontWeight: FontWeight.w500,
-            height: 0,
-          ),
-        ),
+        title: _buildTextHeader(),
       ),
       body: Padding(
         padding: const EdgeInsets.all(30.0),
