@@ -246,12 +246,6 @@ class HomeScreen extends HookWidget {
                   categoriaSeleccionada.value,
                   scrollController,
                 ),
-                _productsHome(
-                  context,
-                  data,
-                  categoriaSeleccionada.value,
-                  scrollController,
-                ),
               ],
             ),
           ),
