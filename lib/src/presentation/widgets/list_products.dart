@@ -3,6 +3,7 @@ import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_hooks/flutter_hooks.dart';
 import 'package:gap/gap.dart';
 import 'package:ionicons/ionicons.dart';
+import 'package:logger/logger.dart';
 import 'package:wayllu_project/src/config/router/app_router.dart';
 import 'package:wayllu_project/src/domain/enums/lists_enums.dart';
 import 'package:wayllu_project/src/domain/enums/user_roles.dart';
@@ -52,7 +53,9 @@ class ProductsCardsItemsList extends HookWidget {
   }
 
   Widget _buildScrollableList(
-      List<ProductInfo> productosFiltrados, UserRoles rol,) {
+    List<ProductInfo> productosFiltrados,
+    UserRoles rol,
+  ) {
     return ListView.separated(
       physics: const NeverScrollableScrollPhysics(),
       separatorBuilder: (context, index) => const SizedBox(height: 8),
@@ -100,7 +103,6 @@ class ProductsCardsItemsList extends HookWidget {
     required ProductInfo itemData,
     required UserRoles rol,
   }) {
-
     return Stack(
       children: [
         Stack(
@@ -124,20 +126,22 @@ class ProductsCardsItemsList extends HookWidget {
               Padding(
                 padding: const EdgeInsets.all(4.0),
                 child: IconButton(
-                  padding: const EdgeInsets.symmetric(horizontal: 6, vertical: 2),
+                  padding:
+                      const EdgeInsets.symmetric(horizontal: 6, vertical: 2),
                   style: ButtonStyle(
-                      shape: MaterialStateProperty.all<OutlinedBorder>(
-                        RoundedRectangleBorder(
-                          borderRadius:
-                              BorderRadius.circular(7), 
-                          side: BorderSide(
-                            color: iconColor.withOpacity(0.6), 
-                            width: 0.5, 
-                          ),
+                    shape: MaterialStateProperty.all<OutlinedBorder>(
+                      RoundedRectangleBorder(
+                        borderRadius: BorderRadius.circular(7),
+                        side: BorderSide(
+                          color: iconColor.withOpacity(0.6),
+                          width: 0.5,
                         ),
                       ),
-                      backgroundColor: MaterialStatePropertyAll(
-                          bottomNavBar.withOpacity(0.4),),),
+                    ),
+                    backgroundColor: MaterialStatePropertyAll(
+                      bottomNavBar.withOpacity(0.4),
+                    ),
+                  ),
                   onPressed: () {
                     _addItemToCarrito(itemData);
                   },
@@ -169,7 +173,7 @@ class ProductsCardsItemsList extends HookWidget {
     );
 
     return Container(
-     width: MediaQuery.of(context).size.width * 0.43,
+      width: MediaQuery.of(context).size.width * 0.43,
       height: MediaQuery.of(context).size.width * 0.44,
       decoration: decoration,
       child: _listTile(
@@ -220,7 +224,7 @@ class ProductsCardsItemsList extends HookWidget {
               Column(
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
-                 const Gap(5),
+                  const Gap(5),
                   title,
                   ...fields.map(
                     (f) => Text(
@@ -237,12 +241,12 @@ class ProductsCardsItemsList extends HookWidget {
           ),
         ),
         Gap(8),
-         if (loggedUserRol)
-                    Container(
-                      margin: const EdgeInsets.only(right: 4),
-                      alignment: Alignment.bottomRight,
-                      child: _buildEditButton(),
-                    ),
+        if (loggedUserRol)
+          Container(
+            margin: const EdgeInsets.only(right: 4),
+            alignment: Alignment.bottomRight,
+            child: _buildEditButton(),
+          ),
       ],
     );
   }

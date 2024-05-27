@@ -12,6 +12,7 @@ import 'package:gap/gap.dart';
 import 'package:intl/intl.dart';
 import 'package:ionicons/ionicons.dart';
 import 'package:logger/logger.dart';
+import 'package:shimmer/shimmer.dart';
 import 'package:wayllu_project/src/config/router/app_router.dart';
 import 'package:wayllu_project/src/domain/enums/lists_enums.dart';
 import 'package:wayllu_project/src/domain/enums/user_roles.dart';
@@ -58,7 +59,6 @@ class HomeScreen extends HookWidget {
     final productsListCubit = context.watch<ProductListCubit>();
 
     Future<void> searchProductByCode(c, String code) async {
-      Logger().i(code);
       await productsListCubit.getProductsListsByCode(code);
     }
 
@@ -79,191 +79,227 @@ class HomeScreen extends HookWidget {
     final categoriaSeleccionada = useState<String?>(null);
     return Scaffold(
       backgroundColor: bgPrimary,
-      body: CustomScrollView(
-        slivers: [
-          SliverAppBar(
-            leading: Container(),
-            expandedHeight: 68.0,
-            backgroundColor: Colors.transparent,
-            flexibleSpace: FlexibleSpaceBar(
-              background: topVector(context),
-            ),
-            bottom: PreferredSize(
-              preferredSize: const Size.fromHeight(20),
-              child: Container(
-                margin: const EdgeInsets.symmetric(horizontal: 22),
-                child: userInfo != null
-                    ? Row(
-                        children: [
-                          Container(
-                            alignment: Alignment.centerLeft,
-                            child: SizedBox(
-                              width: 45,
-                              height: 45,
-                              child: CircleAvatar(
-                                backgroundImage: NetworkImage(
-                                  userInfo.URL_IMAGE ??
-                                      'https://via.placeholder.com/150',
+      body: Stack(
+        children: [
+          CustomScrollView(
+            slivers: [
+              SliverAppBar(
+                leading: Container(),
+                expandedHeight: 68.0,
+                backgroundColor: Colors.transparent,
+                flexibleSpace: FlexibleSpaceBar(
+                  background: topVector(context),
+                ),
+                bottom: PreferredSize(
+                  preferredSize: const Size.fromHeight(20),
+                  child: Container(
+                    margin: const EdgeInsets.symmetric(horizontal: 22),
+                    child: userInfo != null
+                        ? Row(
+                            children: [
+                              Container(
+                                alignment: Alignment.centerLeft,
+                                child: SizedBox(
+                                  width: 45,
+                                  height: 45,
+                                  child: CircleAvatar(
+                                    backgroundImage: NetworkImage(
+                                      userInfo.URL_IMAGE ??
+                                          'https://via.placeholder.com/150',
+                                    ),
+                                  ),
                                 ),
                               ),
-                            ),
-                          ),
-                          Container(
-                            margin: const EdgeInsets.symmetric(horizontal: 10),
-                            child: Column(
-                              crossAxisAlignment: CrossAxisAlignment.start,
-                              children: [
-                                AutoSizeText(
-                                  '$greeting${userInfo.NOMBRE_COMPLETO}',
-                                  style: const TextStyle(
-                                    fontFamily: 'Gotham',
-                                    fontSize: 16,
-                                    fontWeight: FontWeight.w500,
-                                    height: 1,
-                                    color: Color(0xff313131),
-                                  ),
-                                  maxLines: 1,
-                                  overflow: TextOverflow.ellipsis,
+                              Container(
+                                margin:
+                                    const EdgeInsets.symmetric(horizontal: 10),
+                                child: Column(
+                                  crossAxisAlignment: CrossAxisAlignment.start,
+                                  children: [
+                                    AutoSizeText(
+                                      '$greeting${userInfo.NOMBRE_COMPLETO}',
+                                      style: const TextStyle(
+                                        fontFamily: 'Gotham',
+                                        fontSize: 16,
+                                        fontWeight: FontWeight.w500,
+                                        height: 1,
+                                        color: Color(0xff313131),
+                                      ),
+                                      maxLines: 1,
+                                      overflow: TextOverflow.ellipsis,
+                                    ),
+                                  ],
                                 ),
-                              ],
-                            ),
-                          ),
-                        ],
-                      )
-                    : const Center(
-                        child: CircularProgressIndicator(),
-                      ),
-              ),
-            ),
-          ),
-          SliverList(
-            delegate: SliverChildListDelegate(
-              [
-                const SizedBox(
-                  height: 8,
-                ),
-                firstLine(context, loggedUserRol),
-                Container(
-                  margin:
-                      const EdgeInsets.symmetric(horizontal: 18, vertical: 6),
-                  child: Row(
-                    mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                    children: [
-                      if (loggedUserRol == UserRoles.admin)
-                        Row(
-                          mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                          children: [
-                            optionsAndLogout(context),
-                            const Gap(10),
-                            CustomSearchWidget(
-                              hint: 'Buscar por Codigo',
-                              width: 0.62,
-                              filterDataFunction: searchProductByCode,
-                            ),
-                          ],
-                        )
-                      else
-                        Container(),
-                    ],
+                              ),
+                            ],
+                          )
+                        : _buildShimmerinEfect(),
                   ),
                 ),
-                SingleChildScrollView(
-                  child: loggedUserRol == UserRoles.admin
-                      ? Row(
-                          mainAxisAlignment: MainAxisAlignment.center,
-                          children: categories.map((category) {
-                            return categoriesProducts(
-                              context,
-                              category.name,
-                              category.image,
-                              (selectedCategory) {
-                                if (loggedUserRol == UserRoles.admin &&
-                                    selectedCategory ==
-                                        categoriaSeleccionada.value) {
+              ),
+              SliverList(
+                delegate: SliverChildListDelegate(
+                  [
+                    const SizedBox(
+                      height: 8,
+                    ),
+                    firstLine(context, loggedUserRol),
+                    Container(
+                      margin: const EdgeInsets.symmetric(
+                          horizontal: 18, vertical: 6),
+                      child: Row(
+                        mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                        children: [
+                          if (loggedUserRol == UserRoles.admin)
+                            Row(
+                              mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                              children: [
+                                optionsAndLogout(context),
+                                const Gap(10),
+                                CustomSearchWidget(
+                                  hint: 'Buscar por Codigo',
+                                  width: 0.62,
+                                  filterDataFunction: searchProductByCode,
+                                ),
+                              ],
+                            )
+                          else
+                            Container(),
+                        ],
+                      ),
+                    ),
+                    SingleChildScrollView(
+                      child: loggedUserRol == UserRoles.admin
+                          ? Row(
+                              mainAxisAlignment: MainAxisAlignment.center,
+                              children: categories.map((category) {
+                                return categoriesProducts(
+                                  context,
+                                  category.name,
+                                  category.image,
+                                  (selectedCategory) {
+                                    if (loggedUserRol == UserRoles.admin &&
+                                        selectedCategory ==
+                                            categoriaSeleccionada.value) {
+                                      categoriaSeleccionada.value = null;
+                                    } else {
+                                      categoriaSeleccionada.value =
+                                          selectedCategory;
+                                    }
+                                  },
+                                  category.name.toUpperCase() ==
+                                      categoriaSeleccionada
+                                          .value, // Verifica si la categoría está seleccionada
+                                );
+                              }).toList(),
+                            )
+                          : const SizedBox(),
+                    ),
+                    const SizedBox(
+                      height: 6,
+                    ),
+                    Container(
+                      padding: const EdgeInsets.symmetric(horizontal: 22),
+                      alignment: Alignment.centerLeft,
+                      child: categoriaSeleccionada.value == null
+                          ? const Text(
+                              'Todos los productos',
+                              style: TextStyle(
+                                fontFamily: 'Gotham',
+                                fontSize: 24,
+                                fontWeight: FontWeight.w500,
+                              ),
+                            )
+                          : Container(
+                              width: MediaQuery.of(context).size.width * 0.32,
+                              decoration: BoxDecoration(
+                                  borderRadius: BorderRadius.circular(5),
+                                  color: iconColor.withOpacity(0.5),
+                                  border: Border.all(
+                                    color: bottomNavBarStroke,
+                                    width: 0.5,
+                                  )),
+                              child: GestureDetector(
+                                onTap: () {
                                   categoriaSeleccionada.value = null;
-                                } else {
-                                  categoriaSeleccionada.value =
-                                      selectedCategory;
-                                }
-                              },
-                              category.name.toUpperCase() ==
-                                  categoriaSeleccionada
-                                      .value, // Verifica si la categoría está seleccionada
-                            );
-                          }).toList(),
-                        )
-                      : const SizedBox(),
-                ),
-                const SizedBox(
-                  height: 6,
-                ),
-                Container(
-                  padding: const EdgeInsets.symmetric(horizontal: 22),
-                  alignment: Alignment.centerLeft,
-                  child: categoriaSeleccionada.value == null
-                      ? const Text(
-                          'Todos los productos',
-                          style: TextStyle(
-                            fontFamily: 'Gotham',
-                            fontSize: 24,
-                            fontWeight: FontWeight.w500,
-                          ),
-                        )
-                      : Container(
-                          width: MediaQuery.of(context).size.width * 0.32,
-                          decoration: BoxDecoration(
-                              borderRadius: BorderRadius.circular(5),
-                              color: iconColor.withOpacity(0.5),
-                              border: Border.all(
-                                color: bottomNavBarStroke,
-                                width: 0.5,
-                              )),
-                          child: GestureDetector(
-                            onTap: () {
-                              categoriaSeleccionada.value = null;
-                            },
-                            child: Padding(
-                              padding: const EdgeInsets.all(4.0),
-                              child: Row(
-                                mainAxisAlignment: MainAxisAlignment.center,
-                                children: [
-                                  Icon(
-                                    Icons.filter_alt_outlined,
-                                    color: bottomNavBar,
-                                    size: 16,
+                                },
+                                child: Padding(
+                                  padding: const EdgeInsets.all(4.0),
+                                  child: Row(
+                                    mainAxisAlignment: MainAxisAlignment.center,
+                                    children: [
+                                      Icon(
+                                        Icons.filter_alt_outlined,
+                                        color: bottomNavBar,
+                                        size: 16,
+                                      ),
+                                      const SizedBox(width: 8),
+                                      buttonClearFilter(),
+                                    ],
                                   ),
-                                  const SizedBox(width: 8),
-                                  buttonClearFilter(),
-                                ],
+                                ),
                               ),
                             ),
-                          ),
-                        ),
+                    ),
+                    _productsHome(
+                      context,
+                      data,
+                      categoriaSeleccionada.value,
+                      scrollController,
+                    ),
+                  ],
                 ),
-                _productsHome(
-                  context,
-                  data,
-                  categoriaSeleccionada.value,
-                  scrollController,
-                ),
-              ],
-            ),
+              ),
+            ],
           ),
         ],
       ),
       floatingActionButtonLocation: FloatingActionButtonLocation.centerDocked,
-      floatingActionButton: Column(
-        mainAxisAlignment: MainAxisAlignment.end,
+      floatingActionButton: loggedUserRol == UserRoles.artesano
+          ? Column(
+              mainAxisAlignment: MainAxisAlignment.end,
+              children: [
+                shoppingCart(context),
+                Gap(8),
+                BottomNavBar(
+                  viewSelected: viewIndex,
+                )
+              ],
+            )
+          : BottomNavBar(
+              viewSelected: viewIndex,
+            ),
+    );
+  }
+
+  Widget _buildShimmerinEfect() {
+    return Shimmer.fromColors(
+      baseColor: Colors.grey[300]!,
+      highlightColor: Colors.grey[100]!,
+      child: Row(
         children: [
-          if (loggedUserRol == UserRoles.artesano)
-            shoppingCart(context)
-          else
-            Container(),
-          const SizedBox(
-            height: 8,
+          Container(
+            alignment: Alignment.centerLeft,
+            child: const SizedBox(
+              width: 45,
+              height: 45,
+              child: CircleAvatar(
+                backgroundColor: Colors.white,
+              ),
+            ),
           ),
-          BottomNavBar(
-            viewSelected: viewIndex,
+          Container(
+            margin: const EdgeInsets.symmetric(horizontal: 10),
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                Container(
+                  width: 150,
+                  height: 20,
+                  color: Colors.white,
+                ),
+              ],
+            ),
           ),
         ],
       ),
@@ -429,7 +465,10 @@ class HomeScreen extends HookWidget {
         child: Container(
           width: MediaQuery.of(context).size.width,
           alignment: Alignment.bottomRight,
-          margin: const EdgeInsets.symmetric(horizontal: 10),
+          margin: const EdgeInsets.only(
+            left: 10,
+            right: 10,
+          ), //bottom: 60
           child: FloatingActionButton(
             backgroundColor: bottomNavBar,
             shape: const CircleBorder(),

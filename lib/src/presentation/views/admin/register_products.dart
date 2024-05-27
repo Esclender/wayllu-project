@@ -56,8 +56,8 @@ class RegisterProductsScreen extends HookWidget {
     Map<String, dynamic> productInfoToSend,
     BuildContext context,
   ) async {
-    final productsCubit = context.watch<ProductListCubit>();
-    productsCubit.registerNewProduct(productInfoToSend);
+    // final productsCubit = context.watch<ProductListCubit>();
+    // productsCubit.registerNewProduct(productInfoToSend);
   }
 
   @override
@@ -191,6 +191,25 @@ class RegisterProductsScreen extends HookWidget {
             ),
           ],
         ),
+      ),
+    );
+  }
+
+  Widget _buildTextHeader() {
+    return Text(
+      'Registrar Producto',
+      style: TextStyle(
+        fontSize: 23,
+        fontWeight: FontWeight.bold,
+        fontFamily: 'Gotham',
+        foreground: Paint()
+          ..shader = LinearGradient(
+            begin: Alignment.bottomCenter,
+            end: Alignment.topCenter,
+            colors: [btnprimary, btnsecondary],
+          ).createShader(
+            const Rect.fromLTRB(0.0, 0.0, 100.0, 60.0),
+          ),
       ),
     );
   }
@@ -505,19 +524,6 @@ class RegisterProductsScreen extends HookWidget {
           ),
         ),
       ],
-    );
-  }
-
-  Text _buildTextHeader() {
-    return const Text(
-      'Registrar Producto',
-      style: TextStyle(
-        color: Colors.black,
-        fontSize: 18,
-        fontFamily: 'Gotham',
-        fontWeight: FontWeight.w500,
-        height: 0,
-      ),
     );
   }
 

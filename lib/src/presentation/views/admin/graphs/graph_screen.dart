@@ -16,7 +16,6 @@ import 'package:wayllu_project/src/presentation/widgets/graphs_components/column
 import 'package:wayllu_project/src/presentation/widgets/top_vector.dart';
 import 'package:wayllu_project/src/utils/constants/colors.dart';
 import 'package:collection/collection.dart';
-import 'package:wayllu_project/src/utils/extensions/scroll_controller_extension.dart';
 
 @RoutePage()
 class GraphicProductsScreen extends HookWidget {
@@ -80,44 +79,47 @@ class GraphicProductsScreen extends HookWidget {
         final currentYear = DateTime.now().year;
 
         ventasListCubit.getVentasByYearAndMonth('$currentYear', '');
-
         final subscription = ventasListCubit.stream.listen((ventas) {
           if (ventas != null) {
             dataVentas.value = ventas;
           }
         });
-
         initializeDateFormatting('es_ES');
         return subscription.cancel;
       },
       [ventasListCubit],
     );
 
-    List<ChartBarData> chartData;
+    List<ChartBarData> chartData = [];
 
     if (selectedFilter.value.startsWith('Mes')) {
-      // Crear datos agrupados por día
+      final Map<DateTime, double> dailySums = {};
+      DateTime? latestDate;
 
-      final Map<int, double> dailySums = {};
       for (final venta in dataVentas.value) {
         final date = DateTime.parse(venta.FECHA_REGISTRO);
 
         if (date.month.toString() == selectedValues.value['Mes']) {
-          final dayOfWeek = date.weekday;
-          dailySums[dayOfWeek] =
-              (dailySums[dayOfWeek] ?? 0) + (venta.CANTIDAD ?? 0);
+          dailySums[date] = (dailySums[date] ?? 0) + (venta.CANTIDAD ?? 0);
+
+          if (latestDate == null || date.isAfter(latestDate)) {
+            latestDate = date;
+          }
         }
       }
 
-      chartData = dailySums.entries
-          .map((entry) => ChartBarData(
-                DateFormat.EEEE('es_ES').format(DateTime(1, entry.key)),
-                entry.value,
-                entry.key,
-              ))
-          .toList();
+      if (latestDate != null) {
+        for (int i = 0; i < 5; i++) {
+          final date = latestDate.subtract(Duration(days: i));
+          final formattedDate = DateFormat('dd/MM').format(date);
+          final sales = dailySums[date] ?? 0;
+          chartData.add(ChartBarData(formattedDate, sales, date.day));
+        }
+      }
+
+      chartData = chartData.reversed
+          .toList(); // Aseguramos que estén en orden de fecha ascendente
     } else {
-      // Crear datos agrupados por mes
       final Map<int, double> monthlySums = {};
       for (final venta in dataVentas.value) {
         final month = DateTime.parse(venta.FECHA_REGISTRO).month;
@@ -125,11 +127,13 @@ class GraphicProductsScreen extends HookWidget {
       }
 
       chartData = monthlySums.entries
-          .map((entry) => ChartBarData(
-                DateFormat.MMMM('es_ES').format(DateTime(0, entry.key)),
-                entry.value,
-                entry.key,
-              ))
+          .map(
+            (entry) => ChartBarData(
+              DateFormat.MMMM('es_ES').format(DateTime(1, entry.key)),
+              entry.value,
+              entry.key,
+            ),
+          )
           .toList();
     }
 
@@ -200,11 +204,15 @@ class GraphicProductsScreen extends HookWidget {
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
                 TopVector(),
-                _buildGraphicWithFilters(
-                  context,
-                  selectedFilter,
-                  selectedValues.value,
-                  chartData,
+                Column(
+                  children: [
+                    _buildGraphicWithFilters(
+                      context,
+                      selectedFilter,
+                      selectedValues.value,
+                      chartData,
+                    ),
+                  ],
                 ),
                 Container(
                   alignment: Alignment.centerLeft,
@@ -279,51 +287,56 @@ class GraphicProductsScreen extends HookWidget {
   }
 
   Widget _buildGraphicWithFilters(
-      BuildContext context,
-      ValueNotifier<String> selectedFilter,
-      Map<String, String> selectedValues,
-      List<ChartBarData> data) {
-    return Padding(
-      padding: EdgeInsets.all(containersPadding),
-      child: Wrap(
-        spacing: 10.0,
-        runSpacing: 10.0,
-        children: [
-          GradientText(
-            text: 'Registro de ventas',
-            fontSize: 25.0,
+    BuildContext context,
+    ValueNotifier<String> selectedFilter,
+    Map<String, String> selectedValues,
+    List<ChartBarData> data,
+  ) {
+    return Column(
+      children: [
+        Padding(
+          padding: EdgeInsets.all(containersPadding),
+          child: Wrap(
+            spacing: 10.0,
+            runSpacing: 10.0,
+            children: [
+              GradientText(
+                text: 'Registro de ventas',
+                fontSize: 25.0,
+              ),
+              GlassContainer(
+                height: 200,
+                blur: 4,
+                color: Colors.white.withOpacity(0.8),
+                gradient: const LinearGradient(
+                  begin: Alignment.topLeft,
+                  end: Alignment.bottomRight,
+                  colors: [
+                    Color.fromARGB(255, 102, 102, 102),
+                    Color.fromARGB(255, 59, 60, 61),
+                  ],
+                ),
+                border: Border.all(
+                    width: 0.5, color: Colors.white.withOpacity(0.5)),
+                shadowStrength: 5,
+                borderRadius: BorderRadius.circular(5),
+                shadowColor: Colors.white.withOpacity(0.24),
+                child: ColumnBarChartComponent(
+                  data: data,
+                ),
+              ),
+              ...filters.map((String filterHint) {
+                return _buildFilter(
+                  context,
+                  hint: filterHint,
+                  selectedFilter: selectedFilter,
+                  selectedValues: selectedValues,
+                );
+              }),
+            ],
           ),
-          GlassContainer(
-            height: 200,
-            blur: 4,
-            color: Colors.white.withOpacity(0.8),
-            gradient: const LinearGradient(
-              begin: Alignment.topLeft,
-              end: Alignment.bottomRight,
-              colors: [
-                Color.fromARGB(255, 102, 102, 102),
-                Color.fromARGB(255, 59, 60, 61),
-              ],
-            ),
-            border:
-                Border.all(width: 0.5, color: Colors.white.withOpacity(0.5)),
-            shadowStrength: 5,
-            borderRadius: BorderRadius.circular(5),
-            shadowColor: Colors.white.withOpacity(0.24),
-            child: ColumnBarChartComponent(
-              data: data,
-            ),
-          ),
-          ...filters.map((String filterHint) {
-            return _buildFilter(
-              context,
-              hint: filterHint,
-              selectedFilter: selectedFilter,
-              selectedValues: selectedValues,
-            );
-          }),
-        ],
-      ),
+        ),
+      ],
     );
   }
 
@@ -333,9 +346,14 @@ class GraphicProductsScreen extends HookWidget {
       required Map<String, String> selectedValues}) {
     final currentYear = DateTime.now().year;
     final List<DropdownMenuItem<String>> yearItems = [];
+
     for (int year = 2023; year <= currentYear; year++) {
-      yearItems.add(DropdownMenuItem(
-          value: year.toString(), child: Text(year.toString())));
+      yearItems.add(
+        DropdownMenuItem(
+          value: year.toString(),
+          child: Text(year.toString()),
+        ),
+      );
     }
 
     final List<DropdownMenuItem<String>> monthItems = [
@@ -360,164 +378,146 @@ class GraphicProductsScreen extends HookWidget {
       items = monthItems;
     }
 
-    return SizedBox(
-      width: MediaQuery.of(context).size.width * 0.43,
-      child: DropdownButtonFormField(
-        value: selectedValues[hint], // Valor seleccionado
-        decoration: const InputDecoration(
-          border: OutlineInputBorder(),
-          focusedBorder: OutlineInputBorder(),
-        ),
-        hint: Text(
+    return DropdownButton<String>(
+      value: selectedValues[hint],
+      hint: Text(hint),
+      items: items,
+      padding: EdgeInsets.only(right: 6),
+      onChanged: (String? newValue) {
+        _onDropMenuChanged(
+          newValue,
+          context,
           hint,
-          style: const TextStyle(fontSize: 12),
-        ),
-        items: items,
-        onChanged: (value) => _onDropMenuChanged(
-            value, context, hint, selectedFilter, selectedValues),
-      ),
+          selectedFilter,
+          selectedValues,
+        );
+      },
     );
   }
+}
 
-  Widget _listTile({
-    required Widget leading,
-    required Widget title,
-    required List<DescriptionItem> fields,
-  }) {
-    return Row(
-      children: [
-        leading,
-        const Gap(20),
-        Column(
+Widget _listTile({
+  required Widget leading,
+  required Widget title,
+  required List<DescriptionItem> fields,
+}) {
+  return Row(
+    children: [
+      leading,
+      const Gap(20),
+      Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          title,
+          ...fields.map(
+            (f) => Text(
+              '${f.field}: ${f.value}',
+              style: TextStyle(
+                color: smallWordsColor.withOpacity(0.7),
+                fontSize: 8,
+              ),
+            ),
+          ),
+        ],
+      ),
+    ],
+  );
+}
+
+Widget _buildItemContainer(
+    {required String productCode, required List<VentasList> ventas}) {
+  final BoxDecoration decoration = BoxDecoration(
+    color: bottomNavBar,
+    boxShadow: [
+      BoxShadow(
+        color: const Color.fromARGB(255, 95, 95, 95).withOpacity(0.08),
+        spreadRadius: 2,
+        blurRadius: 4,
+        offset: const Offset(
+          0,
+          1,
+        ),
+      ),
+    ],
+    borderRadius: const BorderRadius.all(
+      Radius.circular(5),
+    ),
+  );
+
+  final totalQuantity =
+      ventas.fold<int>(0, (sum, item) => sum + (item.CANTIDAD ?? 0));
+  final String imageUrl = ventas.isNotEmpty && ventas.first.IMAGEN != null
+      ? ventas.first.IMAGEN!
+      : 'https://via.placeholder.com/150'; // URL de la imagen por defecto
+
+  return ExpansionTile(
+    title: Container(
+      padding: EdgeInsets.zero,
+      margin: EdgeInsets.zero,
+      //padding: const EdgeInsets.only(bottom: 5),
+      decoration: decoration,
+
+      child: ListTile(
+        leading: _buildImageAvatar(imageUrl), // Icono para el producto
+        title: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
-            title,
-            ...fields.map(
-              (f) => Text(
-                '${f.field}: ${f.value}',
-                style: TextStyle(
-                  color: smallWordsColor.withOpacity(0.7),
-                  fontSize: 8,
-                ),
-              ),
+            Text(
+              productCode,
+              style: const TextStyle(fontSize: 18),
             ),
+            Container(
+                margin: const EdgeInsets.only(top: 10),
+                padding: const EdgeInsets.symmetric(horizontal: 4),
+                decoration: BoxDecoration(
+                    color: secondary, borderRadius: BorderRadius.circular(3)),
+                child: Text(
+                  'Total vendidos: $totalQuantity',
+                  style: TextStyle(
+                      fontSize: 13,
+                      fontWeight: FontWeight.w500,
+                      color: bgPrimary),
+                )),
           ],
         ),
-      ],
-    );
-  }
-
-  Widget _buildItemContainer(
-      {required String productCode, required List<VentasList> ventas}) {
-    final BoxDecoration decoration = BoxDecoration(
-      color: bottomNavBar,
-      boxShadow: [
-        BoxShadow(
-          color: const Color.fromARGB(255, 95, 95, 95).withOpacity(0.08),
-          spreadRadius: 2,
-          blurRadius: 4,
-          offset: const Offset(
-            0,
-            1,
-          ),
-        ),
-      ],
-      borderRadius: const BorderRadius.all(
-        Radius.circular(5),
       ),
-    );
-
-    final totalQuantity =
-        ventas.fold<int>(0, (sum, item) => sum + (item.CANTIDAD ?? 0));
-    final String imageUrl = ventas.isNotEmpty && ventas.first.IMAGEN != null
-        ? ventas.first.IMAGEN!
-        : 'https://via.placeholder.com/150'; // URL de la imagen por defecto
-
-    return ExpansionTile(
-      title: Container(
-        padding: EdgeInsets.zero,
-        margin: EdgeInsets.zero,
-        //padding: const EdgeInsets.only(bottom: 5),
-        decoration: decoration,
-
-        child: ListTile(
-          leading: _buildImageAvatar(imageUrl), // Icono para el producto
-          title: Column(
-            crossAxisAlignment: CrossAxisAlignment.start,
-            children: [
-              Text(
-                productCode,
-                style: const TextStyle(fontSize: 18),
-              ),
-              Container(
-                  margin: const EdgeInsets.only(top: 10),
-                  padding: const EdgeInsets.symmetric(horizontal: 4),
-                  decoration: BoxDecoration(
-                      color: secondary, borderRadius: BorderRadius.circular(3)),
-                  child: Text(
-                    'Total vendidos: $totalQuantity',
-                    style: TextStyle(
-                        fontSize: 13,
-                        fontWeight: FontWeight.w500,
-                        color: bgPrimary),
-                  )),
-            ],
-          ),
-        ),
-      ),
-      children: ventas.map((venta) {
-        return Column(
-          children: [
-            ListTile(
-              title: Text(
-                'Fecha de Registro: ${venta.formattingDate()}',
-                style: infoCardsProducts(),
-              ),
-              subtitle: Column(
-                crossAxisAlignment: CrossAxisAlignment.start,
-                children: [
-                  Text('Cantidad: ${venta.CANTIDAD}',
-                      style: infoCardsProducts()),
-                  Text('Descripción: ${venta.DESCRIPCION}',
-                      style: infoCardsProducts()),
-                ],
-              ),
+    ),
+    children: ventas.map((venta) {
+      return Column(
+        children: [
+          ListTile(
+            title: Text(
+              'Fecha de Registro: ${venta.formattingDate()}',
+              style: infoCardsProducts(),
             ),
-            Divider(),
-          ],
-        );
-      }).toList(),
-    );
-  }
+            subtitle: Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                Text('Cantidad: ${venta.CANTIDAD}', style: infoCardsProducts()),
+                Text('Descripción: ${venta.DESCRIPCION}',
+                    style: infoCardsProducts()),
+              ],
+            ),
+          ),
+          Divider(),
+        ],
+      );
+    }).toList(),
+  );
+}
 
-  TextStyle infoCardsProducts() => TextStyle(fontSize: 12);
+TextStyle infoCardsProducts() => TextStyle(fontSize: 12);
 
-  Widget _buildImageAvatar(String url) {
-    return Container(
-      width: 60,
-      height: 60,
-      decoration: BoxDecoration(
-        borderRadius: BorderRadius.circular(5.0),
-        image: DecorationImage(
-          image: NetworkImage(url),
-          fit: BoxFit.cover,
-        ),
+Widget _buildImageAvatar(String url) {
+  return Container(
+    width: 60,
+    height: 60,
+    decoration: BoxDecoration(
+      borderRadius: BorderRadius.circular(5.0),
+      image: DecorationImage(
+        image: NetworkImage(url),
+        fit: BoxFit.cover,
       ),
-    );
-  }
-
-  Widget _itemMarker(Color colorMarker) {
-    return Container(
-      margin: const EdgeInsets.only(top: 10),
-      width: 5.0,
-      height: 20.0,
-      decoration: BoxDecoration(
-        color: colorMarker,
-        borderRadius: const BorderRadius.only(
-          topRight: Radius.circular(5),
-          bottomRight: Radius.circular(5),
-        ),
-      ),
-    );
-  }
+    ),
+  );
 }
