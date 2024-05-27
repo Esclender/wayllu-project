@@ -10,11 +10,13 @@ import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_hooks/flutter_hooks.dart';
 import 'package:intl/intl.dart';
 import 'package:ionicons/ionicons.dart';
+import 'package:logger/logger.dart';
 import 'package:wayllu_project/src/config/router/app_router.dart';
 import 'package:wayllu_project/src/domain/enums/lists_enums.dart';
 import 'package:wayllu_project/src/domain/enums/user_roles.dart';
 import 'package:wayllu_project/src/domain/models/models_products.dart';
 import 'package:wayllu_project/src/domain/models/products_info/product_info_model.dart';
+import 'package:wayllu_project/src/domain/models/user_info/user_info_model.dart';
 import 'package:wayllu_project/src/locator.dart';
 import 'package:wayllu_project/src/presentation/cubit/productos_carrito_cubit.dart';
 import 'package:wayllu_project/src/presentation/cubit/products_list_cubit.dart';
@@ -22,7 +24,6 @@ import 'package:wayllu_project/src/presentation/cubit/user_logged_cubit.dart';
 import 'package:wayllu_project/src/presentation/widgets/bottom_navbar.dart';
 import 'package:wayllu_project/src/presentation/widgets/list_products.dart';
 import 'package:wayllu_project/src/utils/constants/colors.dart';
-import 'package:wayllu_project/src/utils/extensions/scroll_controller_extension.dart';
 
 @RoutePage()
 class HomeScreen extends HookWidget {
@@ -39,8 +40,6 @@ class HomeScreen extends HookWidget {
     final int hour = now.hour;
     final String greeting = getGreeting(hour);
     final loggedUserRol = context.read<UserLoggedCubit>().state;
-    final scrollController = useScrollController();
-    final bool isAdmin = loggedUserRol == UserRoles.admin;
 
     final userInfo = context.watch<UserLoggedInfoCubit>().state;
 
@@ -54,19 +53,19 @@ class HomeScreen extends HookWidget {
 
     final productsListCubit = context.watch<ProductListCubit>();
     final List<ProductInfo> data = [];
+    final scrollController = useScrollController();
 
     useEffect(
       () {
         productsListCubit.getProductsLists();
-        scrollController.onScrollEndsListener(
-          () {productsListCubit.getProductsLists();
-          },
-        );
+
         return scrollController.dispose;
       },
       [],
     );
+
     final categoriaSeleccionada = useState<String?>(null);
+
     return Scaffold(
       backgroundColor: bgPrimary,
       body: CustomScrollView(
@@ -83,42 +82,7 @@ class HomeScreen extends HookWidget {
               child: Container(
                 margin: const EdgeInsets.symmetric(horizontal: 22),
                 child: userInfo != null
-                    ? Row(
-                        children: [
-                          Container(
-                            alignment: Alignment.centerLeft,
-                            child: SizedBox(
-                              width: 45,
-                              height: 45,
-                              child: CircleAvatar(
-                                backgroundImage: NetworkImage(
-                                  userInfo.URL_IMAGE ?? 'https://via.placeholder.com/150',
-                                ),
-                              ),
-                            ),
-                          ),
-                          Container(
-                            margin: const EdgeInsets.symmetric(horizontal: 10),
-                            child: Column(
-                              crossAxisAlignment: CrossAxisAlignment.start,
-                              children: [
-                                AutoSizeText(
-                                  '$greeting${userInfo.NOMBRE_COMPLETO}',
-                                  style: const TextStyle(
-                                    fontFamily: 'Gotham',
-                                    fontSize: 16,
-                                    fontWeight: FontWeight.w500,
-                                    height: 1,
-                                    color: Color(0xff313131),
-                                  ),
-                                  maxLines: 1,
-                                  overflow: TextOverflow.ellipsis,
-                                ),
-                              ],
-                            ),
-                          ),
-                        ],
-                      )
+                    ? appBar(userInfo, greeting)
                     : const Center(
                         child: CircularProgressIndicator(),
                       ),
@@ -133,99 +97,29 @@ class HomeScreen extends HookWidget {
                 ),
                 firstLine(context, loggedUserRol),
                 dashboard(context, loggedUserRol),
-                Container(
-                  margin:
-                      const EdgeInsets.symmetric(horizontal: 18, vertical: 6),
-                  child: Row(
-                    mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                    children: [
-                      // barSearch(context),
-                      if (loggedUserRol == UserRoles.admin)
-                        optionsAndLogout(context)
-                      else
-                        Container(),
-                    ],
-                  ),
-                ),
+                buildBarSearch(loggedUserRol, context),
                 SingleChildScrollView(
                   child: loggedUserRol == UserRoles.admin
-                      ? Row(
-                          mainAxisAlignment: MainAxisAlignment.center,
-                          children: categories.map((category) {
-                            return categoriesProducts(
-                              context,
-                              category.name,
-                              category.image,
-                              (selectedCategory) {
-                                if (loggedUserRol == UserRoles.admin &&
-                                    selectedCategory ==
-                                        categoriaSeleccionada.value) {
-                                  categoriaSeleccionada.value = null;
-                                } else {
-                                  categoriaSeleccionada.value =
-                                      selectedCategory;
-                                }
-                              },
-                              category.name.toUpperCase() ==
-                                  categoriaSeleccionada
-                                      .value, // Verifica si la categoría está seleccionada
-                            );
-                          }).toList(),
-                        )
+                      ? filterCategories(
+                          context, loggedUserRol, categoriaSeleccionada)
                       : const SizedBox(),
                 ),
                 const SizedBox(
                   height: 6,
                 ),
-                Container(
-                  padding: const EdgeInsets.symmetric(horizontal: 22),
-                  alignment: Alignment.centerLeft,
-                  child: categoriaSeleccionada.value == null
-                      ? const Text(
-                          'Todos los productos',
-                          style: TextStyle(
-                            fontFamily: 'Gotham',
-                            fontSize: 24,
-                            fontWeight: FontWeight.w500,
-                          ),
-                        )
-                      : Container(
-                          width: MediaQuery.of(context).size.width * 0.32,
-                          decoration: BoxDecoration(
-                              borderRadius: BorderRadius.circular(5),
-                              color: iconColor.withOpacity(0.5),
-                              border: Border.all(
-                                color: bottomNavBarStroke,
-                                width: 0.5,
-                              )),
-                          child: GestureDetector(
-                            onTap: () {
-                              categoriaSeleccionada.value = null;
-                            },
-                            child: Padding(
-                              padding: const EdgeInsets.all(4.0),
-                              child: Row(
-                                mainAxisAlignment: MainAxisAlignment.center,
-                                children: [
-                                  Icon(
-                                    Icons.filter_alt_outlined,
-                                    color: bottomNavBar,
-                                    size: 16,
-                                  ),
-                                  const SizedBox(width: 8),
-                                  buttonClearFilter(),
-                                ],
-                              ),
-                            ),
-                          ),
-                        ),
-                ),
-                _productsHome(
-                  context,
-                  data,
-                  categoriaSeleccionada.value,
-                  scrollController,
-                ),
+                titleSection(categoriaSeleccionada, context),
+            /* SizedBox(
+                  height: loggedUserRol == UserRoles.admin
+        ? MediaQuery.of(context).size.height * 25.5 // Altura inicial si no hay productos
+        : MediaQuery.of(context).size.height, 
+                  child:  _productsHome(
+                        context,
+                        data,
+                        categoriaSeleccionada.value,
+                        scrollController,
+                      )
+                   
+                )*/
               ],
             ),
           ),
@@ -250,6 +144,133 @@ class HomeScreen extends HookWidget {
     );
   }
 
+  Row filterCategories(BuildContext context, UserRoles loggedUserRol,
+      ValueNotifier<String?> categoriaSeleccionada) {
+    return Row(
+      mainAxisAlignment: MainAxisAlignment.center,
+      children: categories.map((category) {
+        return categoriesProducts(
+          context,
+          category.name,
+          category.image,
+          (selectedCategory) {
+            if (loggedUserRol == UserRoles.admin &&
+                selectedCategory == categoriaSeleccionada.value) {
+              categoriaSeleccionada.value = null;
+            } else {
+              categoriaSeleccionada.value = selectedCategory;
+            }
+          },
+          category.name.toUpperCase() ==
+              categoriaSeleccionada
+                  .value, // Verifica si la categoría está seleccionada
+        );
+      }).toList(),
+    );
+  }
+
+  Row appBar(UserInfo userInfo, String greeting) {
+    return Row(
+      children: [
+        Container(
+          alignment: Alignment.centerLeft,
+          child: SizedBox(
+            width: 45,
+            height: 45,
+            child: CircleAvatar(
+              backgroundImage: NetworkImage(
+                userInfo.URL_IMAGE ?? 'https://via.placeholder.com/150',
+              ),
+            ),
+          ),
+        ),
+        Container(
+          margin: const EdgeInsets.symmetric(horizontal: 10),
+          child: Column(
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: [
+              AutoSizeText(
+                '$greeting${userInfo.NOMBRE_COMPLETO}',
+                style: const TextStyle(
+                  fontFamily: 'Gotham',
+                  fontSize: 16,
+                  fontWeight: FontWeight.w500,
+                  height: 1,
+                  color: Color(0xff313131),
+                ),
+                maxLines: 1,
+                overflow: TextOverflow.ellipsis,
+              ),
+            ],
+          ),
+        ),
+      ],
+    );
+  }
+
+  Container titleSection(
+      ValueNotifier<String?> categoriaSeleccionada, BuildContext context) {
+    return Container(
+      padding: const EdgeInsets.symmetric(horizontal: 22),
+      alignment: Alignment.centerLeft,
+      child: categoriaSeleccionada.value == null
+          ? const Text(
+              'Todos los productos',
+              style: TextStyle(
+                fontFamily: 'Gotham',
+                fontSize: 24,
+                fontWeight: FontWeight.w500,
+              ),
+            )
+          : Container(
+              width: MediaQuery.of(context).size.width * 0.32,
+              decoration: BoxDecoration(
+                  borderRadius: BorderRadius.circular(5),
+                  color: iconColor.withOpacity(0.5),
+                  border: Border.all(
+                    color: bottomNavBarStroke,
+                    width: 0.5,
+                  )),
+              child: GestureDetector(
+                onTap: () {
+                  categoriaSeleccionada.value = null;
+                },
+                child: Padding(
+                  padding: const EdgeInsets.all(4.0),
+                  child: Row(
+                    mainAxisAlignment: MainAxisAlignment.center,
+                    children: [
+                      Icon(
+                        Icons.filter_alt_outlined,
+                        color: bottomNavBar,
+                        size: 16,
+                      ),
+                      const SizedBox(width: 8),
+                      buttonClearFilter(),
+                    ],
+                  ),
+                ),
+              ),
+            ),
+    );
+  }
+
+  Container buildBarSearch(UserRoles loggedUserRol, BuildContext context) {
+    return Container(
+      margin: const EdgeInsets.symmetric(horizontal: 18, vertical: 6),
+      child: Row(
+        mainAxisAlignment: MainAxisAlignment.spaceBetween,
+        children: [
+          // barSearch(context),
+          if (loggedUserRol == UserRoles.admin)
+            optionsAndLogout(context)
+          else
+            Container(),
+        ],
+      ),
+    );
+  }
+
   Text buttonClearFilter() {
     return Text(
       'Quitar filtro',
@@ -269,60 +290,69 @@ class HomeScreen extends HookWidget {
     ScrollController scrollController,
   ) {
     return Container(
-      width: MediaQuery.of(context).size.width,
-      height: MediaQuery.of(context).size.height,
       margin: const EdgeInsets.symmetric(vertical: 4, horizontal: 20),
       child:
           dataProducts(categorySeleccionada, data, context, scrollController),
     );
   }
 
-  Widget dataProducts(String? categorySeleccionada, List<ProductInfo> data,
-      BuildContext context, ScrollController scrollController) {
-    return BlocBuilder<ProductListCubit, List<ProductInfo>?>(
-      builder: (context, state) {
-        if (state == null) {
-          return const Center(
-            child: CircularProgressIndicator(),
-          );
-        } else if (categorySeleccionada != null) {
-          data = state;
-          return ListView.builder(
-            controller: scrollController,
-            padding: EdgeInsets.zero,
-            shrinkWrap: true,
-            physics: const NeverScrollableScrollPhysics(),
-            itemCount: data.length,
-            itemBuilder: (context, index) {
-              return ProductsCardsItemsList(
-                context: context,
-                listType: ListEnums.products,
-                dataToRender: data,
-                categoriaSeleccionada: categorySeleccionada,
-                scrollController: scrollController,
-              );
+  Widget dataProducts(
+    String? categorySeleccionada,
+    List<ProductInfo> data,
+    BuildContext context,
+    ScrollController scrollController,
+  ) {
+    return Column(
+      children: [
+        Expanded(
+          child: BlocBuilder<ProductListCubit, List<ProductInfo>?>(
+            builder: (_, state) {
+              if (state == null) {
+                return const Center(
+                  child: CircularProgressIndicator(),
+                );
+              } else if (categorySeleccionada != null) {
+                data = state;
+                return ListView.builder(
+                  shrinkWrap: true,
+                  controller: scrollController,
+                  padding: EdgeInsets.zero,
+                  physics: const NeverScrollableScrollPhysics(),
+                  itemCount: data.length,
+                  itemBuilder: (context, index) {
+                    return ProductsCardsItemsList(
+                      context: context,
+                      listType: ListEnums.products,
+                      dataToRender: data,
+                      categoriaSeleccionada: categorySeleccionada,
+                      scrollController: scrollController,
+                    );
+                  },
+                );
+              } else {
+                data.addAll(state);
+                //data = state;
+                return ListView.builder(
+                  controller: scrollController,
+                  shrinkWrap: true,
+                  padding: EdgeInsets.zero,
+                  physics: const NeverScrollableScrollPhysics(),
+                  itemCount: data.length,
+                  itemBuilder: (context, index) {
+                    return ProductsCardsItemsList(
+                      context: context,
+                      listType: ListEnums.products,
+                      dataToRender: data,
+                      categoriaSeleccionada: categorySeleccionada,
+                      scrollController: scrollController,
+                    );
+                  },
+                );
+              }
             },
-          );
-        } else {
-          data = state;
-          return ListView.builder(
-            controller: scrollController,
-            padding: EdgeInsets.zero,
-            physics: const NeverScrollableScrollPhysics(),
-            shrinkWrap: true,
-            itemCount: data.length,
-            itemBuilder: (context, index) {
-              return ProductsCardsItemsList(
-                context: context,
-                listType: ListEnums.products,
-                dataToRender: data,
-                categoriaSeleccionada: categorySeleccionada,
-                scrollController: scrollController,
-              );
-            },
-          );
-        }
-      },
+          ),
+        ),
+      ],
     );
   }
 

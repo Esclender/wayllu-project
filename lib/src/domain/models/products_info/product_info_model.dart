@@ -43,7 +43,7 @@ class ProductInfo {
   int CANTIDAD;
   String CATEGORIA;
   String TIPO_PESO;
-  String FECHA_INGRESO;
+  String? FECHA_INGRESO;
   String? UBICACION;
   int? PESO;
   String? IMAGEN;
@@ -76,7 +76,7 @@ class ProductInfo {
       );
 
   String formattingDate() {
-    final DateTime dateTime = DateTime.parse(FECHA_INGRESO);
+    final DateTime dateTime = DateTime.parse(FECHA_INGRESO?? '');
 
     final String formattedDate = DateFormat('yyyy-MM-dd').format(dateTime);
 

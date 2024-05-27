@@ -4,13 +4,10 @@ import 'package:flutter_hooks/flutter_hooks.dart';
 import 'package:gap/gap.dart';
 import 'package:wayllu_project/src/config/router/app_router.dart';
 import 'package:wayllu_project/src/domain/enums/lists_enums.dart';
-import 'package:wayllu_project/src/domain/models/list_items_model.dart';
 import 'package:wayllu_project/src/domain/models/registro_ventas/registros_venta_repo.dart';
 import 'package:wayllu_project/src/locator.dart';
 import 'package:wayllu_project/src/presentation/cubit/user_logged_cubit.dart';
-import 'package:wayllu_project/src/presentation/cubit/ventas_list_cubit.dart';
 import 'package:wayllu_project/src/utils/constants/colors.dart';
-import 'package:flutter/material.dart';
 
 class VentasCardsItemsList extends HookWidget {
   final BuildContext contextF;
