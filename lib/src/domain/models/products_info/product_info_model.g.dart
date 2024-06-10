@@ -7,7 +7,7 @@ part of 'product_info_model.dart';
 // **************************************************************************
 
 ProductInfo _$ProductInfoFromJson(Map<String, dynamic> json) => ProductInfo(
-      COD_PRODUCTO: json['COD_PRODUCTO'] as int,
+      COD_PRODUCTO: json['COD_PRODUCTO'] as String,
       ITEM: json['ITEM'] as int,
       DESCRIPCION: json['DESCRIPCION'] as String,
       COD_FAMILIA: json['COD_FAMILIA'] as int,

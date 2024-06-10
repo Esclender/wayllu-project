@@ -34,7 +34,7 @@ class ProductInfo {
   factory ProductInfo.fromJson(Map<String, dynamic> json) =>
       _$ProductInfoFromJson(json);
 
-  int COD_PRODUCTO;
+  String COD_PRODUCTO;
   int ITEM;
   String DESCRIPCION;
   int COD_FAMILIA;
@@ -76,7 +76,7 @@ class ProductInfo {
       );
 
   String formattingDate() {
-    final DateTime dateTime = DateTime.parse(FECHA_INGRESO?? '');
+    final DateTime dateTime = DateTime.parse(FECHA_INGRESO ?? '');
 
     final String formattedDate = DateFormat('yyyy-MM-dd').format(dateTime);
 
@@ -89,7 +89,7 @@ abstract class InfoBase {
 }
 
 class MoreInfo extends InfoBase {
-  int COD_PRODUCTO;
+  String COD_PRODUCTO;
   String DESCRIPCION;
   String CATEGORIA;
 
