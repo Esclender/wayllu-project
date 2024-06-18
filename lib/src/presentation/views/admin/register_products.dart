@@ -4,7 +4,6 @@ import 'dart:async';
 import 'dart:io';
 
 import 'package:auto_route/auto_route.dart';
-import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_hooks/flutter_hooks.dart';
@@ -13,7 +12,6 @@ import 'package:image_picker/image_picker.dart';
 import 'package:ionicons/ionicons.dart';
 import 'package:wayllu_project/src/config/router/app_router.dart';
 import 'package:wayllu_project/src/locator.dart';
-import 'package:wayllu_project/src/presentation/cubit/products_list_cubit.dart';
 import 'package:wayllu_project/src/presentation/cubit/users_list_cubit.dart';
 import 'package:wayllu_project/src/utils/constants/colors.dart';
 import 'package:wayllu_project/src/utils/firebase/firebase_helper.dart';
@@ -418,13 +416,14 @@ class RegisterProductsScreen extends HookWidget {
             Container(
               decoration: BoxDecoration(
                 border: Border.all(
-                  color: Color(
-                      0xFFCCCCCC), // Replace bottomNavBarStroke with a color
+                  color: const Color(
+                    0xFFCCCCCC,
+                  ), // Replace bottomNavBarStroke with a color
                 ),
                 borderRadius: BorderRadius.circular(10),
               ),
               child: DropdownButton(
-                padding: EdgeInsets.symmetric(horizontal: 10.0),
+                padding: const EdgeInsets.symmetric(horizontal: 10.0),
                 isExpanded: true,
                 value: valueNotifier!.value,
                 hint: const Text('Tipo de peso'),
@@ -443,7 +442,7 @@ class RegisterProductsScreen extends HookWidget {
                 items: ['gramos'].map<DropdownMenuItem>((value) {
                   return DropdownMenuItem(
                     value: value,
-                    child: Text(value.toString()),
+                    child: Text(value),
                   );
                 }).toList(),
               ),

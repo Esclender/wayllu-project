@@ -1,3 +1,4 @@
+import 'dart:async';
 import 'dart:ui';
 
 import 'package:auto_route/auto_route.dart';
@@ -9,9 +10,8 @@ import 'package:flutter/widgets.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_hooks/flutter_hooks.dart';
 import 'package:gap/gap.dart';
-import 'package:intl/intl.dart';
+import 'package:hexcolor/hexcolor.dart';
 import 'package:ionicons/ionicons.dart';
-import 'package:logger/logger.dart';
 import 'package:shimmer/shimmer.dart';
 import 'package:wayllu_project/src/config/router/app_router.dart';
 import 'package:wayllu_project/src/domain/enums/lists_enums.dart';
@@ -44,18 +44,10 @@ class HomeScreen extends HookWidget {
     final String greeting = getGreeting(hour);
     final loggedUserRol = context.read<UserLoggedCubit>().state;
     final scrollController = useScrollController();
-    final bool isAdmin = loggedUserRol == UserRoles.admin;
+    final pagina = useState(1);
+    final isSearchingProducts = useState(false);
 
     final userInfo = context.watch<UserLoggedInfoCubit>().state;
-
-    void goToRegisterOfProductOrVentaCondition() {
-      if (loggedUserRol == UserRoles.admin) {
-        appRouter.navigate(const RegisterProductsRoute());
-      } else {
-        appRouter.navigate(const CarritoRoute());
-      }
-    }
-
     final productsListCubit = context.watch<ProductListCubit>();
 
     Future<void> searchProductByCode(c, String code) async {
@@ -68,7 +60,12 @@ class HomeScreen extends HookWidget {
         productsListCubit.getProductsLists();
         scrollController.onScrollEndsListener(
           () {
-            productsListCubit.getProductsLists();
+            isSearchingProducts.value = true;
+            productsListCubit.getProductsLists(pagina: pagina.value++);
+
+            Timer(const Duration(seconds: 3), () {
+              isSearchingProducts.value = false;
+            });
           },
         );
         return scrollController.dispose;
@@ -82,6 +79,7 @@ class HomeScreen extends HookWidget {
       body: Stack(
         children: [
           CustomScrollView(
+            controller: scrollController,
             slivers: [
               SliverAppBar(
                 leading: Container(),
@@ -105,7 +103,7 @@ class HomeScreen extends HookWidget {
                                   child: CircleAvatar(
                                     backgroundImage: NetworkImage(
                                       userInfo.URL_IMAGE ??
-                                          'https://via.placeholder.com/150',
+                                          'https://firebasestorage.googleapis.com/v0/b/wayllu.appspot.com/o/Artisans_Images%2Fimg1.jpeg?alt=media',
                                     ),
                                   ),
                                 ),
@@ -146,7 +144,9 @@ class HomeScreen extends HookWidget {
                     firstLine(context, loggedUserRol),
                     Container(
                       margin: const EdgeInsets.symmetric(
-                          horizontal: 18, vertical: 6),
+                        horizontal: 18,
+                        vertical: 6,
+                      ),
                       child: Row(
                         mainAxisAlignment: MainAxisAlignment.spaceBetween,
                         children: [
@@ -157,6 +157,7 @@ class HomeScreen extends HookWidget {
                                 optionsAndLogout(context),
                                 const Gap(10),
                                 CustomSearchWidget(
+                                  isHome: true,
                                   hint: 'Buscar por Codigo',
                                   width: 0.62,
                                   filterDataFunction: searchProductByCode,
@@ -213,12 +214,13 @@ class HomeScreen extends HookWidget {
                           : Container(
                               width: MediaQuery.of(context).size.width * 0.32,
                               decoration: BoxDecoration(
-                                  borderRadius: BorderRadius.circular(5),
-                                  color: iconColor.withOpacity(0.5),
-                                  border: Border.all(
-                                    color: bottomNavBarStroke,
-                                    width: 0.5,
-                                  )),
+                                borderRadius: BorderRadius.circular(5),
+                                color: iconColor.withOpacity(0.5),
+                                border: Border.all(
+                                  color: bottomNavBarStroke,
+                                  width: 0.5,
+                                ),
+                              ),
                               child: GestureDetector(
                                 onTap: () {
                                   categoriaSeleccionada.value = null;
@@ -247,6 +249,20 @@ class HomeScreen extends HookWidget {
                       categoriaSeleccionada.value,
                       scrollController,
                     ),
+                    if (isSearchingProducts.value)
+                      Padding(
+                        padding: const EdgeInsets.only(
+                          bottom: 65,
+                          top: 10,
+                        ),
+                        child: Center(
+                          child: CircularProgressIndicator(
+                            color: secondaryColor,
+                          ),
+                        ),
+                      )
+                    else
+                      const Gap(65),
                   ],
                 ),
               ),
@@ -260,10 +276,10 @@ class HomeScreen extends HookWidget {
               mainAxisAlignment: MainAxisAlignment.end,
               children: [
                 shoppingCart(context),
-                Gap(8),
+                const Gap(8),
                 BottomNavBar(
                   viewSelected: viewIndex,
-                )
+                ),
               ],
             )
           : BottomNavBar(
@@ -324,31 +340,40 @@ class HomeScreen extends HookWidget {
     String? categorySeleccionada,
     ScrollController scrollController,
   ) {
-    return Container(
-      width: MediaQuery.of(context).size.width,
-      height: MediaQuery.of(context).size.height,
-      margin: const EdgeInsets.symmetric(horizontal: 20, vertical: 4),
-      child: Column(
-        children: [
+    return Padding(
+      padding: const EdgeInsets.only(left: 20),
+      child:
           dataProducts(categorySeleccionada, data, context, scrollController),
-        ],
-      ),
-      // child:
-      //     dataProducts(categorySeleccionada, data, context, scrollController),
     );
   }
 
-  Widget dataProducts(String? categorySeleccionada, List<ProductInfo> data,
-      BuildContext context, ScrollController scrollController) {
+  Widget dataProducts(
+    String? categorySeleccionada,
+    List<ProductInfo> data,
+    BuildContext context,
+    ScrollController scrollController,
+  ) {
     return BlocBuilder<ProductListCubit, List<ProductInfo>?>(
       builder: (context, state) {
         if (state == null) {
-          return const Center(
-            child: CircularProgressIndicator(),
+          return GridView.builder(
+            padding: EdgeInsets.zero,
+            shrinkWrap: true,
+            gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
+              crossAxisCount: 2,
+              crossAxisSpacing: 8,
+              mainAxisSpacing: 8,
+            ),
+            physics: const NeverScrollableScrollPhysics(),
+            itemCount: 12,
+            itemBuilder: (BuildContext context, int index) {
+              return _buildItemContainer(
+                context,
+              );
+            },
           );
         } else if (categorySeleccionada != null) {
           data = state;
-          Logger().i(data);
           return ListView.builder(
             controller: scrollController,
             padding: EdgeInsets.zero,
@@ -367,26 +392,61 @@ class HomeScreen extends HookWidget {
           );
         } else {
           data = state;
-          Logger().i(data);
 
-          return ListView.builder(
-            controller: scrollController,
-            padding: EdgeInsets.zero,
-            physics: const NeverScrollableScrollPhysics(),
-            shrinkWrap: true,
-            itemCount: data.length,
-            itemBuilder: (context, index) {
-              return ProductsCardsItemsList(
-                context: context,
-                listType: ListEnums.products,
-                dataToRender: data,
-                categoriaSeleccionada: categorySeleccionada,
-                scrollController: scrollController,
-              );
-            },
+          return ProductsCardsItemsList(
+            context: context,
+            listType: ListEnums.products,
+            dataToRender: data,
+            categoriaSeleccionada: categorySeleccionada,
+            scrollController: scrollController,
           );
         }
       },
+    );
+  }
+
+  Widget _buildItemContainer(
+    BuildContext context,
+  ) {
+    return Stack(
+      children: [
+        Stack(
+          alignment: Alignment.topRight,
+          children: [
+            Container(
+              width: MediaQuery.of(context).size.width * 0.43,
+              height: double.infinity,
+              decoration: BoxDecoration(
+                color: bottomNavBar,
+                boxShadow: [
+                  simpleShadow,
+                ],
+                borderRadius: const BorderRadius.all(
+                  Radius.circular(10),
+                ),
+              ),
+              child: _buildShimmerEffect(context),
+            ),
+          ],
+        ),
+      ],
+    );
+  }
+
+  Widget _buildShimmerEffect(BuildContext context) {
+    return Shimmer.fromColors(
+      baseColor: Colors.grey[300]!,
+      highlightColor: Colors.grey[100]!,
+      child: Container(
+        width: MediaQuery.of(context).size.width * 0.43,
+        height: double.infinity,
+        decoration: const BoxDecoration(
+          color: Colors.white,
+          borderRadius: BorderRadius.all(
+            Radius.circular(10),
+          ),
+        ),
+      ),
     );
   }
 
@@ -443,7 +503,8 @@ class HomeScreen extends HookWidget {
             value: 'opcion2',
             child: InkWell(
               onTap: () {
-                // appRouter.navigateNamed('login');
+                unregisterDependenciesAndEnpoints();
+                appRouter.navigateNamed('login');
               },
               child: ListTile(
                 leading: Icon(
@@ -520,9 +581,9 @@ class HomeScreen extends HookWidget {
 
   Padding firstLine(BuildContext context, UserRoles rol) {
     // ignore: unrelated_type_equality_checks
-    final bool loggedUserRol = rol == UserRoles.admin;
-    final dateString =
-        DateFormat("dd 'de' MMMM yyyy", 'es').format(DateTime.now());
+    // final bool loggedUserRol = rol == UserRoles.admin;
+    // final dateString =
+    //     DateFormat("dd 'de' MMMM yyyy", 'es').format(DateTime.now());
 
     return Padding(
       padding: const EdgeInsets.symmetric(horizontal: 22.0),

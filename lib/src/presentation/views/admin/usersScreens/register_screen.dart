@@ -150,8 +150,6 @@ class _RegisterUserScreenState extends State<RegisterUserScreen> {
       appRouter.popForced();
       _resetFields();
     });
-
-    Logger().i(userInfoToSend);
   }
 
   void _resetFields() {

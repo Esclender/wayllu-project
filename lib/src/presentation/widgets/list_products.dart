@@ -3,7 +3,6 @@ import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_hooks/flutter_hooks.dart';
 import 'package:gap/gap.dart';
 import 'package:ionicons/ionicons.dart';
-import 'package:logger/logger.dart';
 import 'package:wayllu_project/src/config/router/app_router.dart';
 import 'package:wayllu_project/src/domain/enums/lists_enums.dart';
 import 'package:wayllu_project/src/domain/enums/user_roles.dart';
@@ -49,50 +48,29 @@ class ProductsCardsItemsList extends HookWidget {
             .toList()
         : dataToRender;
 
-    return _buildScrollableList(productosFiltrados, rol);
+    return _buildProducts(productosFiltrados, rol);
   }
 
-  Widget _buildScrollableList(
+  Widget _buildProducts(
     List<ProductInfo> productosFiltrados,
     UserRoles rol,
   ) {
-    return ListView.separated(
-      physics: const NeverScrollableScrollPhysics(),
-      separatorBuilder: (context, index) => const SizedBox(height: 8),
+    return GridView.builder(
+      padding: EdgeInsets.zero,
       shrinkWrap: true,
+      gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
+        crossAxisCount: 2,
+        crossAxisSpacing: 8,
+        mainAxisSpacing: 8,
+      ),
+      physics: const NeverScrollableScrollPhysics(),
       itemCount: productosFiltrados.length,
-      itemBuilder: (BuildContext c, int ind) {
-        return Row(
-          children: [
-            Expanded(
-              child: GridView.builder(
-                padding: EdgeInsets.zero,
-                shrinkWrap: true,
-                gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
-                  crossAxisCount: 2,
-                  crossAxisSpacing: 8,
-                  mainAxisSpacing: 2,
-                ),
-                physics: const NeverScrollableScrollPhysics(),
-                itemCount: ind == (productosFiltrados.length / 2).ceil() - 1
-                    ? productosFiltrados.length % 2
-                    : 2,
-                itemBuilder: (BuildContext context, int index) {
-                  final dataIndex = ind * 2 + index;
-                  if (dataIndex < productosFiltrados.length) {
-                    final producto = productosFiltrados[dataIndex];
-                    return _buildItemContainer(
-                      context,
-                      itemData: producto,
-                      rol: rol,
-                    );
-                  } else {
-                    return const SizedBox(); // No hay más datos para mostrar
-                  }
-                },
-              ),
-            ),
-          ],
+      itemBuilder: (BuildContext context, int index) {
+        final producto = productosFiltrados[index];
+        return _buildItemContainer(
+          context,
+          itemData: producto,
+          rol: rol,
         );
       },
     );
@@ -179,8 +157,9 @@ class ProductsCardsItemsList extends HookWidget {
       child: _listTile(
         context: context,
         rol: rol,
+        productInfo: itemData,
         leading: _buildImageProduct(context, itemData.IMAGEN!),
-        title: Text(itemData.COD_PRODUCTO.toString()),
+        title: Text(itemData.COD_PRODUCTO),
         fields: itemData.descriptionsFields,
         category: Text(itemData.category),
       ),
@@ -208,6 +187,7 @@ class ProductsCardsItemsList extends HookWidget {
     required BuildContext context,
     required Widget leading,
     required Widget title,
+    required ProductInfo productInfo,
     required List<DescriptionItem> fields,
     required Widget category,
     required UserRoles rol,
@@ -245,13 +225,17 @@ class ProductsCardsItemsList extends HookWidget {
           Container(
             margin: const EdgeInsets.only(right: 4),
             alignment: Alignment.bottomRight,
-            child: _buildEditButton(),
+            child: _buildEditButton(
+              productInfo: productInfo,
+            ),
           ),
       ],
     );
   }
 
-  Container _buildEditButton() {
+  Container _buildEditButton({
+    required ProductInfo productInfo,
+  }) {
     return Container(
       padding: const EdgeInsets.symmetric(
         vertical: 4,
@@ -262,7 +246,9 @@ class ProductsCardsItemsList extends HookWidget {
         borderRadius: BorderRadius.circular(5),
       ),
       child: GestureDetector(
-        onTap: () {},
+        onTap: () {
+          appRouter.navigate(EditProductsRoute(productInfo: productInfo));
+        },
         behavior: HitTestBehavior.translucent,
         child: const Text(
           'Editar',

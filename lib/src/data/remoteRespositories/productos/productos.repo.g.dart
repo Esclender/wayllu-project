@@ -22,10 +22,13 @@ class _ProductsApiServices implements ProductsApiServices {
 
   @override
   Future<HttpResponse<List<ProductInfo>?>> getProducts(
-      String? codigoProducto) async {
+    String? codigoProducto,
+    int pagina,
+  ) async {
     const _extra = <String, dynamic>{};
     final queryParameters = <String, dynamic>{
-      r'codigo_producto': codigoProducto
+      r'codigo_producto': codigoProducto,
+      r'pagina': pagina,
     };
     queryParameters.removeWhere((k, v) => v == null);
     final _headers = <String, dynamic>{};
@@ -71,6 +74,35 @@ class _ProductsApiServices implements ProductsApiServices {
             .compose(
               _dio.options,
               '/registro',
+              queryParameters: queryParameters,
+              data: _data,
+            )
+            .copyWith(
+                baseUrl: _combineBaseUrls(
+              _dio.options.baseUrl,
+              baseUrl,
+            ))));
+    final httpResponse = HttpResponse(null, _result);
+    return httpResponse;
+  }
+
+  @override
+  Future<HttpResponse<void>> updateProducto(
+      Map<String, dynamic> productInfo) async {
+    const _extra = <String, dynamic>{};
+    final queryParameters = <String, dynamic>{};
+    final _headers = <String, dynamic>{};
+    final _data = <String, dynamic>{};
+    _data.addAll(productInfo);
+    final _result =
+        await _dio.fetch<void>(_setStreamType<HttpResponse<void>>(Options(
+      method: 'POST',
+      headers: _headers,
+      extra: _extra,
+    )
+            .compose(
+              _dio.options,
+              '/editar',
               queryParameters: queryParameters,
               data: _data,
             )

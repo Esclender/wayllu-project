@@ -1,4 +1,3 @@
-import 'package:logger/logger.dart';
 import 'package:wayllu_project/src/data/remoteRespositories/artesanos/artesanos.repo.dart';
 import 'package:wayllu_project/src/data/remoteRespositories/auth/auth.repo.dart';
 import 'package:wayllu_project/src/data/remoteRespositories/productos/productos.repo.dart';
@@ -40,6 +39,24 @@ class ArtisansApiRepositoryImpl extends BaseApiRepository
   ) async {
     await _apiServices.newArtisian(userInfo);
   }
+
+  @override
+  Future<ArtesansListHttpResponse?> getAllArtisansWithNoPage() async {
+    final responseHttp = await getStateOf<ArtesansListHttpResponse>(
+      request: () => _apiServices.getAllArtisansWithNoPage(),
+    );
+
+    return responseHttp.data;
+  }
+
+  @override
+  Future<UserInfo?> getUniqueArtisan(Map<String, dynamic> filtro) async {
+    final responseHttp = await getStateOf<UserInfo?>(
+      request: () => _apiServices.getUniqueArtisian(filtro),
+    );
+
+    return responseHttp.data;
+  }
 }
 
 class AuthApiRepositoryImpl extends BaseApiRepository
@@ -52,7 +69,6 @@ class AuthApiRepositoryImpl extends BaseApiRepository
   Future<AuthLoginHttpResponse> getAccessToken(
     UserCredentialDto credentials,
   ) async {
-    Logger().i(credentials);
     final responseHttp = await getStateOf<AuthLoginHttpResponse>(
       request: () => _apiServices.getAccessToken(credentials),
     );
@@ -86,9 +102,12 @@ class ProductsApiRepositoryImpl extends BaseApiRepository
   //Se define una capara para obtener los datos desde api
   //Con el proposito de validaciones u otro manejo de datos
   @override
-  Future<ProductsListHttpResponse> getProducts(String? codigoProducto) async {
+  Future<ProductsListHttpResponse> getProducts({
+    String? codigoProducto,
+    int pagina = 1,
+  }) async {
     final responseHttp = await getStateOf<ProductsListHttpResponse>(
-      request: () => _apiServices.getProducts(codigoProducto),
+      request: () => _apiServices.getProducts(codigoProducto, pagina),
     );
 
     return responseHttp.data;
@@ -113,7 +132,9 @@ class ProductsApiRepositoryImpl extends BaseApiRepository
   }
 
   Future<VentasListHttpResponse> getVentasByYearAndMonth(
-      String year, String mes) async {
+    String year,
+    String mes,
+  ) async {
     final responseHttp = await getStateOf<VentasListHttpResponse>(
       request: () => _apiServices.getVentasByYearAndMonth(year, mes),
     );
@@ -125,6 +146,13 @@ class ProductsApiRepositoryImpl extends BaseApiRepository
   Future<void> newProduct(Map<String, dynamic> productInfo) async {
     await getStateOf<void>(
       request: () => _apiServices.newProducto(productInfo),
+    );
+  }
+
+  @override
+  Future<void> updateProduct(Map<String, dynamic> productInfo) async {
+    await getStateOf<void>(
+      request: () => _apiServices.updateProducto(productInfo),
     );
   }
 }

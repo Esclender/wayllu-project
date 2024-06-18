@@ -167,7 +167,7 @@ class CarritoRoute extends PageRouteInfo<void> {
 /// [EditProductsScreen]
 class EditProductsRoute extends PageRouteInfo<EditProductsRouteArgs> {
   EditProductsRoute({
-    required Map<String, dynamic> productInfo,
+    required ProductInfo productInfo,
     List<PageRouteInfo>? children,
   }) : super(
           EditProductsRoute.name,
@@ -184,7 +184,7 @@ class EditProductsRoute extends PageRouteInfo<EditProductsRouteArgs> {
 class EditProductsRouteArgs {
   const EditProductsRouteArgs({required this.productInfo});
 
-  final Map<String, dynamic> productInfo;
+  final ProductInfo productInfo;
 
   @override
   String toString() {

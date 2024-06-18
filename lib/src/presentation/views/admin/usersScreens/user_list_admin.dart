@@ -1,9 +1,11 @@
+import 'dart:async';
+
 import 'package:auto_route/auto_route.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_hooks/flutter_hooks.dart';
+import 'package:gap/gap.dart';
 import 'package:ionicons/ionicons.dart';
-import 'package:logger/logger.dart';
 import 'package:wayllu_project/src/config/router/app_router.dart';
 import 'package:wayllu_project/src/domain/models/list_items_model.dart';
 import 'package:wayllu_project/src/locator.dart';
@@ -39,6 +41,7 @@ class UsersListAdminScreen extends HookWidget {
   Widget build(BuildContext contex) {
     final usersListCubit = contex.watch<UsersListCubit>();
     final scrollController = useScrollController();
+    final isSearchingProducts = useState(false);
 
     final pagina = useState(1);
 
@@ -47,8 +50,14 @@ class UsersListAdminScreen extends HookWidget {
         usersListCubit.getUserLists();
 
         scrollController.onScrollEndsListener(() {
+          isSearchingProducts.value = true;
+
           pagina.value++;
           usersListCubit.getUserLists(pagina: pagina.value);
+
+          Timer(const Duration(seconds: 3), () {
+            isSearchingProducts.value = false;
+          });
         });
 
         return scrollController.dispose;
@@ -76,6 +85,7 @@ class UsersListAdminScreen extends HookWidget {
                     state,
                     contex,
                     scrollController,
+                    isSearchingProducts,
                   );
                 }
               },
@@ -90,6 +100,7 @@ class UsersListAdminScreen extends HookWidget {
     List<CardTemplate> usersToRender,
     BuildContext context,
     ScrollController controller,
+    ValueNotifier<bool> isSearching,
   ) {
     return Stack(
       alignment: Alignment.bottomRight,
@@ -112,6 +123,7 @@ class UsersListAdminScreen extends HookWidget {
                   CustomSearchWidget(
                     isHome: false,
                     filterDataFunction: getUsersFiltered,
+                    isSearching: isSearching,
                   ),
                 ],
               ),

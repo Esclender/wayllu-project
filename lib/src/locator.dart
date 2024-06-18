@@ -46,3 +46,13 @@ void initializeEndpoints(String token) {
     AuthApiRepositoryImpl(getIt.get<AuthApiServices>()),
   );
 }
+
+void unregisterDependenciesAndEnpoints() {
+  getIt.unregister<AuthApiServices>();
+  getIt.unregister<AuthApiRepositoryImpl>();
+  getIt.unregister<Dio>();
+  getIt.unregister<ArtisansApiRepositoryImpl>();
+  getIt.unregister<ArtesansApiServices>();
+  getIt.unregister<ProductsApiServices>();
+  getIt.unregister<ProductsApiRepositoryImpl>();
+}

@@ -28,9 +28,6 @@ class CardTemplateItemsList extends HookWidget {
   final double navBarHeight = 60.0;
   final double registerUserBtnHeight = 60.0;
 
-  
-
-
   void _navigateToEditUser(UserInfo user) {
     appRouter.navigate(InfoUserRoute(viewIndex: 2, user: user));
   }
@@ -49,17 +46,8 @@ class CardTemplateItemsList extends HookWidget {
       shrinkWrap: true,
       itemCount: dataToRender.length,
       itemBuilder: (BuildContext c, int ind) {
-        return Padding(
-          padding: EdgeInsets.only(
-            bottom: ind == filteredData.length - 1
-                ? listType == ListEnums.users
-                    ? navBarHeight + registerUserBtnHeight
-                    : navBarHeight + 10
-                : 0.0,
-          ),
-          child: _buildItemContainer(
-            itemData: filteredData[ind],
-          ),
+        return _buildItemContainer(
+          itemData: filteredData[ind],
         );
       },
     );
@@ -161,7 +149,7 @@ class CardTemplateItemsList extends HookWidget {
     return Row(
       children: [
         leading,
-       const Gap(20),
+        const Gap(20),
         Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [

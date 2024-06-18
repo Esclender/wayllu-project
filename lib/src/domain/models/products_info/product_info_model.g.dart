@@ -7,6 +7,7 @@ part of 'product_info_model.dart';
 // **************************************************************************
 
 ProductInfo _$ProductInfoFromJson(Map<String, dynamic> json) => ProductInfo(
+      id: json['id'] as String,
       COD_PRODUCTO: json['COD_PRODUCTO'] as String,
       ITEM: json['ITEM'] as int,
       DESCRIPCION: json['DESCRIPCION'] as String,
@@ -26,6 +27,7 @@ ProductInfo _$ProductInfoFromJson(Map<String, dynamic> json) => ProductInfo(
 
 Map<String, dynamic> _$ProductInfoToJson(ProductInfo instance) =>
     <String, dynamic>{
+      'id': instance.id,
       'COD_PRODUCTO': instance.COD_PRODUCTO,
       'ITEM': instance.ITEM,
       'DESCRIPCION': instance.DESCRIPCION,

@@ -9,17 +9,21 @@ part 'artesanos.repo.g.dart';
 abstract class ArtesansApiServices {
   factory ArtesansApiServices(Dio dio, {String baseUrl}) = _ArtesansApiServices;
 
-  //Aqui definimos todos nuestros endpoints
-  //estos endpoints seran los que se conecten con la api
-  //Aqui definimos todos nuestros endpoints
-  //estos endpoints seran los que se conecten con la api
   @GET('/')
   Future<HttpResponse<ArtesansListHttpResponse>> getArtisans(
     @Query('pagina') int pagina,
     @Query('nombre') String nombre,
   );
 
-  @GET('/registro')
+  @GET('/todos')
+  Future<HttpResponse<ArtesansListHttpResponse>> getAllArtisansWithNoPage();
+
+  @GET('/filtro')
+  Future<HttpResponse<UserInfo?>> getUniqueArtisian(
+    @Body() Map<String, dynamic> filtro,
+  );
+
+  @POST('/registro')
   Future<HttpResponse<void>> newArtisian(
     @Body() Map<String, dynamic> userInfo,
   );

@@ -1,6 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:gap/gap.dart';
 import 'package:ionicons/ionicons.dart';
+import 'package:shimmer/shimmer.dart';
 import 'package:wayllu_project/src/domain/enums/lists_enums.dart';
 import 'package:wayllu_project/src/domain/models/list_items_model.dart';
 import 'package:wayllu_project/src/presentation/cubit/users_list_cubit.dart';
@@ -13,15 +15,17 @@ class CustomSearchWidget<T> extends StatefulWidget {
 
   final double? width;
   final double? height;
-  final bool? isHome;
+  final bool isHome;
   final String hint;
+  final ValueNotifier<bool>? isSearching;
 
   const CustomSearchWidget({
     required this.filterDataFunction,
+    this.isSearching,
     this.hint = 'Buscar por Nombre',
     this.width,
     this.height,
-    this.isHome,
+    required this.isHome,
   });
 
   @override
@@ -90,8 +94,13 @@ class _CustomSearchWidgetState extends State<CustomSearchWidget> {
                 ],
               ),
             ),
-            if (widget.isHome == null)
-              Container()
+            if (widget.isHome)
+              Padding(
+                padding: EdgeInsets.only(
+                  top: MediaQuery.of(context).size.height * 0.04,
+                ),
+                child: _buildSearchResultsHome(filteredData ?? []),
+              )
             else
               Padding(
                 padding: EdgeInsets.only(
@@ -105,15 +114,153 @@ class _CustomSearchWidgetState extends State<CustomSearchWidget> {
     );
   }
 
+  Widget _buildSearchResultsHome(List<CardTemplate> dataToRender) {
+    return Container();
+  }
+
   Widget _buildSearchResults(List<CardTemplate> dataToRender) {
+    const double registerUserBtnHeight = 60.0;
+
     if (dataToRender.isEmpty) {
-      return const Center(child: Text('No se encontraron resultados'));
+      return ListView.separated(
+        separatorBuilder: (context, index) => const Gap(8),
+        shrinkWrap: true,
+        itemCount: 10,
+        itemBuilder: (BuildContext c, int ind) {
+          return _buildItemContainer();
+        },
+      );
     }
 
-    return CardTemplateItemsList(
-      listType: ListEnums.users,
-      dataToRender: dataToRender,
-      isScrollable: false,
+    if (widget.isSearching!.value) {
+      return Column(
+        children: [
+          CardTemplateItemsList(
+            listType: ListEnums.users,
+            dataToRender: dataToRender,
+            isScrollable: false,
+          ),
+          Padding(
+            padding: const EdgeInsets.only(
+              top: 20,
+              bottom: registerUserBtnHeight + 20,
+            ),
+            child: Center(
+              child: CircularProgressIndicator(
+                color: secondaryColor,
+              ),
+            ),
+          ),
+        ],
+      );
+    }
+
+    return Padding(
+      padding: EdgeInsets.only(bottom: registerUserBtnHeight - 20),
+      child: CardTemplateItemsList(
+        listType: ListEnums.users,
+        dataToRender: dataToRender,
+        isScrollable: false,
+      ),
+    );
+  }
+
+  Widget _buildItemContainer() {
+    final BoxDecoration decoration = BoxDecoration(
+      color: bottomNavBar,
+      boxShadow: [
+        simpleShadow,
+      ],
+      borderRadius: const BorderRadius.all(
+        Radius.circular(5),
+      ),
+    );
+
+    final double additionalPadding = 10;
+
+    return Stack(
+      children: [
+        Stack(
+          children: [
+            Container(
+              margin: const EdgeInsets.symmetric(vertical: 2),
+              decoration: decoration,
+              child: _buildShimmerEffect(context),
+            ),
+            Container(
+              margin: EdgeInsets.only(left: 15, top: 5 + additionalPadding),
+              decoration: decoration,
+              child: _buildShimmerEffect2(context),
+            ),
+            Container(
+              margin: EdgeInsets.only(
+                left: 95,
+                top: 5 + additionalPadding,
+              ),
+              decoration: decoration,
+              child: _buildShimmerEffectText(context),
+            ),
+            Container(
+              margin: EdgeInsets.only(
+                left: 95,
+                top: 20 + additionalPadding,
+              ),
+              decoration: decoration,
+              child: _buildShimmerEffectText(context),
+            ),
+          ],
+        ),
+      ],
+    );
+  }
+
+  Widget _buildShimmerEffect(BuildContext context) {
+    return Shimmer.fromColors(
+      baseColor: Colors.grey[300]!,
+      highlightColor: Colors.grey[100]!,
+      child: Container(
+        width: MediaQuery.of(context).size.width,
+        height: 80,
+        decoration: const BoxDecoration(
+          color: Colors.white,
+          borderRadius: BorderRadius.all(
+            Radius.circular(5),
+          ),
+        ),
+      ),
+    );
+  }
+
+  Widget _buildShimmerEffect2(BuildContext context) {
+    return Shimmer.fromColors(
+      baseColor: Colors.grey[400]!,
+      highlightColor: Colors.grey[50]!,
+      child: Container(
+        padding: const EdgeInsets.only(left: 15, top: 5, bottom: 5),
+        width: 55,
+        height: 55,
+        decoration: const BoxDecoration(
+          color: Colors.white,
+          borderRadius: BorderRadius.all(
+            Radius.circular(5),
+          ),
+        ),
+      ),
+    );
+  }
+
+  Widget _buildShimmerEffectText(BuildContext context) {
+    return Shimmer.fromColors(
+      baseColor: Colors.grey[400]!,
+      highlightColor: Colors.grey[50]!,
+      child: Container(
+        padding: const EdgeInsets.only(left: 15, top: 5, bottom: 5),
+        width: 100,
+        height: 10,
+        decoration: const BoxDecoration(
+          color: Colors.white,
+        ),
+      ),
     );
   }
 }

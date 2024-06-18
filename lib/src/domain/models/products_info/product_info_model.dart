@@ -10,6 +10,7 @@ part 'product_info_model.g.dart';
 @JsonSerializable()
 class ProductInfo {
   ProductInfo({
+    required this.id,
     required this.COD_PRODUCTO,
     required this.ITEM,
     required this.DESCRIPCION,
@@ -27,6 +28,20 @@ class ProductInfo {
     this.ALTO,
   });
 
+  static Map<String, dynamic> convertoToBodyRequest(Map<String, dynamic> json) {
+    return {
+      'id': json['id'],
+      'UBICACION': json['UBICACION'],
+      'COD_ARTESANA': int.parse(json['ARTESANO'] as String),
+      'PESO': int.parse(json['PESO'] as String),
+      'TIPO_PESO': json['TIPO_PESO'],
+      'ALTO': int.parse(json['ALTO'] as String),
+      'ANCHO': int.parse(json['ANCHO'] as String),
+      'CATEGORIA': json['CATEGORIA'],
+      'COD_FAMILIA': int.parse(json['COD_FAMILIA'] as String),
+    };
+  }
+
   List<DescriptionItem> get descriptionsFields => [
         DescriptionItem(field: 'Descripción', value: DESCRIPCION),
       ];
@@ -34,6 +49,7 @@ class ProductInfo {
   factory ProductInfo.fromJson(Map<String, dynamic> json) =>
       _$ProductInfoFromJson(json);
 
+  String id;
   String COD_PRODUCTO;
   int ITEM;
   String DESCRIPCION;
@@ -59,7 +75,7 @@ class ProductInfo {
   Producto toProduct() {
     return Producto(
       imagen: IMAGEN ?? '',
-      product_code: '$COD_PRODUCTO',
+      product_code: COD_PRODUCTO,
       descriptions: [
         DescriptionItem(field: 'Descripción', value: DESCRIPCION),
       ],

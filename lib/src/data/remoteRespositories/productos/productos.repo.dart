@@ -15,10 +15,16 @@ abstract class ProductsApiServices {
   @GET('/')
   Future<HttpResponse<ProductsListHttpResponse>> getProducts(
     @Query('codigo_producto') String? codigoProducto,
+    @Query('pagina') int pagina,
   );
 
   @POST('/registro')
   Future<HttpResponse<void>> newProducto(
+    @Body() Map<String, dynamic> productInfo,
+  );
+
+  @POST('/editar')
+  Future<HttpResponse<void>> updateProducto(
     @Body() Map<String, dynamic> productInfo,
   );
 

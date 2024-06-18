@@ -6,7 +6,7 @@ import 'package:wayllu_project/src/domain/repositories/types/artesans_types.dart
 class UsersListCubit extends Cubit<List<CardTemplate>?> {
   final ArtisansApiRepositoryImpl _apiRepository;
 
-  UsersListCubit(this._apiRepository) : super(null);
+  UsersListCubit(this._apiRepository) : super([]);
 
   Future<void> getUserLists({int pagina = 1, String nombre = ''}) async {
     final ArtesansListHttpResponse responseState =
@@ -24,6 +24,25 @@ class UsersListCubit extends Cubit<List<CardTemplate>?> {
                   ...responseState!.map((user) => user.toCardTemplate()),
                 ],
     );
+  }
+
+  Future<void> getAllUserLists() async {
+    final ArtesansListHttpResponse responseState =
+        await _apiRepository.getAllArtisansWithNoPage();
+
+    emit(responseState?.map((user) => user.toCardTemplate()).toList());
+  }
+
+  Future<void> getUniqueUser(Map<String, dynamic> filtro) async {
+    final response = await _apiRepository.getUniqueArtisan(filtro);
+
+    if (response != null) {
+      emit([
+        response.toCardTemplate(),
+      ]);
+    } else {
+      emit([]);
+    }
   }
 
   Future<void> registerUser(Map<String, dynamic> userInfo) async {

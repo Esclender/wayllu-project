@@ -1,5 +1,4 @@
 import 'package:flutter_bloc/flutter_bloc.dart';
-import 'package:logger/logger.dart';
 import 'package:wayllu_project/main.dart';
 import 'package:wayllu_project/src/data/api_repository.imp.dart';
 import 'package:wayllu_project/src/domain/dtos/usersCredentialsDto/user_credentials_rep.dart';
@@ -35,7 +34,6 @@ class UserLoggedInfoCubit extends Cubit<UserInfo?> {
 
   Future<void> setUserInfo() async {
     final UserInfo? response = await _authRepository.getLoggedUserInfo();
-    Logger().i(response);
     emit(response);
   }
 

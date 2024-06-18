@@ -4,9 +4,11 @@ import 'dart:async';
 
 import 'package:auto_route/auto_route.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter/widgets.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_hooks/flutter_hooks.dart';
 import 'package:hexcolor/hexcolor.dart';
+import 'package:ionicons/ionicons.dart';
 import 'package:wayllu_project/src/config/router/app_router.dart';
 import 'package:wayllu_project/src/config/theme/app_theme.dart';
 import 'package:wayllu_project/src/domain/dtos/usersCredentialsDto/user_credentials_rep.dart';
@@ -28,22 +30,17 @@ class LoginExampleScreen extends HookWidget {
     String clave,
     BuildContext context,
   ) async {
-    final dialogCompleter = Completer<BuildContext>();
-    showLoadingDialog(context, dialogCompleter);
+    //IT WILL RETURN THE TOKEN OR NULL
     final credentialsUser = UserCredentialDto(
       DNI: int.parse(dni),
       CLAVE: clave,
     );
 
-    final token = await context
-        .read<UserLoggedCubit>()
-        .getAccessTokenAndSetRol(credentialsUser)
-        .catchError((e) {
-      Navigator.pop(context);
-      return null;
-    }).then((value) {
-      return value;
-    });
+    final token = await showLoadingDialog(context, credentialsUser);
+
+    if (token == null) {
+      showWrongCredentialsDialog(context);
+    }
 
     if (token != null) {
       initializeEndpoints(token);
@@ -54,8 +51,8 @@ class LoginExampleScreen extends HookWidget {
 
   @override
   Widget build(BuildContext context) {
-    final controllerEmail = useTextEditingController();
-    final controllerClave = useTextEditingController();
+    final controllerEmail = useTextEditingController(text: "12345678");
+    final controllerClave = useTextEditingController(text: "1234");
 
     return AnnotatedRegion(
       value: SystemStyles.login,
@@ -159,10 +156,10 @@ class LoginExampleScreen extends HookWidget {
     );
   }
 
-  void showLoadingDialog(
+  Future<String?> showLoadingDialog(
     BuildContext context,
-    Completer<BuildContext> completer,
-  ) {
+    UserCredentialDto credentialsUser,
+  ) async {
     showDialog(
       context: context,
       barrierDismissible:
@@ -183,5 +180,48 @@ class LoginExampleScreen extends HookWidget {
         );
       },
     );
+
+    final String? token = await context
+        .read<UserLoggedCubit>()
+        .getAccessTokenAndSetRol(credentialsUser)
+        .onError((error, stackTrace) {
+      return null;
+    }).then((value) {
+      appRouter.popForced();
+      return value;
+    });
+
+    return token;
+  }
+
+  void showWrongCredentialsDialog(
+    BuildContext context,
+  ) {
+    showDialog(
+      context: context,
+      barrierDismissible:
+          false, // Prevents closing the dialog by tapping outside
+      builder: (BuildContext context) {
+        // completer.complete(context);
+        return AlertDialog(
+          content: Column(
+            mainAxisSize: MainAxisSize.min,
+            children: [
+              Icon(
+                Ionicons.warning_outline,
+                size: 32,
+                color: HexColor('#B80000'),
+              ),
+              const SizedBox(height: 20),
+              const Text('Credenciales No validas!'),
+            ],
+          ),
+        );
+      },
+    );
+
+    Timer(const Duration(seconds: 2), () {
+      appRouter.popForced();
+    });
   }
 }

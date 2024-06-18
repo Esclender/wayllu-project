@@ -1,7 +1,6 @@
 import 'dart:io' show HttpStatus;
 
 import 'package:dio/dio.dart';
-import 'package:logger/logger.dart';
 import 'package:meta/meta.dart';
 import 'package:retrofit/retrofit.dart';
 import 'package:wayllu_project/src/utils/resources/data_state.dart';
@@ -19,8 +18,6 @@ abstract class BaseApiRepository {
   Future<DataState<T>> getStateOf<T>({
     required Future<HttpResponse<T>> Function() request,
   }) async {
-    final Logger log = Logger();
-
     try {
       final httpResponse = await request();
       if (httpResponse.response.statusCode == HttpStatus.ok) {
@@ -32,8 +29,6 @@ abstract class BaseApiRepository {
         );
       }
     } on DioException catch (error) {
-      log.e(error);
-
       return DataFailed(error);
     }
   }

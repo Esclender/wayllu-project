@@ -4,14 +4,15 @@ import 'dart:async';
 import 'dart:io';
 
 import 'package:auto_route/auto_route.dart';
-import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_hooks/flutter_hooks.dart';
 import 'package:hexcolor/hexcolor.dart';
 import 'package:image_picker/image_picker.dart';
 import 'package:ionicons/ionicons.dart';
+import 'package:logger/logger.dart';
 import 'package:wayllu_project/src/config/router/app_router.dart';
+import 'package:wayllu_project/src/domain/models/products_info/product_info_model.dart';
 import 'package:wayllu_project/src/locator.dart';
 import 'package:wayllu_project/src/presentation/cubit/products_list_cubit.dart';
 import 'package:wayllu_project/src/presentation/cubit/users_list_cubit.dart';
@@ -49,83 +50,61 @@ class EditProductsScreen extends HookWidget {
   final ImagePicker imagePicker = ImagePicker();
   final appRouter = getIt<AppRouter>();
 
-  final Map<String, dynamic> productInfo;
+  final ProductInfo productInfo;
 
   EditProductsScreen({required this.productInfo});
 
-  Future<void> registerProduct(
+  Future<void> updateProduct(
     Map<String, dynamic> productInfoToSend,
     BuildContext context,
   ) async {
-    final productsCubit = context.watch<ProductListCubit>();
-    productsCubit.registerNewProduct(productInfoToSend);
+    final productsCubit = context.read<ProductListCubit>();
+    await productsCubit.updateProduct(productInfoToSend);
+    await productsCubit.getProductsLists();
   }
 
   @override
   Widget build(BuildContext context) {
-    final ValueNotifier<File?> profileImage = useState(null);
+    final ValueNotifier<String> profileImage = useState(productInfo.IMAGEN!);
+    final ValueNotifier<File?> newProfileImage = useState(null);
 
     final ubicacionController =
-        useTextEditingController(text: productInfo['UBICACION']);
-    final pesoController = useTextEditingController(text: productInfo['PESO']);
-    final altoController = useTextEditingController(text: productInfo['ALTO']);
+        useTextEditingController(text: productInfo.UBICACION);
+    final pesoController =
+        useTextEditingController(text: productInfo.PESO.toString());
+    final altoController =
+        useTextEditingController(text: productInfo.ALTO.toString());
     final anchoController =
-        useTextEditingController(text: productInfo['ANCHO']);
-    final artesanoController =
-        useTextEditingController(text: productInfo['ARTESANO']);
+        useTextEditingController(text: productInfo.ANCHO.toString());
+    final artesanoController = useTextEditingController(text: '');
 
-    final tipoPesoController =
-        useState<String>(productInfo['TIPO_PESO'] ?? 'gramos');
-    final categoria =
-        useState<String>(productInfo['CATEGORIA'] ?? categoriasOptions[0]);
+    final tipoPesoController = useState<String>(productInfo.TIPO_PESO);
+    final categoria = useState<String>(productInfo.CATEGORIA);
     final codFamilia = useState<String>(
-        productInfo['COD_FAMILIA'] ?? codFamiliasOptions[0]['valor']!);
-    final codigoArtesano = useState<String>(productInfo['ARTESANO'] ?? '');
+      codFamiliasOptions.firstWhere((familias) =>
+          familias['codigo'] == productInfo.COD_FAMILIA.toString())['valor']!,
+    );
+
+    final codigoArtesano =
+        useState<String>(productInfo.COD_ARTESANA.toString());
 
     Future<String?> selectImage() async {
       final XFile? image =
           await imagePicker.pickImage(source: ImageSource.gallery);
       if (image != null) {
-        profileImage.value = File(image.path);
+        newProfileImage.value = File(image.path);
         return '';
       }
 
       return null;
     }
 
-    void clearFields() {
-      ubicacionController.clear();
-      pesoController.clear();
-      altoController.clear();
-      anchoController.clear();
-      // tipoPesoController.clear();
-      categoria.value = categoriasOptions[0];
-      codFamilia.value = codFamiliasOptions[0]['valor']!;
-      profileImage.value = null;
-    }
-
-    bool validateAllFields() {
-      if (profileImage.value == null ||
-          pesoController.text.isEmpty ||
-          ubicacionController.text.isEmpty ||
-          altoController.text.isEmpty ||
-          anchoController.text.isEmpty ||
-          codigoArtesano.value == '') {
-        showWarningDialog(context);
-        return false;
-      }
-
-      return true;
-    }
-
     return Scaffold(
-      // floatingActionButtonLocation: FloatingActionButtonLocation.centerDocked,
-      // floatingActionButton: BottomNavBar(),
       backgroundColor: bgPrimary,
       appBar: AppBar(
         leading: InkWell(
           onTap: () {
-            AutoRouter.of(context).back();
+            appRouter.navigate(HomeRoute(viewIndex: 0));
           },
           child: const Icon(Ionicons.arrow_back),
         ),
@@ -142,6 +121,7 @@ class EditProductsScreen extends HookWidget {
             ),
             photoUser(
               context,
+              newProfileImage,
               profileImage,
               selectImage,
             ),
@@ -154,17 +134,14 @@ class EditProductsScreen extends HookWidget {
               'Ingrese ubicacion',
               ubicacionController,
             ),
-            wrappedContainerTextForm(
-              context,
-              pesoController,
-              tipoPesoController,
-              altoController,
-              anchoController,
-            ),
             Wrap(
               spacing: 16, // Spacing between elements
               runSpacing: 16, // Spacing between rows
               children: [
+                DropDownMenuArtesanos(
+                  menuController: artesanoController,
+                  selectedOption: codigoArtesano,
+                ),
                 DropDownOptions<String>(
                   optionHead: 'Categoria',
                   options: categoriasOptions,
@@ -176,14 +153,18 @@ class EditProductsScreen extends HookWidget {
                       codFamiliasOptions.map((map) => map['valor']).toList(),
                   selectedOption: codFamilia,
                 ),
-                DropDownMenu(
-                  menuController: artesanoController,
-                  selectedOption: codigoArtesano,
-                ),
               ],
+            ),
+            wrappedContainerTextForm(
+              context,
+              pesoController,
+              tipoPesoController,
+              altoController,
+              anchoController,
             ),
             btnRegistro(
               context,
+              productInfo.id,
               ubicacionController,
               pesoController,
               tipoPesoController,
@@ -192,9 +173,7 @@ class EditProductsScreen extends HookWidget {
               categoria,
               codFamilia,
               codigoArtesano,
-              profileImage.value,
-              clearFields,
-              validateAllFields,
+              newProfileImage.value,
             ),
           ],
         ),
@@ -204,6 +183,7 @@ class EditProductsScreen extends HookWidget {
 
   TextButton btnRegistro(
     BuildContext context,
+    String id,
     TextEditingController ubicacionController,
     TextEditingController pesoController,
     ValueNotifier tipoPesoController,
@@ -213,23 +193,19 @@ class EditProductsScreen extends HookWidget {
     ValueNotifier<String> codFamilia,
     ValueNotifier<String?> codArtesano,
     File? image,
-    VoidCallback clearFields,
-    bool Function() validateAllFields,
   ) {
     return TextButton(
       onPressed: () async {
-        if (!validateAllFields()) return;
-
-        showLoadingDialog(context);
-        final String imageUrl =
-            await uploadImageToFirebase(image!, folder: 'Products_images');
+        final String? imageUrl = image != null
+            ? await uploadImageToFirebase(image, folder: 'Products_images')
+            : null;
 
         final selectedCodFamilia = codFamiliasOptions.firstWhere(
           (element) => element['valor'] == codFamilia.value,
         )['codigo'];
 
-        final productInfo = {
-          'IMAGEN': imageUrl,
+        final productInfoJson = {
+          'id': id,
           'UBICACION': ubicacionController.text,
           'ARTESANO': codArtesano.value,
           'PESO': pesoController.text,
@@ -239,14 +215,12 @@ class EditProductsScreen extends HookWidget {
           'CATEGORIA': categoria.value,
           'COD_FAMILIA': selectedCodFamilia,
         };
-        await registerProduct(productInfo, context);
-        appRouter.popForced();
 
-        showLoadingDialog(context, text: 'Producto Registrado');
-        Timer(const Duration(seconds: 2), () {
-          appRouter.popForced();
-          clearFields();
-        });
+        final productInfo = ProductInfo.convertoToBodyRequest(productInfoJson);
+
+        if (imageUrl != null) productInfo['IMAGEN'] = imageUrl;
+        await showLoadingDialog(context, productInfo: productInfo);
+        showSuccesDialog(context);
       },
       child: Container(
         margin: const EdgeInsets.only(top: 4, bottom: 60),
@@ -260,7 +234,7 @@ class EditProductsScreen extends HookWidget {
         ),
         child: const Center(
           child: Text(
-            'Registrar',
+            'Actualizar',
             style: TextStyle(
               fontFamily: 'Gotham',
               fontSize: 16,
@@ -434,7 +408,7 @@ class EditProductsScreen extends HookWidget {
                 items: ['gramos'].map<DropdownMenuItem>((value) {
                   return DropdownMenuItem(
                     value: value,
-                    child: Text(value.toString()),
+                    child: Text(value),
                   );
                 }).toList(),
               ),
@@ -463,8 +437,9 @@ class EditProductsScreen extends HookWidget {
           Container(
             decoration: BoxDecoration(
               border: Border.all(
-                color: Color(
-                    0xFFCCCCCC), // Replace bottomNavBarStroke with a color
+                color: const Color(
+                  0xFFCCCCCC,
+                ), // Replace bottomNavBarStroke with a color
               ),
               borderRadius: BorderRadius.circular(10),
             ),
@@ -493,7 +468,8 @@ class EditProductsScreen extends HookWidget {
 
   Column photoUser(
     BuildContext context,
-    ValueNotifier<File?> profileImage,
+    ValueNotifier<File?> newProfileImage,
+    ValueNotifier<String> profileImage,
     Future<String?> Function() selectImage,
   ) {
     return Column(
@@ -503,12 +479,13 @@ class EditProductsScreen extends HookWidget {
           child: CircleAvatar(
             radius: 70,
             backgroundColor: Colors.grey,
-            backgroundImage: profileImage.value != null
-                ? FileImage(profileImage.value!)
-                : null,
-            child: profileImage.value == null
-                ? const Icon(Ionicons.camera_outline, color: Colors.white)
-                : null,
+            backgroundImage: newProfileImage.value != null
+                ? FileImage(newProfileImage.value!) as ImageProvider<Object>
+                : NetworkImage(profileImage.value) as ImageProvider<Object>,
+            child: const Icon(
+              Ionicons.camera,
+              color: Colors.grey,
+            ),
           ),
         ),
       ],
@@ -517,7 +494,7 @@ class EditProductsScreen extends HookWidget {
 
   Text _buildTextHeader() {
     return const Text(
-      'Registrar Producto',
+      'Actualizar Producto',
       style: TextStyle(
         color: Colors.black,
         fontSize: 18,
@@ -528,10 +505,11 @@ class EditProductsScreen extends HookWidget {
     );
   }
 
-  void showLoadingDialog(
+  Future<void> showLoadingDialog(
     BuildContext context, {
     String text = 'Cargando...',
-  }) {
+    required Map<String, dynamic> productInfo,
+  }) async {
     showDialog(
       context: context,
       barrierDismissible: false,
@@ -551,6 +529,38 @@ class EditProductsScreen extends HookWidget {
         );
       },
     );
+
+    await updateProduct(productInfo, context);
+    appRouter.popForced();
+  }
+
+  Future<void> showSuccesDialog(
+    BuildContext context, {
+    String text = 'Datos actualizados!',
+  }) async {
+    showDialog(
+      context: context,
+      barrierDismissible: false,
+      builder: (BuildContext context) {
+        // completer.complete(context);
+        return AlertDialog(
+          content: Column(
+            mainAxisSize: MainAxisSize.min,
+            children: [
+              CircularProgressIndicator(
+                color: HexColor('#B80000'),
+              ),
+              const SizedBox(height: 20),
+              Text(text),
+            ],
+          ),
+        );
+      },
+    );
+
+    Timer(const Duration(seconds: 2), () {
+      appRouter.popForced();
+    });
   }
 
   void showWarningDialog(
@@ -569,6 +579,7 @@ class EditProductsScreen extends HookWidget {
               Icon(
                 Icons.warning,
                 color: HexColor('#B80000'),
+                size: 32,
               ),
               const SizedBox(height: 20),
               Text(text),
@@ -580,32 +591,52 @@ class EditProductsScreen extends HookWidget {
   }
 }
 
-class DropDownMenu extends HookWidget {
+class DropDownMenuArtesanos extends HookWidget {
   final TextEditingController? menuController;
   final ValueNotifier<String> selectedOption;
 
-  DropDownMenu({
+  const DropDownMenuArtesanos({
     required this.menuController,
     required this.selectedOption,
   });
 
   @override
   Widget build(BuildContext context) {
-    double width = MediaQuery.of(context).size.width - 45.0;
+    final double width = MediaQuery.of(context).size.width - 45.0;
     final usersListCubit = context.watch<UsersListCubit>();
+    final usersListCubitRead = context.read<UsersListCubit>();
+    final queryNombre = useState(selectedOption.value);
+    final isViewMounted = useIsMounted();
 
-    useEffect(() {
-      usersListCubit.getUserLists();
-      // productsListCubit.getProductsLists();
+    useEffect(
+      () {
+        usersListCubitRead
+            .getUniqueUser({'CODIGO': int.parse(selectedOption.value)});
 
-      return () {};
-    }, []);
+        return () {
+          usersListCubitRead
+              .getUniqueUser({'CODIGO': int.parse(selectedOption.value)});
+        };
+      },
+      [],
+    );
 
-    void onSearchCallback(String query) {
-      if (query.isNotEmpty) {
-        usersListCubit.getUserLists(nombre: query);
-      }
-    }
+    // Add a post-frame callback to ensure the build is complete before handling state changes
+    useEffect(
+      () {
+        WidgetsBinding.instance.addPostFrameCallback((_) {
+          queryNombre.addListener(() {
+            if (queryNombre.value != selectedOption.value) {
+              usersListCubitRead.getUserLists(nombre: queryNombre.value);
+            }
+          });
+        });
+
+        // Cleanup the listener on dispose
+        return () {};
+      },
+      [],
+    );
 
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
@@ -623,6 +654,8 @@ class DropDownMenu extends HookWidget {
         DropdownMenu(
           hintText: 'Asignar artesano',
           controller: menuController,
+          initialSelection:
+              usersListCubit.state!.isNotEmpty ? selectedOption.value : null,
           trailingIcon: const Icon(Ionicons.chevron_down),
           width: width,
           requestFocusOnTap: true,
@@ -639,8 +672,16 @@ class DropDownMenu extends HookWidget {
             selectedOption.value = selected as String;
           },
           searchCallback: (entries, query) {
-            onSearchCallback(query);
-            return null;
+            if (query.isEmpty) {
+              return null;
+            }
+
+            queryNombre.value = query;
+
+            final int index = entries.indexWhere(
+              (DropdownMenuEntry entry) => entry.label == query,
+            );
+            return index != -1 ? index : null;
           },
           dropdownMenuEntries: usersListCubit.state != null
               ? usersListCubit.state!.map<DropdownMenuEntry>((value) {
