@@ -18,4 +18,10 @@ abstract class ArtesansApiServices {
     @Query('pagina') int pagina,
     @Query('nombre') String nombre,
   );
+
+
+  @POST('/registro')
+  Future<HttpResponse<void>> registerArtisan(
+    @Body() Map<String, dynamic> artisanData,
+  );
 }
