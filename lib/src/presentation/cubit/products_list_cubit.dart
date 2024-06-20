@@ -29,11 +29,7 @@ class ProductListCubit extends Cubit<List<ProductInfo>?> {
     );
   }
 
-  Future<void> registerNewProduct(Map<String, dynamic> productInfo) async {
-    await _apiRepository.newProduct(productInfo);
-  }
-
-  Future<void> updateProduct(Map<String, dynamic> productInfo) async {
+   Future<void> updateProduct(Map<String, dynamic> productInfo) async {
     await _apiRepository.updateProduct(productInfo);
   }
 
@@ -43,4 +39,5 @@ class ProductListCubit extends Cubit<List<ProductInfo>?> {
 
     emit(responseState?.map((producto) => producto).toList());
   }
+
 }

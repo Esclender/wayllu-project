@@ -58,13 +58,13 @@ class _ProductsApiServices implements ProductsApiServices {
   }
 
   @override
-  Future<HttpResponse<void>> newProducto(
-      Map<String, dynamic> productInfo) async {
+  Future<HttpResponse<void>> registerNewProduct(
+      Map<String, dynamic> productData) async {
     const _extra = <String, dynamic>{};
     final queryParameters = <String, dynamic>{};
     final _headers = <String, dynamic>{};
     final _data = <String, dynamic>{};
-    _data.addAll(productInfo);
+    _data.addAll(productData);
     final _result =
         await _dio.fetch<void>(_setStreamType<HttpResponse<void>>(Options(
       method: 'POST',

@@ -143,9 +143,9 @@ class ProductsApiRepositoryImpl extends BaseApiRepository
   }
 
   @override
-  Future<void> newProduct(Map<String, dynamic> productInfo) async {
+  Future<void> registerNewProduct(Map<String, dynamic> productData) async {
     await getStateOf<void>(
-      request: () => _apiServices.newProducto(productInfo),
+      request: () => _apiServices.registerNewProduct(productData),
     );
   }
 

@@ -9,6 +9,7 @@ class MyTextField extends StatelessWidget {
     required this.hintText,
     required this.obscureText,
     required this.onSaved,
+    this.controller,
     this.validator,
     this.maxLength,
     this.onChanged,
@@ -17,6 +18,7 @@ class MyTextField extends StatelessWidget {
   final String? Function(String?)? validator;
   final Function(String?) onSaved;
   final String hintText;
+  final TextEditingController? controller;
   final bool obscureText;
   final int? maxLength;
   final Function(String)? onChanged;

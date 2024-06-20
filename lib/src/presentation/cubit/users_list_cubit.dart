@@ -45,7 +45,4 @@ class UsersListCubit extends Cubit<List<CardTemplate>?> {
     }
   }
 
-  Future<void> registerUser(Map<String, dynamic> userInfo) async {
-    await _apiRepository.registerArtisian(userInfo);
-  }
 }

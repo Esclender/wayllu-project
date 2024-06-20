@@ -88,9 +88,11 @@ abstract class _$AppRouter extends RootStackRouter {
       );
     },
     RegisterProductsRoute.name: (routeData) {
+      final args = routeData.argsAs<RegisterProductsRouteArgs>(
+          orElse: () => const RegisterProductsRouteArgs());
       return AutoRoutePage<dynamic>(
         routeData: routeData,
-        child: RegisterProductsScreen(),
+        child: RegisterProductsScreen(key: args.key),
       );
     },
     RegisterUserRoute.name: (routeData) {
@@ -359,16 +361,31 @@ class ReciboRouteArgs {
 
 /// generated route for
 /// [RegisterProductsScreen]
-class RegisterProductsRoute extends PageRouteInfo<void> {
-  const RegisterProductsRoute({List<PageRouteInfo>? children})
-      : super(
+class RegisterProductsRoute extends PageRouteInfo<RegisterProductsRouteArgs> {
+  RegisterProductsRoute({
+    Key? key,
+    List<PageRouteInfo>? children,
+  }) : super(
           RegisterProductsRoute.name,
+          args: RegisterProductsRouteArgs(key: key),
           initialChildren: children,
         );
 
   static const String name = 'RegisterProductsRoute';
 
-  static const PageInfo<void> page = PageInfo<void>(name);
+  static const PageInfo<RegisterProductsRouteArgs> page =
+      PageInfo<RegisterProductsRouteArgs>(name);
+}
+
+class RegisterProductsRouteArgs {
+  const RegisterProductsRouteArgs({this.key});
+
+  final Key? key;
+
+  @override
+  String toString() {
+    return 'RegisterProductsRouteArgs{key: $key}';
+  }
 }
 
 /// generated route for

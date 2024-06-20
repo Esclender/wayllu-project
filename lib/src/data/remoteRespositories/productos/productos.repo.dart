@@ -19,8 +19,8 @@ abstract class ProductsApiServices {
   );
 
   @POST('/registro')
-  Future<HttpResponse<void>> newProducto(
-    @Body() Map<String, dynamic> productInfo,
+  Future<HttpResponse<void>> registerNewProduct(
+    @Body() Map<String, dynamic> productData,
   );
 
   @POST('/editar')

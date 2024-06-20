@@ -32,7 +32,6 @@ class _RegisterUserScreenState extends State<RegisterUserScreen> {
 
   final ImagePicker _imagePicker = ImagePicker();
   File? _selectedImage;
-
   List<Map<String, dynamic>> communities = [
     {'codigoComunidad': 1, 'comunidad': 'Huilloc'},
     {'codigoComunidad': 2, 'comunidad': 'Rumira Sondormayo'},
@@ -148,14 +147,18 @@ class _RegisterUserScreenState extends State<RegisterUserScreen> {
     _showLoadingDialog('Cargando...');
     appRouter.popForced();
 
+
+    const String defaultImageUrl = 'gs://wayllu.appspot.com/Artisans_Images/default.jpg'; 
+      final String finalImageUrl = urlImage ?? defaultImageUrl;
+
     final artesano = ArtesanoDto(
       NOMBRE_COMPLETO: username!,
       DNI: int.parse(dni!),
       COMUNIDAD: community!,
-      CDG_COMUNIDAD: 1, // Example value for CDG_COMUNIDAD
+      CDG_COMUNIDAD: 1,
       CLAVE: password!,
-      CODIGO: 1005, // Example value for CODIGO
-      URL_IMAGE: urlImage!,
+      CODIGO: 1005, 
+      URL_IMAGE: finalImageUrl,
       ROL: rol!,
     );
 
@@ -165,6 +168,7 @@ class _RegisterUserScreenState extends State<RegisterUserScreen> {
       Timer(const Duration(seconds: 2), () {
         appRouter.popForced();
         _resetFields();
+        appRouter.replaceAll([UsersListAdminRoute(viewIndex: 2)]);
       });
     } catch (error) {
       _showAlertDialog('Error al registrar el artesano');
