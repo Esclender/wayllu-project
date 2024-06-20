@@ -2,6 +2,7 @@ import 'package:wayllu_project/src/data/remoteRespositories/artesanos/artesanos.
 import 'package:wayllu_project/src/data/remoteRespositories/auth/auth.repo.dart';
 import 'package:wayllu_project/src/data/remoteRespositories/productos/productos.repo.dart';
 import 'package:wayllu_project/src/data/repository_base.dart';
+import 'package:wayllu_project/src/domain/dtos/registerArtisanDto/artisan_rep.dart';
 import 'package:wayllu_project/src/domain/dtos/usersCredentialsDto/user_credentials_rep.dart';
 import 'package:wayllu_project/src/domain/models/user_info/user_info_model.dart';
 import 'package:wayllu_project/src/domain/models/venta/venta_repo.dart';
@@ -34,7 +35,7 @@ class ArtisansApiRepositoryImpl extends BaseApiRepository
   }
 
   @override
-  Future<void> registerArtisian(
+  Future<void> registerArtisan(
     Map<String, dynamic> artisanData,
   ) async {
     await _apiServices.registerArtisan(artisanData);

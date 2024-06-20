@@ -9,8 +9,10 @@ class ArtisansCubit extends Cubit<List<ArtesanoDto>> {
   
   Future<void> registerArtisan(ArtesanoDto artesano) async {
     try {
+      // Imprimir el JSON en la consola
+      print('Datos enviados al servidor: ${artesano.toJson()}');
 
-      await _artisansApiRepository.registerArtisian(artesano.toJson());
+      await _artisansApiRepository.registerArtisan(artesano.toJson());
       emit([...state, artesano]);
     } catch (e) {
       // Manejar el error según sea necesario
