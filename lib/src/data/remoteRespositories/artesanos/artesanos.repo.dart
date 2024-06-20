@@ -24,7 +24,7 @@ abstract class ArtesansApiServices {
   );
 
   @POST('/registro')
-  Future<HttpResponse<void>> newArtisian(
-    @Body() Map<String, dynamic> userInfo,
+  Future<HttpResponse<void>> registerArtisan(
+    @Body() Map<String, dynamic> artisanData,
   );
 }

@@ -35,9 +35,9 @@ class ArtisansApiRepositoryImpl extends BaseApiRepository
 
   @override
   Future<void> registerArtisian(
-    Map<String, dynamic> userInfo,
+    Map<String, dynamic> artisanData,
   ) async {
-    await _apiServices.newArtisian(userInfo);
+    await _apiServices.registerArtisan(artisanData);
   }
 
   @override
