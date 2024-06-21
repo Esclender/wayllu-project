@@ -12,6 +12,7 @@ import 'package:flutter_hooks/flutter_hooks.dart';
 import 'package:gap/gap.dart';
 import 'package:hexcolor/hexcolor.dart';
 import 'package:ionicons/ionicons.dart';
+import 'package:logger/logger.dart';
 import 'package:shimmer/shimmer.dart';
 import 'package:wayllu_project/src/config/router/app_router.dart';
 import 'package:wayllu_project/src/domain/enums/lists_enums.dart';
@@ -49,8 +50,10 @@ class HomeScreen extends HookWidget {
 
     final userInfo = context.watch<UserLoggedInfoCubit>().state;
     final productsListCubit = context.watch<ProductListCubit>();
+    final isSearchingByCode = useState('');
 
     Future<void> searchProductByCode(c, String code) async {
+      isSearchingByCode.value = code;
       await productsListCubit.getProductsListsByCode(code);
     }
 
@@ -60,12 +63,15 @@ class HomeScreen extends HookWidget {
         productsListCubit.getProductsLists();
         scrollController.onScrollEndsListener(
           () {
-            isSearchingProducts.value = true;
-            productsListCubit.getProductsLists(pagina: pagina.value++);
+            Logger().i(isSearchingByCode.value);
+            if (isSearchingByCode.value == '') {
+              isSearchingProducts.value = true;
+              productsListCubit.getProductsLists(pagina: pagina.value++);
 
-            Timer(const Duration(seconds: 3), () {
-              isSearchingProducts.value = false;
-            });
+              Timer(const Duration(seconds: 3), () {
+                isSearchingProducts.value = false;
+              });
+            }
           },
         );
         return scrollController.dispose;
