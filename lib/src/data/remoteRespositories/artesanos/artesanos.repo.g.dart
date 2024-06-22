@@ -118,12 +118,13 @@ class _ArtesansApiServices implements ArtesansApiServices {
   }
 
   @override
-  Future<HttpResponse<void>> newArtisian(Map<String, dynamic> userInfo) async {
+  Future<HttpResponse<void>> registerArtisan(
+      Map<String, dynamic> artisanData) async {
     const _extra = <String, dynamic>{};
     final queryParameters = <String, dynamic>{};
     final _headers = <String, dynamic>{};
     final _data = <String, dynamic>{};
-    _data.addAll(userInfo);
+    _data.addAll(artisanData);
     final _result =
         await _dio.fetch<void>(_setStreamType<HttpResponse<void>>(Options(
       method: 'POST',

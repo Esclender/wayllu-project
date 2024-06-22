@@ -9,7 +9,7 @@ abstract class ProductRepository {
     String? codigoProducto,
     int pagina,
   });
-  Future<void> newProduct(Map<String, dynamic> productInfo);
+  Future<void> registerNewProduct(Map<String, dynamic> productData);
   Future<void> updateProduct(Map<String, dynamic> productInfo);
   Future<VentaInfo> newVenta(Map<String, dynamic> ventaData);
   Future<VentasListHttpResponse> getVentas();

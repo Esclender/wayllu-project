@@ -9,6 +9,8 @@ import 'package:wayllu_project/src/config/router/app_router.dart';
 import 'package:wayllu_project/src/config/theme/app_theme.dart';
 import 'package:wayllu_project/src/data/api_repository.imp.dart';
 import 'package:wayllu_project/src/locator.dart';
+import 'package:wayllu_project/src/presentation/cubit/artisans_register_cubit.dart';
+import 'package:wayllu_project/src/presentation/cubit/product_register_cubit.dart';
 import 'package:wayllu_project/src/presentation/cubit/productos_carrito_cubit.dart';
 import 'package:wayllu_project/src/presentation/cubit/products_list_cubit.dart';
 import 'package:wayllu_project/src/presentation/cubit/user_logged_cubit.dart';
@@ -61,6 +63,16 @@ class BlocSettup extends StatelessWidget {
         ),
         BlocProvider<VentasListCubit>(
           create: (BuildContext context) => VentasListCubit(
+            locator<ProductsApiRepositoryImpl>(),
+          ),
+        ),
+        BlocProvider<ArtisansCubit>(
+          create: (BuildContext context) => ArtisansCubit(
+            locator<ArtisansApiRepositoryImpl>(),
+          ),
+        ),
+        BlocProvider<ProductRegisterCubit>(
+          create: (BuildContext context) => ProductRegisterCubit(
             locator<ProductsApiRepositoryImpl>(),
           ),
         ),

@@ -1,19 +1,23 @@
 import 'dart:async';
+import 'dart:io';
 
 import 'package:auto_route/auto_route.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
-import 'package:google_fonts/google_fonts.dart';
 import 'package:hexcolor/hexcolor.dart';
+import 'package:image_picker/image_picker.dart';
 import 'package:ionicons/ionicons.dart';
-import 'package:logger/logger.dart';
 import 'package:wayllu_project/src/config/router/app_router.dart';
+import 'package:wayllu_project/src/domain/dtos/registerArtisanDto/artisan_rep.dart';
 import 'package:wayllu_project/src/locator.dart';
-import 'package:wayllu_project/src/presentation/cubit/users_list_cubit.dart';
+import 'package:wayllu_project/src/presentation/cubit/artisans_register_cubit.dart';
+import 'package:wayllu_project/src/presentation/cubit/artisans_register_cubit.dart';
+import 'package:wayllu_project/src/presentation/widgets/gradient_widgets.dart';
 import 'package:wayllu_project/src/presentation/widgets/register_user/my_text_label.dart';
 import 'package:wayllu_project/src/presentation/widgets/register_user/my_textfield.dart';
 import 'package:wayllu_project/src/presentation/widgets/register_user/space_y.dart';
 import 'package:wayllu_project/src/utils/constants/colors.dart';
+import 'package:wayllu_project/src/utils/firebase/firebase_helper.dart';
 
 @RoutePage()
 class RegisterUserScreen extends StatefulWidget {
@@ -25,13 +29,11 @@ class RegisterUserScreen extends StatefulWidget {
 
 class _RegisterUserScreenState extends State<RegisterUserScreen> {
   final TextEditingController _textEditingController = TextEditingController();
-
-  String? nombre, dni, phone, email, community, password, confirmPassword;
   final _formKey = GlobalKey<FormState>();
-  final appRouter = getIt<AppRouter>();
-  var communitySelect;
 
-  final List<Map> communities = [
+  final ImagePicker _imagePicker = ImagePicker();
+  File? _selectedImage;
+  List<Map<String, dynamic>> communities = [
     {'codigoComunidad': 1, 'comunidad': 'Huilloc'},
     {'codigoComunidad': 2, 'comunidad': 'Rumira Sondormayo'},
     {'codigoComunidad': 3, 'comunidad': 'Patacancha'},
@@ -39,19 +41,25 @@ class _RegisterUserScreenState extends State<RegisterUserScreen> {
     {'codigoComunidad': 5, 'comunidad': 'Quellccancca'},
   ];
 
-  List<DropdownMenuItem> get communityDropdownItems =>
-      communities.map((community) {
-        return DropdownMenuItem(
-          value: community,
-          child: Text(community['comunidad'] as String),
-        );
-      }).toList();
+  Map<String, dynamic>? selectedCommunity;
+
+  String? username;
+  String? dni;
+  String? phone;
+  String? email;
+  String? community;
+  String? password;
+  String? confirmPassword;
+  String? urlImage;
+  String? rol;
 
   @override
   void dispose() {
     _textEditingController.clear();
     super.dispose();
   }
+
+  final appRouter = getIt<AppRouter>();
 
   void _showAlertDialog(String message) {
     showDialog<void>(
@@ -101,10 +109,10 @@ class _RegisterUserScreenState extends State<RegisterUserScreen> {
   }
 
   Future<void> _submit() async {
-    if (nombre == null ||
+    if (username == null ||
         dni == null ||
         phone == null ||
-        communitySelect == null ||
+        community == null ||
         password == null ||
         confirmPassword == null) {
       _showAlertDialog('Ingresa los campos obligatorios');
@@ -116,7 +124,13 @@ class _RegisterUserScreenState extends State<RegisterUserScreen> {
       return;
     }
 
-    if (phone!.length != 9 || !RegExp(r'^[0-9]+$').hasMatch(phone!)) {
+    if (rol == 'ARTESANO' && (phone == null || community == null)) {
+      _showAlertDialog('Ingresa los campos obligatorios');
+      return;
+    }
+
+    if (rol == 'ARTESANO' &&
+        (phone!.length != 9 || !RegExp(r'^[0-9]+$').hasMatch(phone!))) {
       _showAlertDialog('El teléfono debe tener 9 números');
       return;
     }
@@ -134,76 +148,63 @@ class _RegisterUserScreenState extends State<RegisterUserScreen> {
     _showLoadingDialog('Cargando...');
     appRouter.popForced();
 
-    // final userCubit = context.watch<>();
-    final userInfoToSend = {
-      'NOMBRE_COMPLETO': nombre,
-      'COMUNIDAD': communitySelect['comunidad'],
-      'DNI': dni,
-      'CDG_COMUNIDAD': communitySelect['codigoComunidad'],
-      'CLAVE': password,
-    };
 
-    // await context.read<UsersListCubit>().registerUser(userInfoToSend);
+    const String defaultImageUrl = 'gs://wayllu.appspot.com/Artisans_Images/default.jpg'; 
+      final String finalImageUrl = urlImage ?? defaultImageUrl;
 
-    _showLoadingDialog('Artesano registrado..');
-    Timer(const Duration(seconds: 2), () {
-      appRouter.popForced();
-      _resetFields();
-    });
+    final artesano = ArtesanoDto(
+      NOMBRE_COMPLETO: username!,
+      DNI: int.parse(dni!),
+      COMUNIDAD: community!,
+      CDG_COMUNIDAD: 1,
+      CLAVE: password!,
+      CODIGO: 1005, 
+      URL_IMAGE: finalImageUrl,
+      ROL: rol!,
+    );
+
+    try {
+      await context.read<ArtisansCubit>().registerArtisan(artesano);
+      _showLoadingDialog('Artesano registrado..');
+      Timer(const Duration(seconds: 2), () {
+        appRouter.popForced();
+        _resetFields();
+        appRouter.replaceAll([UsersListAdminRoute(viewIndex: 2)]);
+      });
+    } catch (error) {
+      _showAlertDialog('Error al registrar el artesano');
+    }
+  }
+
+  Future<void> _pickImage() async {
+    final XFile? image =
+        await _imagePicker.pickImage(source: ImageSource.gallery);
+    if (image != null) {
+      final File imageFile = File(image.path);
+      final String imageUrl =
+          await uploadImageToFirebase(imageFile, folder: '/Artisans_Images');
+      if (imageUrl != null) {
+        setState(() {
+          _selectedImage = imageFile;
+          urlImage = imageUrl;
+        });
+      }
+    }
   }
 
   void _resetFields() {
     setState(() {
-      nombre = null;
+      username = null;
       dni = null;
       phone = null;
       email = null;
-      communitySelect = null;
+      community = null;
       password = null;
       confirmPassword = null;
+      urlImage = null;
+      rol = null;
       _formKey.currentState?.reset();
     });
-  }
-
-  Widget _buildTextField(
-    String label,
-    String hint,
-    bool obscureText,
-    void Function(String?) onSave, {
-    bool isOptional = false,
-  }) {
-    return Column(
-      crossAxisAlignment: CrossAxisAlignment.start,
-      children: [
-        MyTextLabel(hintText: isOptional ? '$label (Opcional)' : label),
-        const SizedBox(height: 10),
-        MyTextField(
-          onChanged: (text) {},
-          onSaved: onSave,
-          hintText: hint,
-          obscureText: obscureText,
-        ),
-      ],
-    );
-  }
-
-  Widget _buildTextHeader() {
-    return Text(
-      'Registrar Artesano',
-      style: TextStyle(
-        fontSize: 23,
-        fontWeight: FontWeight.bold,
-        fontFamily: 'Gotham',
-        foreground: Paint()
-          ..shader = LinearGradient(
-            begin: Alignment.bottomCenter,
-            end: Alignment.topCenter,
-            colors: [btnprimary, btnsecondary],
-          ).createShader(
-            const Rect.fromLTRB(0.0, 0.0, 100.0, 60.0),
-          ),
-      ),
-    );
   }
 
   @override
@@ -217,127 +218,298 @@ class _RegisterUserScreenState extends State<RegisterUserScreen> {
           onTap: () => {appRouter.pop()},
           child: const Icon(Ionicons.arrow_back),
         ),
-        title: _buildTextHeader(),
+        title: GradientText(
+          text: 'Registro de Usuario',
+          fontSize: 25.0,
+        ),
+        centerTitle: true,
       ),
       body: Padding(
         padding: const EdgeInsets.all(30.0),
         child: Form(
           key: _formKey,
-          child: ListView(
-            children: [
+          child: ListView(children: [
+            Column(children: [
               Column(
                 children: [
-                  _buildTextField(
-                    'Nombre:',
-                    'Tu Nombre',
-                    false,
-                    (val) => setState(() => nombre = val),
-                  ),
-                  const SpaceY(),
-                  _buildTextField(
-                    'DNI:',
-                    '87654321',
-                    false,
-                    (val) => setState(() => dni = val),
-                  ),
-                  const SpaceY(),
-                  _buildTextField(
-                    'Teléfono:',
-                    '987654321',
-                    false,
-                    (val) => setState(() => phone = val),
-                  ),
-                  const SpaceY(),
-                  _buildTextField(
-                    'Email',
-                    'ejemplo@gmail.com',
-                    false,
-                    (val) => setState(() => email = val ?? ''),
-                    isOptional: true,
-                  ),
-                  const SpaceY(),
-                  Column(
-                    crossAxisAlignment: CrossAxisAlignment.start,
-                    children: [
-                      const MyTextLabel(hintText: 'Comunidad:'),
-                      const SizedBox(height: 10),
-                      DropdownButtonFormField(
+                  photoUser(),
+                ],
+              ),
+           Column(
+                  children: [
+                    const MyTextLabel(hintText: 'Rol'),
+                    const SizedBox(height: 8),
+                    Padding(
+                      padding: const EdgeInsets.only(bottom:8.0),
+                      child: DropdownButtonFormField<String>(
+                        value: rol,
+                        onChanged: (String? newValue) {
+                          setState(() {
+                            rol = newValue;
+                          });
+                        },
+                        items: <String>['ARTESANO', 'ADMIN']
+                            .map<DropdownMenuItem<String>>((String value) {
+                          return DropdownMenuItem<String>(
+                            value: value,
+                            child: Text(value),
+                          );
+                        }).toList(),
                         decoration: InputDecoration(
                           border: OutlineInputBorder(
-                            borderSide: const BorderSide(
-                              color: Color.fromARGB(120, 0, 0, 0),
-                            ),
-                            borderRadius: BorderRadius.circular(10),
+                            borderRadius: BorderRadius.circular(10.0),
                           ),
-                          enabledBorder: OutlineInputBorder(
-                            borderSide: const BorderSide(
-                              color: Color.fromARGB(120, 0, 0, 0),
-                            ),
-                            borderRadius: BorderRadius.circular(10),
-                          ),
+                          filled: true,
+                          fillColor: Colors.transparent,
+                          hintText: 'Selecciona el rol',
                         ),
-                        items: communityDropdownItems,
-                        hint: Text(
-                          'Comunidad',
-                          style: GoogleFonts.poppins(
-                            fontSize: 14,
-                            color: const Color.fromARGB(128, 0, 0, 0),
+                      ),
+                    ),
+                    Padding(
+                      padding: const EdgeInsets.only(bottom:8.0),
+                      child: Column(
+                        children: [ 
+                      const MyTextLabel(hintText: 'Nombre'),
+                      const SizedBox(height: 8),
+                      MyTextField(
+                        onChanged: (text) {},
+                        onSaved: (val) => {
+                          setState(() {
+                            username = val;
+                          }),
+                        },
+                        hintText: 'Maria',
+                        obscureText: false,
+                      ),],
+                      ),
+                    ),
+                   
+                    Padding(
+                     padding: const EdgeInsets.only(bottom:8.0),
+                      child: Column(
+                        crossAxisAlignment: CrossAxisAlignment.start,
+                        children: [
+                          const MyTextLabel(hintText: 'DNI:'),
+                          const SizedBox(height: 8),
+                          MyTextField(
+                            onChanged: (text) {},
+                            onSaved: (val) => {
+                              setState(() {
+                                dni = val;
+                              }),
+                            },
+                            hintText: '87654321',
+                            obscureText: false,
                           ),
+                        ],
+                      ),
+                    ),
+                    if (rol == 'ARTESANO') ...[
+                      Padding(
+                        padding: const EdgeInsets.only(bottom:8.0),
+                        child: Column(
+                          crossAxisAlignment: CrossAxisAlignment.start,
+                          children: [
+                            const Padding(
+                                padding: EdgeInsets.only(top: 8),
+                                child: MyTextLabel(hintText: 'Celular'),),
+                            const SizedBox(height: 8),
+                            MyTextField(
+                              onChanged: (text) {},
+                              onSaved: (val) => setState(() {
+                                phone = val;
+                              }),
+                              hintText: 'Ingresa tu número de celular',
+                              obscureText: false,
+                            ),
+                          ],
                         ),
-                        onChanged: (value) =>
-                            setState(() => communitySelect = value),
-                        onSaved: (value) =>
-                            setState(() => communitySelect = value),
                       ),
                     ],
-                  ),
-                ],
-              ),
-              const SpaceY(),
-              Row(
-                children: [
-                  Expanded(
-                      child: _buildTextField('Contraseña:', '', true,
-                          (val) => setState(() => password = val))),
-                  const SizedBox(width: 20),
-                  Expanded(
-                      child: _buildTextField('Confirmar', '', true,
-                          (val) => setState(() => confirmPassword = val))),
-                ],
-              ),
-              Padding(
-                padding: const EdgeInsets.fromLTRB(8, 0, 0, 0),
-                child: Text(
-                  '_errorMessage',
-                  style: GoogleFonts.poppins(
-                    fontSize: 12,
-                    color: Colors.white,
-                  ),
+                    
+                    Padding(
+                      padding: const EdgeInsets.only(bottom: 8.0),
+                      child: Column(
+                        crossAxisAlignment: CrossAxisAlignment.start,
+                        children: [
+                          const MyTextLabel(
+                            hintText: 'Email',
+                            warText: '*Opcional*',
+                          ),
+                          const SizedBox(
+                            height: 8,
+                          ),
+                          MyTextField(
+                            onChanged: (text) {},
+                            onSaved: (val) => {
+                              setState(() {
+                                email = val ?? '';
+                              }),
+                            },
+                            hintText: 'ejemplo@gmail.com',
+                            obscureText: false,
+                          ),
+                        ],
+                      ),
+                    ),
+                    
+                    if (rol == 'ARTESANO') ...[
+                      Padding(
+                        padding: const EdgeInsets.only(bottom:8.0),
+                        child: Column(
+                          crossAxisAlignment: CrossAxisAlignment.start,
+                          children: [
+                            const MyTextLabel(
+                              hintText: 'Comunidad:',
+                            ),
+                            const SizedBox(
+                              height: 8,
+                            ),
+                            DropdownButtonFormField<Map<String, dynamic>>(
+                              value: selectedCommunity,
+                              onChanged: (Map<String, dynamic>? value) {
+                                setState(() {
+                                  selectedCommunity = value;
+                                  community = value?['comunidad'] as String;
+                                });
+                              },
+                              items:
+                                  communities.map((Map<String, dynamic> community) {
+                                return DropdownMenuItem<Map<String, dynamic>>(
+                                  value: community,
+                                  child: Text(community['comunidad'] as String),
+                                );
+                              }).toList(),
+                              decoration: InputDecoration(
+                                border: OutlineInputBorder(
+                                  borderRadius: BorderRadius.circular(10.0),
+                                ),
+                                filled: true,
+                                fillColor: Colors.transparent,
+                                hintText: 'Selecciona la comunidad',
+                              ),
+                            ),
+                          ],
+                        ),
+                      ),
+                    ],
+                    Padding(
+                      padding: const EdgeInsets.only(bottom:8.0),
+                      child: Column(
+                        crossAxisAlignment: CrossAxisAlignment.start,
+                        children: [
+                          const Padding(
+                            padding: EdgeInsets.only(top: 8.0),
+                            child: MyTextLabel(hintText: 'Contraseña:'),
+                          ),
+                          const SizedBox(height: 8),
+                          MyTextField(
+                            onChanged: (text) {},
+                            onSaved: (val) => {
+                              setState(() {
+                                password = val;
+                              }),
+                            },
+                            hintText: '******',
+                            obscureText: true,
+                          ),
+                        ],
+                      ),
+                    ),
+                    const SpaceY(),
+                    Column(
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                      children: [
+                        const MyTextLabel(hintText: 'Confirmar contraseña:'),
+                        const SizedBox(height: 8),
+                        MyTextField(
+                          onChanged: (text) {},
+                          onSaved: (val) => {
+                            setState(() {
+                              confirmPassword = val;
+                            }),
+                          },
+                          hintText: '******',
+                          obscureText: true,
+                        ),
+                      ],
+                    ),
+                    const SpaceY(),
+                    SizedBox(
+                      width: double.infinity,
+                      child: CustomButton(
+                        colorOne: '#800080',
+                        colorTwo: '#C3C3DD',
+                        text: 'Registrar',
+                        onTap: () {
+                          if (_formKey.currentState!.validate()) {
+                            _formKey.currentState!.save();
+                            _submit();
+                          }
+                        },
+                      ),
+                    ),
+                  ],
                 ),
-              ),
-              ElevatedButton(
-                style: ElevatedButton.styleFrom(
-                  shape: RoundedRectangleBorder(
-                    borderRadius: BorderRadius.circular(8.58),
-                  ),
-                  backgroundColor: HexColor('#FFA743'),
-                  minimumSize: const Size.fromHeight(60),
-                ),
-                onPressed: () {
-                  if (_formKey.currentState!.validate()) {
-                    _formKey.currentState!.save();
-                    _submit();
-                  }
-                },
-                child: Text(
-                  'Registrar',
-                  style: GoogleFonts.poppins(
-                    fontSize: 16,
-                    color: Colors.white,
-                  ),
-                ),
-              ),
-            ],
+             
+            ],),
+          ],),
+        ),
+      ),
+    );
+  }
+
+  InkWell photoUser() {
+    return InkWell(
+      onTap: _pickImage,
+      child: CircleAvatar(
+        radius: 70,
+        backgroundColor: const Color.fromARGB(255, 190, 190, 190),
+        backgroundImage:
+            _selectedImage != null ? FileImage(_selectedImage!) : null,
+        child: _selectedImage == null
+            ? const Icon(Icons.camera_alt_outlined,
+                color: Color.fromARGB(255, 78, 78, 78),)
+            : null,
+      ),
+    );
+  }
+}
+
+class CustomButton extends StatelessWidget {
+  final String colorOne;
+  final String colorTwo;
+  final String text;
+  final VoidCallback onTap;
+
+  const CustomButton({
+    required this.colorOne,
+    required this.colorTwo,
+    required this.text,
+    required this.onTap,
+  });
+
+  @override
+  Widget build(BuildContext context) {
+    return GestureDetector(
+      onTap: onTap,
+      child: Container(
+        decoration: BoxDecoration(
+          gradient: LinearGradient(
+            colors: [btnprimary, btnsecondary],
+            begin: Alignment.topLeft,
+            end: Alignment.bottomRight,
+          ),
+          borderRadius: BorderRadius.circular(10),
+        ),
+        padding: const EdgeInsets.symmetric(vertical: 15),
+        alignment: Alignment.center,
+        child: Text(
+          text,
+          style: const TextStyle(
+            color: Colors.white,
+            fontSize: 16,
+            fontWeight: FontWeight.bold,
           ),
         ),
       ),

@@ -9,5 +9,5 @@ abstract class ArtisansRepository {
     Map<String, dynamic> filtro,
   );
   Future<ArtesansListHttpResponse> getAllArtisansWithNoPage();
-  Future<void> registerArtisian(Map<String, dynamic> userInfo);
+  Future<void> registerArtisan(Map<String, dynamic> artisanData);
 }
