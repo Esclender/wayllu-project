@@ -40,17 +40,18 @@ class HomeScreen extends HookWidget {
 
   @override
   Widget build(BuildContext context) {
+    final searchController = useTextEditingController();
+    final productsListCubit = context.watch<ProductListCubit>();
+    final loggedUserRol = context.read<UserLoggedCubit>().state;
+    final userInfo = context.watch<UserLoggedInfoCubit>().state;
+    final scrollController = useScrollController();
+    final isSearchingProducts = useState(false);
+    final isSearchingByCode = useState('');
+    final pagina = useState(1);
+
     final DateTime now = DateTime.now();
     final int hour = now.hour;
     final String greeting = getGreeting(hour);
-    final loggedUserRol = context.read<UserLoggedCubit>().state;
-    final scrollController = useScrollController();
-    final pagina = useState(1);
-    final isSearchingProducts = useState(false);
-
-    final userInfo = context.watch<UserLoggedInfoCubit>().state;
-    final productsListCubit = context.watch<ProductListCubit>();
-    final isSearchingByCode = useState('');
 
     Future<void> searchProductByCode(c, String code) async {
       isSearchingByCode.value = code;
@@ -162,11 +163,47 @@ class HomeScreen extends HookWidget {
                               children: [
                                 optionsAndLogout(context),
                                 const Gap(10),
-                                CustomSearchWidget(
-                                  isHome: true,
-                                  hint: 'Buscar por Codigo',
-                                  width: 0.62,
-                                  filterDataFunction: searchProductByCode,
+                                Stack(
+                                  children: [
+                                    Container(
+                                      decoration: BoxDecoration(
+                                        color: bottomNavBar,
+                                        borderRadius: BorderRadius.circular(10),
+                                        boxShadow: [simpleShadow],
+                                      ),
+                                      child: Row(
+                                        children: [
+                                          const Padding(
+                                            padding: EdgeInsets.symmetric(
+                                              horizontal: 8.0,
+                                            ),
+                                            child: Icon(Ionicons.search),
+                                          ),
+                                          SizedBox(
+                                            width: MediaQuery.of(context)
+                                                    .size
+                                                    .width *
+                                                (0.62),
+                                            height: MediaQuery.of(context)
+                                                    .size
+                                                    .height *
+                                                0.06,
+                                            child: TextField(
+                                              controller: searchController,
+                                              onChanged: (q) {
+                                                searchProductByCode(context, q);
+                                              },
+                                              decoration: InputDecoration(
+                                                fillColor: bottomNavBar,
+                                                border: InputBorder.none,
+                                                hintText: 'Buscar por codigo',
+                                              ),
+                                            ),
+                                          ),
+                                        ],
+                                      ),
+                                    ),
+                                  ],
                                 ),
                               ],
                             )

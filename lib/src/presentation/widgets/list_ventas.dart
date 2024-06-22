@@ -1,12 +1,10 @@
 import 'package:flutter/material.dart';
-import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_hooks/flutter_hooks.dart';
 import 'package:gap/gap.dart';
 import 'package:wayllu_project/src/config/router/app_router.dart';
 import 'package:wayllu_project/src/domain/enums/lists_enums.dart';
 import 'package:wayllu_project/src/domain/models/registro_ventas/registros_venta_repo.dart';
 import 'package:wayllu_project/src/locator.dart';
-import 'package:wayllu_project/src/presentation/cubit/user_logged_cubit.dart';
 import 'package:wayllu_project/src/utils/constants/colors.dart';
 
 class VentasCardsItemsList extends HookWidget {
@@ -30,8 +28,6 @@ class VentasCardsItemsList extends HookWidget {
 
   @override
   Widget build(BuildContext context) {
-    final rol = context.read<UserLoggedCubit>().state;
-
     final ventasFiltrados = dataToRender;
 
     return _buildScrollableList(

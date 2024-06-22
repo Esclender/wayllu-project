@@ -75,6 +75,7 @@ class _CustomSearchWidgetState extends State<CustomSearchWidget> {
                         (widget.width ?? 0.82),
                     height: MediaQuery.of(context).size.height * 0.06,
                     child: TextField(
+                      controller: _searchController,
                       onChanged: (q) {
                         _onSearchChanged(q);
                       },

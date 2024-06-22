@@ -605,7 +605,12 @@ class DropDownMenuArtesanos extends HookWidget {
     final usersListCubit = context.watch<UsersListCubit>();
     final usersListCubitRead = context.read<UsersListCubit>();
     final queryNombre = useState(selectedOption.value);
-    final isViewMounted = useIsMounted();
+
+    void changeQuery(String query) {
+      WidgetsBinding.instance.addPostFrameCallback((_) {
+        queryNombre.value = query;
+      });
+    }
 
     useEffect(
       () {
@@ -675,7 +680,7 @@ class DropDownMenuArtesanos extends HookWidget {
               return null;
             }
 
-            queryNombre.value = query;
+            changeQuery(query);
 
             final int index = entries.indexWhere(
               (DropdownMenuEntry entry) => entry.label == query,
