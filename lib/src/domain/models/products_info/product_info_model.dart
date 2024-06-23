@@ -61,7 +61,7 @@ class ProductInfo {
   String TIPO_PESO;
   String? FECHA_INGRESO;
   String? UBICACION;
-  int? PESO;
+  double? PESO;
   String? IMAGEN;
   int? ANCHO;
   int? ALTO;

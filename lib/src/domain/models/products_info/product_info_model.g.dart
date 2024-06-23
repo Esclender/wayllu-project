@@ -19,7 +19,7 @@ ProductInfo _$ProductInfoFromJson(Map<String, dynamic> json) => ProductInfo(
       TIPO_PESO: json['TIPO_PESO'] as String,
       FECHA_INGRESO: json['FECHA_INGRESO'] as String?,
       UBICACION: json['UBICACION'] as String?,
-      PESO: json['PESO'] as int?,
+      PESO: (json['PESO'] as num?)?.toDouble(),
       IMAGEN: json['IMAGEN'] as String?,
       ANCHO: json['ANCHO'] as int?,
       ALTO: json['ALTO'] as int?,

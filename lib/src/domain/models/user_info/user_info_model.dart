@@ -4,6 +4,7 @@
 import 'package:intl/intl.dart';
 import 'package:json_annotation/json_annotation.dart';
 import 'package:wayllu_project/src/domain/models/list_items_model.dart';
+import 'package:wayllu_project/src/domain/models/list_products_model.dart';
 
 part 'user_info_model.g.dart';
 
@@ -47,7 +48,7 @@ class UserInfo {
         DescriptionItem(field: 'Comunidad', value: COMUNIDAD ?? ''),
         DescriptionItem(field: 'Tlf', value: TELEFONO ?? ''),
         DescriptionItem(field: 'Registrado', value: formattingDate()),
-      ],
+      ], userInfo: this, 
     );
   }
 

@@ -15,7 +15,7 @@ class CardTemplateItemsList extends HookWidget {
   final bool isScrollable;
   final String query;
 
-  //Dependencies Injection
+  // Dependencies Injection
   final appRouter = getIt<AppRouter>();
 
   CardTemplateItemsList({
@@ -44,7 +44,7 @@ class CardTemplateItemsList extends HookWidget {
       separatorBuilder: (context, index) => const Gap(8),
       physics: isScrollable ? null : const NeverScrollableScrollPhysics(),
       shrinkWrap: true,
-      itemCount: dataToRender.length,
+      itemCount: filteredData.length,
       itemBuilder: (BuildContext c, int ind) {
         return _buildItemContainer(
           itemData: filteredData[ind],
@@ -85,7 +85,8 @@ class CardTemplateItemsList extends HookWidget {
             ),
           ],
         ),
-        if (listType == ListEnums.users) _itemEdit() else Container(),
+         if (listType == ListEnums.users) _itemEdit(itemData.userInfo) else Container(),
+     
       ],
     );
   }
@@ -104,9 +105,9 @@ class CardTemplateItemsList extends HookWidget {
     );
   }
 
-  Widget _itemEdit() {
+  Widget _itemEdit(UserInfo user) {
     return InkWell(
-      //onTap: () => {_navigateToEditUser()},
+      onTap: () => _navigateToEditUser(user),
       child: Container(
         width: 30,
         height: 25,
@@ -124,9 +125,7 @@ class CardTemplateItemsList extends HookWidget {
     );
   }
 
-  Widget _itemMarker(
-    Color colorMarker,
-  ) {
+  Widget _itemMarker(Color colorMarker) {
     return Container(
       margin: const EdgeInsets.only(top: 10),
       width: 5.0,

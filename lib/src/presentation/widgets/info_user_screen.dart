@@ -49,7 +49,7 @@ class InfoUserScreen extends HookWidget {
         viewSelected: viewIndex,
       ),
       backgroundColor: bgPrimary,
-      appBar: isAdmin
+      appBar: isAdmin 
           ? AppBar(
               backgroundColor: bgPrimary,
               surfaceTintColor: Colors.transparent,
@@ -63,7 +63,17 @@ class InfoUserScreen extends HookWidget {
       body: CustomScrollView(
         slivers: [
           SliverAppBar(
-            leading: Container(),
+            leading: isAdmin 
+          ? AppBar(
+              backgroundColor: bgPrimary,
+              surfaceTintColor: Colors.transparent,
+              leading: InkWell(
+                onTap: () => {appRouter.pop()},
+                child: const Icon(Ionicons.arrow_back),
+              ),
+              centerTitle: true,
+            )
+          : null,
             expandedHeight: 68.0,
             backgroundColor: Colors.transparent,
             flexibleSpace: FlexibleSpaceBar(

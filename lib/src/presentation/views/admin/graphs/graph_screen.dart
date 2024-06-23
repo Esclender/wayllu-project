@@ -8,6 +8,7 @@ import 'package:intl/date_symbol_data_local.dart';
 import 'package:intl/intl.dart';
 import 'package:wayllu_project/src/domain/models/graphs/chart_column_bar.dart';
 import 'package:wayllu_project/src/domain/models/list_items_model.dart';
+import 'package:wayllu_project/src/domain/models/list_products_model.dart';
 import 'package:wayllu_project/src/domain/models/registro_ventas/registros_venta_repo.dart';
 import 'package:wayllu_project/src/presentation/cubit/ventas_list_cubit.dart';
 import 'package:wayllu_project/src/presentation/widgets/bottom_navbar.dart';
@@ -144,7 +145,7 @@ class GraphicProductsScreen extends HookWidget {
       (venta) => '${venta.COD_PRODUCTO}' ?? '',
     );
 
-    final List<CardTemplate> cardData = groupedVentas.entries.map((entry) {
+    final List<CardTemplateProducts> cardData = groupedVentas.entries.map((entry) {
       final codigoProducto = entry.key;
       final ventas = entry.value;
       final totalCantidad = ventas.fold<int>(
@@ -153,7 +154,7 @@ class GraphicProductsScreen extends HookWidget {
       );
       final producto = ventas.first;
 
-      return CardTemplate(
+      return CardTemplateProducts(
         nombre: codigoProducto,
         url: producto.IMAGEN ?? 'https://via.placeholder.com/150',
         descriptions: [

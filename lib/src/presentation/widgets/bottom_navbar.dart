@@ -54,9 +54,7 @@ class BottomNavBar extends HookWidget {
         icon: Ionicons.person,
         routes: [
           OptionsIconsRoutes(
-            route: InfoUserRoute(
-              viewIndex: 2,
-            ),
+            route: InfoUserRoute(viewIndex: 2, ),
             rol: UserRoles.artesano,
           ),
           OptionsIconsRoutes(

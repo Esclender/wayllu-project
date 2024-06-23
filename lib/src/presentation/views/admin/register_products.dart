@@ -14,6 +14,7 @@ import 'package:wayllu_project/src/config/router/app_router.dart';
 import 'package:wayllu_project/src/domain/dtos/registerProductDto/product_rep.dart';
 import 'package:wayllu_project/src/locator.dart';
 import 'package:wayllu_project/src/presentation/cubit/product_register_cubit.dart';
+import 'package:wayllu_project/src/presentation/cubit/users_list_cubit.dart';
 import 'package:wayllu_project/src/presentation/views/admin/usersScreens/register_screen.dart';
 import 'package:wayllu_project/src/presentation/views/home_screen.dart';
 import 'package:wayllu_project/src/presentation/widgets/gradient_widgets.dart';
@@ -169,7 +170,7 @@ class RegisterProductsScreen extends HookWidget {
     final cantidadController = useTextEditingController();
     final selectedCategoria = useState<String?>(null);
     final selectedCodFamilia = useState<Map<String, String>?>(null);
-    final selectedArtesano = useTextEditingController();
+    final selectedArtesano = useState<String>(toString());
 
     final selectedImage = useState<File?>(null);
     final urlImage = useState<String?>(null);
@@ -241,21 +242,16 @@ class RegisterProductsScreen extends HookWidget {
                 ],
               ),
             ),
-            Padding(
+         Padding(
               padding: const EdgeInsets.only(bottom: 8.0),
               child: Column(
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
-                  const MyTextLabel(hintText: 'Código de Artesana'),
+                  const MyTextLabel(hintText: 'Artesano'),
                   const SizedBox(height: 8),
-                  CustomTextField(
-                    controller: selectedArtesano,
-                    onChanged: (text) {},
-                    onSaved: (val) {
-                      // nothing here, handled by useState
-                    },
-                    hintText: 'Código de artesana',
-                    obscureText: false,
+                  DropDownMenuArtesanos(
+                    menuController: null,
+                    selectedOption: selectedArtesano,
                   ),
                 ],
               ),
@@ -371,7 +367,7 @@ class RegisterProductsScreen extends HookWidget {
                   selectedCategoria.value,
                   descripcionController.text,
                   selectedCodFamilia.value,
-                  selectedArtesano.text,
+                  selectedArtesano.value,
                   ubicacionController.text,
                   cantidadController.text,
                   urlImage.value,
@@ -819,6 +815,112 @@ class CustomButton extends StatelessWidget {
           ),
         ),
       ),
+    );
+  }
+}
+class DropDownMenuArtesanos extends HookWidget {
+  final TextEditingController? menuController;
+  final ValueNotifier<String> selectedOption;
+
+  const DropDownMenuArtesanos({
+    required this.menuController,
+    required this.selectedOption,
+  });
+
+  @override
+  Widget build(BuildContext context) {
+    final double width = MediaQuery.of(context).size.width - 45.0;
+    final usersListCubit = context.watch<UsersListCubit>();
+    final usersListCubitRead = context.read<UsersListCubit>();
+    final queryNombre = useState(selectedOption.value);
+    final isViewMounted = useIsMounted();
+
+    useEffect(
+      () {
+        // Obtener la lista de usuarios al montar el widget
+        usersListCubitRead.getUserLists();
+
+        return () {};
+      },
+      [],
+    );
+
+    useEffect(
+      () {
+        WidgetsBinding.instance.addPostFrameCallback((_) {
+          queryNombre.addListener(() {
+            if (queryNombre.value != selectedOption.value) {
+              usersListCubitRead.getUserLists(nombre: queryNombre.value);
+            }
+          });
+        });
+
+        return () {};
+      },
+      [],
+    );
+
+    return Column(
+      crossAxisAlignment: CrossAxisAlignment.start,
+      children: [
+        const Text(
+          'Artesano',
+          style: TextStyle(
+            color: Color(0xFF241E20),
+            fontSize: 16,
+            fontFamily: 'Gotham',
+            fontWeight: FontWeight.w500,
+            height: 1.5,
+          ),
+        ),
+        DropdownMenu(
+          hintText: 'Asignar artesano',
+          controller: menuController,
+          initialSelection: usersListCubit.state!.isNotEmpty ? selectedOption.value : null,
+          trailingIcon: const Icon(Ionicons.chevron_down),
+          width: width,
+          requestFocusOnTap: true,
+          enableFilter: true,
+          menuStyle: MenuStyle(
+            side: MaterialStateProperty.all<BorderSide>(
+              const BorderSide(
+                color: Colors.transparent,
+              ),
+            ),
+            backgroundColor: MaterialStateProperty.all<Color>(Colors.white),
+          ),
+          onSelected: (dynamic selected) {
+            // Actualizar la opción seleccionada
+            selectedOption.value = selected as String;
+          },
+          searchCallback: (entries, query) {
+            if (query.isEmpty) {
+              return null;
+            }
+
+            queryNombre.value = query;
+
+            final int index = entries.indexWhere(
+              (DropdownMenuEntry entry) => entry.label == query,
+            );
+            return index != -1 ? index : null;
+          },
+          dropdownMenuEntries: usersListCubit.state != null
+              ? usersListCubit.state!.map<DropdownMenuEntry>((value) {
+                  return DropdownMenuEntry(
+                    value: value.codigoArtesano.toString(),
+                    label: value.nombre,
+                    labelWidget: ListTile(
+                      leading: CircleAvatar(
+                        backgroundImage: NetworkImage(value.url),
+                      ),
+                      title: Text(value.nombre),
+                    ),
+                  );
+                }).toList()
+              : [],
+        ),
+      ],
     );
   }
 }
