@@ -15,6 +15,7 @@ abstract class ProductsApiServices {
   @GET('/')
   Future<HttpResponse<ProductsListHttpResponse>> getProducts(
     @Query('codigo_producto') String? codigoProducto,
+    @Query('categoria') String? categoria,
     @Query('pagina') int pagina,
   );
 

@@ -42,13 +42,13 @@ class ProductsCardsItemsList extends HookWidget {
   Widget build(BuildContext context) {
     final rol = context.read<UserLoggedCubit>().state;
 
-    final productosFiltrados = categoriaSeleccionada != null
-        ? dataToRender
-            .where((producto) => producto.category == categoriaSeleccionada)
-            .toList()
-        : dataToRender;
+    // final productosFiltrados = categoriaSeleccionada != null
+    //     ? dataToRender
+    //         .where((producto) => producto.category == categoriaSeleccionada)
+    //         .toList()
+    //     : dataToRender;
 
-    return _buildProducts(productosFiltrados, rol);
+    return _buildProducts(dataToRender, rol);
   }
 
   Widget _buildProducts(

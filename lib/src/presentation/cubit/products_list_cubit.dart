@@ -1,5 +1,4 @@
 import 'package:flutter_bloc/flutter_bloc.dart';
-import 'package:logger/logger.dart';
 import 'package:wayllu_project/src/data/api_repository.imp.dart';
 import 'package:wayllu_project/src/domain/models/products_info/product_info_model.dart';
 import 'package:wayllu_project/src/domain/repositories/types/products_types.dart';
@@ -9,11 +8,13 @@ class ProductListCubit extends Cubit<List<ProductInfo>?> {
 
   ProductListCubit(this._apiRepository) : super(null);
 
-  Future<void> getProductsLists({int pagina = 1, String codigo = ''}) async {
+  Future<void> getProductsLists({
+    int pagina = 1,
+    String codigo = '',
+    String categoria = '',
+  }) async {
     final ProductsListHttpResponse responseState =
-        await _apiRepository.getProducts(pagina: pagina);
-
-    Logger().i(responseState);
+        await _apiRepository.getProducts(pagina: pagina, categoria: categoria);
 
     emit(
       state == null
@@ -29,7 +30,7 @@ class ProductListCubit extends Cubit<List<ProductInfo>?> {
     );
   }
 
-   Future<void> updateProduct(Map<String, dynamic> productInfo) async {
+  Future<void> updateProduct(Map<String, dynamic> productInfo) async {
     await _apiRepository.updateProduct(productInfo);
   }
 
@@ -39,5 +40,4 @@ class ProductListCubit extends Cubit<List<ProductInfo>?> {
 
     emit(responseState?.map((producto) => producto).toList());
   }
-
 }

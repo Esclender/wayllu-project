@@ -605,7 +605,16 @@ class DropDownMenuArtesanos extends HookWidget {
     final usersListCubit = context.watch<UsersListCubit>();
     final usersListCubitRead = context.read<UsersListCubit>();
     final queryNombre = useState(selectedOption.value);
-    final isViewMounted = useIsMounted();
+
+    void changeQuery(String query) {
+      WidgetsBinding.instance.addPostFrameCallback((_) {
+        queryNombre.value = query;
+      });
+    }
+
+    void closeKeyboard(BuildContext context) {
+      FocusScope.of(context).unfocus();
+    }
 
     useEffect(
       () {
@@ -626,7 +635,10 @@ class DropDownMenuArtesanos extends HookWidget {
         WidgetsBinding.instance.addPostFrameCallback((_) {
           queryNombre.addListener(() {
             if (queryNombre.value != selectedOption.value) {
-              usersListCubitRead.getUserLists(nombre: queryNombre.value);
+              usersListCubitRead.getUserLists(
+                nombre: queryNombre.value,
+                cantidad: 5,
+              );
             }
           });
         });
@@ -669,13 +681,14 @@ class DropDownMenuArtesanos extends HookWidget {
           ),
           onSelected: (dynamic selected) {
             selectedOption.value = selected as String;
+            closeKeyboard(context);
           },
           searchCallback: (entries, query) {
             if (query.isEmpty) {
               return null;
             }
 
-            queryNombre.value = query;
+            changeQuery(query);
 
             final int index = entries.indexWhere(
               (DropdownMenuEntry entry) => entry.label == query,
