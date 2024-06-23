@@ -25,10 +25,11 @@ class ArtisansApiRepositoryImpl extends BaseApiRepository
   @override
   Future<ArtesansListHttpResponse> getArtisans(
     int pagina,
+    int cantidad,
     String nombre,
   ) async {
     final responseHttp = await getStateOf<ArtesansListHttpResponse>(
-      request: () => _apiServices.getArtisans(pagina, nombre),
+      request: () => _apiServices.getArtisans(pagina, cantidad, nombre),
     );
 
     return responseHttp.data;

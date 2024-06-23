@@ -23,11 +23,13 @@ class _ArtesansApiServices implements ArtesansApiServices {
   @override
   Future<HttpResponse<List<UserInfo>?>> getArtisans(
     int pagina,
+    int cantidad,
     String nombre,
   ) async {
     const _extra = <String, dynamic>{};
     final queryParameters = <String, dynamic>{
       r'pagina': pagina,
+      r'cantidad': cantidad,
       r'nombre': nombre,
     };
     final _headers = <String, dynamic>{};

@@ -12,6 +12,7 @@ abstract class ArtesansApiServices {
   @GET('/')
   Future<HttpResponse<ArtesansListHttpResponse>> getArtisans(
     @Query('pagina') int pagina,
+    @Query('cantidad') int cantidad,
     @Query('nombre') String nombre,
   );
 

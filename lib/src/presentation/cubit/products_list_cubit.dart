@@ -1,5 +1,4 @@
 import 'package:flutter_bloc/flutter_bloc.dart';
-import 'package:logger/logger.dart';
 import 'package:wayllu_project/src/data/api_repository.imp.dart';
 import 'package:wayllu_project/src/domain/models/products_info/product_info_model.dart';
 import 'package:wayllu_project/src/domain/repositories/types/products_types.dart';
@@ -16,8 +15,6 @@ class ProductListCubit extends Cubit<List<ProductInfo>?> {
   }) async {
     final ProductsListHttpResponse responseState =
         await _apiRepository.getProducts(pagina: pagina, categoria: categoria);
-
-    Logger().i(responseState);
 
     emit(
       state == null

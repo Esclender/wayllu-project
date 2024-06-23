@@ -612,6 +612,10 @@ class DropDownMenuArtesanos extends HookWidget {
       });
     }
 
+    void closeKeyboard(BuildContext context) {
+      FocusScope.of(context).unfocus();
+    }
+
     useEffect(
       () {
         usersListCubitRead
@@ -631,7 +635,10 @@ class DropDownMenuArtesanos extends HookWidget {
         WidgetsBinding.instance.addPostFrameCallback((_) {
           queryNombre.addListener(() {
             if (queryNombre.value != selectedOption.value) {
-              usersListCubitRead.getUserLists(nombre: queryNombre.value);
+              usersListCubitRead.getUserLists(
+                nombre: queryNombre.value,
+                cantidad: 5,
+              );
             }
           });
         });
@@ -674,6 +681,7 @@ class DropDownMenuArtesanos extends HookWidget {
           ),
           onSelected: (dynamic selected) {
             selectedOption.value = selected as String;
+            closeKeyboard(context);
           },
           searchCallback: (entries, query) {
             if (query.isEmpty) {
