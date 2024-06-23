@@ -11,6 +11,7 @@ import 'package:wayllu_project/src/domain/models/list_items_model.dart';
 import 'package:wayllu_project/src/domain/models/registro_ventas/registros_venta_repo.dart';
 import 'package:wayllu_project/src/presentation/cubit/ventas_list_cubit.dart';
 import 'package:wayllu_project/src/presentation/widgets/bottom_navbar.dart';
+import 'package:wayllu_project/src/presentation/widgets/expand_tile.dart';
 import 'package:wayllu_project/src/presentation/widgets/gradient_widgets.dart';
 import 'package:wayllu_project/src/presentation/widgets/graphs_components/column_bar_chart.dart';
 import 'package:wayllu_project/src/presentation/widgets/top_vector.dart';
@@ -229,13 +230,16 @@ class GraphicProductsScreen extends HookWidget {
                     margin: const EdgeInsets.only(left: 16, bottom: 6, top: 2),
                     width: MediaQuery.of(context).size.width * 0.32,
                     decoration: BoxDecoration(
-                        borderRadius: BorderRadius.circular(5),
-                        color: iconColor.withOpacity(0.5),
-                        border:
-                            Border.all(color: bottomNavBarStroke, width: 0.5)),
+                      borderRadius: BorderRadius.circular(5),
+                      color: iconColor.withOpacity(0.5),
+                      border: Border.all(color: bottomNavBarStroke, width: 0.5),
+                    ),
                     child: GestureDetector(
                       onTap: () => _clearFilters(
-                          context, selectedFilter, selectedValues.value),
+                        context,
+                        selectedFilter,
+                        selectedValues.value,
+                      ),
                       child: Padding(
                         padding: const EdgeInsets.all(4.0),
                         child: Row(
@@ -317,7 +321,9 @@ class GraphicProductsScreen extends HookWidget {
                   ],
                 ),
                 border: Border.all(
-                    width: 0.5, color: Colors.white.withOpacity(0.5)),
+                  width: 0.5,
+                  color: Colors.white.withOpacity(0.5),
+                ),
                 shadowStrength: 5,
                 borderRadius: BorderRadius.circular(5),
                 shadowColor: Colors.white.withOpacity(0.24),
@@ -424,8 +430,10 @@ Widget _listTile({
   );
 }
 
-Widget _buildItemContainer(
-    {required String productCode, required List<VentasList> ventas}) {
+Widget _buildItemContainer({
+  required String productCode,
+  required List<VentasList> ventas,
+}) {
   final BoxDecoration decoration = BoxDecoration(
     color: bottomNavBar,
     boxShadow: [
@@ -442,6 +450,7 @@ Widget _buildItemContainer(
     borderRadius: const BorderRadius.all(
       Radius.circular(5),
     ),
+    border: Border.all(color: Colors.transparent),
   );
 
   final totalQuantity =
@@ -450,7 +459,7 @@ Widget _buildItemContainer(
       ? ventas.first.IMAGEN!
       : 'https://via.placeholder.com/150'; // URL de la imagen por defecto
 
-  return ExpansionTile(
+  return ExpansionTileImp(
     title: Container(
       padding: EdgeInsets.zero,
       margin: EdgeInsets.zero,
@@ -458,7 +467,7 @@ Widget _buildItemContainer(
       decoration: decoration,
 
       child: ListTile(
-        leading: _buildImageAvatar(imageUrl), // Icono para el producto
+        leading: _buildImageAvatar(imageUrl),
         title: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
@@ -467,17 +476,21 @@ Widget _buildItemContainer(
               style: const TextStyle(fontSize: 18),
             ),
             Container(
-                margin: const EdgeInsets.only(top: 10),
-                padding: const EdgeInsets.symmetric(horizontal: 4),
-                decoration: BoxDecoration(
-                    color: secondary, borderRadius: BorderRadius.circular(3)),
-                child: Text(
-                  'Total vendidos: $totalQuantity',
-                  style: TextStyle(
-                      fontSize: 13,
-                      fontWeight: FontWeight.w500,
-                      color: bgPrimary),
-                )),
+              margin: const EdgeInsets.only(top: 10),
+              padding: const EdgeInsets.symmetric(horizontal: 4),
+              decoration: BoxDecoration(
+                color: secondary,
+                borderRadius: BorderRadius.circular(3),
+              ),
+              child: Text(
+                'Total vendidos: $totalQuantity',
+                style: TextStyle(
+                  fontSize: 13,
+                  fontWeight: FontWeight.w500,
+                  color: bgPrimary,
+                ),
+              ),
+            ),
           ],
         ),
       ),
@@ -494,8 +507,10 @@ Widget _buildItemContainer(
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
                 Text('Cantidad: ${venta.CANTIDAD}', style: infoCardsProducts()),
-                Text('Descripción: ${venta.DESCRIPCION}',
-                    style: infoCardsProducts()),
+                Text(
+                  'Descripción: ${venta.DESCRIPCION}',
+                  style: infoCardsProducts(),
+                ),
               ],
             ),
           ),
