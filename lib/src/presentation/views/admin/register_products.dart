@@ -15,17 +15,13 @@ import 'package:wayllu_project/src/domain/dtos/registerProductDto/product_rep.da
 import 'package:wayllu_project/src/locator.dart';
 import 'package:wayllu_project/src/presentation/cubit/product_register_cubit.dart';
 import 'package:wayllu_project/src/presentation/cubit/users_list_cubit.dart';
-import 'package:wayllu_project/src/presentation/views/admin/usersScreens/register_screen.dart';
-import 'package:wayllu_project/src/presentation/views/home_screen.dart';
 import 'package:wayllu_project/src/presentation/widgets/gradient_widgets.dart';
 import 'package:wayllu_project/src/presentation/widgets/register_user/my_text_label.dart';
 import 'package:wayllu_project/src/utils/constants/colors.dart';
-import 'package:wayllu_project/src/utils/firebase/firebase_helper.dart';
-
 
 @RoutePage()
 class RegisterProductsScreen extends HookWidget {
-  RegisterProductsScreen({Key? key}) : super(key: key);
+  RegisterProductsScreen({super.key});
 
   final List<Map<String, String>> codFamiliasOptions = const [
     {'codigo': '1', 'valor': '1 (BOLSA ASA CUERO)'},
@@ -51,8 +47,6 @@ class RegisterProductsScreen extends HookWidget {
     'BOLSOS Y MONEDEROS',
     'TEXTILES PARA EL HOGAR',
   ];
-
-
 
   final appRouter = getIt<AppRouter>();
   void _showAlertDialog(BuildContext context, String message) {
@@ -168,27 +162,26 @@ class RegisterProductsScreen extends HookWidget {
     final descripcionController = useTextEditingController();
     final ubicacionController = useTextEditingController();
     final cantidadController = useTextEditingController();
+
     final selectedCategoria = useState<String?>(null);
     final selectedCodFamilia = useState<Map<String, String>?>(null);
-    final selectedArtesano = useState<String>(toString());
-
-    final selectedImage = useState<File?>(null);
+    final selectedArtesano = useState<String>('');
+    final artesanoController = useTextEditingController(text: '');
     final urlImage = useState<String?>(null);
     final formKey = GlobalKey<FormState>();
 
+    final ImagePicker imagePicker = ImagePicker();
 
-     final ImagePicker imagePicker = ImagePicker();
+    Future<String?> selectImage() async {
+      final XFile? image =
+          await imagePicker.pickImage(source: ImageSource.gallery);
+      if (image != null) {
+        productImage.value = File(image.path);
+        return '';
+      }
 
-  Future<String?> selectImage() async {
-  final XFile? image =
-      await imagePicker.pickImage(source: ImageSource.gallery);
-  if (image != null) {
-    productImage.value = File(image.path);
-    return '';
-  }
-
-  return null;
-}
+      return null;
+    }
 
     return Scaffold(
       backgroundColor: bgPrimary,
@@ -196,9 +189,7 @@ class RegisterProductsScreen extends HookWidget {
         backgroundColor: bgPrimary,
         surfaceTintColor: Colors.transparent,
         leading: InkWell(
-          onTap: () => {
-            appRouter.navigate(HomeRoute(viewIndex: 0))
-          },
+          onTap: () => {appRouter.navigate(HomeRoute(viewIndex: 0))},
           child: const Icon(Ionicons.arrow_back),
         ),
         title: GradientText(
@@ -207,8 +198,8 @@ class RegisterProductsScreen extends HookWidget {
         ),
         centerTitle: true,
       ),
-      body: Padding(
-        padding: const EdgeInsets.all(8.0),
+      body: Container(
+        padding: const EdgeInsets.symmetric(horizontal: 20.0),
         child: ListView(
           children: [
             photoUser(
@@ -216,141 +207,35 @@ class RegisterProductsScreen extends HookWidget {
               productImage,
               selectImage,
             ),
-            wrappedContainerTextForm(
-              context,
-              pesoController,
-              tipoPesoController,
-              altoController,
-              anchoController,
+            containerTextForm(
+                context, 'Ubicación', 'Ingrese ubicación', ubicacionController,),
+            containerTextForm(
+                context, 'Descripción', 'Ingrese la descripcion del producto', descripcionController,),
+            Wrap(
+              spacing: 16, // Spacing between elements
+              runSpacing: 16, // Spacing between rows
+              children: [
+                DropDownMenuArtesanos(
+                  menuController: artesanoController,
+                  selectedOption: selectedArtesano,
+                ),
+                DropDownOptions(
+                    optionHead: 'Categoria',
+                    options: categoriasOptions,
+                    selectedOption: selectedCategoria),
+                _selectedCodigoFamilia(selectedCodFamilia),
+               
+              ],
             ),
-            Padding(
-              padding: const EdgeInsets.only(bottom: 8.0),
-              child: Column(
-                crossAxisAlignment: CrossAxisAlignment.start,
-                children: [
-                  const MyTextLabel(hintText: 'Descripción'),
-                  const SizedBox(height: 8),
-                  CustomTextField(
-                    controller: descripcionController,
-                    onChanged: (text) {},
-                    onSaved: (val) {
-                      // nothing here, handled by useState
-                    },
-                    hintText: 'Descripción',
-                    obscureText: false,
-                  ),
-                ],
-              ),
-            ),
-         Padding(
-              padding: const EdgeInsets.only(bottom: 8.0),
-              child: Column(
-                crossAxisAlignment: CrossAxisAlignment.start,
-                children: [
-                  const MyTextLabel(hintText: 'Artesano'),
-                  const SizedBox(height: 8),
-                  DropDownMenuArtesanos(
-                    menuController: null,
-                    selectedOption: selectedArtesano,
-                  ),
-                ],
-              ),
-            ),
-            Padding(
-              padding: const EdgeInsets.only(bottom: 8.0),
-              child: Column(
-                crossAxisAlignment: CrossAxisAlignment.start,
-                children: [
-                  const MyTextLabel(hintText: 'Ubicación'),
-                  const SizedBox(height: 8),
-                  CustomTextField(
-                    controller: ubicacionController,
-                    onChanged: (text) {},
-                    onSaved: (val) {
-                      // nothing here, handled by useState
-                    },
-                    hintText: 'Ubicación',
-                    obscureText: false,
-                  ),
-                ],
-              ),
-            ),
-            Padding(
-              padding: const EdgeInsets.only(bottom: 8.0),
-              child: Column(
-                crossAxisAlignment: CrossAxisAlignment.start,
-                children: [
-                  const MyTextLabel(hintText: 'Cantidad'),
-                  const SizedBox(height: 8),
-                  CustomTextField(
-                    controller: cantidadController,
-                    onChanged: (text) {},
-                    onSaved: (val) {},
-                    hintText: 'Cantidad',
-                    obscureText: false,
-                  ),
-                ],
-              ),
-            ),
-            Padding(
-              padding: const EdgeInsets.only(bottom: 8.0),
-              child: Column(
-                crossAxisAlignment: CrossAxisAlignment.start,
-                children: [
-                  const MyTextLabel(hintText: 'Categoría'),
-                  const SizedBox(height: 8),
-                  DropdownButtonFormField<String>(
-                    value: selectedCategoria.value,
-                    onChanged: (String? newValue) {
-                      selectedCategoria.value = newValue;
-                    },
-                    items: categoriasOptions
-                        .map<DropdownMenuItem<String>>((String value) {
-                      return DropdownMenuItem<String>(
-                        value: value,
-                        child: Text(value),
-                      );
-                    }).toList(),
-                    decoration: InputDecoration(
-                      hintText: 'Seleccione una categoría',
-                      border: OutlineInputBorder(
-                        borderRadius: BorderRadius.circular(8.0),
-                      ),
-                    ),
-                  ),
-                ],
-              ),
-            ),
-            Padding(
-              padding: const EdgeInsets.only(bottom: 8.0),
-              child: Column(
-                crossAxisAlignment: CrossAxisAlignment.start,
-                children: [
-                  const MyTextLabel(hintText: 'Código de Familia'),
-                  const SizedBox(height: 8),
-                  DropdownButtonFormField<Map<String, String>>(
-                    value: selectedCodFamilia.value,
-                    onChanged: (Map<String, String>? newValue) {
-                      selectedCodFamilia.value = newValue;
-                    },
-                    items: codFamiliasOptions
-                        .map<DropdownMenuItem<Map<String, String>>>(
-                            (Map<String, String> value) {
-                      return DropdownMenuItem<Map<String, String>>(
-                        value: value,
-                        child: Text(value['valor']!),
-                      );
-                    }).toList(),
-                    decoration: InputDecoration(
-                      hintText: 'Seleccione un código de familia',
-                      border: OutlineInputBorder(
-                        borderRadius: BorderRadius.circular(8.0),
-                      ),
-                    ),
-                  ),
-                ],
-              ),
-            ),
+             containerTextForm(context, 'Cantidad', 'Ingrese la cantidad',
+                    cantidadController),
+                wrappedContainerTextForm(
+                  context,
+                  pesoController,
+                  tipoPesoController,
+                  altoController,
+                  anchoController,
+                ),
             const SizedBox(height: 24),
             CustomButton(
               colorOne: '#800080',
@@ -377,6 +262,61 @@ class RegisterProductsScreen extends HookWidget {
           ],
         ),
       ),
+    );
+  }
+
+  Column _selectedCodigoFamilia(
+      ValueNotifier<Map<String, String>?> selectedCodFamilia) {
+    return Column(
+      crossAxisAlignment: CrossAxisAlignment.start,
+      children: [
+        const Text(
+          'Código de Familia',
+          style: TextStyle(
+            color: Color(0xFF241E20),
+            fontSize: 16,
+            fontFamily: 'Gotham',
+            fontWeight: FontWeight.w500,
+            height: 1.5,
+          ),
+        ),
+        Container(
+          padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 4),
+          decoration: ShapeDecoration(
+            shape: RoundedRectangleBorder(
+              side: const BorderSide(
+                width: 1,
+                style: BorderStyle.solid,
+                color: Colors.grey, // Cambiar al color deseado
+              ),
+              borderRadius: BorderRadius.circular(10),
+            ),
+          ),
+          child: DropdownButton<Map<String, String>>(
+            isExpanded: true,
+            value: selectedCodFamilia.value,
+            hint: const Text('Seleccione un código'),
+            icon: const Icon(Icons.keyboard_arrow_down),
+            elevation: 16,
+            style: const TextStyle(color: Colors.black),
+            underline: Container(
+              height: 2,
+              color: Colors.transparent,
+            ),
+            onChanged: (Map<String, String>? newValue) {
+              if (newValue != null) {
+                selectedCodFamilia.value = newValue;
+              }
+            },
+            items: codFamiliasOptions.map((Map<String, String> value) {
+              return DropdownMenuItem<Map<String, String>>(
+                value: value,
+                child: Text(value['valor']!),
+              );
+            }).toList(),
+          ),
+        ),
+      ],
     );
   }
 
@@ -408,13 +348,13 @@ class RegisterProductsScreen extends HookWidget {
             Container(
               decoration: BoxDecoration(
                 border: Border.all(
-                  color: Color(
+                  color: const Color(
                       0xFFCCCCCC), // Replace bottomNavBarStroke with a color
                 ),
                 borderRadius: BorderRadius.circular(10),
               ),
               child: DropdownButton(
-                padding: EdgeInsets.symmetric(horizontal: 10.0),
+                padding: const EdgeInsets.symmetric(horizontal: 10.0),
                 isExpanded: true,
                 value: valueNotifier!.value,
                 hint: const Text('Tipo de peso'),
@@ -489,6 +429,62 @@ class RegisterProductsScreen extends HookWidget {
       ),
     );
   }
+
+  SizedBox containerTextForm(
+    BuildContext context,
+    String title,
+    String description,
+    TextEditingController controller,
+  ) {
+    return SizedBox(
+      width: MediaQuery.of(context).size.width * 0.85,
+      height: MediaQuery.of(context).size.height * 0.11,
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          const SizedBox(
+            height: 8,
+          ),
+          Text(
+            title,
+            style: const TextStyle(
+              color: Color(0xFF241E20),
+              fontSize: 16,
+              fontFamily: 'Gotham',
+              fontWeight: FontWeight.w500,
+              height: 0,
+            ),
+          ),
+          Container(
+            margin: const EdgeInsets.only(top: 6),
+            decoration: BoxDecoration(
+              border: Border.all(
+                color: bottomNavBarStroke,
+              ),
+              borderRadius: BorderRadius.circular(10),
+            ),
+            child: TextField(
+              controller: controller,
+              decoration: InputDecoration(
+                hintText: description,
+                border: const OutlineInputBorder(
+                  borderSide: BorderSide.none,
+                ),
+                contentPadding: const EdgeInsets.only(left: 12),
+                hintStyle: const TextStyle(
+                  color: Color(0xFF241E20),
+                  fontSize: 14,
+                  fontFamily: 'Gotham',
+                  fontWeight: FontWeight.w300,
+                  height: 0,
+                ),
+              ),
+            ),
+          ),
+        ],
+      ),
+    );
+  }
 }
 
 class CustomTextField extends StatelessWidget {
@@ -499,13 +495,13 @@ class CustomTextField extends StatelessWidget {
   final bool obscureText;
 
   const CustomTextField({
-    Key? key,
+    super.key,
     required this.controller,
     required this.onChanged,
     required this.onSaved,
     required this.hintText,
     required this.obscureText,
-  }) : super(key: key);
+  });
 
   @override
   Widget build(BuildContext context) {
@@ -675,7 +671,7 @@ Widget _buildTextField(
           decoration: BoxDecoration(
             border: Border.all(
               color:
-                  Color(0xFFCCCCCC), // Replace bottomNavBarStroke with a color
+                  const Color(0xFFCCCCCC), // Replace bottomNavBarStroke with a color
             ),
             borderRadius: BorderRadius.circular(10),
           ),
@@ -796,28 +792,31 @@ class CustomButton extends StatelessWidget {
     return GestureDetector(
       onTap: onTap,
       child: Container(
-        decoration: BoxDecoration(
-          gradient: LinearGradient(
-            colors: [btnprimary, btnsecondary],
-            begin: Alignment.topLeft,
-            end: Alignment.bottomRight,
+        margin: const EdgeInsets.only(top: 4, bottom: 60),
+        width: MediaQuery.of(context).size.width * 0.85,
+        height: MediaQuery.of(context).size.height * 0.06,
+        decoration: ShapeDecoration(
+          color: mainColor,
+          shape: RoundedRectangleBorder(
+            borderRadius: BorderRadius.circular(10),
           ),
-          borderRadius: BorderRadius.circular(10),
         ),
-        padding: const EdgeInsets.symmetric(vertical: 15),
-        alignment: Alignment.center,
-        child: Text(
-          text,
-          style: const TextStyle(
-            color: Colors.white,
-            fontSize: 16,
-            fontWeight: FontWeight.bold,
+        child: const Center(
+          child: Text(
+            'Registrar',
+            style: TextStyle(
+              fontFamily: 'Gotham',
+              fontSize: 16,
+              fontWeight: FontWeight.w500,
+              color: Colors.white,
+            ),
           ),
         ),
       ),
     );
   }
 }
+
 class DropDownMenuArtesanos extends HookWidget {
   final TextEditingController? menuController;
   final ValueNotifier<String> selectedOption;
@@ -833,28 +832,37 @@ class DropDownMenuArtesanos extends HookWidget {
     final usersListCubit = context.watch<UsersListCubit>();
     final usersListCubitRead = context.read<UsersListCubit>();
     final queryNombre = useState(selectedOption.value);
-    final isViewMounted = useIsMounted();
 
-    useEffect(
-      () {
-        // Obtener la lista de usuarios al montar el widget
-        usersListCubitRead.getUserLists();
+    void changeQuery(String query) {
+      WidgetsBinding.instance.addPostFrameCallback((_) {
+        queryNombre.value = query;
+      });
+    }
 
-        return () {};
-      },
-      [],
-    );
+    void closeKeyboard(BuildContext context) {
+      FocusScope.of(context).unfocus();
+    }
 
+    useEffect(() {
+      usersListCubitRead.getUserLists();
+      return;
+    }, []);
+
+    // Add a post-frame callback to ensure the build is complete before handling state changes
     useEffect(
       () {
         WidgetsBinding.instance.addPostFrameCallback((_) {
           queryNombre.addListener(() {
             if (queryNombre.value != selectedOption.value) {
-              usersListCubitRead.getUserLists(nombre: queryNombre.value);
+              usersListCubitRead.getUserLists(
+                nombre: queryNombre.value,
+                cantidad: 5,
+              );
             }
           });
         });
 
+        // Cleanup the listener on dispose
         return () {};
       },
       [],
@@ -870,13 +878,14 @@ class DropDownMenuArtesanos extends HookWidget {
             fontSize: 16,
             fontFamily: 'Gotham',
             fontWeight: FontWeight.w500,
-            height: 1.5,
+            height: 1.5, // Adjust height as needed
           ),
         ),
         DropdownMenu(
           hintText: 'Asignar artesano',
           controller: menuController,
-          initialSelection: usersListCubit.state!.isNotEmpty ? selectedOption.value : null,
+          initialSelection:
+              usersListCubit.state!.isNotEmpty ? selectedOption.value : null,
           trailingIcon: const Icon(Ionicons.chevron_down),
           width: width,
           requestFocusOnTap: true,
@@ -890,16 +899,14 @@ class DropDownMenuArtesanos extends HookWidget {
             backgroundColor: MaterialStateProperty.all<Color>(Colors.white),
           ),
           onSelected: (dynamic selected) {
-            // Actualizar la opción seleccionada
             selectedOption.value = selected as String;
+            closeKeyboard(context);
           },
           searchCallback: (entries, query) {
             if (query.isEmpty) {
               return null;
             }
-
-            queryNombre.value = query;
-
+            changeQuery(query);
             final int index = entries.indexWhere(
               (DropdownMenuEntry entry) => entry.label == query,
             );

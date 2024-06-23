@@ -75,6 +75,7 @@ class EditProductsScreen extends HookWidget {
         useTextEditingController(text: productInfo.ALTO.toString());
     final anchoController =
         useTextEditingController(text: productInfo.ANCHO.toString());
+    
     final artesanoController = useTextEditingController(text: '');
 
     final tipoPesoController = useState<String>(productInfo.TIPO_PESO);
