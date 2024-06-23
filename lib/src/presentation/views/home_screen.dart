@@ -1,18 +1,13 @@
 import 'dart:async';
-import 'dart:ui';
 
 import 'package:auto_route/auto_route.dart';
 import 'package:auto_size_text/auto_size_text.dart';
 import 'package:badges/badges.dart' as badge;
-import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
-import 'package:flutter/widgets.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_hooks/flutter_hooks.dart';
 import 'package:gap/gap.dart';
-import 'package:hexcolor/hexcolor.dart';
 import 'package:ionicons/ionicons.dart';
-import 'package:logger/logger.dart';
 import 'package:shimmer/shimmer.dart';
 import 'package:wayllu_project/src/config/router/app_router.dart';
 import 'package:wayllu_project/src/domain/enums/lists_enums.dart';
@@ -23,7 +18,6 @@ import 'package:wayllu_project/src/locator.dart';
 import 'package:wayllu_project/src/presentation/cubit/productos_carrito_cubit.dart';
 import 'package:wayllu_project/src/presentation/cubit/products_list_cubit.dart';
 import 'package:wayllu_project/src/presentation/cubit/user_logged_cubit.dart';
-import 'package:wayllu_project/src/presentation/widgets/bar_search.dart';
 import 'package:wayllu_project/src/presentation/widgets/bottom_navbar.dart';
 import 'package:wayllu_project/src/presentation/widgets/list_products.dart';
 import 'package:wayllu_project/src/utils/constants/colors.dart';
@@ -40,6 +34,7 @@ class HomeScreen extends HookWidget {
 
   @override
   Widget build(BuildContext context) {
+    final categoriaSeleccionada = useState<String?>(null);
     final searchController = useTextEditingController();
     final productsListCubit = context.watch<ProductListCubit>();
     final loggedUserRol = context.read<UserLoggedCubit>().state;
@@ -64,10 +59,12 @@ class HomeScreen extends HookWidget {
         productsListCubit.getProductsLists();
         scrollController.onScrollEndsListener(
           () {
-            Logger().i(isSearchingByCode.value);
             if (isSearchingByCode.value == '') {
               isSearchingProducts.value = true;
-              productsListCubit.getProductsLists(pagina: pagina.value++);
+              productsListCubit.getProductsLists(
+                pagina: pagina.value++,
+                categoria: categoriaSeleccionada.value ?? '',
+              );
 
               Timer(const Duration(seconds: 3), () {
                 isSearchingProducts.value = false;
@@ -80,7 +77,18 @@ class HomeScreen extends HookWidget {
       [],
     );
 
-    final categoriaSeleccionada = useState<String?>(null);
+    useEffect(
+      () {
+        productsListCubit.getProductsLists(
+          pagina: pagina.value,
+          categoria: categoriaSeleccionada.value ?? '',
+        );
+
+        return () {};
+      },
+      [categoriaSeleccionada.value],
+    );
+
     return Scaffold(
       backgroundColor: bgPrimary,
       body: Stack(
@@ -243,7 +251,10 @@ class HomeScreen extends HookWidget {
                       height: 6,
                     ),
                     Container(
-                      padding: const EdgeInsets.symmetric(horizontal: 22),
+                      padding: const EdgeInsets.symmetric(
+                        horizontal: 22,
+                        vertical: 10,
+                      ),
                       alignment: Alignment.centerLeft,
                       child: categoriaSeleccionada.value == null
                           ? const Text(
@@ -267,6 +278,7 @@ class HomeScreen extends HookWidget {
                               child: GestureDetector(
                                 onTap: () {
                                   categoriaSeleccionada.value = null;
+                                  pagina.value = 1;
                                 },
                                 child: Padding(
                                   padding: const EdgeInsets.all(4.0),
@@ -385,13 +397,11 @@ class HomeScreen extends HookWidget {
   ) {
     return Padding(
       padding: const EdgeInsets.only(left: 20),
-      child:
-          dataProducts(categorySeleccionada, data, context, scrollController),
+      child: dataProducts(data, context, scrollController),
     );
   }
 
   Widget dataProducts(
-    String? categorySeleccionada,
     List<ProductInfo> data,
     BuildContext context,
     ScrollController scrollController,
@@ -415,38 +425,37 @@ class HomeScreen extends HookWidget {
               );
             },
           );
-        } else if (categorySeleccionada != null) {
-          data = state;
-          return ListView.builder(
-            controller: scrollController,
-            padding: EdgeInsets.zero,
-            shrinkWrap: true,
-            physics: const NeverScrollableScrollPhysics(),
-            itemCount: data.length,
-            itemBuilder: (context, index) {
-              return ProductsCardsItemsList(
-                context: context,
-                listType: ListEnums.products,
-                dataToRender: data,
-                categoriaSeleccionada: categorySeleccionada,
-                scrollController: scrollController,
-              );
-            },
-          );
         } else {
-          data = state;
-
           return ProductsCardsItemsList(
             context: context,
             listType: ListEnums.products,
-            dataToRender: data,
-            categoriaSeleccionada: categorySeleccionada,
+            dataToRender: state,
             scrollController: scrollController,
           );
         }
       },
     );
   }
+
+  // else if (categorySeleccionada != null) {
+  //         data = state;
+  //         return ListView.builder(
+  //           controller: scrollController,
+  //           padding: EdgeInsets.zero,
+  //           shrinkWrap: true,
+  //           physics: const NeverScrollableScrollPhysics(),
+  //           itemCount: data.length,
+  //           itemBuilder: (context, index) {
+  //             return ProductsCardsItemsList(
+  //               context: context,
+  //               listType: ListEnums.products,
+  //               dataToRender: data,
+  //               categoriaSeleccionada: categorySeleccionada,
+  //               scrollController: scrollController,
+  //             );
+  //           },
+  //         );
+  //       }
 
   Widget _buildItemContainer(
     BuildContext context,

@@ -23,11 +23,13 @@ class _ProductsApiServices implements ProductsApiServices {
   @override
   Future<HttpResponse<List<ProductInfo>?>> getProducts(
     String? codigoProducto,
+    String? categoria,
     int pagina,
   ) async {
     const _extra = <String, dynamic>{};
     final queryParameters = <String, dynamic>{
       r'codigo_producto': codigoProducto,
+      r'categoria': categoria,
       r'pagina': pagina,
     };
     queryParameters.removeWhere((k, v) => v == null);

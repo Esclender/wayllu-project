@@ -2,7 +2,7 @@ import 'package:wayllu_project/src/data/remoteRespositories/artesanos/artesanos.
 import 'package:wayllu_project/src/data/remoteRespositories/auth/auth.repo.dart';
 import 'package:wayllu_project/src/data/remoteRespositories/productos/productos.repo.dart';
 import 'package:wayllu_project/src/data/repository_base.dart';
-import 'package:wayllu_project/src/domain/dtos/registerArtisanDto/artisan_rep.dart';
+
 import 'package:wayllu_project/src/domain/dtos/usersCredentialsDto/user_credentials_rep.dart';
 import 'package:wayllu_project/src/domain/models/user_info/user_info_model.dart';
 import 'package:wayllu_project/src/domain/models/venta/venta_repo.dart';
@@ -100,15 +100,18 @@ class ProductsApiRepositoryImpl extends BaseApiRepository
 
   ProductsApiRepositoryImpl(this._apiServices);
 
-  //Se define una capara para obtener los datos desde api
-  //Con el proposito de validaciones u otro manejo de datos
   @override
   Future<ProductsListHttpResponse> getProducts({
     String? codigoProducto,
+    String? categoria,
     int pagina = 1,
   }) async {
     final responseHttp = await getStateOf<ProductsListHttpResponse>(
-      request: () => _apiServices.getProducts(codigoProducto, pagina),
+      request: () => _apiServices.getProducts(
+        codigoProducto,
+        categoria,
+        pagina,
+      ),
     );
 
     return responseHttp.data;
