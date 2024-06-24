@@ -4,6 +4,7 @@ import 'package:auto_route/auto_route.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_hooks/flutter_hooks.dart';
+import 'package:hexcolor/hexcolor.dart';
 import 'package:ionicons/ionicons.dart';
 import 'package:wayllu_project/src/config/router/app_router.dart';
 import 'package:wayllu_project/src/domain/models/carrito_item.dart';
@@ -19,14 +20,14 @@ class CarritoScreen extends HookWidget {
   final double checkoutBtnHeight = 150.0;
   final appRouter = getIt<AppRouter>();
 
-  Future<void> _checkoutVentaGoRecib(ProductsCarrito carrito) async {
+  Future<VentaInfo?> _checkoutVentaGoRecib(ProductsCarrito carrito) async {
     if (carrito.itemsInCartInt == 0) {
-      return;
+      return null;
     }
 
-    final VentaInfo ventaInfo;
-    ventaInfo = await carrito.registerVenta();
-    appRouter.navigate(ReciboRoute(ventaInfo: ventaInfo));
+    final VentaInfo ventaInfo = await carrito.registerVenta();
+
+    return ventaInfo;
   }
 
   void _increaseQuantity(
@@ -91,6 +92,42 @@ class CarritoScreen extends HookWidget {
         ],
       ),
     );
+  }
+
+  Future<String?> showLoadingDialog(
+    BuildContext context,
+    ProductsCarrito carrito,
+  ) async {
+    showDialog(
+      context: context,
+      barrierDismissible:
+          false, // Prevents closing the dialog by tapping outside
+      builder: (BuildContext context) {
+        // completer.complete(context);
+        return AlertDialog(
+          content: Column(
+            mainAxisSize: MainAxisSize.min,
+            children: [
+              CircularProgressIndicator(
+                color: HexColor('#B80000'),
+              ),
+              const SizedBox(height: 20),
+              const Text('Cargando...'),
+            ],
+          ),
+        );
+      },
+    );
+
+    _checkoutVentaGoRecib(carrito).onError((error, stackTrace) {
+      appRouter.popForced();
+      return null;
+    }).then((value) {
+      if (value != null) {
+        appRouter.navigate(ReciboRoute(ventaInfo: value));
+        appRouter.popForced();
+      }
+    });
   }
 
   Widget _buildBlocBuilderWithList(BuildContext contextF) {
@@ -284,7 +321,7 @@ class CarritoScreen extends HookWidget {
           const SizedBox(height: 10),
           ElevatedButton(
             onPressed: () {
-              _checkoutVentaGoRecib(itemsInCart);
+              showLoadingDialog(context, itemsInCart);
             },
             style: ElevatedButton.styleFrom(
               backgroundColor: thirdColor,

@@ -2,7 +2,6 @@
 // ignore_for_file: non_constant_identifier_names
 // ignore: unused_import
 import 'package:intl/intl.dart';
-import 'package:wayllu_project/src/domain/models/carrito_item.dart';
 import 'package:json_annotation/json_annotation.dart';
 
 part 'venta_repo.g.dart';
@@ -30,7 +29,6 @@ class VentaInfo {
 
   Map<String, dynamic> toJson() => _$VentaInfoToJson(this);
 
-
   String formattingDate() {
     final DateTime dateTime = FECHA_REGISTRO != null
         ? DateTime.parse(FECHA_REGISTRO ?? '')
@@ -40,6 +38,4 @@ class VentaInfo {
 
     return formattedDate;
   }
-
 }
-
