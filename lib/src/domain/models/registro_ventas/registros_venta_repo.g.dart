@@ -10,7 +10,7 @@ VentasList _$VentasListFromJson(Map<String, dynamic> json) => VentasList(
       FECHA_REGISTRO: json['FECHA_REGISTRO'] as String,
       CANTIDAD: json['CANTIDAD'] as int?,
       DESCRIPCION: json['DESCRIPCION'] as String?,
-      COD_PRODUCTO: json['COD_PRODUCTO'] as int?,
+      COD_PRODUCTO: json['COD_PRODUCTO'] as String?,
       CODIGO_REGISTRO: json['CODIGO_REGISTRO'] as String?,
       registrosVentasId: json['registrosVentasId'] as String?,
       IMAGEN: json['IMAGEN'] as String?,

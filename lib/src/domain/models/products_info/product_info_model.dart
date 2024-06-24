@@ -2,6 +2,7 @@
 // ignore_for_file: non_constant_identifier_names
 import 'package:intl/intl.dart';
 import 'package:json_annotation/json_annotation.dart';
+import 'package:logger/logger.dart';
 import 'package:wayllu_project/src/domain/models/list_items_model.dart';
 import 'package:wayllu_project/src/domain/models/models_products.dart';
 
@@ -61,7 +62,7 @@ class ProductInfo {
   String TIPO_PESO;
   String? FECHA_INGRESO;
   String? UBICACION;
-  double? PESO;
+  int? PESO;
   String? IMAGEN;
   int? ANCHO;
   int? ALTO;

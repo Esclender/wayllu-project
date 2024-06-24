@@ -1,3 +1,5 @@
+// ignore_for_file: non_constant_identifier_names
+
 import 'package:intl/intl.dart';
 import 'package:json_annotation/json_annotation.dart';
 import 'package:wayllu_project/src/domain/models/list_items_model.dart';
@@ -26,19 +28,20 @@ class VentasList {
   String? DESCRIPCION;
   String? registrosVentasId;
   String? IMAGEN;
-  int? COD_PRODUCTO;
+  String? COD_PRODUCTO;
 
   Map<String, dynamic> toJson() => _$VentasListToJson(this);
 
-Producto toProduct() {
+  Producto toProduct() {
     return Producto(
       imagen: IMAGEN ?? '',
       product_code: '$COD_PRODUCTO',
       descriptions: [
-        DescriptionItem(field: 'Descripción', value: DESCRIPCION?? ''),
+        DescriptionItem(field: 'Descripción', value: DESCRIPCION ?? ''),
       ],
     );
   }
+
   String formattingDate() {
     final DateTime dateTime = DateTime.parse(FECHA_REGISTRO);
 

@@ -49,31 +49,9 @@ class InfoUserScreen extends HookWidget {
         viewSelected: viewIndex,
       ),
       backgroundColor: bgPrimary,
-      appBar: isAdmin
-          ? AppBar(
-              backgroundColor: bgPrimary,
-              surfaceTintColor: Colors.transparent,
-              leading: InkWell(
-                onTap: () => {appRouter.pop()},
-                child: const Icon(Ionicons.arrow_back),
-              ),
-              centerTitle: true,
-            )
-          : null,
       body: CustomScrollView(
         slivers: [
           SliverAppBar(
-            leading: isAdmin
-                ? AppBar(
-                    backgroundColor: bgPrimary,
-                    surfaceTintColor: Colors.transparent,
-                    leading: InkWell(
-                      onTap: () => {appRouter.pop()},
-                      child: const Icon(Ionicons.arrow_back),
-                    ),
-                    centerTitle: true,
-                  )
-                : null,
             expandedHeight: 48.0,
             backgroundColor: Colors.transparent,
             flexibleSpace: FlexibleSpaceBar(
@@ -94,23 +72,31 @@ class InfoUserScreen extends HookWidget {
                       ),
                       Column(
                         children: [
-                          const SizedBox(height: 10,),
+                          const SizedBox(
+                            height: 10,
+                          ),
                           _buildInfoContainer(
                             'Informacion Personal',
                             user!.userInfo,
+                            isAdmin,
                             context,
                           ),
-                          const SizedBox(height: 10,),
+                          const SizedBox(
+                            height: 10,
+                          ),
                           _buildInfoContainer(
                             'Informacion de Contacto',
                             user!.userContactInfo,
+                            isAdmin,
                             context,
                           ),
-                          const SizedBox(height:5,),
-                          if (isAdmin)
-                            _buildInhabilitButton(context)
-                          else
-                            Container(),
+                          const SizedBox(
+                            height: 5,
+                          ),
+                          // if (isAdmin)
+                          //   _buildInhabilitButton(context)
+                          // else
+                          //   Container(),
                         ],
                       ),
                     ],
@@ -134,19 +120,27 @@ class InfoUserScreen extends HookWidget {
                           ),
                           Column(
                             children: [
-                              const SizedBox(height: 10,),
+                              const SizedBox(
+                                height: 10,
+                              ),
                               _buildInfoContainer(
                                 'Informacion Personal',
                                 loggeUser.userInfo,
+                                isAdmin,
                                 context,
                               ),
-                              const SizedBox(height: 10,),
+                              const SizedBox(
+                                height: 10,
+                              ),
                               _buildInfoContainer(
                                 'Informacion de Contacto',
                                 loggeUser.userContactInfo,
+                                isAdmin,
                                 context,
                               ),
-                              const SizedBox(height:5,),
+                              const SizedBox(
+                                height: 5,
+                              ),
                               CustomButton(
                                 colorOne: '#800080',
                                 colorTwo: '#C3C3DD',
@@ -196,6 +190,7 @@ class InfoUserScreen extends HookWidget {
   Widget _buildInfoContainer(
     String container,
     InfoBase data,
+    bool isAdmin,
     BuildContext context,
   ) {
     final BoxShadow boxShadow = BoxShadow(
@@ -227,64 +222,52 @@ class InfoUserScreen extends HookWidget {
                 ),
               ),
             ),
-            _buildGrid(data.entries, context),
+            _buildGrid(data.entries, isAdmin, context),
           ],
         ),
       ),
     );
   }
 
-  Widget _buildGrid(List<List> data, BuildContext context) {
+  Widget _buildGrid(List<List> data, bool isAdmin, BuildContext context) {
     return Padding(
       padding: const EdgeInsets.symmetric(horizontal: 16),
       child: ListView.separated(
         shrinkWrap: true,
-        itemBuilder: (context, index) => _buildGridRow(data[index], context),
+        itemBuilder: (context, index) => _buildGridRow(
+          data[index],
+          isAdmin,
+          context,
+        ),
         separatorBuilder: (c, i) => const Divider(),
         itemCount: data.length,
       ),
     );
   }
 
-  Widget _buildGridRow(List entry, BuildContext context) {
-    bool isObscure = true;
+  Widget _buildGridRow(List entry, bool isAdmin, BuildContext context) {
+    if (entry[0] == 'Clave' && !isAdmin) {
+      return Container();
+    }
+
     if (entry[0] == 'Clave') {
       return StatefulBuilder(
         builder: (context, setState) {
           return Row(
             mainAxisAlignment: MainAxisAlignment.spaceBetween,
             children: [
-              Flexible(
+              const Flexible(
                 child: Text(
-                  entry[0].toString(),
-                  style: const TextStyle(fontWeight: FontWeight.w300),
-                ),
-              ),
-              Flexible(
-                flex: 2,
-                child: InkWell(
-                  onTap: () {
-                    setState(() {
-                      isObscure = !isObscure;
-                    });
-                  },
-                  child: const Icon(Ionicons.eye),
-                ),
-              ),
-              Flexible(
-                child: TextFormField(
-                  decoration: const InputDecoration(border: InputBorder.none),
-                  keyboardType: TextInputType.text,
-                  obscureText: isObscure,
-                  initialValue: entry[1] as String,
-                  readOnly: true,
+                  'Cambiar Clave',
+                  style: TextStyle(fontWeight: FontWeight.w300),
                 ),
               ),
               Flexible(
                 child: _buildGridRowEditButton(
                   context,
                   entry[0].toString(),
-                  entry[1].toString(),
+                  '',
+                  fieldHint: 'Nueva Clave',
                 ),
               ),
             ],
@@ -321,8 +304,9 @@ class InfoUserScreen extends HookWidget {
   Widget _buildGridRowEditButton(
     BuildContext context,
     String field,
-    String actualValue,
-  ) {
+    String actualValue, {
+    String fieldHint = '',
+  }) {
     const double size = 30;
     final TextEditingController textEditingController =
         TextEditingController(text: actualValue);
@@ -332,7 +316,12 @@ class InfoUserScreen extends HookWidget {
         showDialog(
           context: context,
           builder: (BuildContext context) {
-            return _updateDialog(textEditingController, field, context);
+            return _updateDialog(
+              textEditingController,
+              field,
+              context,
+              hint: fieldHint,
+            );
           },
         );
       },
@@ -362,8 +351,9 @@ class InfoUserScreen extends HookWidget {
   Widget _updateDialog(
     TextEditingController textController,
     String field,
-    BuildContext context,
-  ) {
+    BuildContext context, {
+    String hint = '',
+  }) {
     return AlertDialog(
       title: Text(
         'Modificar $field',
@@ -379,6 +369,7 @@ class InfoUserScreen extends HookWidget {
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
             TextField(
+              decoration: InputDecoration(hintText: hint),
               controller: textController,
             ),
             ElevatedButton(

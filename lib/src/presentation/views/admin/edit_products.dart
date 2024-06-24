@@ -10,6 +10,7 @@ import 'package:flutter_hooks/flutter_hooks.dart';
 import 'package:hexcolor/hexcolor.dart';
 import 'package:image_picker/image_picker.dart';
 import 'package:ionicons/ionicons.dart';
+import 'package:logger/logger.dart';
 import 'package:wayllu_project/src/config/router/app_router.dart';
 import 'package:wayllu_project/src/domain/models/products_info/product_info_model.dart';
 import 'package:wayllu_project/src/locator.dart';
@@ -75,7 +76,7 @@ class EditProductsScreen extends HookWidget {
         useTextEditingController(text: productInfo.ALTO.toString());
     final anchoController =
         useTextEditingController(text: productInfo.ANCHO.toString());
-    
+
     final artesanoController = useTextEditingController(text: '');
 
     final tipoPesoController = useState<String>(productInfo.TIPO_PESO);
@@ -195,6 +196,9 @@ class EditProductsScreen extends HookWidget {
     File? image,
   ) {
     return TextButton(
+      style: ButtonStyle(
+        splashFactory: NoSplash.splashFactory,
+      ),
       onPressed: () async {
         final String? imageUrl = image != null
             ? await uploadImageToFirebase(image, folder: 'Products_images')

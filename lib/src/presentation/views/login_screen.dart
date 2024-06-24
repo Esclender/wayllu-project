@@ -30,28 +30,32 @@ class LoginExampleScreen extends HookWidget {
     String clave,
     BuildContext context,
   ) async {
-    //IT WILL RETURN THE TOKEN OR NULL
-    final credentialsUser = UserCredentialDto(
-      DNI: int.parse(dni),
-      CLAVE: clave,
-    );
-
-    final token = await showLoadingDialog(context, credentialsUser);
-
-    if (token == null) {
+    if (dni == '' || clave == '') {
       showWrongCredentialsDialog(context);
-    }
+    } else {
+      final credentialsUser = UserCredentialDto(
+        DNI: int.parse(dni),
+        CLAVE: clave,
+      );
 
-    if (token != null) {
-      initializeEndpoints(token);
-      appRouter.popAndPush(HomeRoute(viewIndex: 0));
-      await context.read<UserLoggedInfoCubit>().setUserInfo();
+      final token = await showLoadingDialog(context, credentialsUser);
+
+      if (token == null) {
+        showWrongCredentialsDialog(context);
+      }
+
+      if (token != null) {
+        initializeEndpoints(token);
+        appRouter.popAndPush(HomeRoute(viewIndex: 0));
+        await context.read<UserLoggedInfoCubit>().setUserInfo();
+      }
     }
   }
+
 //45682020
   @override
   Widget build(BuildContext context) {
-    final controllerEmail = useTextEditingController(text: "123456789");
+    final controllerEmail = useTextEditingController(text: "45682020");
     final controllerClave = useTextEditingController(text: "1234");
 
     return AnnotatedRegion(
@@ -112,6 +116,7 @@ class LoginExampleScreen extends HookWidget {
                           controller: controllerEmail,
                           hintText: 'Ingrese su DNI',
                           obscureText: false,
+                          isOnlyNumbers: true,
                         ),
                         const SizedBox(
                           height: 10,

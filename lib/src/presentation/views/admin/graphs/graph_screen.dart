@@ -3,9 +3,9 @@ import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_hooks/flutter_hooks.dart';
 import 'package:gap/gap.dart';
-import 'package:glassmorphism_ui/glassmorphism_ui.dart';
 import 'package:intl/date_symbol_data_local.dart';
 import 'package:intl/intl.dart';
+import 'package:shimmer/shimmer.dart';
 import 'package:wayllu_project/src/domain/models/graphs/chart_column_bar.dart';
 import 'package:wayllu_project/src/domain/models/list_items_model.dart';
 import 'package:wayllu_project/src/domain/models/list_products_model.dart';
@@ -18,8 +18,6 @@ import 'package:wayllu_project/src/presentation/widgets/graphs_components/column
 import 'package:wayllu_project/src/presentation/widgets/top_vector.dart';
 import 'package:wayllu_project/src/utils/constants/colors.dart';
 import 'package:collection/collection.dart';
-
-
 
 @RoutePage()
 class GraphicProductsScreen extends HookWidget {
@@ -123,7 +121,8 @@ class GraphicProductsScreen extends HookWidget {
         }
       }
 
-      chartData = chartData.reversed.toList(); // Aseguramos que estén en orden de fecha ascendente
+      chartData = chartData.reversed
+          .toList(); // Aseguramos que estén en orden de fecha ascendente
     } else {
       final Map<int, double> monthlySums = {};
       for (final venta in dataVentas.value) {
@@ -131,21 +130,24 @@ class GraphicProductsScreen extends HookWidget {
         monthlySums[month] = (monthlySums[month] ?? 0) + (venta.CANTIDAD ?? 0);
       }
 
-      chartData = monthlySums.entries.map((entry) => ChartBarData(
-        DateFormat.MMMM('es_ES').format(DateTime(1, entry.key)),
-        entry.value,
-        entry.key,
-      )).toList();
+      chartData = monthlySums.entries
+          .map((entry) => ChartBarData(
+                DateFormat.MMMM('es_ES').format(DateTime(1, entry.key)),
+                entry.value,
+                entry.key,
+              ))
+          .toList();
     }
 
     chartData.sort((a, b) => a.monthNumber.compareTo(b.monthNumber));
 
     final groupedVentas = groupBy<VentasList, String>(
       dataVentas.value,
-      (venta) => '${venta.COD_PRODUCTO}' ?? '',
+      (venta) => '${venta.COD_PRODUCTO}',
     );
 
-    final List<CardTemplateProducts> cardData = groupedVentas.entries.map((entry) {
+    final List<CardTemplateProducts> cardData =
+        groupedVentas.entries.map((entry) {
       final codigoProducto = entry.key;
       final ventas = entry.value;
       final totalCantidad = ventas.fold<int>(
@@ -186,7 +188,8 @@ class GraphicProductsScreen extends HookWidget {
         return 'Ventas del Año $year';
       } else if (selectedFilter.value.startsWith('Mes')) {
         final month = selectedFilter.value.split('/')[1];
-        final year = selectedValues.value['Año'] ?? DateTime.now().year.toString();
+        final year =
+            selectedValues.value['Año'] ?? DateTime.now().year.toString();
         return 'Ventas de $month/$year';
       } else {
         return 'Ventas Filtradas';
@@ -266,21 +269,26 @@ class GraphicProductsScreen extends HookWidget {
                     ),
                   ),
                 if (isLoading.value)
-                  Center(
-                    child: CircularProgressIndicator(),
+                  ListView.separated(
+                    separatorBuilder: (context, index) => const Gap(8),
+                    shrinkWrap: true,
+                    itemCount: 4,
+                    itemBuilder: (BuildContext c, int ind) {
+                      return _buildShimmerItemContainer(context);
+                    },
                   )
                 else if (dataVentas.value.isEmpty)
                   Center(
                     child: Column(
                       children: [
                         Image.asset('assets/images/nodatafound.png'),
-                        Text('No hay resultados'),
+                        const Text('No hay resultados'),
                       ],
                     ),
                   )
                 else
                   Container(
-                    padding: EdgeInsets.symmetric(horizontal: 4),
+                    padding: const EdgeInsets.symmetric(horizontal: 4),
                     alignment: Alignment.topCenter,
                     height: MediaQuery.of(context).size.height * 1.4,
                     width: MediaQuery.of(context).size.width,
@@ -306,7 +314,6 @@ class GraphicProductsScreen extends HookWidget {
     );
   }
 
-
   Widget _buildGraphicWithFilters(
     BuildContext context,
     ValueNotifier<String> selectedFilter,
@@ -327,12 +334,10 @@ class GraphicProductsScreen extends HookWidget {
               ),
               Container(
                 height: 200,
-             
                 child: ColumnBarChartComponent(
                   data: data,
                 ),
               ),
-             
               ...filters.map((String filterHint) {
                 return Padding(
                   padding: const EdgeInsets.symmetric(horizontal: 8.0),
@@ -403,6 +408,108 @@ class GraphicProductsScreen extends HookWidget {
           selectedValues,
         );
       },
+    );
+  }
+
+  Widget _buildShimmerItemContainer(BuildContext context) {
+    final BoxDecoration decoration = BoxDecoration(
+      color: bottomNavBar,
+      boxShadow: [
+        simpleShadow,
+      ],
+      borderRadius: const BorderRadius.all(
+        Radius.circular(5),
+      ),
+    );
+
+    final double additionalPadding = 10;
+
+    return Padding(
+      padding: const EdgeInsets.symmetric(horizontal: 20),
+      child: Stack(
+        children: [
+          Stack(
+            children: [
+              Container(
+                margin: const EdgeInsets.symmetric(vertical: 2),
+                decoration: decoration,
+                child: _buildShimmerEffect(context),
+              ),
+              Container(
+                margin: EdgeInsets.only(left: 15, top: 5 + additionalPadding),
+                decoration: decoration,
+                child: _buildShimmerEffect2(context),
+              ),
+              Container(
+                margin: EdgeInsets.only(
+                  left: 95,
+                  top: 5 + additionalPadding,
+                ),
+                decoration: decoration,
+                child: _buildShimmerEffectText(context),
+              ),
+              Container(
+                margin: EdgeInsets.only(
+                  left: 95,
+                  top: 20 + additionalPadding,
+                ),
+                decoration: decoration,
+                child: _buildShimmerEffectText(context),
+              ),
+            ],
+          ),
+        ],
+      ),
+    );
+  }
+
+  Widget _buildShimmerEffect(BuildContext context) {
+    return Shimmer.fromColors(
+      baseColor: Colors.grey[300]!,
+      highlightColor: Colors.grey[100]!,
+      child: Container(
+        width: MediaQuery.of(context).size.width,
+        height: 80,
+        decoration: const BoxDecoration(
+          color: Colors.white,
+          borderRadius: BorderRadius.all(
+            Radius.circular(5),
+          ),
+        ),
+      ),
+    );
+  }
+
+  Widget _buildShimmerEffect2(BuildContext context) {
+    return Shimmer.fromColors(
+      baseColor: Colors.grey[400]!,
+      highlightColor: Colors.grey[50]!,
+      child: Container(
+        padding: const EdgeInsets.only(left: 15, top: 5, bottom: 5),
+        width: 55,
+        height: 55,
+        decoration: const BoxDecoration(
+          color: Colors.white,
+          borderRadius: BorderRadius.all(
+            Radius.circular(5),
+          ),
+        ),
+      ),
+    );
+  }
+
+  Widget _buildShimmerEffectText(BuildContext context) {
+    return Shimmer.fromColors(
+      baseColor: Colors.grey[400]!,
+      highlightColor: Colors.grey[50]!,
+      child: Container(
+        padding: const EdgeInsets.only(left: 15, top: 5, bottom: 5),
+        width: 100,
+        height: 10,
+        decoration: const BoxDecoration(
+          color: Colors.white,
+        ),
+      ),
     );
   }
 }

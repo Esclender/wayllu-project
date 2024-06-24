@@ -1,5 +1,7 @@
 // ignore_for_file: avoid_dynamic_calls
 
+import 'dart:async';
+
 import 'package:auto_route/auto_route.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
@@ -21,10 +23,6 @@ class CarritoScreen extends HookWidget {
   final appRouter = getIt<AppRouter>();
 
   Future<VentaInfo?> _checkoutVentaGoRecib(ProductsCarrito carrito) async {
-    if (carrito.itemsInCartInt == 0) {
-      return null;
-    }
-
     final VentaInfo ventaInfo = await carrito.registerVenta();
 
     return ventaInfo;
@@ -94,7 +92,7 @@ class CarritoScreen extends HookWidget {
     );
   }
 
-  Future<String?> showLoadingDialog(
+  Future<void> showLoadingDialog(
     BuildContext context,
     ProductsCarrito carrito,
   ) async {
@@ -121,12 +119,45 @@ class CarritoScreen extends HookWidget {
 
     _checkoutVentaGoRecib(carrito).onError((error, stackTrace) {
       appRouter.popForced();
+      showSometgingWrongDialog(context);
+
       return null;
     }).then((value) {
       if (value != null) {
         appRouter.navigate(ReciboRoute(ventaInfo: value));
         appRouter.popForced();
       }
+    });
+  }
+
+  void showSometgingWrongDialog(
+    BuildContext context,
+  ) {
+    showDialog(
+      context: context,
+      barrierDismissible:
+          false, // Prevents closing the dialog by tapping outside
+      builder: (BuildContext context) {
+        // completer.complete(context);
+        return AlertDialog(
+          content: Column(
+            mainAxisSize: MainAxisSize.min,
+            children: [
+              Icon(
+                Ionicons.warning_outline,
+                size: 32,
+                color: HexColor('#B80000'),
+              ),
+              const SizedBox(height: 20),
+              const Text('No se logro completar el registro!'),
+            ],
+          ),
+        );
+      },
+    );
+
+    Timer(const Duration(seconds: 2), () {
+      appRouter.popForced();
     });
   }
 
@@ -287,7 +318,7 @@ class CarritoScreen extends HookWidget {
   }
 
   Widget _buildConfirmCheckoutBtn(BuildContext context) {
-    final itemsInCart = context.watch<ProductsCarrito>();
+    final carrito = context.watch<ProductsCarrito>();
 
     return Container(
       height: checkoutBtnHeight,
@@ -308,7 +339,7 @@ class CarritoScreen extends HookWidget {
                 ),
               ),
               Text(
-                itemsInCart.totalItems,
+                carrito.totalItems,
                 textAlign: TextAlign.center,
                 style: TextStyle(
                   fontSize: 14,
@@ -321,7 +352,9 @@ class CarritoScreen extends HookWidget {
           const SizedBox(height: 10),
           ElevatedButton(
             onPressed: () {
-              showLoadingDialog(context, itemsInCart);
+              if (carrito.itemsInCartInt != 0) {
+                showLoadingDialog(context, carrito);
+              }
             },
             style: ElevatedButton.styleFrom(
               backgroundColor: thirdColor,

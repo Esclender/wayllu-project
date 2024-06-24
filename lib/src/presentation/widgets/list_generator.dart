@@ -29,7 +29,7 @@ class CardTemplateItemsList extends HookWidget {
   final double registerUserBtnHeight = 60.0;
 
   void _navigateToEditUser(UserInfo user) {
-    appRouter.navigate(InfoUserRoute(viewIndex: 2, user: user));
+    appRouter.navigate(InfoUserRoute(viewIndex: 2, user: user, isAdmin: true));
   }
 
   @override
@@ -85,8 +85,10 @@ class CardTemplateItemsList extends HookWidget {
             ),
           ],
         ),
-         if (listType == ListEnums.users) _itemEdit(itemData.userInfo) else Container(),
-     
+        if (listType == ListEnums.users)
+          _itemEdit(itemData.userInfo)
+        else
+          Container(),
       ],
     );
   }
