@@ -160,7 +160,7 @@ class HomeScreen extends HookWidget {
                     Container(
                       margin: const EdgeInsets.symmetric(
                         horizontal: 18,
-                        vertical: 6,
+                        vertical: 10,
                       ),
                       child: Row(
                         mainAxisAlignment: MainAxisAlignment.spaceBetween,
@@ -191,11 +191,11 @@ class HomeScreen extends HookWidget {
                                             width: MediaQuery.of(context)
                                                     .size
                                                     .width *
-                                                (0.62),
+                                                (0.65),
                                             height: MediaQuery.of(context)
                                                     .size
                                                     .height *
-                                                0.06,
+                                                0.052,
                                             child: TextField(
                                               controller: searchController,
                                               onChanged: (q) {
@@ -396,7 +396,7 @@ class HomeScreen extends HookWidget {
     ScrollController scrollController,
   ) {
     return Padding(
-      padding: const EdgeInsets.only(left: 20),
+      padding: const EdgeInsets.symmetric(horizontal: 18),
       child: dataProducts(data, context, scrollController),
     );
   }
@@ -718,8 +718,8 @@ Container categoriesProducts(
   bool isSelected,
 ) {
   return Container(
-    padding: const EdgeInsets.symmetric(
-      vertical: 8,
+    padding: const EdgeInsets.only(
+      top: 4,
     ),
     child: GestureDetector(
       onTap: () {

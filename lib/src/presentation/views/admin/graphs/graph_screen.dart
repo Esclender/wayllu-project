@@ -18,7 +18,6 @@ import 'package:wayllu_project/src/presentation/widgets/graphs_components/column
 import 'package:wayllu_project/src/presentation/widgets/top_vector.dart';
 import 'package:wayllu_project/src/utils/constants/colors.dart';
 import 'package:collection/collection.dart';
-
 @RoutePage()
 class GraphicProductsScreen extends HookWidget {
   final int viewIndex;
@@ -46,8 +45,9 @@ class GraphicProductsScreen extends HookWidget {
       ventasListCubit.getVentasByYearAndMonth(selectedValue ?? '', '');
       selectedFilter.value = 'Año/$selectedValue';
       selectedValues['Año'] = selectedValue ?? '';
+      selectedValues.remove('Mes'); // Restablece el filtro de mes
     } else if (filterType == 'Mes') {
-      final currentYear = DateTime.now().year;
+      final currentYear = selectedValues['Año'] ?? DateTime.now().year.toString();
       ventasListCubit.getVentasByYearAndMonth(
         '$currentYear/$selectedValue',
         '',
@@ -75,6 +75,7 @@ class GraphicProductsScreen extends HookWidget {
     final selectedFilter = useState<String>('');
     final selectedValues = useState<Map<String, String>>({});
     final scrollController = useScrollController();
+    final isLoading = useState<bool>(true); // Variable de estado para controlar la carga
 
     useEffect(
       () {
@@ -84,6 +85,7 @@ class GraphicProductsScreen extends HookWidget {
         final subscription = ventasListCubit.stream.listen((ventas) {
           if (ventas != null) {
             dataVentas.value = ventas;
+            isLoading.value = false; // Cambia el estado después de cargar los datos
           }
         });
         initializeDateFormatting('es_ES');
@@ -119,8 +121,7 @@ class GraphicProductsScreen extends HookWidget {
         }
       }
 
-      chartData = chartData.reversed
-          .toList(); // Aseguramos que estén en orden de fecha ascendente
+      chartData = chartData.reversed.toList(); // Aseguramos que estén en orden de fecha ascendente
     } else {
       final Map<int, double> monthlySums = {};
       for (final venta in dataVentas.value) {
@@ -128,15 +129,11 @@ class GraphicProductsScreen extends HookWidget {
         monthlySums[month] = (monthlySums[month] ?? 0) + (venta.CANTIDAD ?? 0);
       }
 
-      chartData = monthlySums.entries
-          .map(
-            (entry) => ChartBarData(
-              DateFormat.MMMM('es_ES').format(DateTime(1, entry.key)),
-              entry.value,
-              entry.key,
-            ),
-          )
-          .toList();
+      chartData = monthlySums.entries.map((entry) => ChartBarData(
+        DateFormat.MMMM('es_ES').format(DateTime(1, entry.key)),
+        entry.value,
+        entry.key,
+      )).toList();
     }
 
     chartData.sort((a, b) => a.monthNumber.compareTo(b.monthNumber));
@@ -168,7 +165,6 @@ class GraphicProductsScreen extends HookWidget {
       );
     }).toList();
 
-    // ignore: no_leading_underscores_for_local_identifiers
     Widget _buildGroupedItemContainer(
       BuildContext context,
       String productCode,
@@ -184,12 +180,14 @@ class GraphicProductsScreen extends HookWidget {
       if (selectedFilter.value.isEmpty) {
         return 'Todas las ventas';
       } else if (selectedFilter.value.startsWith('Año')) {
-        return 'Ventas Anuales';
+        final year = selectedFilter.value.split('/')[1];
+        return 'Ventas del Año $year';
+      } else if (selectedFilter.value.startsWith('Mes')) {
+        final month = selectedFilter.value.split('/')[1];
+        final year = selectedValues.value['Año'] ?? DateTime.now().year.toString();
+        return 'Ventas de $month/$year';
       } else {
-        final parts = selectedFilter.value.split('/');
-        final month = parts[1];
-        final year = DateTime.now().year;
-        return 'Ventas de 0$month/$year';
+        return 'Ventas Filtradas';
       }
     }
 
@@ -199,95 +197,119 @@ class GraphicProductsScreen extends HookWidget {
       floatingActionButton: BottomNavBar(
         viewSelected: viewIndex,
       ),
-      body: CustomScrollView(
-        slivers: [
-          SliverToBoxAdapter(
-            child: Column(
-              crossAxisAlignment: CrossAxisAlignment.start,
-              children: [
-                TopVector(),
-                Column(
-                  children: [
-                    _buildGraphicWithFilters(
-                      context,
-                      selectedFilter,
-                      selectedValues.value,
-                      chartData,
-                    ),
-                  ],
-                ),
-                Container(
-                  alignment: Alignment.centerLeft,
-                  margin: const EdgeInsets.symmetric(horizontal: 16),
-                  child: Text(
-                    getTitle(),
-                    style: const TextStyle(
-                      fontSize: 20.0,
-                    ),
-                  ),
-                ),
-                if (selectedFilter.value.isNotEmpty)
-                  Container(
-                    margin: const EdgeInsets.only(left: 16, bottom: 6, top: 2),
-                    width: MediaQuery.of(context).size.width * 0.32,
-                    decoration: BoxDecoration(
-                      borderRadius: BorderRadius.circular(5),
-                      color: iconColor.withOpacity(0.5),
-                      border: Border.all(color: bottomNavBarStroke, width: 0.5),
-                    ),
-                    child: GestureDetector(
-                      onTap: () => _clearFilters(
-                        context,
-                        selectedFilter,
-                        selectedValues.value,
+      body: isLoading.value // Condicional para mostrar el indicador de carga
+          ? Center(
+              child: CircularProgressIndicator(), // Muestra el indicador de carga
+            )
+          : CustomScrollView(
+              slivers: [
+                SliverToBoxAdapter(
+                  child: Column(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: [
+                      TopVector(),
+                      Column(
+                        children: [
+                          _buildGraphicWithFilters(
+                            context,
+                            selectedFilter,
+                            selectedValues.value,
+                            chartData,
+                          ),
+                        ],
                       ),
-                      child: Padding(
-                        padding: const EdgeInsets.all(4.0),
-                        child: Row(
-                          children: [
-                            Icon(
-                              Icons.filter_alt_outlined,
-                              color: bottomNavBar,
-                              size: 16,
-                            ),
-                            const SizedBox(width: 8),
-                            Text(
-                              'Quitar filtro',
-                              style: TextStyle(
-                                color: bottomNavBar,
-                                fontFamily: 'Gotham',
-                                fontWeight: FontWeight.w300,
-                                fontSize: 14,
-                              ),
-                            ),
-                          ],
+                      Container(
+                        alignment: Alignment.centerLeft,
+                        margin: const EdgeInsets.symmetric(horizontal: 16),
+                        child: Text(
+                          getTitle(),
+                          style: const TextStyle(
+                            fontSize: 20.0,
+                          ),
                         ),
                       ),
-                    ),
-                  ),
-                Container(
-                  alignment: Alignment.topCenter,
-                  height: MediaQuery.of(context).size.height * 1.4,
-                  width: MediaQuery.of(context).size.width,
-                  child: ListView.builder(
-                    controller: scrollController,
-                    padding: EdgeInsets.zero,
-                    itemCount: cardData.length,
-                    itemBuilder: (context, index) {
-                      final key = groupedVentas.keys.elementAt(index);
-                      return _buildGroupedItemContainer(
-                        context,
-                        key,
-                        groupedVentas[key]!,
-                      );
-                    },
+                      if (dataVentas.value.isEmpty)
+                        Column(
+                          children: [
+                            SizedBox(
+                              width: MediaQuery.of(context).size.width * 0.88,
+                              height: MediaQuery.of(context).size.width * 0.88,
+                              child: Image.asset('assets/images/nodatafound.png'),
+                            ),
+                            const Text(
+                              'Lo siento, no hay registros de ventas durante este mes.',
+                              style: TextStyle(
+                                color: Color.fromARGB(255, 32, 32, 32),
+                                fontSize: 16,
+                                fontWeight: FontWeight.w200,
+                              ),
+                              textAlign: TextAlign.center,
+                            ),
+                          ],
+                        )
+                      else
+                        Container(
+                          alignment: Alignment.topCenter,
+                          height: MediaQuery.of(context).size.height * 1.4,
+                          width: MediaQuery.of(context).size.width,
+                          child: ListView.builder(
+                            controller: scrollController,
+                            padding: EdgeInsets.symmetric(horizontal: 4),
+                            itemCount: cardData.length,
+                            itemBuilder: (context, index) {
+                              final key = groupedVentas.keys.elementAt(index);
+                              return _buildGroupedItemContainer(
+                                context,
+                                key,
+                                groupedVentas[key]!,
+                              );
+                            },
+                          ),
+                        ),
+                      if (selectedFilter.value.isNotEmpty)
+                        Container(
+                          margin: const EdgeInsets.only(left: 16, bottom: 6, top: 2),
+                          width: MediaQuery.of(context).size.width * 0.32,
+                          decoration: BoxDecoration(
+                            borderRadius: BorderRadius.circular(5),
+                            color: iconColor.withOpacity(0.5),
+                            border: Border.all(color: bottomNavBarStroke, width: 0.5),
+                          ),
+                          child: GestureDetector(
+                            onTap: () => _clearFilters(
+                              context,
+                              selectedFilter,
+                              selectedValues.value,
+                            ),
+                            child: Padding(
+                              padding: const EdgeInsets.all(4.0),
+                              child: Row(
+                                children: [
+                                  Icon(
+                                    Icons.filter_alt_outlined,
+                                    color: bottomNavBar,
+                                    size: 16,
+                                  ),
+                                  const SizedBox(width: 8),
+                                  Text(
+                                    'Quitar filtro',
+                                    style: TextStyle(
+                                      color: bottomNavBar,
+                                      fontFamily: 'Gotham',
+                                      fontWeight: FontWeight.w300,
+                                      fontSize: 14,
+                                    ),
+                                  ),
+                                ],
+                              ),
+                            ),
+                          ),
+                        ),
+                    ],
                   ),
                 ),
               ],
             ),
-          ),
-        ],
-      ),
     );
   }
 
@@ -309,35 +331,23 @@ class GraphicProductsScreen extends HookWidget {
                 text: 'Registro de ventas',
                 fontSize: 25.0,
               ),
-              GlassContainer(
+              Container(
                 height: 200,
-                blur: 4,
-                color: Colors.white.withOpacity(0.8),
-                gradient: const LinearGradient(
-                  begin: Alignment.topLeft,
-                  end: Alignment.bottomRight,
-                  colors: [
-                    Color.fromARGB(255, 102, 102, 102),
-                    Color.fromARGB(255, 59, 60, 61),
-                  ],
-                ),
-                border: Border.all(
-                  width: 0.5,
-                  color: Colors.white.withOpacity(0.5),
-                ),
-                shadowStrength: 5,
-                borderRadius: BorderRadius.circular(5),
-                shadowColor: Colors.white.withOpacity(0.24),
+             
                 child: ColumnBarChartComponent(
                   data: data,
                 ),
               ),
+             
               ...filters.map((String filterHint) {
-                return _buildFilter(
-                  context,
-                  hint: filterHint,
-                  selectedFilter: selectedFilter,
-                  selectedValues: selectedValues,
+                return Padding(
+                  padding: const EdgeInsets.symmetric(horizontal: 8.0),
+                  child: _buildFilter(
+                    context,
+                    hint: filterHint,
+                    selectedFilter: selectedFilter,
+                    selectedValues: selectedValues,
+                  ),
                 );
               }),
             ],
