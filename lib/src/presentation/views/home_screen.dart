@@ -52,6 +52,12 @@ class HomeScreen extends HookWidget {
       isSearchingByCode.value = code;
       await productsListCubit.getProductsListsByCode(code);
     }
+    void _clearSearch() {
+    searchController.clear();
+    isSearchingByCode.value= '';
+    isSearchingProducts.value = true;
+    productsListCubit.getProductsLists();
+    }
 
     final List<ProductInfo> data = [];
     useEffect(
@@ -205,6 +211,12 @@ class HomeScreen extends HookWidget {
                                                 fillColor: bottomNavBar,
                                                 border: InputBorder.none,
                                                 hintText: 'Buscar por codigo',
+                                                 suffixIcon: searchController.text.isNotEmpty
+                                                 ? IconButton(
+                                                 icon: const Icon(Icons.clear),
+                                                onPressed: _clearSearch,
+                                                 )
+                                                : null,
                                               ),
                                             ),
                                           ),

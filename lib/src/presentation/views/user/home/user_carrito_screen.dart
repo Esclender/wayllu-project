@@ -208,72 +208,80 @@ class CarritoScreen extends HookWidget {
     required void Function() increase,
     required void Function() decrease,
   }) {
-    return Row(
-      children: [
-        SizedBox(
-          width: 110,
-          child: ClipRRect(
-            borderRadius: BorderRadius.circular(10),
-            child: Image.network(
-              product.IMAGEN!,
-              width: 100,
-              height: 80,
-              fit: BoxFit.cover,
+    return Container(
+      padding: EdgeInsets.all(6),
+      margin: EdgeInsets.only(bottom: 8),
+      decoration: BoxDecoration(
+        borderRadius: BorderRadius.circular(10),
+        color: bottomNavBar,
+      boxShadow: [simpleShadow]),
+      child: Row(
+        children: [
+          SizedBox(
+            width: 110,
+            child: ClipRRect(
+              borderRadius: BorderRadius.circular(5),
+              child: Image.network(
+                product.IMAGEN!,
+                width: 80,
+                height: 80,
+                fit: BoxFit.cover,
+              ),
             ),
           ),
-        ),
-        const SizedBox(width: 10),
-        Expanded(
-          child: Column(
-            crossAxisAlignment: CrossAxisAlignment.start,
-            children: [
-              SizedBox(
-                height: 25,
-                child: Row(
+          const SizedBox(width: 10),
+          Expanded(
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                SizedBox(
+                  height: 25,
+                  child: Row(
+                    mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                    children: [
+                      Text(
+                        product.COD_PRODUCTO.toString(),
+                        style: const TextStyle(
+                          fontSize: 16,
+                          fontWeight: FontWeight.bold,
+                          color: Colors.black,
+                          fontFamily: 'Gotham',
+                        ),
+                      ),
+                      IconButton(
+                        icon: const Icon(Icons.close),
+                        iconSize: 22,
+                        onPressed: () {
+                          _removeProduct(context, product);
+                        },
+                      ),
+                    ],
+                  ),
+                ),
+                Text(
+                  product.DESCRIPCION,
+                  style: const TextStyle(
+                    fontSize: 10,
+                    color: Colors.grey,
+                    fontFamily: 'Gotham',
+                  ),
+                ),
+                const SizedBox(height: 15),
+                Row(
                   mainAxisAlignment: MainAxisAlignment.spaceBetween,
                   children: [
-                    Text(
-                      product.COD_PRODUCTO.toString(),
-                      style: const TextStyle(
-                        fontSize: 16,
-                        fontWeight: FontWeight.bold,
-                        color: Colors.black,
-                        fontFamily: 'Gotham',
-                      ),
-                    ),
-                    IconButton(
-                      icon: const Icon(Icons.close),
-                      iconSize: 18,
-                      onPressed: () {
-                        _removeProduct(context, product);
-                      },
+                    _buildQuantityControl(
+                      increase: increase,
+                      decrease: decrease,
+                      value: actualValue,
                     ),
                   ],
                 ),
-              ),
-              Text(
-                product.DESCRIPCION,
-                style: const TextStyle(
-                  fontSize: 10,
-                  color: Colors.grey,
-                  fontFamily: 'Gotham',
-                ),
-              ),
-              const SizedBox(height: 15),
-              Row(
-                mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                children: [
-                  _buildQuantityControl(
-                    increase: increase,
-                    decrease: decrease,
-                    value: actualValue,
-                  ),
-                ],
-              ),
-            ],
+              ],
+            ),
           ),
-        ),
-      ],
+        ],
+      ),
     );
   }
 

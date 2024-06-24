@@ -201,9 +201,9 @@ class InfoUserScreen extends HookWidget {
     );
 
     return Padding(
-      padding: const EdgeInsets.symmetric(horizontal: 20.0),
+      padding: const EdgeInsets.symmetric(horizontal: 22.0),
       child: Container(
-        padding: const EdgeInsets.all(12.0),
+        padding: const EdgeInsets.all(8.0),
         decoration: BoxDecoration(
           color: bgContainer,
           borderRadius: const BorderRadius.all(Radius.circular(10.0)),

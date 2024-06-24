@@ -47,6 +47,10 @@ class TextLoginField extends StatelessWidget {
               const BorderSide(color: Color.fromARGB(120, 0, 0, 0), width: 0.5),
           borderRadius: BorderRadius.circular(10),
         ),
+        focusedBorder: OutlineInputBorder(
+          borderSide: BorderSide(color: secondary, width: 0.5),
+          borderRadius: BorderRadius.circular(10),
+        ),
         enabledBorder: OutlineInputBorder(
           borderSide:
               const BorderSide(color: Color.fromARGB(120, 0, 0, 0), width: 0.5),
