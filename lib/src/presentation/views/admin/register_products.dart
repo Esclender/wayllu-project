@@ -16,7 +16,6 @@ import 'package:wayllu_project/src/locator.dart';
 import 'package:wayllu_project/src/presentation/cubit/product_register_cubit.dart';
 import 'package:wayllu_project/src/presentation/cubit/users_list_cubit.dart';
 import 'package:wayllu_project/src/presentation/widgets/gradient_widgets.dart';
-import 'package:wayllu_project/src/presentation/widgets/register_user/my_text_label.dart';
 import 'package:wayllu_project/src/utils/constants/colors.dart';
 
 @RoutePage()
@@ -121,7 +120,7 @@ class RegisterProductsScreen extends HookWidget {
     appRouter.popForced();
 
     const String defaultImageUrl =
-        'gs://wayllu.appspot.com/Product_Images/default.jpg';
+        'https://firebasestorage.googleapis.com/v0/b/wayllu.appspot.com/o/Products_Images%2Fdefault.jpg?alt=media';
     final String finalImageUrl = urlImage ?? defaultImageUrl;
 
     final producto = ProductDto(
@@ -134,7 +133,7 @@ class RegisterProductsScreen extends HookWidget {
       DESCRIPCION: descripcion,
       COD_FAMILIA: int.parse(selectedCodFamilia['codigo']!),
       COD_ARTESANA: int.parse(selectedArtesano),
-      COD_PRODUCTO: '',
+    
       UBICACION: ubicacion,
       CANTIDAD: int.parse(cantidad),
     );
@@ -173,11 +172,15 @@ class RegisterProductsScreen extends HookWidget {
     final ImagePicker imagePicker = ImagePicker();
 
     Future<String?> selectImage() async {
+      const String defaultImageUrl =
+        'https://firebasestorage.googleapis.com/v0/b/wayllu.appspot.com/o/Products_Images%2Fdefault.jpg?alt=media&token=df650e20-c859-4dbe-8324-8cb58585b362';
       final XFile? image =
           await imagePicker.pickImage(source: ImageSource.gallery);
       if (image != null) {
         productImage.value = File(image.path);
         return '';
+      } else {
+        productImage.value = File(defaultImageUrl);
       }
 
       return null;
@@ -208,9 +211,17 @@ class RegisterProductsScreen extends HookWidget {
               selectImage,
             ),
             containerTextForm(
-                context, 'Ubicación', 'Ingrese ubicación', ubicacionController,),
+              context,
+              'Ubicación',
+              'Ingrese ubicación',
+              ubicacionController,
+            ),
             containerTextForm(
-                context, 'Descripción', 'Ingrese la descripcion del producto', descripcionController,),
+              context,
+              'Descripción',
+              'Ingrese la descripcion del producto',
+              descripcionController,
+            ),
             Wrap(
               spacing: 16, // Spacing between elements
               runSpacing: 16, // Spacing between rows
@@ -224,18 +235,17 @@ class RegisterProductsScreen extends HookWidget {
                     options: categoriasOptions,
                     selectedOption: selectedCategoria),
                 _selectedCodigoFamilia(selectedCodFamilia),
-               
               ],
             ),
-             containerTextForm(context, 'Cantidad', 'Ingrese la cantidad',
-                    cantidadController),
-                wrappedContainerTextForm(
-                  context,
-                  pesoController,
-                  tipoPesoController,
-                  altoController,
-                  anchoController,
-                ),
+            containerTextForm(
+                context, 'Cantidad', 'Ingrese la cantidad', cantidadController),
+            wrappedContainerTextForm(
+              context,
+              pesoController,
+              tipoPesoController,
+              altoController,
+              anchoController,
+            ),
             const SizedBox(height: 24),
             CustomButton(
               colorOne: '#800080',
@@ -670,8 +680,8 @@ Widget _buildTextField(
         Container(
           decoration: BoxDecoration(
             border: Border.all(
-              color:
-                  const Color(0xFFCCCCCC), // Replace bottomNavBarStroke with a color
+              color: const Color(
+                  0xFFCCCCCC), // Replace bottomNavBarStroke with a color
             ),
             borderRadius: BorderRadius.circular(10),
           ),

@@ -18,7 +18,6 @@ class ProductDto extends Equatable {
   final String DESCRIPCION;
   final int COD_FAMILIA;
   final int COD_ARTESANA;
-  final String COD_PRODUCTO;
   final String UBICACION;
   final int CANTIDAD;
 
@@ -32,7 +31,6 @@ class ProductDto extends Equatable {
     required this.DESCRIPCION,
     required this.COD_FAMILIA,
     required this.COD_ARTESANA,
-    required this.COD_PRODUCTO,
     required this.UBICACION,
     required this.CANTIDAD,
   });
@@ -55,7 +53,6 @@ class ProductDto extends Equatable {
         DESCRIPCION,
         COD_FAMILIA,
         COD_ARTESANA,
-        COD_PRODUCTO,
         UBICACION,
         CANTIDAD,
       ];

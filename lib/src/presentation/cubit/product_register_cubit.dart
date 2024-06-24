@@ -19,12 +19,7 @@ class ProductRegisterCubit extends Cubit<List<ProductDto>> {
   void addNewProduct(ProductDto producto) {
     emit([...state, producto]);
   }
-
-  void removeProduct(ProductDto producto) {
-    state.removeWhere((item) => item.COD_PRODUCTO == producto.COD_PRODUCTO );
-    emit(List.from(state));
-  }
-
+  
   void removeAllProducts() {
     emit([]);
   }

@@ -16,7 +16,6 @@ ProductDto _$ProductDtoFromJson(Map<String, dynamic> json) => ProductDto(
       DESCRIPCION: json['DESCRIPCION'] as String,
       COD_FAMILIA: json['COD_FAMILIA'] as int,
       COD_ARTESANA: json['COD_ARTESANA'] as int,
-      COD_PRODUCTO: json['COD_PRODUCTO'] as String,
       UBICACION: json['UBICACION'] as String,
       CANTIDAD: json['CANTIDAD'] as int,
     );
@@ -32,7 +31,6 @@ Map<String, dynamic> _$ProductDtoToJson(ProductDto instance) =>
       'DESCRIPCION': instance.DESCRIPCION,
       'COD_FAMILIA': instance.COD_FAMILIA,
       'COD_ARTESANA': instance.COD_ARTESANA,
-      'COD_PRODUCTO': instance.COD_PRODUCTO,
       'UBICACION': instance.UBICACION,
       'CANTIDAD': instance.CANTIDAD,
     };
