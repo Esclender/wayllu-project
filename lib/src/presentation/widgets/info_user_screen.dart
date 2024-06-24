@@ -12,6 +12,7 @@ import 'package:wayllu_project/src/config/router/app_router.dart';
 import 'package:wayllu_project/src/domain/models/user_info/user_info_model.dart';
 import 'package:wayllu_project/src/locator.dart';
 import 'package:wayllu_project/src/presentation/cubit/user_logged_cubit.dart';
+import 'package:wayllu_project/src/presentation/views/admin/register_products.dart';
 import 'package:wayllu_project/src/presentation/widgets/bottom_navbar.dart';
 import 'package:wayllu_project/src/presentation/widgets/top_vector.dart';
 import 'package:wayllu_project/src/utils/constants/colors.dart';
@@ -48,7 +49,7 @@ class InfoUserScreen extends HookWidget {
         viewSelected: viewIndex,
       ),
       backgroundColor: bgPrimary,
-      appBar: isAdmin 
+      appBar: isAdmin
           ? AppBar(
               backgroundColor: bgPrimary,
               surfaceTintColor: Colors.transparent,
@@ -62,18 +63,18 @@ class InfoUserScreen extends HookWidget {
       body: CustomScrollView(
         slivers: [
           SliverAppBar(
-            leading: isAdmin 
-          ? AppBar(
-              backgroundColor: bgPrimary,
-              surfaceTintColor: Colors.transparent,
-              leading: InkWell(
-                onTap: () => {appRouter.pop()},
-                child: const Icon(Ionicons.arrow_back),
-              ),
-              centerTitle: true,
-            )
-          : null,
-            expandedHeight: 68.0,
+            leading: isAdmin
+                ? AppBar(
+                    backgroundColor: bgPrimary,
+                    surfaceTintColor: Colors.transparent,
+                    leading: InkWell(
+                      onTap: () => {appRouter.pop()},
+                      child: const Icon(Ionicons.arrow_back),
+                    ),
+                    centerTitle: true,
+                  )
+                : null,
+            expandedHeight: 48.0,
             backgroundColor: Colors.transparent,
             flexibleSpace: FlexibleSpaceBar(
               background: TopVector(),
@@ -93,16 +94,19 @@ class InfoUserScreen extends HookWidget {
                       ),
                       Column(
                         children: [
+                          const SizedBox(height: 10,),
                           _buildInfoContainer(
                             'Informacion Personal',
                             user!.userInfo,
                             context,
                           ),
+                          const SizedBox(height: 10,),
                           _buildInfoContainer(
                             'Informacion de Contacto',
                             user!.userContactInfo,
                             context,
                           ),
+                          const SizedBox(height:5,),
                           if (isAdmin)
                             _buildInhabilitButton(context)
                           else
@@ -130,16 +134,28 @@ class InfoUserScreen extends HookWidget {
                           ),
                           Column(
                             children: [
+                              const SizedBox(height: 10,),
                               _buildInfoContainer(
                                 'Informacion Personal',
                                 loggeUser.userInfo,
                                 context,
                               ),
+                              const SizedBox(height: 10,),
                               _buildInfoContainer(
                                 'Informacion de Contacto',
                                 loggeUser.userContactInfo,
                                 context,
                               ),
+                              const SizedBox(height:5,),
+                              CustomButton(
+                                colorOne: '#800080',
+                                colorTwo: '#C3C3DD',
+                                text: 'Cerrar Sesión',
+                                onTap: () {
+                                  unregisterDependenciesAndEnpoints();
+                                  appRouter.navigateNamed('login');
+                                },
+                              )
                             ],
                           ),
                         ],
@@ -190,7 +206,7 @@ class InfoUserScreen extends HookWidget {
     );
 
     return Padding(
-      padding: const EdgeInsets.all(20.0),
+      padding: const EdgeInsets.symmetric(horizontal: 20.0),
       child: Container(
         padding: const EdgeInsets.all(12.0),
         decoration: BoxDecoration(

@@ -811,9 +811,9 @@ class CustomButton extends StatelessWidget {
             borderRadius: BorderRadius.circular(10),
           ),
         ),
-        child: const Center(
+        child:  Center(
           child: Text(
-            'Registrar',
+            text,
             style: TextStyle(
               fontFamily: 'Gotham',
               fontSize: 16,
