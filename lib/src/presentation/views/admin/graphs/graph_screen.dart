@@ -273,7 +273,7 @@ class GraphicProductsScreen extends HookWidget {
                   Center(
                     child: Column(
                       children: [
-                        Image.asset('assets/nodatafound.png'),
+                        Image.asset('assets/images/nodatafound.png'),
                         Text('No hay resultados'),
                       ],
                     ),
