@@ -24,12 +24,13 @@ class ColumnBarChartComponent extends HookWidget {
       primaryXAxis: const CategoryAxis(
         majorTickLines: MajorTickLines(width: 0),
         majorGridLines: MajorGridLines(width: 0),
-        labelStyle: TextStyle(color: Color(0xffFCF6F0)),
+        labelStyle: TextStyle(color: Color.fromARGB(220, 31, 31, 31)),
       ),
       primaryYAxis: const NumericAxis(
         isVisible: false,
       ),
       series: _getColumnSeries(),
+      backgroundColor: Colors.transparent,
       tooltipBehavior: _tooltipBehavior,
     );
   }
@@ -44,6 +45,7 @@ class ColumnBarChartComponent extends HookWidget {
         borderRadius: BorderRadius.all(Radius.circular(10)),
         name: 'Gold',
         color: secondaryColor,
+        
         opacity: 1,
       ),
     ];

@@ -1,4 +1,4 @@
-import 'package:logger/logger.dart';
+import 'package:flutter/material.dart';
 import 'package:wayllu_project/src/data/remoteRespositories/artesanos/artesanos.repo.dart';
 import 'package:wayllu_project/src/data/remoteRespositories/auth/auth.repo.dart';
 import 'package:wayllu_project/src/data/remoteRespositories/productos/productos.repo.dart';
@@ -124,7 +124,10 @@ class ProductsApiRepositoryImpl extends BaseApiRepository
     final response = await getStateOf<VentaInfo>(
       request: () => _apiServices.newVenta(ventaData),
     );
-
+    if (response.data == null) {
+      print(response.data);
+      throw Exception('La respuesta de la nueva venta es nula');
+    }
     return response.data!;
   }
 

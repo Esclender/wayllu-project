@@ -19,6 +19,8 @@ import 'package:wayllu_project/src/presentation/widgets/top_vector.dart';
 import 'package:wayllu_project/src/utils/constants/colors.dart';
 import 'package:collection/collection.dart';
 
+
+
 @RoutePage()
 class GraphicProductsScreen extends HookWidget {
   final int viewIndex;
@@ -49,7 +51,7 @@ class GraphicProductsScreen extends HookWidget {
     } else if (filterType == 'Mes') {
       final currentYear = DateTime.now().year;
       ventasListCubit.getVentasByYearAndMonth(
-        '$currentYear/$selectedValue',
+        '${selectedValues['Año'] ?? currentYear}/$selectedValue',
         '',
       );
       selectedFilter.value = 'Mes/$selectedValue';
@@ -75,6 +77,7 @@ class GraphicProductsScreen extends HookWidget {
     final selectedFilter = useState<String>('');
     final selectedValues = useState<Map<String, String>>({});
     final scrollController = useScrollController();
+    final isLoading = useState<bool>(true);
 
     useEffect(
       () {
@@ -85,6 +88,7 @@ class GraphicProductsScreen extends HookWidget {
           if (ventas != null) {
             dataVentas.value = ventas;
           }
+          isLoading.value = false;
         });
         initializeDateFormatting('es_ES');
         return subscription.cancel;
@@ -119,8 +123,7 @@ class GraphicProductsScreen extends HookWidget {
         }
       }
 
-      chartData = chartData.reversed
-          .toList(); // Aseguramos que estén en orden de fecha ascendente
+      chartData = chartData.reversed.toList(); // Aseguramos que estén en orden de fecha ascendente
     } else {
       final Map<int, double> monthlySums = {};
       for (final venta in dataVentas.value) {
@@ -128,15 +131,11 @@ class GraphicProductsScreen extends HookWidget {
         monthlySums[month] = (monthlySums[month] ?? 0) + (venta.CANTIDAD ?? 0);
       }
 
-      chartData = monthlySums.entries
-          .map(
-            (entry) => ChartBarData(
-              DateFormat.MMMM('es_ES').format(DateTime(1, entry.key)),
-              entry.value,
-              entry.key,
-            ),
-          )
-          .toList();
+      chartData = monthlySums.entries.map((entry) => ChartBarData(
+        DateFormat.MMMM('es_ES').format(DateTime(1, entry.key)),
+        entry.value,
+        entry.key,
+      )).toList();
     }
 
     chartData.sort((a, b) => a.monthNumber.compareTo(b.monthNumber));
@@ -168,7 +167,6 @@ class GraphicProductsScreen extends HookWidget {
       );
     }).toList();
 
-    // ignore: no_leading_underscores_for_local_identifiers
     Widget _buildGroupedItemContainer(
       BuildContext context,
       String productCode,
@@ -184,12 +182,14 @@ class GraphicProductsScreen extends HookWidget {
       if (selectedFilter.value.isEmpty) {
         return 'Todas las ventas';
       } else if (selectedFilter.value.startsWith('Año')) {
-        return 'Ventas Anuales';
+        final year = selectedFilter.value.split('/')[1];
+        return 'Ventas del Año $year';
+      } else if (selectedFilter.value.startsWith('Mes')) {
+        final month = selectedFilter.value.split('/')[1];
+        final year = selectedValues.value['Año'] ?? DateTime.now().year.toString();
+        return 'Ventas de $month/$year';
       } else {
-        final parts = selectedFilter.value.split('/');
-        final month = parts[1];
-        final year = DateTime.now().year;
-        return 'Ventas de 0$month/$year';
+        return 'Ventas Filtradas';
       }
     }
 
@@ -265,24 +265,39 @@ class GraphicProductsScreen extends HookWidget {
                       ),
                     ),
                   ),
-                Container(
-                  alignment: Alignment.topCenter,
-                  height: MediaQuery.of(context).size.height * 1.4,
-                  width: MediaQuery.of(context).size.width,
-                  child: ListView.builder(
-                    controller: scrollController,
-                    padding: EdgeInsets.zero,
-                    itemCount: cardData.length,
-                    itemBuilder: (context, index) {
-                      final key = groupedVentas.keys.elementAt(index);
-                      return _buildGroupedItemContainer(
-                        context,
-                        key,
-                        groupedVentas[key]!,
-                      );
-                    },
+                if (isLoading.value)
+                  Center(
+                    child: CircularProgressIndicator(),
+                  )
+                else if (dataVentas.value.isEmpty)
+                  Center(
+                    child: Column(
+                      children: [
+                        Image.asset('assets/images/nodatafound.png'),
+                        Text('No hay resultados'),
+                      ],
+                    ),
+                  )
+                else
+                  Container(
+                    padding: EdgeInsets.symmetric(horizontal: 4),
+                    alignment: Alignment.topCenter,
+                    height: MediaQuery.of(context).size.height * 1.4,
+                    width: MediaQuery.of(context).size.width,
+                    child: ListView.builder(
+                      controller: scrollController,
+                      padding: EdgeInsets.zero,
+                      itemCount: cardData.length,
+                      itemBuilder: (context, index) {
+                        final key = groupedVentas.keys.elementAt(index);
+                        return _buildGroupedItemContainer(
+                          context,
+                          key,
+                          groupedVentas[key]!,
+                        );
+                      },
+                    ),
                   ),
-                ),
               ],
             ),
           ),
@@ -290,6 +305,7 @@ class GraphicProductsScreen extends HookWidget {
       ),
     );
   }
+
 
   Widget _buildGraphicWithFilters(
     BuildContext context,
@@ -309,35 +325,23 @@ class GraphicProductsScreen extends HookWidget {
                 text: 'Registro de ventas',
                 fontSize: 25.0,
               ),
-              GlassContainer(
+              Container(
                 height: 200,
-                blur: 4,
-                color: Colors.white.withOpacity(0.8),
-                gradient: const LinearGradient(
-                  begin: Alignment.topLeft,
-                  end: Alignment.bottomRight,
-                  colors: [
-                    Color.fromARGB(255, 102, 102, 102),
-                    Color.fromARGB(255, 59, 60, 61),
-                  ],
-                ),
-                border: Border.all(
-                  width: 0.5,
-                  color: Colors.white.withOpacity(0.5),
-                ),
-                shadowStrength: 5,
-                borderRadius: BorderRadius.circular(5),
-                shadowColor: Colors.white.withOpacity(0.24),
+             
                 child: ColumnBarChartComponent(
                   data: data,
                 ),
               ),
+             
               ...filters.map((String filterHint) {
-                return _buildFilter(
-                  context,
-                  hint: filterHint,
-                  selectedFilter: selectedFilter,
-                  selectedValues: selectedValues,
+                return Padding(
+                  padding: const EdgeInsets.symmetric(horizontal: 8.0),
+                  child: _buildFilter(
+                    context,
+                    hint: filterHint,
+                    selectedFilter: selectedFilter,
+                    selectedValues: selectedValues,
+                  ),
                 );
               }),
             ],

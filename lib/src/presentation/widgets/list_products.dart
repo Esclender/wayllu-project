@@ -152,7 +152,7 @@ class ProductsCardsItemsList extends HookWidget {
 
     return Container(
       width: MediaQuery.of(context).size.width * 0.43,
-      height: MediaQuery.of(context).size.width * 0.44,
+      height: MediaQuery.of(context).size.width * 0.36,
       decoration: decoration,
       child: _listTile(
         context: context,
@@ -169,7 +169,7 @@ class ProductsCardsItemsList extends HookWidget {
   Widget _buildImageProduct(BuildContext context, String url) {
     return Container(
       width: MediaQuery.of(context).size.width * 0.5,
-      height: MediaQuery.of(context).size.width * 0.26,
+      height: MediaQuery.of(context).size.width * 0.25,
       decoration: BoxDecoration(
         borderRadius: const BorderRadius.only(
           topLeft: Radius.circular(10),
