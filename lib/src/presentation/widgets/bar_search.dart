@@ -52,6 +52,11 @@ class _CustomSearchWidgetState extends State<CustomSearchWidget> {
     widget.filterDataFunction(c, query);
   }
 
+  void _clearSearch() {
+    _searchController.clear();
+    _onSearchChanged('');
+  }
+
   @override
   Widget build(BuildContext context) {
     return BlocBuilder<UsersListCubit, List<CardTemplate>?>(
@@ -86,7 +91,7 @@ class _CustomSearchWidgetState extends State<CustomSearchWidget> {
                         suffixIcon: _searchController.text.isNotEmpty
                             ? IconButton(
                                 icon: const Icon(Icons.clear),
-                                onPressed: () {},
+                                onPressed: _clearSearch,
                               )
                             : null,
                       ),

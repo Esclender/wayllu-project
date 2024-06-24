@@ -149,7 +149,7 @@ class _RegisterUserScreenState extends State<RegisterUserScreen> {
     appRouter.popForced();
 
 
-    const String defaultImageUrl = 'gs://wayllu.appspot.com/Artisans_Images/default.jpg'; 
+    const String defaultImageUrl = 'https://firebasestorage.googleapis.com/v0/b/wayllu.appspot.com/o/Products_Images%2Fdefault.jpg?alt=media&token=df650e20-c859-4dbe-8324-8cb58585b362'; 
       final String finalImageUrl = urlImage ?? defaultImageUrl;
 
     final artesano = ArtesanoDto(
@@ -311,7 +311,7 @@ class _RegisterUserScreenState extends State<RegisterUserScreen> {
                           crossAxisAlignment: CrossAxisAlignment.start,
                           children: [
                             const Padding(
-                                padding: EdgeInsets.only(top: 8),
+                                padding: EdgeInsets.only(top: 2),
                                 child: MyTextLabel(hintText: 'Celular'),),
                             const SizedBox(height: 8),
                             MyTextField(
@@ -399,10 +399,10 @@ class _RegisterUserScreenState extends State<RegisterUserScreen> {
                         crossAxisAlignment: CrossAxisAlignment.start,
                         children: [
                           const Padding(
-                            padding: EdgeInsets.only(top: 8.0),
+                            padding: EdgeInsets.only(top: 4.0),
                             child: MyTextLabel(hintText: 'Contraseña:'),
                           ),
-                          const SizedBox(height: 8),
+                          
                           MyTextField(
                             onChanged: (text) {},
                             onSaved: (val) => {
@@ -416,7 +416,6 @@ class _RegisterUserScreenState extends State<RegisterUserScreen> {
                         ],
                       ),
                     ),
-                    const SpaceY(),
                     Column(
                       crossAxisAlignment: CrossAxisAlignment.start,
                       children: [
