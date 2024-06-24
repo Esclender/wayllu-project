@@ -231,11 +231,6 @@ class GraphicProductsScreen extends HookWidget {
                       if (dataVentas.value.isEmpty)
                         Column(
                           children: [
-                            SizedBox(
-                              width: MediaQuery.of(context).size.width * 0.88,
-                              height: MediaQuery.of(context).size.width * 0.88,
-                              child: Image.asset('assets/images/nodatafound.png'),
-                            ),
                             const Text(
                               'Lo siento, no hay registros de ventas durante este mes.',
                               style: TextStyle(
@@ -245,6 +240,12 @@ class GraphicProductsScreen extends HookWidget {
                               ),
                               textAlign: TextAlign.center,
                             ),
+                            SizedBox(
+                              width: MediaQuery.of(context).size.width * 0.88,
+                              height: MediaQuery.of(context).size.width * 0.88,
+                              child: Image.asset('assets/images/nodatafound.png'),
+                            ),
+                            
                           ],
                         )
                       else
