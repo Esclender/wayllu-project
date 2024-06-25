@@ -25,7 +25,7 @@ class UsersListAdminScreen extends HookWidget {
     required this.viewIndex,
   });
 
-  final appRouter = getIt<AppRouter>();
+  final appRouter = getItAppRouter<AppRouter>();
   // Controlador para el campo de búsqueda
 
   void _navigateRegisterUser() {

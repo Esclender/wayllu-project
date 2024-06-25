@@ -30,7 +30,7 @@ class HomeScreen extends HookWidget {
     required this.viewIndex,
   });
 
-  final appRouter = getIt<AppRouter>();
+  final appRouter = getItAppRouter<AppRouter>();
 
   @override
   Widget build(BuildContext context) {
@@ -52,11 +52,12 @@ class HomeScreen extends HookWidget {
       isSearchingByCode.value = code;
       await productsListCubit.getProductsListsByCode(code);
     }
+
     void _clearSearch() {
-    searchController.clear();
-    isSearchingByCode.value= '';
-    isSearchingProducts.value = true;
-    productsListCubit.getProductsLists();
+      searchController.clear();
+      isSearchingByCode.value = '';
+      isSearchingProducts.value = true;
+      productsListCubit.getProductsLists();
     }
 
     final List<ProductInfo> data = [];
@@ -211,12 +212,14 @@ class HomeScreen extends HookWidget {
                                                 fillColor: bottomNavBar,
                                                 border: InputBorder.none,
                                                 hintText: 'Buscar por codigo',
-                                                 suffixIcon: searchController.text.isNotEmpty
-                                                 ? IconButton(
-                                                 icon: const Icon(Icons.clear),
-                                                onPressed: _clearSearch,
-                                                 )
-                                                : null,
+                                                suffixIcon: searchController
+                                                        .text.isNotEmpty
+                                                    ? IconButton(
+                                                        icon: const Icon(
+                                                            Icons.clear),
+                                                        onPressed: _clearSearch,
+                                                      )
+                                                    : null,
                                               ),
                                             ),
                                           ),
@@ -568,7 +571,6 @@ class HomeScreen extends HookWidget {
             child: InkWell(
               onTap: () {
                 unregisterDependenciesAndEnpoints();
-                appRouter.navigateNamed('login');
               },
               child: ListTile(
                 leading: Icon(

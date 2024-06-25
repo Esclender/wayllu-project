@@ -16,7 +16,7 @@ class CardTemplateItemsList extends HookWidget {
   final String query;
 
   // Dependencies Injection
-  final appRouter = getIt<AppRouter>();
+  final appRouter = getItAppRouter<AppRouter>();
 
   CardTemplateItemsList({
     required this.listType,

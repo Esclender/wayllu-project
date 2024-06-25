@@ -20,7 +20,7 @@ import 'package:wayllu_project/src/utils/constants/colors.dart';
 @RoutePage()
 class CarritoScreen extends HookWidget {
   final double checkoutBtnHeight = 150.0;
-  final appRouter = getIt<AppRouter>();
+  final appRouter = getItAppRouter<AppRouter>();
 
   Future<VentaInfo?> _checkoutVentaGoRecib(ProductsCarrito carrito) async {
     final VentaInfo ventaInfo = await carrito.registerVenta();
@@ -212,9 +212,9 @@ class CarritoScreen extends HookWidget {
       padding: EdgeInsets.all(6),
       margin: EdgeInsets.only(bottom: 8),
       decoration: BoxDecoration(
-        borderRadius: BorderRadius.circular(10),
-        color: bottomNavBar,
-      boxShadow: [simpleShadow]),
+          borderRadius: BorderRadius.circular(10),
+          color: bottomNavBar,
+          boxShadow: [simpleShadow]),
       child: Row(
         children: [
           SizedBox(

@@ -13,7 +13,7 @@ import 'package:wayllu_project/src/utils/functions/date_converter.dart';
 @RoutePage()
 class ReciboScreen extends HookWidget {
   final VentaInfo ventaInfo;
-  final appRouter = getIt<AppRouter>();
+  final appRouter = getItAppRouter<AppRouter>();
 
   ReciboScreen({
     required this.ventaInfo,
@@ -140,11 +140,10 @@ class ReciboScreen extends HookWidget {
               child: ClipRRect(
                 borderRadius: BorderRadius.circular(10),
                 child: Image.network(
-                 '${producto['IMAGEN'] ?? 'assets/images/dont-image.jpg'}',
+                  '${producto['IMAGEN'] ?? 'assets/images/dont-image.jpg'}',
                   width: 100,
                   height: 80,
                   fit: BoxFit.cover,
-              
                 ),
               ),
             ),

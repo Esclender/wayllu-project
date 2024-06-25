@@ -16,7 +16,7 @@ class BottomNavBar extends HookWidget {
   BottomNavBar({super.key, this.viewSelected = 0});
 
   //Dependencies Injection
-  final appRouter = getIt<AppRouter>();
+  final appRouter = getItAppRouter<AppRouter>();
 
   final double blur = 1.5;
   final BorderRadiusGeometry borderRadiusBotNav = const BorderRadius.only(
@@ -54,7 +54,9 @@ class BottomNavBar extends HookWidget {
         icon: Ionicons.person,
         routes: [
           OptionsIconsRoutes(
-            route: InfoUserRoute(viewIndex: 2, ),
+            route: InfoUserRoute(
+              viewIndex: 2,
+            ),
             rol: UserRoles.artesano,
           ),
           OptionsIconsRoutes(

@@ -15,7 +15,7 @@ class VentasCardsItemsList extends HookWidget {
   final ScrollController? scrollController;
   final String? categoriaSeleccionada;
 
-  final appRouter = getIt<AppRouter>();
+  final appRouter = getItAppRouter<AppRouter>();
 
   VentasCardsItemsList({
     required this.contextF,

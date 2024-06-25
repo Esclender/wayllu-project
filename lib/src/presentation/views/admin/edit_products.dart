@@ -48,7 +48,7 @@ class EditProductsScreen extends HookWidget {
   ];
 
   final ImagePicker imagePicker = ImagePicker();
-  final appRouter = getIt<AppRouter>();
+  final appRouter = getItAppRouter<AppRouter>();
 
   final ProductInfo productInfo;
 

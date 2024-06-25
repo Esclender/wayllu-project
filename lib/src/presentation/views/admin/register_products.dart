@@ -47,7 +47,7 @@ class RegisterProductsScreen extends HookWidget {
     'TEXTILES PARA EL HOGAR',
   ];
 
-  final appRouter = getIt<AppRouter>();
+  final appRouter = getItAppRouter<AppRouter>();
   void _showAlertDialog(BuildContext context, String message) {
     showDialog<void>(
       context: context,
@@ -133,7 +133,6 @@ class RegisterProductsScreen extends HookWidget {
       DESCRIPCION: descripcion,
       COD_FAMILIA: int.parse(selectedCodFamilia['codigo']!),
       COD_ARTESANA: int.parse(selectedArtesano),
-    
       UBICACION: ubicacion,
       CANTIDAD: int.parse(cantidad),
     );
@@ -173,7 +172,7 @@ class RegisterProductsScreen extends HookWidget {
 
     Future<String?> selectImage() async {
       const String defaultImageUrl =
-        'https://firebasestorage.googleapis.com/v0/b/wayllu.appspot.com/o/Products_Images%2Fdefault.jpg?alt=media&token=df650e20-c859-4dbe-8324-8cb58585b362';
+          'https://firebasestorage.googleapis.com/v0/b/wayllu.appspot.com/o/Products_Images%2Fdefault.jpg?alt=media&token=df650e20-c859-4dbe-8324-8cb58585b362';
       final XFile? image =
           await imagePicker.pickImage(source: ImageSource.gallery);
       if (image != null) {
@@ -811,7 +810,7 @@ class CustomButton extends StatelessWidget {
             borderRadius: BorderRadius.circular(10),
           ),
         ),
-        child:  Center(
+        child: Center(
           child: Text(
             text,
             style: TextStyle(

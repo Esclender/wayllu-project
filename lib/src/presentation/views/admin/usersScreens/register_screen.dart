@@ -59,7 +59,7 @@ class _RegisterUserScreenState extends State<RegisterUserScreen> {
     super.dispose();
   }
 
-  final appRouter = getIt<AppRouter>();
+  final appRouter = getItAppRouter<AppRouter>();
 
   void _showAlertDialog(String message) {
     showDialog<void>(
@@ -148,9 +148,9 @@ class _RegisterUserScreenState extends State<RegisterUserScreen> {
     _showLoadingDialog('Cargando...');
     appRouter.popForced();
 
-
-    const String defaultImageUrl = 'https://firebasestorage.googleapis.com/v0/b/wayllu.appspot.com/o/Products_Images%2Fdefault.jpg?alt=media&token=df650e20-c859-4dbe-8324-8cb58585b362'; 
-      final String finalImageUrl = urlImage ?? defaultImageUrl;
+    const String defaultImageUrl =
+        'https://firebasestorage.googleapis.com/v0/b/wayllu.appspot.com/o/Products_Images%2Fdefault.jpg?alt=media&token=df650e20-c859-4dbe-8324-8cb58585b362';
+    final String finalImageUrl = urlImage ?? defaultImageUrl;
 
     final artesano = ArtesanoDto(
       NOMBRE_COMPLETO: username!,
@@ -158,7 +158,7 @@ class _RegisterUserScreenState extends State<RegisterUserScreen> {
       COMUNIDAD: community!,
       CDG_COMUNIDAD: 1,
       CLAVE: password!,
-      CODIGO: 1005, 
+      CODIGO: 1005,
       URL_IMAGE: finalImageUrl,
       ROL: rol!,
     );
@@ -228,186 +228,205 @@ class _RegisterUserScreenState extends State<RegisterUserScreen> {
         padding: const EdgeInsets.all(30.0),
         child: Form(
           key: _formKey,
-          child: ListView(children: [
-            Column(children: [
+          child: ListView(
+            children: [
               Column(
                 children: [
-                  photoUser(),
-                ],
-              ),
-           Column(
-                  children: [
-                    const MyTextLabel(hintText: 'Rol'),
-                    const SizedBox(height: 8),
-                    Padding(
-                      padding: const EdgeInsets.only(bottom:8.0),
-                      child: DropdownButtonFormField<String>(
-                        value: rol,
-                        onChanged: (String? newValue) {
-                          setState(() {
-                            rol = newValue;
-                          });
-                        },
-                        items: <String>['ARTESANO', 'ADMIN']
-                            .map<DropdownMenuItem<String>>((String value) {
-                          return DropdownMenuItem<String>(
-                            value: value,
-                            child: Text(value),
-                          );
-                        }).toList(),
-                        decoration: InputDecoration(
-                          border: OutlineInputBorder(
-                            borderRadius: BorderRadius.circular(10.0),
+                  Column(
+                    children: [
+                      photoUser(),
+                    ],
+                  ),
+                  Column(
+                    children: [
+                      const MyTextLabel(hintText: 'Rol'),
+                      const SizedBox(height: 8),
+                      Padding(
+                        padding: const EdgeInsets.only(bottom: 8.0),
+                        child: DropdownButtonFormField<String>(
+                          value: rol,
+                          onChanged: (String? newValue) {
+                            setState(() {
+                              rol = newValue;
+                            });
+                          },
+                          items: <String>['ARTESANO', 'ADMIN']
+                              .map<DropdownMenuItem<String>>((String value) {
+                            return DropdownMenuItem<String>(
+                              value: value,
+                              child: Text(value),
+                            );
+                          }).toList(),
+                          decoration: InputDecoration(
+                            border: OutlineInputBorder(
+                              borderRadius: BorderRadius.circular(10.0),
+                            ),
+                            filled: true,
+                            fillColor: Colors.transparent,
+                            hintText: 'Selecciona el rol',
                           ),
-                          filled: true,
-                          fillColor: Colors.transparent,
-                          hintText: 'Selecciona el rol',
                         ),
                       ),
-                    ),
-                    Padding(
-                      padding: const EdgeInsets.only(bottom:8.0),
-                      child: Column(
-                        children: [ 
-                      const MyTextLabel(hintText: 'Nombre'),
-                      const SizedBox(height: 8),
-                      MyTextField(
-                        onChanged: (text) {},
-                        onSaved: (val) => {
-                          setState(() {
-                            username = val;
-                          }),
-                        },
-                        hintText: 'Maria',
-                        obscureText: false,
-                      ),],
-                      ),
-                    ),
-                   
-                    Padding(
-                     padding: const EdgeInsets.only(bottom:8.0),
-                      child: Column(
-                        crossAxisAlignment: CrossAxisAlignment.start,
-                        children: [
-                          const MyTextLabel(hintText: 'DNI:'),
-                          const SizedBox(height: 8),
-                          MyTextField(
-                            onChanged: (text) {},
-                            onSaved: (val) => {
-                              setState(() {
-                                dni = val;
-                              }),
-                            },
-                            hintText: '87654321',
-                            obscureText: false,
-                          ),
-                        ],
-                      ),
-                    ),
-                    if (rol == 'ARTESANO') ...[
                       Padding(
-                        padding: const EdgeInsets.only(bottom:8.0),
+                        padding: const EdgeInsets.only(bottom: 8.0),
                         child: Column(
-                          crossAxisAlignment: CrossAxisAlignment.start,
                           children: [
-                            const Padding(
-                                padding: EdgeInsets.only(top: 2),
-                                child: MyTextLabel(hintText: 'Celular'),),
+                            const MyTextLabel(hintText: 'Nombre'),
                             const SizedBox(height: 8),
                             MyTextField(
                               onChanged: (text) {},
-                              onSaved: (val) => setState(() {
-                                phone = val;
-                              }),
-                              hintText: 'Ingresa tu número de celular',
+                              onSaved: (val) => {
+                                setState(() {
+                                  username = val;
+                                }),
+                              },
+                              hintText: 'Maria',
                               obscureText: false,
                             ),
                           ],
                         ),
                       ),
-                    ],
-                    
-                    Padding(
-                      padding: const EdgeInsets.only(bottom: 8.0),
-                      child: Column(
-                        crossAxisAlignment: CrossAxisAlignment.start,
-                        children: [
-                          const MyTextLabel(
-                            hintText: 'Email',
-                            warText: '*Opcional*',
-                          ),
-                          const SizedBox(
-                            height: 8,
-                          ),
-                          MyTextField(
-                            onChanged: (text) {},
-                            onSaved: (val) => {
-                              setState(() {
-                                email = val ?? '';
-                              }),
-                            },
-                            hintText: 'ejemplo@gmail.com',
-                            obscureText: false,
-                          ),
-                        ],
-                      ),
-                    ),
-                    
-                    if (rol == 'ARTESANO') ...[
                       Padding(
-                        padding: const EdgeInsets.only(bottom:8.0),
+                        padding: const EdgeInsets.only(bottom: 8.0),
                         child: Column(
                           crossAxisAlignment: CrossAxisAlignment.start,
                           children: [
-                            const MyTextLabel(
-                              hintText: 'Comunidad:',
-                            ),
-                            const SizedBox(
-                              height: 8,
-                            ),
-                            DropdownButtonFormField<Map<String, dynamic>>(
-                              value: selectedCommunity,
-                              onChanged: (Map<String, dynamic>? value) {
+                            const MyTextLabel(hintText: 'DNI:'),
+                            const SizedBox(height: 8),
+                            MyTextField(
+                              onChanged: (text) {},
+                              onSaved: (val) => {
                                 setState(() {
-                                  selectedCommunity = value;
-                                  community = value?['comunidad'] as String;
-                                });
+                                  dni = val;
+                                }),
                               },
-                              items:
-                                  communities.map((Map<String, dynamic> community) {
-                                return DropdownMenuItem<Map<String, dynamic>>(
-                                  value: community,
-                                  child: Text(community['comunidad'] as String),
-                                );
-                              }).toList(),
-                              decoration: InputDecoration(
-                                border: OutlineInputBorder(
-                                  borderRadius: BorderRadius.circular(10.0),
-                                ),
-                                filled: true,
-                                fillColor: Colors.transparent,
-                                hintText: 'Selecciona la comunidad',
-                              ),
+                              hintText: '87654321',
+                              obscureText: false,
                             ),
                           ],
                         ),
                       ),
-                    ],
-                    Padding(
-                      padding: const EdgeInsets.only(bottom:8.0),
-                      child: Column(
+                      if (rol == 'ARTESANO') ...[
+                        Padding(
+                          padding: const EdgeInsets.only(bottom: 8.0),
+                          child: Column(
+                            crossAxisAlignment: CrossAxisAlignment.start,
+                            children: [
+                              const Padding(
+                                padding: EdgeInsets.only(top: 2),
+                                child: MyTextLabel(hintText: 'Celular'),
+                              ),
+                              const SizedBox(height: 8),
+                              MyTextField(
+                                onChanged: (text) {},
+                                onSaved: (val) => setState(() {
+                                  phone = val;
+                                }),
+                                hintText: 'Ingresa tu número de celular',
+                                obscureText: false,
+                              ),
+                            ],
+                          ),
+                        ),
+                      ],
+                      Padding(
+                        padding: const EdgeInsets.only(bottom: 8.0),
+                        child: Column(
+                          crossAxisAlignment: CrossAxisAlignment.start,
+                          children: [
+                            const MyTextLabel(
+                              hintText: 'Email',
+                              warText: '*Opcional*',
+                            ),
+                            const SizedBox(
+                              height: 8,
+                            ),
+                            MyTextField(
+                              onChanged: (text) {},
+                              onSaved: (val) => {
+                                setState(() {
+                                  email = val ?? '';
+                                }),
+                              },
+                              hintText: 'ejemplo@gmail.com',
+                              obscureText: false,
+                            ),
+                          ],
+                        ),
+                      ),
+                      if (rol == 'ARTESANO') ...[
+                        Padding(
+                          padding: const EdgeInsets.only(bottom: 8.0),
+                          child: Column(
+                            crossAxisAlignment: CrossAxisAlignment.start,
+                            children: [
+                              const MyTextLabel(
+                                hintText: 'Comunidad:',
+                              ),
+                              const SizedBox(
+                                height: 8,
+                              ),
+                              DropdownButtonFormField<Map<String, dynamic>>(
+                                value: selectedCommunity,
+                                onChanged: (Map<String, dynamic>? value) {
+                                  setState(() {
+                                    selectedCommunity = value;
+                                    community = value?['comunidad'] as String;
+                                  });
+                                },
+                                items: communities
+                                    .map((Map<String, dynamic> community) {
+                                  return DropdownMenuItem<Map<String, dynamic>>(
+                                    value: community,
+                                    child:
+                                        Text(community['comunidad'] as String),
+                                  );
+                                }).toList(),
+                                decoration: InputDecoration(
+                                  border: OutlineInputBorder(
+                                    borderRadius: BorderRadius.circular(10.0),
+                                  ),
+                                  filled: true,
+                                  fillColor: Colors.transparent,
+                                  hintText: 'Selecciona la comunidad',
+                                ),
+                              ),
+                            ],
+                          ),
+                        ),
+                      ],
+                      Padding(
+                        padding: const EdgeInsets.only(bottom: 8.0),
+                        child: Column(
+                          crossAxisAlignment: CrossAxisAlignment.start,
+                          children: [
+                            const Padding(
+                              padding: EdgeInsets.only(top: 4.0),
+                              child: MyTextLabel(hintText: 'Contraseña:'),
+                            ),
+                            MyTextField(
+                              onChanged: (text) {},
+                              onSaved: (val) => {
+                                setState(() {
+                                  password = val;
+                                }),
+                              },
+                              hintText: '******',
+                              obscureText: true,
+                            ),
+                          ],
+                        ),
+                      ),
+                      Column(
                         crossAxisAlignment: CrossAxisAlignment.start,
                         children: [
-                          const Padding(
-                            padding: EdgeInsets.only(top: 4.0),
-                            child: MyTextLabel(hintText: 'Contraseña:'),
-                          ),
-                          
+                          const MyTextLabel(hintText: 'Confirmar contraseña:'),
+                          const SizedBox(height: 8),
                           MyTextField(
                             onChanged: (text) {},
                             onSaved: (val) => {
                               setState(() {
-                                password = val;
+                                confirmPassword = val;
                               }),
                             },
                             hintText: '******',
@@ -415,44 +434,27 @@ class _RegisterUserScreenState extends State<RegisterUserScreen> {
                           ),
                         ],
                       ),
-                    ),
-                    Column(
-                      crossAxisAlignment: CrossAxisAlignment.start,
-                      children: [
-                        const MyTextLabel(hintText: 'Confirmar contraseña:'),
-                        const SizedBox(height: 8),
-                        MyTextField(
-                          onChanged: (text) {},
-                          onSaved: (val) => {
-                            setState(() {
-                              confirmPassword = val;
-                            }),
+                      const SpaceY(),
+                      SizedBox(
+                        width: double.infinity,
+                        child: CustomButton(
+                          colorOne: '#800080',
+                          colorTwo: '#C3C3DD',
+                          text: 'Registrar',
+                          onTap: () {
+                            if (_formKey.currentState!.validate()) {
+                              _formKey.currentState!.save();
+                              _submit();
+                            }
                           },
-                          hintText: '******',
-                          obscureText: true,
                         ),
-                      ],
-                    ),
-                    const SpaceY(),
-                    SizedBox(
-                      width: double.infinity,
-                      child: CustomButton(
-                        colorOne: '#800080',
-                        colorTwo: '#C3C3DD',
-                        text: 'Registrar',
-                        onTap: () {
-                          if (_formKey.currentState!.validate()) {
-                            _formKey.currentState!.save();
-                            _submit();
-                          }
-                        },
                       ),
-                    ),
-                  ],
-                ),
-             
-            ],),
-          ],),
+                    ],
+                  ),
+                ],
+              ),
+            ],
+          ),
         ),
       ),
     );
@@ -467,8 +469,10 @@ class _RegisterUserScreenState extends State<RegisterUserScreen> {
         backgroundImage:
             _selectedImage != null ? FileImage(_selectedImage!) : null,
         child: _selectedImage == null
-            ? const Icon(Icons.camera_alt_outlined,
-                color: Color.fromARGB(255, 78, 78, 78),)
+            ? const Icon(
+                Icons.camera_alt_outlined,
+                color: Color.fromARGB(255, 78, 78, 78),
+              )
             : null,
       ),
     );
