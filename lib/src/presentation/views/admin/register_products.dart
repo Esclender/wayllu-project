@@ -101,6 +101,7 @@ class RegisterProductsScreen extends HookWidget {
       String? selectedArtesano,
       String? ubicacion,
       String? cantidad,
+      String? precio,
       String? urlImage) async {
     if (ancho == null ||
         alto == null ||
@@ -111,7 +112,8 @@ class RegisterProductsScreen extends HookWidget {
         selectedCodFamilia == null ||
         selectedArtesano == null ||
         ubicacion == null ||
-        cantidad == null) {
+        cantidad == null ||
+        precio == null) {
       _showAlertDialog(context, 'Please fill all required fields');
       return;
     }
@@ -124,19 +126,18 @@ class RegisterProductsScreen extends HookWidget {
     final String finalImageUrl = urlImage ?? defaultImageUrl;
 
     final producto = ProductDto(
-      ANCHO: int.parse(ancho),
-      ALTO: int.parse(alto),
-      TIPO_PESO: tipoPeso,
-      PESO: int.parse(peso),
-      CATEGORIA: selectedCategoria,
-      IMAGEN: finalImageUrl,
-      DESCRIPCION: descripcion,
-      COD_FAMILIA: int.parse(selectedCodFamilia['codigo']!),
-      COD_ARTESANA: int.parse(selectedArtesano),
-    
-      UBICACION: ubicacion,
-      CANTIDAD: int.parse(cantidad),
-    );
+        ANCHO: int.parse(ancho),
+        ALTO: int.parse(alto),
+        TIPO_PESO: tipoPeso,
+        PESO: int.parse(peso),
+        CATEGORIA: selectedCategoria,
+        IMAGEN: finalImageUrl,
+        DESCRIPCION: descripcion,
+        COD_FAMILIA: int.parse(selectedCodFamilia['codigo']!),
+        COD_ARTESANA: int.parse(selectedArtesano),
+        UBICACION: ubicacion,
+        CANTIDAD: int.parse(cantidad),
+        PRECIO: double.parse(precio));
 
     try {
       await context.read<ProductRegisterCubit>().registerNewProduct(producto);
@@ -166,6 +167,7 @@ class RegisterProductsScreen extends HookWidget {
     final selectedCodFamilia = useState<Map<String, String>?>(null);
     final selectedArtesano = useState<String>('');
     final artesanoController = useTextEditingController(text: '');
+    final precioController = useTextEditingController(text: '');
     final urlImage = useState<String?>(null);
     final formKey = GlobalKey<FormState>();
 
@@ -173,7 +175,7 @@ class RegisterProductsScreen extends HookWidget {
 
     Future<String?> selectImage() async {
       const String defaultImageUrl =
-        'https://firebasestorage.googleapis.com/v0/b/wayllu.appspot.com/o/Products_Images%2Fdefault.jpg?alt=media&token=df650e20-c859-4dbe-8324-8cb58585b362';
+          'https://firebasestorage.googleapis.com/v0/b/wayllu.appspot.com/o/Products_Images%2Fdefault.jpg?alt=media&token=df650e20-c859-4dbe-8324-8cb58585b362';
       final XFile? image =
           await imagePicker.pickImage(source: ImageSource.gallery);
       if (image != null) {
@@ -222,6 +224,12 @@ class RegisterProductsScreen extends HookWidget {
               'Ingrese la descripcion del producto',
               descripcionController,
             ),
+            containerTextForm(
+              context,
+              'Precio',
+              'Ingrese el precio del producto',
+              precioController,
+            ),
             Wrap(
               spacing: 16, // Spacing between elements
               runSpacing: 16, // Spacing between rows
@@ -265,6 +273,7 @@ class RegisterProductsScreen extends HookWidget {
                   selectedArtesano.value,
                   ubicacionController.text,
                   cantidadController.text,
+                  precioController.text,
                   urlImage.value,
                 );
               },
@@ -811,7 +820,7 @@ class CustomButton extends StatelessWidget {
             borderRadius: BorderRadius.circular(10),
           ),
         ),
-        child:  Center(
+        child: Center(
           child: Text(
             text,
             style: TextStyle(

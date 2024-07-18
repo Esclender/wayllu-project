@@ -22,6 +22,7 @@ class ProductInfo {
     required this.CATEGORIA,
     required this.TIPO_PESO,
     required this.FECHA_INGRESO,
+    required this.PRECIO,
     this.UBICACION,
     this.PESO,
     this.IMAGEN,
@@ -40,6 +41,7 @@ class ProductInfo {
       'ANCHO': int.parse(json['ANCHO'] as String),
       'CATEGORIA': json['CATEGORIA'],
       'COD_FAMILIA': int.parse(json['COD_FAMILIA'] as String),
+      'PRECIO': double.parse(json['PRECIO'] as String),
     };
   }
 
@@ -66,6 +68,7 @@ class ProductInfo {
   String? IMAGEN;
   int? ANCHO;
   int? ALTO;
+  double PRECIO;
 
   Map<String, dynamic> toJson() => _$ProductInfoToJson(this);
 

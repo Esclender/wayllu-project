@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:hexcolor/hexcolor.dart';
 
-HexColor bgPrimary = HexColor('#FCF6F0');
+HexColor bgPrimary = HexColor('#FFFDFB');
 HexColor txtColor = HexColor('#241E20');
 HexColor subtxtColor = HexColor('#919191');
 HexColor secondary = HexColor('#FFA743');

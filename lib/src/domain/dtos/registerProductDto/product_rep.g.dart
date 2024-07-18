@@ -18,6 +18,7 @@ ProductDto _$ProductDtoFromJson(Map<String, dynamic> json) => ProductDto(
       COD_ARTESANA: json['COD_ARTESANA'] as int,
       UBICACION: json['UBICACION'] as String,
       CANTIDAD: json['CANTIDAD'] as int,
+      PRECIO: (json['PRECIO'] as num).toDouble(),
     );
 
 Map<String, dynamic> _$ProductDtoToJson(ProductDto instance) =>
@@ -33,4 +34,5 @@ Map<String, dynamic> _$ProductDtoToJson(ProductDto instance) =>
       'COD_ARTESANA': instance.COD_ARTESANA,
       'UBICACION': instance.UBICACION,
       'CANTIDAD': instance.CANTIDAD,
+      'PRECIO': instance.PRECIO,
     };
