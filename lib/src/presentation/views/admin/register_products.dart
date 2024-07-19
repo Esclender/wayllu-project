@@ -144,7 +144,6 @@ class RegisterProductsScreen extends HookWidget {
       _showLoadingDialog(context, 'Product registered..');
       Timer(const Duration(seconds: 2), () {
         appRouter.popForced();
-        //appRouter.replaceAll([HomeScreen(viewIndex: 0)]);
       });
     } catch (error) {
       _showAlertDialog(context, 'Error: $error');

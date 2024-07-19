@@ -5,11 +5,13 @@ import 'package:flutter_hooks/flutter_hooks.dart';
 import 'package:gap/gap.dart';
 import 'package:intl/date_symbol_data_local.dart';
 import 'package:intl/intl.dart';
+import 'package:ionicons/ionicons.dart';
 import 'package:shimmer/shimmer.dart';
 import 'package:wayllu_project/src/domain/models/graphs/chart_column_bar.dart';
 import 'package:wayllu_project/src/domain/models/list_items_model.dart';
 import 'package:wayllu_project/src/domain/models/list_products_model.dart';
 import 'package:wayllu_project/src/domain/models/registro_ventas/registros_venta_repo.dart';
+import 'package:wayllu_project/src/presentation/cubit/users_list_cubit.dart';
 import 'package:wayllu_project/src/presentation/cubit/ventas_list_cubit.dart';
 import 'package:wayllu_project/src/presentation/widgets/bottom_navbar.dart';
 import 'package:wayllu_project/src/presentation/widgets/expand_tile.dart';
@@ -29,10 +31,10 @@ class GraphicProductsScreen extends HookWidget {
   });
 
   final List<String> filters = [
+    'Artesano',
     'Año',
     'Mes',
   ];
-
   void _onDropMenuChanged(
     String? selectedValue,
     BuildContext context,
@@ -54,6 +56,15 @@ class GraphicProductsScreen extends HookWidget {
       );
       selectedFilter.value = 'Mes/$selectedValue';
       selectedValues['Mes'] = selectedValue ?? '';
+    } else if (filterType == 'Artesano') {
+      final codArtisan = int.tryParse(selectedValue ?? '');
+      if (codArtisan != null) {
+        ventasListCubit.getVentasByCodeArtisians(codArtisan);
+        selectedFilter.value = 'Artesano/$selectedValue';
+        selectedValues['Artesano'] = selectedValue ?? '';
+      } else {
+        print('Invalid artisan code: $selectedValue');
+      }
     }
   }
 
@@ -77,11 +88,21 @@ class GraphicProductsScreen extends HookWidget {
     final scrollController = useScrollController();
     final isLoading = useState<bool>(true);
 
+    final artesanoController = useTextEditingController();
     useEffect(
       () {
         final currentYear = DateTime.now().year;
-
         ventasListCubit.getVentasByYearAndMonth('$currentYear', '');
+      
+        if (artesanoController.text.isNotEmpty) {
+          final codArtisan = int.tryParse(artesanoController.text);
+          if (codArtisan != null) {
+            ventasListCubit.getVentasByCodeArtisians(codArtisan);
+          } else {
+            print('Invalid artisan code: ${artesanoController.text}');
+          }
+        }
+
         final subscription = ventasListCubit.stream.listen((ventas) {
           if (ventas != null) {
             dataVentas.value = ventas;
@@ -320,6 +341,7 @@ class GraphicProductsScreen extends HookWidget {
     Map<String, String> selectedValues,
     List<ChartBarData> data,
   ) {
+    final artesanoController = useTextEditingController();
     return Column(
       children: [
         Padding(
@@ -346,6 +368,7 @@ class GraphicProductsScreen extends HookWidget {
                     hint: filterHint,
                     selectedFilter: selectedFilter,
                     selectedValues: selectedValues,
+                    menuController: artesanoController,
                   ),
                 );
               }),
@@ -359,8 +382,10 @@ class GraphicProductsScreen extends HookWidget {
   Widget _buildFilter(BuildContext context,
       {required String hint,
       required ValueNotifier<String> selectedFilter,
-      required Map<String, String> selectedValues}) {
+      required Map<String, String> selectedValues,
+      TextEditingController? menuController}) {
     final currentYear = DateTime.now().year;
+
     final List<DropdownMenuItem<String>> yearItems = [];
 
     for (int year = 2023; year <= currentYear; year++) {
@@ -386,6 +411,13 @@ class GraphicProductsScreen extends HookWidget {
       const DropdownMenuItem(value: '11', child: Text('Noviembre')),
       const DropdownMenuItem(value: '12', child: Text('Diciembre')),
     ];
+
+    if (hint == 'Artesano') {
+      return DropDownMenuArtesanos(
+        menuController: menuController,
+        selectedOption: selectedFilter,
+      );
+    }
 
     List<DropdownMenuItem<String>> items = [];
     if (hint == 'Año') {
@@ -512,139 +544,267 @@ class GraphicProductsScreen extends HookWidget {
       ),
     );
   }
-}
 
-Widget _listTile({
-  required Widget leading,
-  required Widget title,
-  required List<DescriptionItem> fields,
-}) {
-  return Row(
-    children: [
-      leading,
-      const Gap(20),
-      Column(
-        crossAxisAlignment: CrossAxisAlignment.start,
-        children: [
-          title,
-          ...fields.map(
-            (f) => Text(
-              '${f.field}: ${f.value}',
-              style: TextStyle(
-                color: smallWordsColor.withOpacity(0.7),
-                fontSize: 8,
-              ),
-            ),
-          ),
-        ],
-      ),
-    ],
-  );
-}
-
-Widget _buildItemContainer({
-  required String productCode,
-  required List<VentasList> ventas,
-}) {
-  final BoxDecoration decoration = BoxDecoration(
-    color: bottomNavBar,
-    boxShadow: [
-      BoxShadow(
-        color: const Color.fromARGB(255, 95, 95, 95).withOpacity(0.08),
-        spreadRadius: 2,
-        blurRadius: 4,
-        offset: const Offset(
-          0,
-          1,
-        ),
-      ),
-    ],
-    borderRadius: const BorderRadius.all(
-      Radius.circular(5),
-    ),
-    border: Border.all(color: Colors.transparent),
-  );
-
-  final totalQuantity =
-      ventas.fold<int>(0, (sum, item) => sum + (item.CANTIDAD ?? 0));
-  final String imageUrl = ventas.isNotEmpty && ventas.first.IMAGEN != null
-      ? ventas.first.IMAGEN!
-      : 'https://via.placeholder.com/150'; // URL de la imagen por defecto
-
-  return ExpansionTileImp(
-    title: Container(
-      padding: EdgeInsets.zero,
-      margin: EdgeInsets.zero,
-      //padding: const EdgeInsets.only(bottom: 5),
-      decoration: decoration,
-
-      child: ListTile(
-        leading: _buildImageAvatar(imageUrl),
-        title: Column(
+  Widget _listTile({
+    required Widget leading,
+    required Widget title,
+    required List<DescriptionItem> fields,
+  }) {
+    return Row(
+      children: [
+        leading,
+        const Gap(20),
+        Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
-            Text(
-              productCode,
-              style: const TextStyle(fontSize: 18),
-            ),
-            Container(
-              margin: const EdgeInsets.only(top: 10),
-              padding: const EdgeInsets.symmetric(horizontal: 4),
-              decoration: BoxDecoration(
-                color: secondary,
-                borderRadius: BorderRadius.circular(3),
-              ),
-              child: Text(
-                'Total vendidos: $totalQuantity',
+            title,
+            ...fields.map(
+              (f) => Text(
+                '${f.field}: ${f.value}',
                 style: TextStyle(
-                  fontSize: 13,
-                  fontWeight: FontWeight.w500,
-                  color: bgPrimary,
+                  color: smallWordsColor.withOpacity(0.7),
+                  fontSize: 8,
                 ),
               ),
             ),
           ],
         ),
-      ),
-    ),
-    children: ventas.map((venta) {
-      return Column(
-        children: [
-          ListTile(
-            title: Text(
-              'Fecha de Registro: ${venta.formattingDate()}',
-              style: infoCardsProducts(),
-            ),
-            subtitle: Column(
-              crossAxisAlignment: CrossAxisAlignment.start,
-              children: [
-                Text('Cantidad: ${venta.CANTIDAD}', style: infoCardsProducts()),
-                Text(
-                  'Descripción: ${venta.DESCRIPCION}',
-                  style: infoCardsProducts(),
-                ),
-              ],
-            ),
+      ],
+    );
+  }
+
+  Widget _buildItemContainer({
+    required String productCode,
+    required List<VentasList> ventas,
+  }) {
+    final BoxDecoration decoration = BoxDecoration(
+      color: bottomNavBar,
+      boxShadow: [
+        BoxShadow(
+          color: const Color.fromARGB(255, 95, 95, 95).withOpacity(0.08),
+          spreadRadius: 2,
+          blurRadius: 4,
+          offset: const Offset(
+            0,
+            1,
           ),
-          Divider(),
-        ],
-      );
-    }).toList(),
-  );
-}
-
-TextStyle infoCardsProducts() => TextStyle(fontSize: 12);
-
-Widget _buildImageAvatar(String url) {
-  return Container(
-    width: 60,
-    height: 60,
-    decoration: BoxDecoration(
-      borderRadius: BorderRadius.circular(5.0),
-      image: DecorationImage(
-        image: NetworkImage(url),
-        fit: BoxFit.cover,
+        ),
+      ],
+      borderRadius: const BorderRadius.all(
+        Radius.circular(5),
       ),
-    ),
-  );
+      border: Border.all(color: Colors.transparent),
+    );
+
+    final totalQuantity =
+        ventas.fold<int>(0, (sum, item) => sum + (item.CANTIDAD ?? 0));
+    final String imageUrl = ventas.isNotEmpty && ventas.first.IMAGEN != null
+        ? ventas.first.IMAGEN!
+        : 'https://via.placeholder.com/150'; // URL de la imagen por defecto
+
+    return ExpansionTileImp(
+      title: Container(
+        padding: EdgeInsets.zero,
+        margin: EdgeInsets.zero,
+        //padding: const EdgeInsets.only(bottom: 5),
+        decoration: decoration,
+
+        child: ListTile(
+          leading: _buildImageAvatar(imageUrl),
+          title: Column(
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: [
+              Text(
+                productCode,
+                style: const TextStyle(fontSize: 18),
+              ),
+              Container(
+                margin: const EdgeInsets.only(top: 10),
+                padding: const EdgeInsets.symmetric(horizontal: 4),
+                decoration: BoxDecoration(
+                  color: secondary,
+                  borderRadius: BorderRadius.circular(3),
+                ),
+                child: Text(
+                  'Total vendidos: $totalQuantity',
+                  style: TextStyle(
+                    fontSize: 13,
+                    fontWeight: FontWeight.w500,
+                    color: bgPrimary,
+                  ),
+                ),
+              ),
+            ],
+          ),
+        ),
+      ),
+      children: ventas.map((venta) {
+        return Column(
+          children: [
+            ListTile(
+              title: Text(
+                'Fecha de Registro: ${venta.formattingDate()}',
+                style: infoCardsProducts(),
+              ),
+              subtitle: Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  Text('Cantidad: ${venta.CANTIDAD}',
+                      style: infoCardsProducts()),
+                  Text(
+                    'Descripción: ${venta.DESCRIPCION}',
+                    style: infoCardsProducts(),
+                  ),
+                  Text(
+                    'Artesana: ${venta.COD_ARTESANA}',
+                    style: infoCardsProducts(),
+                  ),
+                ],
+              ),
+            ),
+            Divider(),
+          ],
+        );
+      }).toList(),
+    );
+  }
+
+  TextStyle infoCardsProducts() => TextStyle(fontSize: 12);
+
+  Widget _buildImageAvatar(String url) {
+    return Container(
+      width: 60,
+      height: 60,
+      decoration: BoxDecoration(
+        borderRadius: BorderRadius.circular(5.0),
+        image: DecorationImage(
+          image: NetworkImage(url),
+          fit: BoxFit.cover,
+        ),
+      ),
+    );
+  }
+}
+class DropDownMenuArtesanos extends HookWidget {
+  final TextEditingController? menuController;
+  final ValueNotifier<String> selectedOption;
+
+  const DropDownMenuArtesanos({
+    required this.menuController,
+    required this.selectedOption,
+  });
+
+  @override
+  Widget build(BuildContext context) {
+    final double width = MediaQuery.of(context).size.width - 45.0;
+    final usersListCubit = context.watch<UsersListCubit>();
+    final usersListCubitRead = context.read<UsersListCubit>();
+    final queryNombre = useState(selectedOption.value);
+
+    void changeQuery(String query) {
+      WidgetsBinding.instance.addPostFrameCallback((_) {
+        queryNombre.value = query;
+      });
+    }
+
+    void closeKeyboard(BuildContext context) {
+      FocusScope.of(context).unfocus();
+    }
+
+    useEffect(() {
+      usersListCubitRead.getUserLists();
+      return;
+    }, []);
+
+    // Add a post-frame callback to ensure the build is complete before handling state changes
+    useEffect(
+      () {
+        WidgetsBinding.instance.addPostFrameCallback((_) {
+          queryNombre.addListener(() {
+            if (queryNombre.value != selectedOption.value) {
+              usersListCubitRead.getUserLists(
+                nombre: queryNombre.value,
+                cantidad: 5,
+              );
+            }
+          });
+        });
+
+        // Cleanup the listener on dispose
+        return () {};
+      },
+      [],
+    );
+
+    return Column(
+      crossAxisAlignment: CrossAxisAlignment.start,
+      children: [
+        const Text(
+          'Artesano',
+          style: TextStyle(
+            color: Color(0xFF241E20),
+            fontSize: 16,
+            fontFamily: 'Gotham',
+            fontWeight: FontWeight.w500,
+            height: 1.5, // Adjust height as needed
+          ),
+        ),
+        DropdownMenu(
+          hintText: 'Asignar artesano',
+          controller: menuController,
+          initialSelection:
+              usersListCubit.state!.isNotEmpty ? selectedOption.value : null,
+          trailingIcon: const Icon(Ionicons.chevron_down),
+          width: width,
+          requestFocusOnTap: true,
+          enableFilter: true,
+          menuStyle: MenuStyle(
+            side: MaterialStateProperty.all<BorderSide>(
+              const BorderSide(
+                color: Colors.transparent,
+              ),
+            ),
+            backgroundColor: MaterialStateProperty.all<Color>(Colors.white),
+          ),
+          onSelected: (dynamic selected) {
+            selectedOption.value = selected as String;
+            closeKeyboard(context);
+
+            // Add the logic to use the selected artisan code
+            final ventasListCubit = context.read<VentasListCubit>();
+            final codArtisan = int.tryParse(selectedOption.value);
+            if (codArtisan != null) {
+              ventasListCubit.getVentasByCodeArtisians(codArtisan);
+            } else {
+              print('Invalid artisan code: ${selectedOption.value}');
+            }
+          },
+          searchCallback: (entries, query) {
+            if (query.isEmpty) {
+              return null;
+            }
+            changeQuery(query);
+            final int index = entries.indexWhere(
+              (DropdownMenuEntry entry) => entry.label == query,
+            );
+            return index != -1 ? index : null;
+          },
+          dropdownMenuEntries: usersListCubit.state != null
+              ? usersListCubit.state!.map<DropdownMenuEntry>((value) {
+                  return DropdownMenuEntry(
+                    value: value.codigoArtesano.toString(),
+                    label: value.nombre,
+                    labelWidget: ListTile(
+                      leading: CircleAvatar(
+                        backgroundImage: NetworkImage(value.url),
+                      ),
+                      title: Text(value.nombre),
+                    ),
+                  );
+                }).toList()
+              : [],
+        ),
+      ],
+    );
+  }
 }

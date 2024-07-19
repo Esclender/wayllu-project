@@ -57,7 +57,7 @@ class ProductsCarrito extends Cubit<List<CarritoItem>> {
 
   String get itemsInCart => state.length.toString();
   int get itemsInCartInt => state.length;
-  List<Map<String, dynamic>> get mappedCarritoItems {
+    List<Map<String, dynamic>> get mappedCarritoItems {
     return state.map((e) => e.toMap()).toList();
   }
 }

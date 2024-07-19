@@ -41,4 +41,9 @@ abstract class ProductsApiServices {
     @Path('year') String? year,
     @Path('mes') String? mes,
   );
+
+  @GET('/ventas/artesano/{codArtisan}')
+  Future<HttpResponse<VentasListHttpResponse>> getVentasByCodeArtisians(
+    @Path('codArtisan') int codArtisan,
+  );
 }
