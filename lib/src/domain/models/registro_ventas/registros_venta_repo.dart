@@ -16,6 +16,7 @@ class VentasList {
     this.COD_PRODUCTO,
     this.COD_ARTESANA,
     this.CODIGO_REGISTRO,
+    this.PRECIO_VENTA,
     this.registrosVentasId,
     this.IMAGEN,
   });
@@ -31,6 +32,7 @@ class VentasList {
   String? IMAGEN;
   String? COD_PRODUCTO;
   int? COD_ARTESANA;
+  double? PRECIO_VENTA;
 
   Map<String, dynamic> toJson() => _$VentasListToJson(this);
 

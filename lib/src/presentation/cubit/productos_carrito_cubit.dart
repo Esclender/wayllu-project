@@ -13,6 +13,7 @@ class ProductsCarrito extends Cubit<List<CarritoItem>> {
   Future<VentaInfo> registerVenta() async {
     final ventaInfo = await _productsApiServices.newVenta({
       'CANTIDAD_TOTAL_PRODUCTOS': itemsInCartInt,
+      'PRECIO_TOTAL_PRODUCTOS': totalPrice,
       'PRODUCTOS': mappedCarritoItems,
     });
 

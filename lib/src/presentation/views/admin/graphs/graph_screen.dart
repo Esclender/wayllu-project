@@ -148,7 +148,7 @@ class GraphicProductsScreen extends HookWidget {
       final Map<int, double> monthlySums = {};
       for (final venta in dataVentas.value) {
         final month = DateTime.parse(venta.FECHA_REGISTRO).month;
-        monthlySums[month] = (monthlySums[month] ?? 0) + (venta.CANTIDAD ?? 0);
+        monthlySums[month] = (monthlySums[month] ?? 0) + (venta.PRECIO_VENTA ?? 0);
       }
 
       chartData = monthlySums.entries
