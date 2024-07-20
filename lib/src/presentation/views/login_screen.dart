@@ -9,7 +9,6 @@ import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_hooks/flutter_hooks.dart';
 import 'package:hexcolor/hexcolor.dart';
 import 'package:ionicons/ionicons.dart';
-import 'package:logger/logger.dart';
 import 'package:wayllu_project/src/config/router/app_router.dart';
 import 'package:wayllu_project/src/config/theme/app_theme.dart';
 import 'package:wayllu_project/src/domain/dtos/usersCredentialsDto/user_credentials_rep.dart';
@@ -56,8 +55,8 @@ class LoginExampleScreen extends HookWidget {
 //45682020
   @override
   Widget build(BuildContext context) {
-    final controllerEmail = useTextEditingController();
-    final controllerClave = useTextEditingController();
+    final controllerEmail = useTextEditingController(text: "12345678");
+    final controllerClave = useTextEditingController(text: "1234");
 
     return AnnotatedRegion(
       value: SystemStyles.login,

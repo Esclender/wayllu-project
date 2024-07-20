@@ -1,4 +1,5 @@
 import 'package:auto_route/auto_route.dart';
+import 'package:collection/collection.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_hooks/flutter_hooks.dart';
@@ -6,10 +7,12 @@ import 'package:gap/gap.dart';
 import 'package:intl/date_symbol_data_local.dart';
 import 'package:intl/intl.dart';
 import 'package:shimmer/shimmer.dart';
+import 'package:wayllu_project/src/config/router/app_router.dart';
 import 'package:wayllu_project/src/domain/models/graphs/chart_column_bar.dart';
 import 'package:wayllu_project/src/domain/models/list_items_model.dart';
 import 'package:wayllu_project/src/domain/models/list_products_model.dart';
 import 'package:wayllu_project/src/domain/models/registro_ventas/registros_venta_repo.dart';
+import 'package:wayllu_project/src/locator.dart';
 import 'package:wayllu_project/src/presentation/cubit/ventas_list_cubit.dart';
 import 'package:wayllu_project/src/presentation/widgets/bottom_navbar.dart';
 import 'package:wayllu_project/src/presentation/widgets/expand_tile.dart';
@@ -17,12 +20,14 @@ import 'package:wayllu_project/src/presentation/widgets/gradient_widgets.dart';
 import 'package:wayllu_project/src/presentation/widgets/graphs_components/column_bar_chart.dart';
 import 'package:wayllu_project/src/presentation/widgets/top_vector.dart';
 import 'package:wayllu_project/src/utils/constants/colors.dart';
-import 'package:collection/collection.dart';
+import 'package:wayllu_project/src/utils/functions/excel_util.dart';
 
 @RoutePage()
 class GraphicProductsScreen extends HookWidget {
   final int viewIndex;
+  final ExcelUtil excelUtil = ExcelUtil();
   final double containersPadding = 20.0;
+  final appRouter = getItAppRouter<AppRouter>();
 
   GraphicProductsScreen({
     required this.viewIndex,
@@ -76,6 +81,7 @@ class GraphicProductsScreen extends HookWidget {
     final selectedValues = useState<Map<String, String>>({});
     final scrollController = useScrollController();
     final isLoading = useState<bool>(true);
+    List<ChartBarData> chartData = [];
 
     useEffect(
       () {
@@ -93,8 +99,6 @@ class GraphicProductsScreen extends HookWidget {
       },
       [ventasListCubit],
     );
-
-    List<ChartBarData> chartData = [];
 
     if (selectedFilter.value.startsWith('Mes')) {
       final Map<DateTime, double> dailySums = {};
@@ -131,11 +135,13 @@ class GraphicProductsScreen extends HookWidget {
       }
 
       chartData = monthlySums.entries
-          .map((entry) => ChartBarData(
-                DateFormat.MMMM('es_ES').format(DateTime(1, entry.key)),
-                entry.value,
-                entry.key,
-              ))
+          .map(
+            (entry) => ChartBarData(
+              DateFormat.MMMM('es_ES').format(DateTime(1, entry.key)),
+              entry.value,
+              entry.key,
+            ),
+          )
           .toList();
     }
 
@@ -199,8 +205,15 @@ class GraphicProductsScreen extends HookWidget {
     return Scaffold(
       backgroundColor: bgPrimary,
       floatingActionButtonLocation: FloatingActionButtonLocation.centerDocked,
-      floatingActionButton: BottomNavBar(
-        viewSelected: viewIndex,
+      floatingActionButton: Column(
+        mainAxisAlignment: MainAxisAlignment.end,
+        children: [
+          _downloadExcelComponent(context),
+          const Gap(8),
+          BottomNavBar(
+            viewSelected: viewIndex,
+          ),
+        ],
       ),
       body: CustomScrollView(
         slivers: [
@@ -310,6 +323,27 @@ class GraphicProductsScreen extends HookWidget {
             ),
           ),
         ],
+      ),
+    );
+  }
+
+  Widget _downloadExcelComponent(BuildContext context) {
+    // final productsCubit = context.watch<ProductsCarrito>();
+
+    return Container(
+      width: MediaQuery.of(context).size.width,
+      alignment: Alignment.bottomRight,
+      margin: const EdgeInsets.only(
+        left: 10,
+        right: 10,
+      ), //bottom: 60
+      child: FloatingActionButton(
+        backgroundColor: bottomNavBar,
+        shape: const CircleBorder(),
+        onPressed: () {
+          excelUtil.generateAndSaveExcel('prueba');
+        },
+        child: Image.asset('assets/images/excel-download.png'),
       ),
     );
   }
