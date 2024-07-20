@@ -57,7 +57,17 @@ class ProductsCarrito extends Cubit<List<CarritoItem>> {
 
   String get itemsInCart => state.length.toString();
   int get itemsInCartInt => state.length;
-    List<Map<String, dynamic>> get mappedCarritoItems {
+  List<Map<String, dynamic>> get mappedCarritoItems {
     return state.map((e) => e.toMap()).toList();
   }
+
+  double calculateTotalPrice() {
+    double totalPrice = 0;
+    for (var item in state) {
+      totalPrice += item.info.PRECIO * item.quantity;
+    }
+    return totalPrice;
+  }
+
+  double get totalPrice => calculateTotalPrice();
 }
