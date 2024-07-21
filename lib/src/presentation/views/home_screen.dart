@@ -18,6 +18,7 @@ import 'package:wayllu_project/src/locator.dart';
 import 'package:wayllu_project/src/presentation/cubit/productos_carrito_cubit.dart';
 import 'package:wayllu_project/src/presentation/cubit/products_list_cubit.dart';
 import 'package:wayllu_project/src/presentation/cubit/user_logged_cubit.dart';
+import 'package:wayllu_project/src/presentation/widgets/actity_day.dart';
 import 'package:wayllu_project/src/presentation/widgets/bottom_navbar.dart';
 import 'package:wayllu_project/src/presentation/widgets/list_products.dart';
 import 'package:wayllu_project/src/utils/constants/colors.dart';
@@ -104,13 +105,13 @@ class HomeScreen extends HookWidget {
             slivers: [
               SliverAppBar(
                 leading: Container(),
-                expandedHeight: 68.0,
+                expandedHeight: 58.0,
                 backgroundColor: Colors.transparent,
                 flexibleSpace: FlexibleSpaceBar(
                   background: topVector(context),
                 ),
                 bottom: PreferredSize(
-                  preferredSize: const Size.fromHeight(20),
+                  preferredSize: const Size.fromHeight(10),
                   child: Container(
                     margin: const EdgeInsets.symmetric(horizontal: 22),
                     child: userInfo != null
@@ -119,8 +120,8 @@ class HomeScreen extends HookWidget {
                               Container(
                                 alignment: Alignment.centerLeft,
                                 child: SizedBox(
-                                  width: 45,
-                                  height: 45,
+                                  width: 40,
+                                  height: 40,
                                   child: CircleAvatar(
                                     backgroundImage: NetworkImage(
                                       userInfo.URL_IMAGE ??
@@ -140,7 +141,7 @@ class HomeScreen extends HookWidget {
                                       style: const TextStyle(
                                         fontFamily: 'Gotham',
                                         fontSize: 16,
-                                        fontWeight: FontWeight.w500,
+                                        fontWeight: FontWeight.w400,
                                         height: 1,
                                         color: Color(0xff313131),
                                       ),
@@ -162,6 +163,7 @@ class HomeScreen extends HookWidget {
                     const SizedBox(
                       height: 8,
                     ),
+                    ActivityHeader(),
                     firstLine(context, loggedUserRol),
                     Container(
                       margin: const EdgeInsets.symmetric(
@@ -176,7 +178,7 @@ class HomeScreen extends HookWidget {
                               mainAxisAlignment: MainAxisAlignment.spaceBetween,
                               children: [
                                 optionsAndLogout(context),
-                                const Gap(10),
+                                const Gap(8),
                                 Stack(
                                   children: [
                                     Container(
@@ -189,15 +191,15 @@ class HomeScreen extends HookWidget {
                                         children: [
                                           const Padding(
                                             padding: EdgeInsets.symmetric(
-                                              horizontal: 8.0,
+                                              horizontal: 6.0,
                                             ),
-                                            child: Icon(Ionicons.search),
+                                            child: Icon(Ionicons.search, color: Colors.grey, size: 20,),
                                           ),
                                           SizedBox(
                                             width: MediaQuery.of(context)
                                                     .size
                                                     .width *
-                                                (0.65),
+                                                (0.66),
                                             height: MediaQuery.of(context)
                                                     .size
                                                     .height *
@@ -211,9 +213,10 @@ class HomeScreen extends HookWidget {
                                                 fillColor: bottomNavBar,
                                                 border: InputBorder.none,
                                                 hintText: 'Buscar por codigo',
+                                                hintStyle: TextStyle(fontWeight: FontWeight.w300),
                                                  suffixIcon: searchController.text.isNotEmpty
                                                  ? IconButton(
-                                                 icon: const Icon(Icons.clear),
+                                                 icon: const Icon(Icons.clear, color: Colors.grey,),
                                                 onPressed: _clearSearch,
                                                  )
                                                 : null,
@@ -516,9 +519,9 @@ class HomeScreen extends HookWidget {
 
   Widget optionsAndLogout(BuildContext context) {
     return Container(
-      //margin: EdgeInsets.only(left: 4),
+      margin: EdgeInsets.only(left: 3),
       width: MediaQuery.of(context).size.width * 0.12,
-      height: MediaQuery.of(context).size.width * 0.10,
+      height: MediaQuery.of(context).size.width * 0.11,
       decoration: BoxDecoration(
         color: bottomNavBar,
         borderRadius: BorderRadius.circular(10),

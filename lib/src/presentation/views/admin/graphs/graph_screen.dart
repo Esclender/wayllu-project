@@ -354,7 +354,7 @@ class GraphicProductsScreen extends HookWidget {
                 text: 'Registro de ventas',
                 fontSize: 25.0,
               ),
-              Container(
+              SizedBox(
                 height: 200,
                 child: ColumnBarChartComponent(
                   data: data,
@@ -383,7 +383,7 @@ class GraphicProductsScreen extends HookWidget {
       {required String hint,
       required ValueNotifier<String> selectedFilter,
       required Map<String, String> selectedValues,
-      TextEditingController? menuController}) {
+      TextEditingController? menuController,}) {
     final currentYear = DateTime.now().year;
 
     final List<DropdownMenuItem<String>> yearItems = [];
@@ -429,8 +429,10 @@ class GraphicProductsScreen extends HookWidget {
     return DropdownButton<String>(
       value: selectedValues[hint],
       hint: Text(hint),
+      style: TextStyle(fontSize: 14, fontWeight: FontWeight.w400, color: iconColor),
       items: items,
-      padding: EdgeInsets.only(right: 6),
+      padding: const EdgeInsets.only(right: 2),
+
       onChanged: (String? newValue) {
         _onDropMenuChanged(
           newValue,
@@ -440,6 +442,7 @@ class GraphicProductsScreen extends HookWidget {
           selectedValues,
         );
       },
+      
     );
   }
 
@@ -454,7 +457,7 @@ class GraphicProductsScreen extends HookWidget {
       ),
     );
 
-    final double additionalPadding = 10;
+    const double additionalPadding = 10;
 
     return Padding(
       padding: const EdgeInsets.symmetric(horizontal: 20),
@@ -468,12 +471,12 @@ class GraphicProductsScreen extends HookWidget {
                 child: _buildShimmerEffect(context),
               ),
               Container(
-                margin: EdgeInsets.only(left: 15, top: 5 + additionalPadding),
+                margin: const EdgeInsets.only(left: 15, top: 5 + additionalPadding),
                 decoration: decoration,
                 child: _buildShimmerEffect2(context),
               ),
               Container(
-                margin: EdgeInsets.only(
+                margin: const EdgeInsets.only(
                   left: 95,
                   top: 5 + additionalPadding,
                 ),
@@ -481,7 +484,7 @@ class GraphicProductsScreen extends HookWidget {
                 child: _buildShimmerEffectText(context),
               ),
               Container(
-                margin: EdgeInsets.only(
+                margin: const EdgeInsets.only(
                   left: 95,
                   top: 20 + additionalPadding,
                 ),
@@ -545,33 +548,6 @@ class GraphicProductsScreen extends HookWidget {
     );
   }
 
-  Widget _listTile({
-    required Widget leading,
-    required Widget title,
-    required List<DescriptionItem> fields,
-  }) {
-    return Row(
-      children: [
-        leading,
-        const Gap(20),
-        Column(
-          crossAxisAlignment: CrossAxisAlignment.start,
-          children: [
-            title,
-            ...fields.map(
-              (f) => Text(
-                '${f.field}: ${f.value}',
-                style: TextStyle(
-                  color: smallWordsColor.withOpacity(0.7),
-                  fontSize: 8,
-                ),
-              ),
-            ),
-          ],
-        ),
-      ],
-    );
-  }
 
   Widget _buildItemContainer({
     required String productCode,
@@ -650,7 +626,7 @@ class GraphicProductsScreen extends HookWidget {
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
                   Text('Cantidad: ${venta.CANTIDAD}',
-                      style: infoCardsProducts()),
+                      style: infoCardsProducts(),),
                   Text(
                     'Descripción: ${venta.DESCRIPCION}',
                     style: infoCardsProducts(),
@@ -662,14 +638,14 @@ class GraphicProductsScreen extends HookWidget {
                 ],
               ),
             ),
-            Divider(),
+            const Divider(),
           ],
         );
       }).toList(),
     );
   }
 
-  TextStyle infoCardsProducts() => TextStyle(fontSize: 12);
+  TextStyle infoCardsProducts() => const TextStyle(fontSize: 12);
 
   Widget _buildImageAvatar(String url) {
     return Container(
@@ -685,6 +661,7 @@ class GraphicProductsScreen extends HookWidget {
     );
   }
 }
+
 class DropDownMenuArtesanos extends HookWidget {
   final TextEditingController? menuController;
   final ValueNotifier<String> selectedOption;
@@ -696,16 +673,10 @@ class DropDownMenuArtesanos extends HookWidget {
 
   @override
   Widget build(BuildContext context) {
-    final double width = MediaQuery.of(context).size.width - 45.0;
     final usersListCubit = context.watch<UsersListCubit>();
     final usersListCubitRead = context.read<UsersListCubit>();
     final queryNombre = useState(selectedOption.value);
 
-    void changeQuery(String query) {
-      WidgetsBinding.instance.addPostFrameCallback((_) {
-        queryNombre.value = query;
-      });
-    }
 
     void closeKeyboard(BuildContext context) {
       FocusScope.of(context).unfocus();
@@ -716,93 +687,65 @@ class DropDownMenuArtesanos extends HookWidget {
       return;
     }, []);
 
-    // Add a post-frame callback to ensure the build is complete before handling state changes
-    useEffect(
-      () {
-        WidgetsBinding.instance.addPostFrameCallback((_) {
-          queryNombre.addListener(() {
-            if (queryNombre.value != selectedOption.value) {
-              usersListCubitRead.getUserLists(
-                nombre: queryNombre.value,
-                cantidad: 5,
-              );
-            }
-          });
+    useEffect(() {
+      WidgetsBinding.instance.addPostFrameCallback((_) {
+        queryNombre.addListener(() {
+          if (queryNombre.value != selectedOption.value) {
+            usersListCubitRead.getUserLists(
+              nombre: queryNombre.value,
+              cantidad: 5,
+            );
+          }
         });
+      });
 
-        // Cleanup the listener on dispose
-        return () {};
-      },
-      [],
-    );
+      return () {};
+    }, []);
+
+    final items = usersListCubit.state?.map<DropdownMenuItem<String>>((value) {
+      return DropdownMenuItem<String>(
+        value: value.codigoArtesano.toString(),
+        child: ListTile(
+          leading: SizedBox(
+            width: 35,
+            height: 35,
+            child: CircleAvatar(
+              backgroundImage: NetworkImage(value.url),
+            ),
+          ),
+          title: Text(value.nombre, style: const TextStyle(fontSize: 14, fontWeight: FontWeight.w400),),
+        ),
+      );
+    }).toList() ?? [];
+
+    // Comprobar que el valor seleccionado está en la lista de elementos
+    String? selectedValue = selectedOption.value;
+    if (selectedValue != null && !items.any((item) => item.value == selectedValue)) {
+      selectedValue = null;
+    }
 
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
-        const Text(
-          'Artesano',
-          style: TextStyle(
-            color: Color(0xFF241E20),
-            fontSize: 16,
-            fontFamily: 'Gotham',
-            fontWeight: FontWeight.w500,
-            height: 1.5, // Adjust height as needed
-          ),
-        ),
-        DropdownMenu(
-          hintText: 'Asignar artesano',
-          controller: menuController,
-          initialSelection:
-              usersListCubit.state!.isNotEmpty ? selectedOption.value : null,
-          trailingIcon: const Icon(Ionicons.chevron_down),
-          width: width,
-          requestFocusOnTap: true,
-          enableFilter: true,
-          menuStyle: MenuStyle(
-            side: MaterialStateProperty.all<BorderSide>(
-              const BorderSide(
-                color: Colors.transparent,
-              ),
-            ),
-            backgroundColor: MaterialStateProperty.all<Color>(Colors.white),
-          ),
-          onSelected: (dynamic selected) {
-            selectedOption.value = selected as String;
-            closeKeyboard(context);
-
-            // Add the logic to use the selected artisan code
-            final ventasListCubit = context.read<VentasListCubit>();
-            final codArtisan = int.tryParse(selectedOption.value);
-            if (codArtisan != null) {
-              ventasListCubit.getVentasByCodeArtisians(codArtisan);
-            } else {
-              print('Invalid artisan code: ${selectedOption.value}');
+        DropdownButton<String>(
+          value: selectedValue,
+          hint: const Text('Asignar artesano'),
+          style: const TextStyle(fontSize: 14, fontWeight: FontWeight.w400),
+          isExpanded: true,
+          items: items,
+          onChanged: (String? newValue) {
+            if (newValue != null) {
+              selectedOption.value = newValue;
+              closeKeyboard(context);
+              final ventasListCubit = context.read<VentasListCubit>();
+              final codArtisan = int.tryParse(selectedOption.value);
+              if (codArtisan != null) {
+                ventasListCubit.getVentasByCodeArtisians(codArtisan);
+              } else {
+                print('Invalid artisan code: ${selectedOption.value}');
+              }
             }
           },
-          searchCallback: (entries, query) {
-            if (query.isEmpty) {
-              return null;
-            }
-            changeQuery(query);
-            final int index = entries.indexWhere(
-              (DropdownMenuEntry entry) => entry.label == query,
-            );
-            return index != -1 ? index : null;
-          },
-          dropdownMenuEntries: usersListCubit.state != null
-              ? usersListCubit.state!.map<DropdownMenuEntry>((value) {
-                  return DropdownMenuEntry(
-                    value: value.codigoArtesano.toString(),
-                    label: value.nombre,
-                    labelWidget: ListTile(
-                      leading: CircleAvatar(
-                        backgroundImage: NetworkImage(value.url),
-                      ),
-                      title: Text(value.nombre),
-                    ),
-                  );
-                }).toList()
-              : [],
         ),
       ],
     );
