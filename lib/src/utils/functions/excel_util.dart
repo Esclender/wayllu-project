@@ -1,20 +1,133 @@
 import 'dart:io';
+import 'package:permission_handler/permission_handler.dart';
 import 'package:wayllu_project/src/utils/extensions/excel_implementation.dart';
 
+import '../../domain/models/venta/ventas_excel/ventas_excel.dart';
+
+List<SalesData> salesDataList = [
+  SalesData(
+    date: '2024-17-20 14:30',
+    item: 1,
+    productCode: '013067001',
+    artisan: 'FELIPA RIOS',
+    community: 'PATACANCHA',
+    family: 'CAMINO DE MESA / PIE DE CAMA',
+    quantity: 2,
+    amount: 2.00,
+    unitPrice: 1.00,
+  ),
+  SalesData(
+    date: '2024-17-20 14:30',
+    item: 2,
+    productCode: '013048001',
+    artisan: 'FELIPA RIOS',
+    community: 'PATACANCHA',
+    family: 'CAMINO DE MESA / PIE DE CAMA',
+    quantity: 2,
+    amount: 2.00,
+    unitPrice: 1.00,
+  ),
+  SalesData(
+    date: '2024-17-20 14:30',
+    item: 2,
+    productCode: '013048001',
+    artisan: 'FELIPA RIOS',
+    community: 'PATACANCHA',
+    family: 'CAMINO DE MESA / PIE DE CAMA',
+    quantity: 2,
+    amount: 2.00,
+    unitPrice: 1.00,
+  ),
+  SalesData(
+    date: '2024-17-20 14:30',
+    item: 2,
+    productCode: '013048001',
+    artisan: 'FELIPA RIOS',
+    community: 'PATACANCHA',
+    family: 'CAMINO DE MESA / PIE DE CAMA',
+    quantity: 2,
+    amount: 2.00,
+    unitPrice: 1.00,
+  ),
+  SalesData(
+    date: '2024-17-20 14:30',
+    item: 2,
+    productCode: '013048001',
+    artisan: 'FELIPA RIOS',
+    community: 'PATACANCHA',
+    family: 'CAMINO DE MESA / PIE DE CAMA',
+    quantity: 2,
+    amount: 2.00,
+    unitPrice: 1.00,
+  ),
+  SalesData(
+    date: '2024-17-20 14:30',
+    item: 2,
+    productCode: '013048001',
+    artisan: 'FELIPA RIOS',
+    community: 'PATACANCHA',
+    family: 'CAMINO DE MESA / PIE DE CAMA',
+    quantity: 2,
+    amount: 2.00,
+    unitPrice: 1.00,
+  ),
+  SalesData(
+    date: '2024-17-20 14:30',
+    item: 2,
+    productCode: '013048001',
+    artisan: 'FELIPA RIOS',
+    community: 'PATACANCHA',
+    family: 'CAMINO DE MESA / PIE DE CAMA',
+    quantity: 2,
+    amount: 2.00,
+    unitPrice: 1.00,
+  ),
+  SalesData(
+    date: '2024-17-20 14:30',
+    item: 2,
+    productCode: '013048001',
+    artisan: 'FELIPA RIOS',
+    community: 'PATACANCHA',
+    family: 'CAMINO DE MESA / PIE DE CAMA',
+    quantity: 2,
+    amount: 2.00,
+    unitPrice: 1.00,
+  ),
+];
+
 class ExcelUtil {
+  Future<void> requestStoragePermission() async {
+    // Check if storage permission is already granted
+    if (await Permission.storage.isGranted) {
+      print('Storage permission is already granted.');
+      return;
+    }
+
+    // Request storage permission
+    PermissionStatus status = await Permission.storage.request();
+
+    // Handle the status of the permission request
+    if (status.isGranted) {
+      print('Storage permission granted.');
+    } else if (status.isDenied) {
+      print('Storage permission denied.');
+    } else if (status.isPermanentlyDenied) {
+      print(
+          'Storage permission is permanently denied. Please enable it from settings.');
+      // Optionally, open app settings so the user can grant permission manually
+      openAppSettings();
+    }
+  }
+
   Future<void> generateAndSaveExcel(
     String fileName,
   ) async {
-    // Create an instance of ExcelLibrary
     final ExcelImplementation excelLibrary = ExcelImplementation();
+    final int totalRows = excelLibrary.addData(salesDataList);
+    excelLibrary.insertFooter(totalRows);
+    excelLibrary.wrappingCells(totalRows);
 
-    // Set headers with styles
-    excelLibrary.setHeaders();
-
-    // Add data to the Excel sheet
-    excelLibrary.addData();
-
-    // Save the Excel file to device storage
+    await requestStoragePermission();
     await _saveExcelFile(excelLibrary.encode(), fileName);
     excelLibrary.dispose();
   }
@@ -33,25 +146,6 @@ class ExcelUtil {
 
     // Save the Excel file
     File(filePath).writeAsBytesSync(bytes);
-
-    print('Excel file saved at: $filePath');
+    print('Excel file saved');
   }
 }
-
-// void main() async {
-//   // Example usage of the ExcelUtil class
-//   ExcelUtil excelUtil = ExcelUtil();
-
-//   // Define the headers for the Excel file
-//   List<String> headers = ['Name', 'Age', 'Occupation'];
-
-//   // Define the data to be added to the Excel file
-//   List<List<dynamic>> data = [
-//     ['Alice', 28, 'Engineer'],
-//     ['Bob', 34, 'Designer'],
-//     ['Charlie', 22, 'Developer'],
-//   ];
-
-//   // Generate and save the Excel file
-//   await excelUtil.generateAndSaveExcel('CustomExcel');
-// }

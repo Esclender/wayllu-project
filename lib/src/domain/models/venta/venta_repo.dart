@@ -31,7 +31,7 @@ class VentaInfo {
 
   String formattingDate() {
     final DateTime dateTime = FECHA_REGISTRO != null
-        ? DateTime.parse(FECHA_REGISTRO ?? '')
+        ? DateTime.parse(FECHA_REGISTRO)
         : DateTime.now();
 
     final String formattedDate = DateFormat('yyyy-MM-dd').format(dateTime);
