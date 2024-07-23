@@ -30,4 +30,12 @@ class VentasListCubit extends Cubit<List<VentasList>?> {
       emit(responseState);
     }
   }
+
+   Future<void> getVentasByCodeArtisians(int codArtisan) async {
+    final responseState = await _apiRepository.getVentasByCodeArtisians(codArtisan);
+
+   if (responseState != null) {
+      emit(responseState);
+    }
+  }
 }

@@ -14,7 +14,9 @@ class VentasList {
     this.CANTIDAD,
     this.DESCRIPCION,
     this.COD_PRODUCTO,
+    this.COD_ARTESANA,
     this.CODIGO_REGISTRO,
+    this.PRECIO_VENTA,
     this.registrosVentasId,
     this.IMAGEN,
   });
@@ -29,6 +31,8 @@ class VentasList {
   String? registrosVentasId;
   String? IMAGEN;
   String? COD_PRODUCTO;
+  int? COD_ARTESANA;
+  double? PRECIO_VENTA;
 
   Map<String, dynamic> toJson() => _$VentasListToJson(this);
 
@@ -38,6 +42,7 @@ class VentasList {
       product_code: '$COD_PRODUCTO',
       descriptions: [
         DescriptionItem(field: 'Descripción', value: DESCRIPCION ?? ''),
+        DescriptionItem(field: 'Artesana', value: '$COD_ARTESANA'), 
       ],
     );
   }

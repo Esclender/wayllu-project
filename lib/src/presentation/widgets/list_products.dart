@@ -221,14 +221,24 @@ class ProductsCardsItemsList extends HookWidget {
           ),
         ),
         Gap(8),
-        if (loggedUserRol)
-          Container(
-            margin: const EdgeInsets.only(right: 4),
-            alignment: Alignment.bottomRight,
-            child: _buildEditButton(
-              productInfo: productInfo,
+        Row(
+          mainAxisAlignment: MainAxisAlignment.spaceBetween,
+          children: [
+            Padding(
+              padding: const EdgeInsets.only(left: 4.0),
+              child: Text('S/${productInfo.PRECIO}', style: TextStyle(color: iconColor,
+              fontSize: 16),),
             ),
-          ),
+            if (loggedUserRol)
+              Container(
+                margin: const EdgeInsets.only(right: 4),
+                alignment: Alignment.bottomRight,
+                child: _buildEditButton(
+                  productInfo: productInfo,
+                ),
+              ),
+          ],
+        )
       ],
     );
   }

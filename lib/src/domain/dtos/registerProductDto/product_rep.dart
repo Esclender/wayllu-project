@@ -20,6 +20,7 @@ class ProductDto extends Equatable {
   final int COD_ARTESANA;
   final String UBICACION;
   final int CANTIDAD;
+  final double PRECIO;
 
   ProductDto({
     required this.ANCHO,
@@ -33,6 +34,7 @@ class ProductDto extends Equatable {
     required this.COD_ARTESANA,
     required this.UBICACION,
     required this.CANTIDAD,
+    required this.PRECIO,
   });
 
   // Método toJson usando json_serializable
@@ -55,5 +57,6 @@ class ProductDto extends Equatable {
         COD_ARTESANA,
         UBICACION,
         CANTIDAD,
+        PRECIO
       ];
 }

@@ -48,4 +48,5 @@ class UsersListCubit extends Cubit<List<CardTemplate>?> {
       emit([]);
     }
   }
+
 }

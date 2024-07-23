@@ -9,7 +9,7 @@ class ColumnBarChartComponent extends HookWidget {
   final TooltipBehavior _tooltipBehavior = TooltipBehavior(
     enable: true,
     canShowMarker: false,
-    format: 'point.y productos vendidos',
+    format: 'point.y total de ventas',
     header: '',
   );
 

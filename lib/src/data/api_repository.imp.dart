@@ -164,4 +164,13 @@ class ProductsApiRepositoryImpl extends BaseApiRepository
       request: () => _apiServices.updateProducto(productInfo),
     );
   }
+
+  
+  Future<VentasListHttpResponse> getVentasByCodeArtisians(int codArtisan) async {
+    
+    final responseHttp = await getStateOf<VentasListHttpResponse>(
+      request: () => _apiServices.getVentasByCodeArtisians(codArtisan),
+    );
+    return responseHttp.data;
+  }
 }

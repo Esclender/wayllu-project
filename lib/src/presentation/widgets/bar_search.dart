@@ -73,7 +73,7 @@ class _CustomSearchWidgetState extends State<CustomSearchWidget> {
                 children: [
                   const Padding(
                     padding: EdgeInsets.symmetric(horizontal: 8.0),
-                    child: Icon(Ionicons.search),
+                    child: Icon(Ionicons.search, color: Colors.grey,),
                   ),
                   SizedBox(
                     width: MediaQuery.of(context).size.width *
