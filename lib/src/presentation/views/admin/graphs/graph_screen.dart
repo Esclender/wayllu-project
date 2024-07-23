@@ -729,7 +729,7 @@ class DropDownMenuArtesanos extends HookWidget {
       children: [
         DropdownButton<String>(
           value: selectedValue,
-          hint: const Text('Asignar artesano'),
+          hint: const Text('Buscar artesano'),
           style: const TextStyle(fontSize: 14, fontWeight: FontWeight.w400),
           isExpanded: true,
           items: items,
