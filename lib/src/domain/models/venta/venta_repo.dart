@@ -30,9 +30,7 @@ class VentaInfo {
   Map<String, dynamic> toJson() => _$VentaInfoToJson(this);
 
   String formattingDate() {
-    final DateTime dateTime = FECHA_REGISTRO != null
-        ? DateTime.parse(FECHA_REGISTRO)
-        : DateTime.now();
+    final DateTime dateTime = DateTime.parse(FECHA_REGISTRO);
 
     final String formattedDate = DateFormat('yyyy-MM-dd').format(dateTime);
 

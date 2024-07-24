@@ -1,7 +1,7 @@
 class SalesData {
   final String date;
-  final int item;
   final String productCode;
+  final String categoryProduct;
   final String artisan;
   final String community;
   final String family;
@@ -11,7 +11,7 @@ class SalesData {
 
   SalesData({
     required this.date,
-    required this.item,
+    required this.categoryProduct,
     required this.productCode,
     required this.artisan,
     required this.community,

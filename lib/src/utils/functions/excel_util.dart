@@ -1,99 +1,9 @@
 import 'dart:io';
+
+import 'package:intl/intl.dart';
 import 'package:permission_handler/permission_handler.dart';
+import 'package:wayllu_project/src/domain/models/venta/ventas_excel/ventas_excel.dart';
 import 'package:wayllu_project/src/utils/extensions/excel_implementation.dart';
-
-import '../../domain/models/venta/ventas_excel/ventas_excel.dart';
-
-List<SalesData> salesDataList = [
-  SalesData(
-    date: '2024-17-20 14:30',
-    item: 1,
-    productCode: '013067001',
-    artisan: 'FELIPA RIOS',
-    community: 'PATACANCHA',
-    family: 'CAMINO DE MESA / PIE DE CAMA',
-    quantity: 2,
-    amount: 2.00,
-    unitPrice: 1.00,
-  ),
-  SalesData(
-    date: '2024-17-20 14:30',
-    item: 2,
-    productCode: '013048001',
-    artisan: 'FELIPA RIOS',
-    community: 'PATACANCHA',
-    family: 'CAMINO DE MESA / PIE DE CAMA',
-    quantity: 2,
-    amount: 2.00,
-    unitPrice: 1.00,
-  ),
-  SalesData(
-    date: '2024-17-20 14:30',
-    item: 2,
-    productCode: '013048001',
-    artisan: 'FELIPA RIOS',
-    community: 'PATACANCHA',
-    family: 'CAMINO DE MESA / PIE DE CAMA',
-    quantity: 2,
-    amount: 2.00,
-    unitPrice: 1.00,
-  ),
-  SalesData(
-    date: '2024-17-20 14:30',
-    item: 2,
-    productCode: '013048001',
-    artisan: 'FELIPA RIOS',
-    community: 'PATACANCHA',
-    family: 'CAMINO DE MESA / PIE DE CAMA',
-    quantity: 2,
-    amount: 2.00,
-    unitPrice: 1.00,
-  ),
-  SalesData(
-    date: '2024-17-20 14:30',
-    item: 2,
-    productCode: '013048001',
-    artisan: 'FELIPA RIOS',
-    community: 'PATACANCHA',
-    family: 'CAMINO DE MESA / PIE DE CAMA',
-    quantity: 2,
-    amount: 2.00,
-    unitPrice: 1.00,
-  ),
-  SalesData(
-    date: '2024-17-20 14:30',
-    item: 2,
-    productCode: '013048001',
-    artisan: 'FELIPA RIOS',
-    community: 'PATACANCHA',
-    family: 'CAMINO DE MESA / PIE DE CAMA',
-    quantity: 2,
-    amount: 2.00,
-    unitPrice: 1.00,
-  ),
-  SalesData(
-    date: '2024-17-20 14:30',
-    item: 2,
-    productCode: '013048001',
-    artisan: 'FELIPA RIOS',
-    community: 'PATACANCHA',
-    family: 'CAMINO DE MESA / PIE DE CAMA',
-    quantity: 2,
-    amount: 2.00,
-    unitPrice: 1.00,
-  ),
-  SalesData(
-    date: '2024-17-20 14:30',
-    item: 2,
-    productCode: '013048001',
-    artisan: 'FELIPA RIOS',
-    community: 'PATACANCHA',
-    family: 'CAMINO DE MESA / PIE DE CAMA',
-    quantity: 2,
-    amount: 2.00,
-    unitPrice: 1.00,
-  ),
-];
 
 class ExcelUtil {
   Future<void> requestStoragePermission() async {
@@ -119,8 +29,14 @@ class ExcelUtil {
     }
   }
 
+  String generateRandomFileName() {
+    final DateTime now = DateTime.now();
+    final String formattedDate = DateFormat('yyyyMMdd_HHmmss').format(now);
+    return 'REPORTE_$formattedDate.xlsx';
+  }
+
   Future<void> generateAndSaveExcel(
-    String fileName,
+    List<SalesData> salesDataList,
   ) async {
     final ExcelImplementation excelLibrary = ExcelImplementation();
     final int totalRows = excelLibrary.addData(salesDataList);
@@ -128,7 +44,7 @@ class ExcelUtil {
     excelLibrary.wrappingCells(totalRows);
 
     await requestStoragePermission();
-    await _saveExcelFile(excelLibrary.encode(), fileName);
+    await _saveExcelFile(excelLibrary.encode(), generateRandomFileName());
     excelLibrary.dispose();
   }
 

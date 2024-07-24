@@ -6,13 +6,13 @@ import 'package:flutter_hooks/flutter_hooks.dart';
 import 'package:gap/gap.dart';
 import 'package:intl/date_symbol_data_local.dart';
 import 'package:intl/intl.dart';
-import 'package:ionicons/ionicons.dart';
 import 'package:shimmer/shimmer.dart';
 import 'package:wayllu_project/src/config/router/app_router.dart';
 import 'package:wayllu_project/src/domain/models/graphs/chart_column_bar.dart';
 import 'package:wayllu_project/src/domain/models/list_items_model.dart';
 import 'package:wayllu_project/src/domain/models/list_products_model.dart';
 import 'package:wayllu_project/src/domain/models/registro_ventas/registros_venta_repo.dart';
+import 'package:wayllu_project/src/domain/models/venta/ventas_excel/ventas_excel.dart';
 import 'package:wayllu_project/src/locator.dart';
 import 'package:wayllu_project/src/presentation/cubit/users_list_cubit.dart';
 import 'package:wayllu_project/src/presentation/cubit/ventas_list_cubit.dart';
@@ -73,6 +73,14 @@ class GraphicProductsScreen extends HookWidget {
     }
   }
 
+  Future<void> generateSalesReport(BuildContext context) async {
+    final ventasListCubit = context.read<VentasListCubit>();
+    final List<SalesData> salesDataList = await ventasListCubit.getSalesData();
+
+    final excelUtil = ExcelUtil();
+    excelUtil.generateAndSaveExcel(salesDataList);
+  }
+
   void _clearFilters(
     BuildContext context,
     ValueNotifier<String> selectedFilter,
@@ -86,12 +94,12 @@ class GraphicProductsScreen extends HookWidget {
 
   @override
   Widget build(BuildContext context) {
-    final ventasListCubit = context.watch<VentasListCubit>();
-    final dataVentas = useState<List<VentasList>>([]);
+    final isLoading = useState<bool>(true);
     final selectedFilter = useState<String>('');
+    final dataVentas = useState<List<VentasList>>([]);
     final selectedValues = useState<Map<String, String>>({});
     final scrollController = useScrollController();
-    final isLoading = useState<bool>(true);
+    final ventasListCubit = context.watch<VentasListCubit>();
     List<ChartBarData> chartData = [];
 
     final artesanoController = useTextEditingController();
@@ -129,7 +137,7 @@ class GraphicProductsScreen extends HookWidget {
         final date = DateTime.parse(venta.FECHA_REGISTRO);
 
         if (date.month.toString() == selectedValues.value['Mes']) {
-          dailySums[date] = (dailySums[date] ?? 0) + (venta.CANTIDAD ?? 0);
+          dailySums[date] = (dailySums[date] ?? 0) + (venta.CANTIDAD);
 
           if (latestDate == null || date.isAfter(latestDate)) {
             latestDate = date;
@@ -152,8 +160,7 @@ class GraphicProductsScreen extends HookWidget {
       final Map<int, double> monthlySums = {};
       for (final venta in dataVentas.value) {
         final month = DateTime.parse(venta.FECHA_REGISTRO).month;
-        monthlySums[month] =
-            (monthlySums[month] ?? 0) + (venta.PRECIO_VENTA ?? 0);
+        monthlySums[month] = (monthlySums[month] ?? 0) + (venta.PRECIO_VENTA);
       }
 
       chartData = monthlySums.entries
@@ -171,7 +178,7 @@ class GraphicProductsScreen extends HookWidget {
 
     final groupedVentas = groupBy<VentasList, String>(
       dataVentas.value,
-      (venta) => '${venta.COD_PRODUCTO}',
+      (venta) => venta.COD_PRODUCTO,
     );
 
     final List<CardTemplateProducts> cardData =
@@ -180,7 +187,7 @@ class GraphicProductsScreen extends HookWidget {
       final ventas = entry.value;
       final totalCantidad = ventas.fold<int>(
         0,
-        (sum, venta) => sum + (venta.CANTIDAD ?? 0),
+        (sum, venta) => sum + (venta.CANTIDAD),
       );
       final producto = ventas.first;
 
@@ -191,7 +198,7 @@ class GraphicProductsScreen extends HookWidget {
           DescriptionItem(field: 'Total Vendido', value: '$totalCantidad'),
           DescriptionItem(
             field: 'Descripción',
-            value: producto.DESCRIPCION ?? '',
+            value: producto.DESCRIPCION,
           ),
         ],
       );
@@ -363,7 +370,7 @@ class GraphicProductsScreen extends HookWidget {
         backgroundColor: bottomNavBar,
         shape: const CircleBorder(),
         onPressed: () {
-          excelUtil.generateAndSaveExcel('prueba');
+          generateSalesReport(context);
         },
         child: Image.asset('assets/images/excel-download.png'),
       ),
@@ -609,7 +616,7 @@ class GraphicProductsScreen extends HookWidget {
     );
 
     final totalQuantity =
-        ventas.fold<int>(0, (sum, item) => sum + (item.CANTIDAD ?? 0));
+        ventas.fold<int>(0, (sum, item) => sum + (item.CANTIDAD));
     final String imageUrl = ventas.isNotEmpty && ventas.first.IMAGEN != null
         ? ventas.first.IMAGEN!
         : 'https://via.placeholder.com/150'; // URL de la imagen por defecto
@@ -762,8 +769,7 @@ class DropDownMenuArtesanos extends HookWidget {
 
     // Comprobar que el valor seleccionado está en la lista de elementos
     String? selectedValue = selectedOption.value;
-    if (selectedValue != null &&
-        !items.any((item) => item.value == selectedValue)) {
+    if (!items.any((item) => item.value == selectedValue)) {
       selectedValue = null;
     }
 

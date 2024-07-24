@@ -85,8 +85,8 @@ class ExcelImplementation {
 
     // Add headers
     sheet.getRangeByName('B5').setText('FECHA');
-    sheet.getRangeByName('C5').setText('ITEM');
-    sheet.getRangeByName('D5').setText('CODIGO PRODUCTO');
+    sheet.getRangeByName('C5').setText('CODIGO PRODUCTO');
+    sheet.getRangeByName('D5').setText('CATEGORIA PRODUCTO');
     sheet.getRangeByName('E5').setText('ARTESANA');
     sheet.getRangeByName('F5').setText('COMUNIDAD');
     sheet.getRangeByName('G5').setText('FAMILIA');
@@ -106,8 +106,8 @@ class ExcelImplementation {
     int currentRow = 6;
     for (var data in salesDataList) {
       sheet.getRangeByName('B$currentRow').setText(data.date);
-      sheet.getRangeByName('C$currentRow').setValue(data.item);
-      sheet.getRangeByName('D$currentRow').setText(data.productCode);
+      sheet.getRangeByName('C$currentRow').setValue(data.productCode);
+      sheet.getRangeByName('D$currentRow').setText(data.categoryProduct);
       sheet.getRangeByName('E$currentRow').setText(data.artisan);
       sheet.getRangeByName('F$currentRow').setText(data.community);
       sheet.getRangeByName('G$currentRow').setText(data.family);

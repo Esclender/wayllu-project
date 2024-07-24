@@ -1,4 +1,3 @@
-import 'package:flutter/material.dart';
 import 'package:wayllu_project/src/data/remoteRespositories/artesanos/artesanos.repo.dart';
 import 'package:wayllu_project/src/data/remoteRespositories/auth/auth.repo.dart';
 import 'package:wayllu_project/src/data/remoteRespositories/productos/productos.repo.dart';
@@ -165,9 +164,8 @@ class ProductsApiRepositoryImpl extends BaseApiRepository
     );
   }
 
-  
-  Future<VentasListHttpResponse> getVentasByCodeArtisians(int codArtisan) async {
-    
+  Future<VentasListHttpResponse> getVentasByCodeArtisians(
+      int codArtisan) async {
     final responseHttp = await getStateOf<VentasListHttpResponse>(
       request: () => _apiServices.getVentasByCodeArtisians(codArtisan),
     );
