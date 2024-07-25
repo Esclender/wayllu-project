@@ -4,6 +4,8 @@ import 'dart:async';
 
 import 'package:auto_route/auto_route.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter/rendering.dart';
+import 'package:flutter/widgets.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_hooks/flutter_hooks.dart';
 import 'package:hexcolor/hexcolor.dart';
@@ -209,12 +211,13 @@ class CarritoScreen extends HookWidget {
     required void Function() decrease,
   }) {
     return Container(
-      padding: EdgeInsets.all(6),
-      margin: EdgeInsets.only(bottom: 8),
+      padding: const EdgeInsets.all(6),
+      margin: const EdgeInsets.only(bottom: 8),
       decoration: BoxDecoration(
-          borderRadius: BorderRadius.circular(10),
-          color: bottomNavBar,
-          boxShadow: [simpleShadow]),
+        borderRadius: BorderRadius.circular(10),
+        color: bottomNavBar,
+        boxShadow: [simpleShadow],
+      ),
       child: Row(
         children: [
           SizedBox(
@@ -229,7 +232,7 @@ class CarritoScreen extends HookWidget {
               ),
             ),
           ),
-          const SizedBox(width: 10),
+          const SizedBox(width: 12),
           Expanded(
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.start,
@@ -240,11 +243,11 @@ class CarritoScreen extends HookWidget {
                     mainAxisAlignment: MainAxisAlignment.spaceBetween,
                     children: [
                       Text(
-                        product.COD_PRODUCTO.toString(),
+                        product.COD_PRODUCTO,
                         style: const TextStyle(
                           fontSize: 16,
-                          fontWeight: FontWeight.bold,
-                          color: Colors.black,
+                          fontWeight: FontWeight.normal,
+                          color: Color.fromARGB(255, 25, 25, 25),
                           fontFamily: 'Gotham',
                         ),
                       ),
@@ -270,6 +273,10 @@ class CarritoScreen extends HookWidget {
                 Row(
                   mainAxisAlignment: MainAxisAlignment.spaceBetween,
                   children: [
+                    Text(
+                      'S/${product.PRECIO}',
+                      style: TextStyle(fontSize: 18, color: iconColor),
+                    ),
                     _buildQuantityControl(
                       increase: increase,
                       decrease: decrease,
@@ -291,34 +298,77 @@ class CarritoScreen extends HookWidget {
     required void Function() decrease,
   }) {
     return Container(
+      margin: const EdgeInsets.only(right: 10),
       height: 30,
-      decoration: BoxDecoration(
-        border: Border.all(
-          color: const Color(0xFF919191),
-        ),
-        borderRadius: BorderRadius.circular(5),
-      ),
+      // decoration: BoxDecoration(
+      //   border: Border.all(
+      //     color: const Color(0xFF919191),
+      //   ),
+      //   borderRadius: BorderRadius.circular(5),
+      // ),
       child: Row(
         children: [
-          IconButton(
-            icon: const Icon(
-              Icons.remove,
+          Container(
+            width: 20,
+            height: 20,
+            decoration: BoxDecoration(
+              color: bottomNavBarStroke,
+              borderRadius: BorderRadius.circular(5),
             ),
-            iconSize: 15,
-            onPressed: decrease,
-          ),
-          Text(
-            value.toString(),
-            style: const TextStyle(
-              fontSize: 16,
-              fontFamily: 'Gotham',
-              color: Colors.black,
+            child: TextButton(
+              style: TextButton.styleFrom(
+                padding: EdgeInsets.zero,
+                shape: RoundedRectangleBorder(
+                  borderRadius: BorderRadius.circular(5),
+                ),
+              ),
+              onPressed: decrease,
+              child: Icon(
+                Icons.remove,
+                size: 18,
+                color: bottomNavBar,
+              ),
             ),
           ),
-          IconButton(
-            icon: const Icon(Icons.add),
-            iconSize: 15,
-            onPressed: increase,
+          const SizedBox(
+            width: 6,
+          ),
+          SizedBox(
+            width: 25,
+            child: Text(
+              value.toString(),
+              style: const TextStyle(
+                fontSize: 18,
+                fontFamily: 'Gotham',
+                color: Colors.black,
+              ),
+              textAlign: TextAlign.center,
+            ),
+          ),
+          const SizedBox(
+            width: 6,
+          ),
+          Container(
+            width: 20,
+            height: 20,
+            decoration: BoxDecoration(
+              color: bottomNavBarStroke,
+              borderRadius: BorderRadius.circular(5),
+            ),
+            child: TextButton(
+              style: TextButton.styleFrom(
+                padding: EdgeInsets.zero,
+                shape: RoundedRectangleBorder(
+                  borderRadius: BorderRadius.circular(5),
+                ),
+              ),
+              onPressed: increase,
+              child: Icon(
+                Icons.add,
+                size: 18,
+                color: bottomNavBar,
+              ),
+            ),
           ),
         ],
       ),
@@ -330,12 +380,49 @@ class CarritoScreen extends HookWidget {
 
     return Container(
       height: checkoutBtnHeight,
-      color: bgContainer,
-      padding: const EdgeInsets.all(10.0),
+      decoration: BoxDecoration(
+        color: bgContainer,
+        borderRadius: const BorderRadius.only(
+          topLeft: Radius.circular(10),
+          topRight: Radius.circular(10),
+        ),
+        boxShadow: [
+          BoxShadow(
+            color: Color.fromARGB(255, 33, 33, 33)
+                .withOpacity(0.1), // Color de la sombra
+            // offset: Offset(0, -1), // Desplazamiento en el eje y
+            blurRadius: 6, // Radio de desenfoque
+          ),
+        ],
+      ),
+      padding: const EdgeInsets.symmetric(horizontal: 20.0, vertical: 10),
       child: Column(
         children: [
           Row(
-            mainAxisAlignment: MainAxisAlignment.spaceAround,
+            mainAxisAlignment: MainAxisAlignment.spaceBetween,
+            children: [
+              Text(
+                'Total:',
+                textAlign: TextAlign.center,
+                style: TextStyle(
+                  fontSize: 18,
+                  fontFamily: 'Gotham',
+                  color: iconColor,
+                ),
+              ),
+              Text(
+                'S/${carrito.totalPrice.toString()}',
+                textAlign: TextAlign.center,
+                style: TextStyle(
+                  fontSize: 18,
+                  fontFamily: 'Gotham',
+                  color: iconColor,
+                ),
+              ),
+            ],
+          ),
+          Row(
+            mainAxisAlignment: MainAxisAlignment.spaceBetween,
             children: [
               Text(
                 'N° productos agregados:',
@@ -358,27 +445,30 @@ class CarritoScreen extends HookWidget {
             ],
           ),
           const SizedBox(height: 10),
-          ElevatedButton(
-            onPressed: () {
-              if (carrito.itemsInCartInt != 0) {
-                showLoadingDialog(context, carrito);
-              }
-            },
-            style: ElevatedButton.styleFrom(
-              backgroundColor: thirdColor,
-              padding: const EdgeInsets.symmetric(horizontal: 80, vertical: 15),
-              shape: RoundedRectangleBorder(
-                borderRadius: BorderRadius.circular(
-                  10,
+          SizedBox(
+            width: MediaQuery.of(context).size.width,
+            child: ElevatedButton(
+              onPressed: () {
+                if (carrito.itemsInCartInt != 0) {
+                  showLoadingDialog(context, carrito);
+                }
+              },
+              style: ElevatedButton.styleFrom(
+                backgroundColor: thirdColor,
+                padding: const EdgeInsets.symmetric(vertical: 12),
+                shape: RoundedRectangleBorder(
+                  borderRadius: BorderRadius.circular(
+                    10,
+                  ),
                 ),
               ),
-            ),
-            child: Text(
-              'Registrar Venta',
-              style: TextStyle(
-                fontFamily: 'Gotham',
-                fontSize: 16,
-                color: bgContainer,
+              child: Text(
+                'Registrar Venta',
+                style: TextStyle(
+                  fontFamily: 'Gotham',
+                  fontSize: 16,
+                  color: bgContainer,
+                ),
               ),
             ),
           ),

@@ -1,7 +1,4 @@
 import 'package:flutter_bloc/flutter_bloc.dart';
-import 'package:get_it/get_it.dart';
-import 'package:logger/logger.dart';
-import 'package:wayllu_project/main.dart';
 import 'package:wayllu_project/src/data/api_repository.imp.dart';
 import 'package:wayllu_project/src/domain/dtos/usersCredentialsDto/user_credentials_rep.dart';
 import 'package:wayllu_project/src/domain/enums/user_roles.dart';

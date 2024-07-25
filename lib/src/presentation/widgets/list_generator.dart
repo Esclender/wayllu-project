@@ -57,13 +57,17 @@ class CardTemplateItemsList extends HookWidget {
     required CardTemplate itemData,
   }) {
     final BoxDecoration decoration = BoxDecoration(
-      color: bottomNavBar,
-      boxShadow: [
-        simpleShadow,
-      ],
-      borderRadius: const BorderRadius.all(
-        Radius.circular(5),
-      ),
+      // color: bottomNavBar,
+      // boxShadow: [
+      //   simpleShadow,
+      // ],
+      border: Border(
+      top: BorderSide(width: 0.5, color: bottomNavBarStroke.withOpacity(0.8)),
+      // bottom: BorderSide(color: bottomNavBarStroke),
+    ),
+    //  borderRadius: const BorderRadius.all(
+    //     Radius.circular(5),
+    //   ),
     );
 
     return Stack(
@@ -72,16 +76,13 @@ class CardTemplateItemsList extends HookWidget {
         Stack(
           children: [
             Container(
-              padding: const EdgeInsets.only(left: 15, top: 5, bottom: 5),
+              padding: const EdgeInsets.only(left: 5, top: 8, bottom: 3),
               decoration: decoration,
               child: _listTile(
                 leading: _buildImageAvatar(itemData.url),
                 title: Text(itemData.nombre),
                 fields: itemData.descriptions,
               ),
-            ),
-            _itemMarker(
-              secondary,
             ),
           ],
         ),
@@ -95,8 +96,8 @@ class CardTemplateItemsList extends HookWidget {
 
   Widget _buildImageAvatar(String url) {
     return Container(
-      width: 55,
-      height: 55,
+      width: 65,
+      height: 60,
       decoration: BoxDecoration(
         borderRadius: BorderRadius.circular(5.0),
         image: DecorationImage(

@@ -30,4 +30,18 @@ class VentasListCubit extends Cubit<List<VentasList>?> {
       emit(responseState);
     }
   }
+
+  Future<List<Map<String, dynamic>>> getSalesData() async {
+    if (state == null) return [];
+    return state!.map((venta) => venta.toSalesData().toJson()).toList();
+  }
+
+  Future<void> getVentasByCodeArtisians(int codArtisan) async {
+    final responseState =
+        await _apiRepository.getVentasByCodeArtisians(codArtisan);
+
+    if (responseState != null) {
+      emit(responseState);
+    }
+  }
 }

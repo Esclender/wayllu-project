@@ -10,7 +10,6 @@ import 'package:flutter_hooks/flutter_hooks.dart';
 import 'package:hexcolor/hexcolor.dart';
 import 'package:image_picker/image_picker.dart';
 import 'package:ionicons/ionicons.dart';
-import 'package:logger/logger.dart';
 import 'package:wayllu_project/src/config/router/app_router.dart';
 import 'package:wayllu_project/src/domain/models/products_info/product_info_model.dart';
 import 'package:wayllu_project/src/locator.dart';
@@ -70,6 +69,8 @@ class EditProductsScreen extends HookWidget {
 
     final ubicacionController =
         useTextEditingController(text: productInfo.UBICACION);
+    final precioController =
+        useTextEditingController(text: productInfo.PRECIO.toString());
     final pesoController =
         useTextEditingController(text: productInfo.PESO.toString());
     final altoController =
@@ -156,6 +157,12 @@ class EditProductsScreen extends HookWidget {
                 ),
               ],
             ),
+            containerTextForm(
+              context,
+              'Precio',
+              'Actualice el precio',
+              precioController,
+            ),
             wrappedContainerTextForm(
               context,
               pesoController,
@@ -171,6 +178,7 @@ class EditProductsScreen extends HookWidget {
               tipoPesoController,
               altoController,
               anchoController,
+              precioController,
               categoria,
               codFamilia,
               codigoArtesano,
@@ -190,6 +198,7 @@ class EditProductsScreen extends HookWidget {
     ValueNotifier tipoPesoController,
     TextEditingController altoController,
     TextEditingController anchoController,
+    TextEditingController precioController,
     ValueNotifier<String> categoria,
     ValueNotifier<String> codFamilia,
     ValueNotifier<String?> codArtesano,
@@ -218,6 +227,7 @@ class EditProductsScreen extends HookWidget {
           'ANCHO': anchoController.text,
           'CATEGORIA': categoria.value,
           'COD_FAMILIA': selectedCodFamilia,
+          'PRECIO': precioController.text,
         };
 
         final productInfo = ProductInfo.convertoToBodyRequest(productInfoJson);

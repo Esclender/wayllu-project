@@ -108,7 +108,7 @@ class UsersListAdminScreen extends HookWidget {
           [
             TopVector(),
             Padding(
-              padding: const EdgeInsets.all(10.0),
+              padding: const EdgeInsets.symmetric(horizontal: 12.0),
               child: Column(
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [

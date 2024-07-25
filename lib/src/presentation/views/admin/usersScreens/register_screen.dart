@@ -11,7 +11,6 @@ import 'package:wayllu_project/src/config/router/app_router.dart';
 import 'package:wayllu_project/src/domain/dtos/registerArtisanDto/artisan_rep.dart';
 import 'package:wayllu_project/src/locator.dart';
 import 'package:wayllu_project/src/presentation/cubit/artisans_register_cubit.dart';
-import 'package:wayllu_project/src/presentation/cubit/artisans_register_cubit.dart';
 import 'package:wayllu_project/src/presentation/widgets/gradient_widgets.dart';
 import 'package:wayllu_project/src/presentation/widgets/register_user/my_text_label.dart';
 import 'package:wayllu_project/src/presentation/widgets/register_user/my_textfield.dart';
@@ -183,12 +182,10 @@ class _RegisterUserScreenState extends State<RegisterUserScreen> {
       final File imageFile = File(image.path);
       final String imageUrl =
           await uploadImageToFirebase(imageFile, folder: '/Artisans_Images');
-      if (imageUrl != null) {
-        setState(() {
-          _selectedImage = imageFile;
-          urlImage = imageUrl;
-        });
-      }
+      setState(() {
+        _selectedImage = imageFile;
+        urlImage = imageUrl;
+      });
     }
   }
 

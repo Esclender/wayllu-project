@@ -13,6 +13,7 @@ class ProductsCarrito extends Cubit<List<CarritoItem>> {
   Future<VentaInfo> registerVenta() async {
     final ventaInfo = await _productsApiServices.newVenta({
       'CANTIDAD_TOTAL_PRODUCTOS': itemsInCartInt,
+      'PRECIO_TOTAL_PRODUCTOS': totalPrice,
       'PRODUCTOS': mappedCarritoItems,
     });
 
@@ -60,4 +61,14 @@ class ProductsCarrito extends Cubit<List<CarritoItem>> {
   List<Map<String, dynamic>> get mappedCarritoItems {
     return state.map((e) => e.toMap()).toList();
   }
+
+  double calculateTotalPrice() {
+    double totalPrice = 0;
+    for (var item in state) {
+      totalPrice += item.info.PRECIO * item.quantity;
+    }
+    return totalPrice;
+  }
+
+  double get totalPrice => calculateTotalPrice();
 }

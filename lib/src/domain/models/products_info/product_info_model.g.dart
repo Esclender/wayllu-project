@@ -18,6 +18,7 @@ ProductInfo _$ProductInfoFromJson(Map<String, dynamic> json) => ProductInfo(
       CATEGORIA: json['CATEGORIA'] as String,
       TIPO_PESO: json['TIPO_PESO'] as String,
       FECHA_INGRESO: json['FECHA_INGRESO'] as String?,
+      PRECIO: (json['PRECIO'] as num).toDouble(),
       UBICACION: json['UBICACION'] as String?,
       PESO: json['PESO'] as int?,
       IMAGEN: json['IMAGEN'] as String?,
@@ -43,4 +44,5 @@ Map<String, dynamic> _$ProductInfoToJson(ProductInfo instance) =>
       'IMAGEN': instance.IMAGEN,
       'ANCHO': instance.ANCHO,
       'ALTO': instance.ALTO,
+      'PRECIO': instance.PRECIO,
     };
