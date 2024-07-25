@@ -97,6 +97,8 @@ class GraphicProductsScreen extends HookWidget {
 
     _showLoadingDialog(context);
     await excelUtil.generateExcelInBackground(context, excelLibrary);
+    appRouter.popForced();
+    _showSuccessDialog('Reporte Generado!', context);
   }
 
   @override
