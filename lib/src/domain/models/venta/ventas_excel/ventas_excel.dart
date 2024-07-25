@@ -1,3 +1,8 @@
+import 'package:json_annotation/json_annotation.dart';
+
+part 'ventas_excel.g.dart';
+
+@JsonSerializable()
 class SalesData {
   final String date;
   final String productCode;
@@ -20,4 +25,9 @@ class SalesData {
     required this.amount,
     required this.unitPrice,
   });
+
+  factory SalesData.fromJson(Map<String, dynamic> json) =>
+      _$SalesDataFromJson(json);
+
+  Map<String, dynamic> toJson() => _$SalesDataToJson(this);
 }

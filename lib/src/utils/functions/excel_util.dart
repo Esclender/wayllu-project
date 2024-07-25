@@ -1,9 +1,24 @@
 import 'dart:io';
+import 'dart:isolate';
 
+import 'package:flutter/material.dart';
+import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:intl/intl.dart';
 import 'package:permission_handler/permission_handler.dart';
-import 'package:wayllu_project/src/domain/models/venta/ventas_excel/ventas_excel.dart';
+import 'package:wayllu_project/src/presentation/cubit/ventas_list_cubit.dart';
 import 'package:wayllu_project/src/utils/extensions/excel_implementation.dart';
+
+class GenerateExcelParams {
+  final List<Map<String, dynamic>> salesDataList;
+  final SendPort sendPort;
+  final ExcelImplementation excelImplementation;
+
+  GenerateExcelParams(
+    this.salesDataList,
+    this.sendPort,
+    this.excelImplementation,
+  );
+}
 
 class ExcelUtil {
   Future<void> requestStoragePermission() async {
@@ -32,18 +47,18 @@ class ExcelUtil {
   String generateRandomFileName() {
     final DateTime now = DateTime.now();
     final String formattedDate = DateFormat('yyyyMMdd_HHmmss').format(now);
-    return 'REPORTE_$formattedDate.xlsx';
+    return 'REPORTE_$formattedDate';
   }
 
   Future<void> generateAndSaveExcel(
-    List<SalesData> salesDataList,
+    List<Map<String, dynamic>> salesDataList,
+    ExcelImplementation excelLibrary,
   ) async {
-    final ExcelImplementation excelLibrary = ExcelImplementation();
+    // final ExcelImplementation excelLibrary = ExcelImplementation();
     final int totalRows = excelLibrary.addData(salesDataList);
     excelLibrary.insertFooter(totalRows);
     excelLibrary.wrappingCells(totalRows);
 
-    await requestStoragePermission();
     await _saveExcelFile(excelLibrary.encode(), generateRandomFileName());
     excelLibrary.dispose();
   }
@@ -63,5 +78,41 @@ class ExcelUtil {
     // Save the Excel file
     File(filePath).writeAsBytesSync(bytes);
     print('Excel file saved');
+  }
+
+  Future<void> generateAndSaveExcelEntryPoint(
+    GenerateExcelParams params,
+  ) async {
+    await generateAndSaveExcel(
+      params.salesDataList,
+      params.excelImplementation,
+    );
+
+    params.sendPort.send(true);
+  }
+
+  Future<void> generateExcelInBackground(
+    BuildContext context,
+    ExcelImplementation excelLibrary,
+  ) async {
+    final ventasListCubit = context.read<VentasListCubit>();
+    final salesDataList = await ventasListCubit.getSalesData();
+
+    final ReceivePort receivePort = ReceivePort();
+    // Spawn the isolate
+    await Isolate.spawn(
+      generateAndSaveExcelEntryPoint,
+      // receivePort.sendPort,
+      GenerateExcelParams(
+        salesDataList,
+        receivePort.sendPort,
+        excelLibrary,
+      ),
+    );
+
+    // Listen for messages from the isolate
+    receivePort.listen((message) {
+      receivePort.close();
+    });
   }
 }

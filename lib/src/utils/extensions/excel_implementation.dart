@@ -102,26 +102,33 @@ class ExcelImplementation {
     await insertImage('/assets/LOGOTIPO.png', 2, 8);
   }
 
-  int addData(List<SalesData> salesDataList) {
+  int addData(List<Map<String, dynamic>> salesDataList) {
     int currentRow = 6;
     for (var data in salesDataList) {
-      sheet.getRangeByName('B$currentRow').setText(data.date);
-      sheet.getRangeByName('C$currentRow').setValue(data.productCode);
-      sheet.getRangeByName('D$currentRow').setText(data.categoryProduct);
-      sheet.getRangeByName('E$currentRow').setText(data.artisan);
-      sheet.getRangeByName('F$currentRow').setText(data.community);
-      sheet.getRangeByName('G$currentRow').setText(data.family);
-      sheet.getRangeByName('H$currentRow').setValue(data.quantity);
-      sheet.getRangeByName('I$currentRow').setNumber(data.amount);
-      sheet.getRangeByName('J$currentRow').setNumber(data.unitPrice);
+      final salesDataFromJson = SalesData.fromJson(data);
+      sheet.getRangeByName('B$currentRow').setText(salesDataFromJson.date);
+      sheet
+          .getRangeByName('C$currentRow')
+          .setValue(salesDataFromJson.productCode);
+      sheet
+          .getRangeByName('D$currentRow')
+          .setText(salesDataFromJson.categoryProduct);
+      sheet.getRangeByName('E$currentRow').setText(salesDataFromJson.artisan);
+      sheet.getRangeByName('F$currentRow').setText(salesDataFromJson.community);
+      sheet.getRangeByName('G$currentRow').setText(salesDataFromJson.family);
+      sheet.getRangeByName('H$currentRow').setValue(salesDataFromJson.quantity);
+      sheet.getRangeByName('I$currentRow').setNumber(salesDataFromJson.amount);
+      sheet
+          .getRangeByName('J$currentRow')
+          .setNumber(salesDataFromJson.unitPrice);
 
       // Set currency format for "MONTO" and "PRECIO U" columns
       final montoCell = sheet.getRangeByName('I$currentRow');
-      montoCell.setNumber(data.amount);
+      montoCell.setNumber(salesDataFromJson.amount);
       montoCell.cellStyle.numberFormat = '"S/"#,##0.00';
 
       final totalCell = sheet.getRangeByName('J$currentRow');
-      totalCell.setNumber(data.unitPrice);
+      totalCell.setNumber(salesDataFromJson.unitPrice);
       totalCell.cellStyle.numberFormat = '"S/"#,##0.00';
 
       // Set columns data alignment

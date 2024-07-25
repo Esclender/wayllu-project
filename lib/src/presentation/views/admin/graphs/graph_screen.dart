@@ -1,18 +1,23 @@
+import 'dart:async';
+import 'dart:isolate';
+
 import 'package:auto_route/auto_route.dart';
 import 'package:collection/collection.dart';
+import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_hooks/flutter_hooks.dart';
 import 'package:gap/gap.dart';
+import 'package:hexcolor/hexcolor.dart';
 import 'package:intl/date_symbol_data_local.dart';
 import 'package:intl/intl.dart';
+import 'package:ionicons/ionicons.dart';
 import 'package:shimmer/shimmer.dart';
 import 'package:wayllu_project/src/config/router/app_router.dart';
 import 'package:wayllu_project/src/domain/models/graphs/chart_column_bar.dart';
 import 'package:wayllu_project/src/domain/models/list_items_model.dart';
 import 'package:wayllu_project/src/domain/models/list_products_model.dart';
 import 'package:wayllu_project/src/domain/models/registro_ventas/registros_venta_repo.dart';
-import 'package:wayllu_project/src/domain/models/venta/ventas_excel/ventas_excel.dart';
 import 'package:wayllu_project/src/locator.dart';
 import 'package:wayllu_project/src/presentation/cubit/users_list_cubit.dart';
 import 'package:wayllu_project/src/presentation/cubit/ventas_list_cubit.dart';
@@ -22,12 +27,14 @@ import 'package:wayllu_project/src/presentation/widgets/gradient_widgets.dart';
 import 'package:wayllu_project/src/presentation/widgets/graphs_components/column_bar_chart.dart';
 import 'package:wayllu_project/src/presentation/widgets/top_vector.dart';
 import 'package:wayllu_project/src/utils/constants/colors.dart';
+import 'package:wayllu_project/src/utils/extensions/excel_implementation.dart';
 import 'package:wayllu_project/src/utils/functions/excel_util.dart';
 
 @RoutePage()
 class GraphicProductsScreen extends HookWidget {
   final int viewIndex;
   final ExcelUtil excelUtil = ExcelUtil();
+  final ExcelImplementation excelLibrary = ExcelImplementation();
   final double containersPadding = 20.0;
   final appRouter = getItAppRouter<AppRouter>();
 
@@ -73,14 +80,6 @@ class GraphicProductsScreen extends HookWidget {
     }
   }
 
-  Future<void> generateSalesReport(BuildContext context) async {
-    final ventasListCubit = context.read<VentasListCubit>();
-    final List<SalesData> salesDataList = await ventasListCubit.getSalesData();
-
-    final excelUtil = ExcelUtil();
-    excelUtil.generateAndSaveExcel(salesDataList);
-  }
-
   void _clearFilters(
     BuildContext context,
     ValueNotifier<String> selectedFilter,
@@ -90,6 +89,14 @@ class GraphicProductsScreen extends HookWidget {
     ventasListCubit.getVentas();
     selectedFilter.value = '';
     selectedValues.clear();
+  }
+
+  Future<void> generateReport() async {
+    final BuildContext context = appRouter.navigatorKey.currentContext!;
+    await excelUtil.requestStoragePermission();
+
+    _showLoadingDialog(context);
+    await excelUtil.generateExcelInBackground(context, excelLibrary);
   }
 
   @override
@@ -357,8 +364,6 @@ class GraphicProductsScreen extends HookWidget {
   }
 
   Widget _downloadExcelComponent(BuildContext context) {
-    // final productsCubit = context.watch<ProductsCarrito>();
-
     return Container(
       width: MediaQuery.of(context).size.width,
       alignment: Alignment.bottomRight,
@@ -369,9 +374,7 @@ class GraphicProductsScreen extends HookWidget {
       child: FloatingActionButton(
         backgroundColor: bottomNavBar,
         shape: const CircleBorder(),
-        onPressed: () {
-          generateSalesReport(context);
-        },
+        onPressed: generateReport,
         child: Image.asset('assets/images/excel-download.png'),
       ),
     );
@@ -704,6 +707,53 @@ class GraphicProductsScreen extends HookWidget {
         ),
       ),
     );
+  }
+
+  void _showLoadingDialog(BuildContext context) {
+    showDialog<void>(
+      barrierDismissible: false,
+      context: context,
+      builder: (BuildContext context) {
+        return AlertDialog(
+          content: Column(
+            mainAxisSize: MainAxisSize.min,
+            children: [
+              CircularProgressIndicator(
+                color: HexColor('#B80000'),
+              ),
+              const SizedBox(height: 20),
+              const Text('Generando reporte...'),
+            ],
+          ),
+        );
+      },
+    );
+  }
+
+  void _showSuccessDialog(String message, BuildContext context) {
+    showDialog<void>(
+      context: context,
+      builder: (BuildContext context) {
+        return AlertDialog(
+          content: Column(
+            mainAxisSize: MainAxisSize.min,
+            children: [
+              Icon(
+                Ionicons.checkmark_outline,
+                color: estadotxt,
+                size: 36,
+              ),
+              const SizedBox(height: 20),
+              Text(message),
+            ],
+          ),
+        );
+      },
+    );
+
+    Timer(const Duration(seconds: 2), () {
+      appRouter.popForced();
+    });
   }
 }
 

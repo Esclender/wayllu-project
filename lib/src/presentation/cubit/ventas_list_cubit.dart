@@ -1,7 +1,6 @@
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:wayllu_project/src/data/api_repository.imp.dart';
 import 'package:wayllu_project/src/domain/models/registro_ventas/registros_venta_repo.dart';
-import 'package:wayllu_project/src/domain/models/venta/ventas_excel/ventas_excel.dart';
 
 class VentasListCubit extends Cubit<List<VentasList>?> {
   final ProductsApiRepositoryImpl _apiRepository;
@@ -32,9 +31,9 @@ class VentasListCubit extends Cubit<List<VentasList>?> {
     }
   }
 
-  Future<List<SalesData>> getSalesData() async {
+  Future<List<Map<String, dynamic>>> getSalesData() async {
     if (state == null) return [];
-    return state!.map((venta) => venta.toSalesData()).toList();
+    return state!.map((venta) => venta.toSalesData().toJson()).toList();
   }
 
   Future<void> getVentasByCodeArtisians(int codArtisan) async {
