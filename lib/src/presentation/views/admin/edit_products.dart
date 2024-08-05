@@ -16,6 +16,7 @@ import 'package:wayllu_project/src/domain/models/products_info/product_info_mode
 import 'package:wayllu_project/src/locator.dart';
 import 'package:wayllu_project/src/presentation/cubit/products_list_cubit.dart';
 import 'package:wayllu_project/src/presentation/cubit/users_list_cubit.dart';
+import 'package:wayllu_project/src/presentation/widgets/options_categories.dart';
 import 'package:wayllu_project/src/utils/constants/colors.dart';
 import 'package:wayllu_project/src/utils/firebase/firebase_helper.dart';
 
@@ -726,73 +727,6 @@ class DropDownMenuArtesanos extends HookWidget {
                   );
                 }).toList()
               : [],
-        ),
-      ],
-    );
-  }
-}
-
-class DropDownOptions<T> extends HookWidget {
-  final String optionHead;
-  final List<T> options;
-  final ValueNotifier<T> selectedOption;
-
-  DropDownOptions({
-    required this.optionHead,
-    required this.options,
-    required this.selectedOption,
-  });
-
-  @override
-  Widget build(BuildContext context) {
-    return Column(
-      crossAxisAlignment: CrossAxisAlignment.start,
-      children: [
-        Text(
-          optionHead,
-          style: const TextStyle(
-            color: Color(0xFF241E20),
-            fontSize: 16,
-            fontFamily: 'Gotham',
-            fontWeight: FontWeight.w500,
-            height: 1.5, // Adjust height as needed
-          ),
-        ),
-        Container(
-          padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 4),
-          decoration: ShapeDecoration(
-            shape: RoundedRectangleBorder(
-              side: BorderSide(
-                width: 1,
-                style: BorderStyle.solid,
-                color: bottomNavBarStroke,
-              ),
-              borderRadius: BorderRadius.circular(10),
-            ),
-          ),
-          child: DropdownButton<T>(
-            isExpanded: true,
-            value: selectedOption.value,
-            hint: Text(optionHead),
-            icon: const Icon(Ionicons.chevron_down),
-            elevation: 16,
-            style: const TextStyle(color: Colors.black),
-            underline: Container(
-              height: 2,
-              color: Colors.transparent,
-            ),
-            onChanged: (T? newValue) {
-              if (newValue != null) {
-                selectedOption.value = newValue;
-              }
-            },
-            items: options.map<DropdownMenuItem<T>>((T value) {
-              return DropdownMenuItem<T>(
-                value: value,
-                child: Text(value.toString()),
-              );
-            }).toList(),
-          ),
         ),
       ],
     );

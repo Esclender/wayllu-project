@@ -18,6 +18,8 @@ import 'package:wayllu_project/src/presentation/cubit/users_list_cubit.dart';
 import 'package:wayllu_project/src/presentation/widgets/gradient_widgets.dart';
 import 'package:wayllu_project/src/utils/constants/colors.dart';
 
+import '../../widgets/options_categories.dart';
+
 @RoutePage()
 class RegisterProductsScreen extends HookWidget {
   RegisterProductsScreen({super.key});
@@ -126,18 +128,19 @@ class RegisterProductsScreen extends HookWidget {
     final String finalImageUrl = urlImage ?? defaultImageUrl;
 
     final producto = ProductDto(
-        ANCHO: int.parse(ancho),
-        ALTO: int.parse(alto),
-        TIPO_PESO: tipoPeso,
-        PESO: int.parse(peso),
-        CATEGORIA: selectedCategoria,
-        IMAGEN: finalImageUrl,
-        DESCRIPCION: descripcion,
-        COD_FAMILIA: int.parse(selectedCodFamilia['codigo']!),
-        COD_ARTESANA: int.parse(selectedArtesano),
-        UBICACION: ubicacion,
-        CANTIDAD: int.parse(cantidad),
-        PRECIO: double.parse(precio));
+      ANCHO: int.parse(ancho),
+      ALTO: int.parse(alto),
+      TIPO_PESO: tipoPeso,
+      PESO: int.parse(peso),
+      CATEGORIA: selectedCategoria,
+      IMAGEN: finalImageUrl,
+      DESCRIPCION: descripcion,
+      COD_FAMILIA: int.parse(selectedCodFamilia['codigo']!),
+      COD_ARTESANA: int.parse(selectedArtesano),
+      UBICACION: ubicacion,
+      CANTIDAD: int.parse(cantidad),
+      PRECIO: double.parse(precio),
+    );
 
     try {
       await context.read<ProductRegisterCubit>().registerNewProduct(producto);
@@ -238,14 +241,25 @@ class RegisterProductsScreen extends HookWidget {
                   selectedOption: selectedArtesano,
                 ),
                 DropDownOptions(
-                    optionHead: 'Categoria',
-                    options: categoriasOptions,
-                    selectedOption: selectedCategoria),
-                _selectedCodigoFamilia(selectedCodFamilia),
+                  optionHead: 'Categoria',
+                  options: categoriasOptions,
+                  selectedOption: selectedCategoria,
+                ),
+                DropDownOptions<dynamic>(
+                  optionHead: 'Codigo familia',
+                  options: codFamiliasOptions,
+                  displayField: "valor",
+                  selectedOption: selectedCodFamilia,
+                )
+                // _selectedCodigoFamilia(selectedCodFamilia),
               ],
             ),
             containerTextForm(
-                context, 'Cantidad', 'Ingrese la cantidad', cantidadController),
+              context,
+              'Cantidad',
+              'Ingrese la cantidad',
+              cantidadController,
+            ),
             wrappedContainerTextForm(
               context,
               pesoController,
@@ -477,7 +491,9 @@ class RegisterProductsScreen extends HookWidget {
             margin: const EdgeInsets.only(top: 6),
             decoration: BoxDecoration(
               border: Border.all(
-                color: bottomNavBarStroke,
+                color: const Color(
+                  0xFFCCCCCC,
+                ),
               ),
               borderRadius: BorderRadius.circular(10),
             ),
@@ -538,73 +554,6 @@ class CustomTextField extends StatelessWidget {
   }
 }
 
-class DropDownOptions<T> extends HookWidget {
-  final String optionHead;
-  final List<T> options;
-  final ValueNotifier<T> selectedOption;
-
-  DropDownOptions({
-    required this.optionHead,
-    required this.options,
-    required this.selectedOption,
-  });
-
-  @override
-  Widget build(BuildContext context) {
-    return Column(
-      crossAxisAlignment: CrossAxisAlignment.start,
-      children: [
-        Text(
-          optionHead,
-          style: const TextStyle(
-            color: Color(0xFF241E20),
-            fontSize: 16,
-            fontFamily: 'Gotham',
-            fontWeight: FontWeight.w500,
-            height: 1.5, // Adjust height as needed
-          ),
-        ),
-        Container(
-          padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 4),
-          decoration: ShapeDecoration(
-            shape: RoundedRectangleBorder(
-              side: BorderSide(
-                width: 1,
-                style: BorderStyle.solid,
-                color: bottomNavBarStroke,
-              ),
-              borderRadius: BorderRadius.circular(10),
-            ),
-          ),
-          child: DropdownButton<T>(
-            isExpanded: true,
-            value: selectedOption.value,
-            hint: Text(optionHead),
-            icon: const Icon(Ionicons.chevron_down),
-            elevation: 16,
-            style: const TextStyle(color: Colors.black),
-            underline: Container(
-              height: 2,
-              color: Colors.transparent,
-            ),
-            onChanged: (T? newValue) {
-              if (newValue != null) {
-                selectedOption.value = newValue;
-              }
-            },
-            items: options.map<DropdownMenuItem<T>>((T value) {
-              return DropdownMenuItem<T>(
-                value: value,
-                child: Text(value.toString()),
-              );
-            }).toList(),
-          ),
-        ),
-      ],
-    );
-  }
-}
-
 Widget _buildTextField(
   BuildContext context,
   String title,
@@ -615,7 +564,7 @@ Widget _buildTextField(
 }) {
   if (isCombo) {
     return SizedBox(
-      width: (MediaQuery.of(context).size.width * 0.85) / 2 - 8,
+      width: (MediaQuery.of(context).size.width * 0.85) / 2 - 6,
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
