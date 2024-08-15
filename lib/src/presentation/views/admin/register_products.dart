@@ -18,7 +18,7 @@ import 'package:wayllu_project/src/presentation/cubit/users_list_cubit.dart';
 import 'package:wayllu_project/src/presentation/widgets/gradient_widgets.dart';
 import 'package:wayllu_project/src/utils/constants/colors.dart';
 
-import '../../widgets/options_categories.dart';
+import '../../widgets/forms_components.dart/options_categories.dart';
 
 @RoutePage()
 class RegisterProductsScreen extends HookWidget {
@@ -104,7 +104,7 @@ class RegisterProductsScreen extends HookWidget {
       String? ubicacion,
       String? cantidad,
       String? precio,
-      String? urlImage) async {
+      String? urlImage,) async {
     if (ancho == null ||
         alto == null ||
         tipoPeso == null ||
@@ -297,170 +297,170 @@ class RegisterProductsScreen extends HookWidget {
     );
   }
 
-  Column _selectedCodigoFamilia(
-      ValueNotifier<Map<String, String>?> selectedCodFamilia) {
-    return Column(
-      crossAxisAlignment: CrossAxisAlignment.start,
-      children: [
-        const Text(
-          'Código de Familia',
-          style: TextStyle(
-            color: Color(0xFF241E20),
-            fontSize: 16,
-            fontFamily: 'Gotham',
-            fontWeight: FontWeight.w500,
-            height: 1.5,
-          ),
-        ),
-        Container(
-          padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 4),
-          decoration: ShapeDecoration(
-            shape: RoundedRectangleBorder(
-              side: const BorderSide(
-                width: 1,
-                style: BorderStyle.solid,
-                color: Colors.grey, // Cambiar al color deseado
-              ),
-              borderRadius: BorderRadius.circular(10),
-            ),
-          ),
-          child: DropdownButton<Map<String, String>>(
-            isExpanded: true,
-            value: selectedCodFamilia.value,
-            hint: const Text('Seleccione un código'),
-            icon: const Icon(Icons.keyboard_arrow_down),
-            elevation: 16,
-            style: const TextStyle(color: Colors.black),
-            underline: Container(
-              height: 2,
-              color: Colors.transparent,
-            ),
-            onChanged: (Map<String, String>? newValue) {
-              if (newValue != null) {
-                selectedCodFamilia.value = newValue;
-              }
-            },
-            items: codFamiliasOptions.map((Map<String, String> value) {
-              return DropdownMenuItem<Map<String, String>>(
-                value: value,
-                child: Text(value['valor']!),
-              );
-            }).toList(),
-          ),
-        ),
-      ],
-    );
-  }
+  // Column _selectedCodigoFamilia(
+  //     ValueNotifier<Map<String, String>?> selectedCodFamilia) {
+  //   return Column(
+  //     crossAxisAlignment: CrossAxisAlignment.start,
+  //     children: [
+  //       const Text(
+  //         'Código de Familia',
+  //         style: TextStyle(
+  //           color: Color(0xFF241E20),
+  //           fontSize: 16,
+  //           fontFamily: 'Gotham',
+  //           fontWeight: FontWeight.w500,
+  //           height: 1.5,
+  //         ),
+  //       ),
+  //       Container(
+  //         padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 4),
+  //         decoration: ShapeDecoration(
+  //           shape: RoundedRectangleBorder(
+  //             side: const BorderSide(
+  //               width: 1,
+  //               style: BorderStyle.solid,
+  //               color: Colors.grey, // Cambiar al color deseado
+  //             ),
+  //             borderRadius: BorderRadius.circular(10),
+  //           ),
+  //         ),
+  //         child: DropdownButton<Map<String, String>>(
+  //           isExpanded: true,
+  //           value: selectedCodFamilia.value,
+  //           hint: const Text('Seleccione un código'),
+  //           icon: const Icon(Icons.keyboard_arrow_down),
+  //           elevation: 16,
+  //           style: const TextStyle(color: Colors.black),
+  //           underline: Container(
+  //             height: 2,
+  //             color: Colors.transparent,
+  //           ),
+  //           onChanged: (Map<String, String>? newValue) {
+  //             if (newValue != null) {
+  //               selectedCodFamilia.value = newValue;
+  //             }
+  //           },
+  //           items: codFamiliasOptions.map((Map<String, String> value) {
+  //             return DropdownMenuItem<Map<String, String>>(
+  //               value: value,
+  //               child: Text(value['valor']!),
+  //             );
+  //           }).toList(),
+  //         ),
+  //       ),
+  //     ],
+  //   );
+  // }
 
-  Widget _buildTextField(
-    BuildContext context,
-    String title,
-    String? description,
-    TextEditingController? controller, {
-    bool isCombo = false,
-    ValueNotifier? valueNotifier,
-  }) {
-    if (isCombo) {
-      return SizedBox(
-        width: (MediaQuery.of(context).size.width * 0.85) / 2 - 8,
-        child: Column(
-          crossAxisAlignment: CrossAxisAlignment.start,
-          children: [
-            Text(
-              title,
-              style: const TextStyle(
-                color: Color(0xFF241E20),
-                fontSize: 16,
-                fontFamily: 'Gotham',
-                fontWeight: FontWeight.w500,
-                height: 1.5, // Adjust height as needed
-              ),
-            ),
-            const SizedBox(height: 6),
-            Container(
-              decoration: BoxDecoration(
-                border: Border.all(
-                  color: const Color(
-                      0xFFCCCCCC), // Replace bottomNavBarStroke with a color
-                ),
-                borderRadius: BorderRadius.circular(10),
-              ),
-              child: DropdownButton(
-                padding: const EdgeInsets.symmetric(horizontal: 10.0),
-                isExpanded: true,
-                value: valueNotifier!.value,
-                hint: const Text('Tipo de peso'),
-                icon: const Icon(Ionicons.chevron_down),
-                elevation: 16,
-                style: const TextStyle(color: Colors.black),
-                underline: Container(
-                  height: 2,
-                  color: Colors.transparent,
-                ),
-                onChanged: (newValue) {
-                  if (newValue != null) {
-                    valueNotifier.value = newValue;
-                  }
-                },
-                items: ['gramos'].map<DropdownMenuItem>((value) {
-                  return DropdownMenuItem(
-                    value: value,
-                    child: Text(value),
-                  );
-                }).toList(),
-              ),
-            ),
-          ],
-        ),
-      );
-    }
-    return SizedBox(
-      width: (MediaQuery.of(context).size.width * 0.85) / 2 - 8,
-      child: Column(
-        crossAxisAlignment: CrossAxisAlignment.start,
-        children: [
-          Text(
-            title,
-            style: const TextStyle(
-              color: Color(0xFF241E20),
-              fontSize: 16,
-              fontFamily: 'Gotham',
-              fontWeight: FontWeight.w500,
-              height: 1.5, // Adjust height as needed
-            ),
-          ),
-          const SizedBox(height: 6),
-          Container(
-            decoration: BoxDecoration(
-              border: Border.all(
-                color: const Color(
-                  0xFFCCCCCC,
-                ), // Replace bottomNavBarStroke with a color
-              ),
-              borderRadius: BorderRadius.circular(10),
-            ),
-            child: TextField(
-              controller: controller,
-              decoration: InputDecoration(
-                hintText: description,
-                border: const OutlineInputBorder(
-                  borderSide: BorderSide.none,
-                ),
-                contentPadding: const EdgeInsets.only(left: 12),
-                hintStyle: const TextStyle(
-                  color: Color(0xFF241E20),
-                  fontSize: 14,
-                  fontFamily: 'Gotham',
-                  fontWeight: FontWeight.w300,
-                  height: 1.5, // Adjust height as needed
-                ),
-              ),
-            ),
-          ),
-        ],
-      ),
-    );
-  }
+  // Widget _buildTextField(
+  //   BuildContext context,
+  //   String title,
+  //   String? description,
+  //   TextEditingController? controller, {
+  //   bool isCombo = false,
+  //   ValueNotifier? valueNotifier,
+  // }) {
+  //   if (isCombo) {
+  //     return SizedBox(
+  //       width: (MediaQuery.of(context).size.width * 0.85) / 2 - 8,
+  //       child: Column(
+  //         crossAxisAlignment: CrossAxisAlignment.start,
+  //         children: [
+  //           Text(
+  //             title,
+  //             style: const TextStyle(
+  //               color: Color(0xFF241E20),
+  //               fontSize: 16,
+  //               fontFamily: 'Gotham',
+  //               fontWeight: FontWeight.w500,
+  //               height: 1.5, // Adjust height as needed
+  //             ),
+  //           ),
+  //           const SizedBox(height: 6),
+  //           Container(
+  //             decoration: BoxDecoration(
+  //               border: Border.all(
+  //                 color: const Color(
+  //                     0xFFCCCCCC), // Replace bottomNavBarStroke with a color
+  //               ),
+  //               borderRadius: BorderRadius.circular(10),
+  //             ),
+  //             child: DropdownButton(
+  //               padding: const EdgeInsets.symmetric(horizontal: 10.0),
+  //               isExpanded: true,
+  //               value: valueNotifier!.value,
+  //               hint: const Text('Tipo de peso'),
+  //               icon: const Icon(Ionicons.chevron_down),
+  //               elevation: 16,
+  //               style: const TextStyle(color: Colors.black),
+  //               underline: Container(
+  //                 height: 2,
+  //                 color: Colors.transparent,
+  //               ),
+  //               onChanged: (newValue) {
+  //                 if (newValue != null) {
+  //                   valueNotifier.value = newValue;
+  //                 }
+  //               },
+  //               items: ['gramos'].map<DropdownMenuItem>((value) {
+  //                 return DropdownMenuItem(
+  //                   value: value,
+  //                   child: Text(value),
+  //                 );
+  //               }).toList(),
+  //             ),
+  //           ),
+  //         ],
+  //       ),
+  //     );
+  //   }
+  //   return SizedBox(
+  //     width: (MediaQuery.of(context).size.width * 0.85) / 2 - 8,
+  //     child: Column(
+  //       crossAxisAlignment: CrossAxisAlignment.start,
+  //       children: [
+  //         Text(
+  //           title,
+  //           style: const TextStyle(
+  //             color: Color(0xFF241E20),
+  //             fontSize: 16,
+  //             fontFamily: 'Gotham',
+  //             fontWeight: FontWeight.w500,
+  //             height: 1.5, // Adjust height as needed
+  //           ),
+  //         ),
+  //         const SizedBox(height: 6),
+  //         Container(
+  //           decoration: BoxDecoration(
+  //             border: Border.all(
+  //               color: const Color(
+  //                 0xFFCCCCCC,
+  //               ), // Replace bottomNavBarStroke with a color
+  //             ),
+  //             borderRadius: BorderRadius.circular(10),
+  //           ),
+  //           child: TextField(
+  //             controller: controller,
+  //             decoration: InputDecoration(
+  //               hintText: description,
+  //               border: const OutlineInputBorder(
+  //                 borderSide: BorderSide.none,
+  //               ),
+  //               contentPadding: const EdgeInsets.only(left: 12),
+  //               hintStyle: const TextStyle(
+  //                 color: Color(0xFF241E20),
+  //                 fontSize: 14,
+  //                 fontFamily: 'Gotham',
+  //                 fontWeight: FontWeight.w300,
+  //                 height: 1.5, // Adjust height as needed
+  //               ),
+  //             ),
+  //           ),
+  //         ),
+  //       ],
+  //     ),
+  //   );
+  // }
 
   SizedBox containerTextForm(
     BuildContext context,
@@ -564,7 +564,7 @@ Widget _buildTextField(
 }) {
   if (isCombo) {
     return SizedBox(
-      width: (MediaQuery.of(context).size.width * 0.85) / 2 - 6,
+      width: (MediaQuery.of(context).size.width * 0.90) / 2 - 6,
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
@@ -619,7 +619,7 @@ Widget _buildTextField(
   }
 
   return SizedBox(
-    width: (MediaQuery.of(context).size.width * 0.85) / 2 - 8,
+    width: (MediaQuery.of(context).size.width * 0.90) / 2 - 6,
     child: Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
@@ -697,7 +697,7 @@ SizedBox wrappedContainerTextForm(
   TextEditingController anchoController,
 ) {
   return SizedBox(
-    width: MediaQuery.of(context).size.width * 0.85,
+    width: MediaQuery.of(context).size.width,
     height:
         MediaQuery.of(context).size.height * 0.24, // Adjust height as needed
     child: Column(
@@ -705,7 +705,7 @@ SizedBox wrappedContainerTextForm(
       children: [
         const SizedBox(height: 8),
         Wrap(
-          spacing: 16, // Spacing between elements
+          spacing:10, // Spacing between elements
           runSpacing: 16, // Spacing between rows
           children: [
             _buildTextField(
@@ -771,7 +771,7 @@ class CustomButton extends StatelessWidget {
         child: Center(
           child: Text(
             text,
-            style: TextStyle(
+            style: const TextStyle(
               fontFamily: 'Gotham',
               fontSize: 16,
               fontWeight: FontWeight.w500,
