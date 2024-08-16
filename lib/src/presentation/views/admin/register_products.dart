@@ -69,15 +69,15 @@ class RegisterProductsScreen extends HookWidget {
   }
   Future<String> uploadImageToFirebase(File image) async {
     // Get the file name
-    String fileName = basename(image.path);
+    final String fileName = basename(image.path);
     // Create a reference to Firebase Storage
-    Reference firebaseStorageRef = FirebaseStorage.instance
+    final Reference firebaseStorageRef = FirebaseStorage.instance
         .ref()
         .child('Products_Images/$fileName');
     // Upload the file
-    UploadTask uploadTask = firebaseStorageRef.putFile(image);
+    final UploadTask uploadTask = firebaseStorageRef.putFile(image);
     // Get the download URL after the upload is complete
-    TaskSnapshot taskSnapshot = await uploadTask.whenComplete(() => null);
+    final TaskSnapshot taskSnapshot = await uploadTask.whenComplete(() => null);
     return await taskSnapshot.ref.getDownloadURL();
   }
 
@@ -283,172 +283,6 @@ class RegisterProductsScreen extends HookWidget {
       ),
     );
   }
-
-  // Column _selectedCodigoFamilia(
-  //     ValueNotifier<Map<String, String>?> selectedCodFamilia) {
-  //   return Column(
-  //     crossAxisAlignment: CrossAxisAlignment.start,
-  //     children: [
-  //       const Text(
-  //         'Código de Familia',
-  //         style: TextStyle(
-  //           color: Color(0xFF241E20),
-  //           fontSize: 16,
-  //           fontFamily: 'Gotham',
-  //           fontWeight: FontWeight.w500,
-  //           height: 1.5,
-  //         ),
-  //       ),
-  //       Container(
-  //         padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 4),
-  //         decoration: ShapeDecoration(
-  //           shape: RoundedRectangleBorder(
-  //             side: const BorderSide(
-  //               width: 1,
-  //               style: BorderStyle.solid,
-  //               color: Colors.grey, // Cambiar al color deseado
-  //             ),
-  //             borderRadius: BorderRadius.circular(10),
-  //           ),
-  //         ),
-  //         child: DropdownButton<Map<String, String>>(
-  //           isExpanded: true,
-  //           value: selectedCodFamilia.value,
-  //           hint: const Text('Seleccione un código'),
-  //           icon: const Icon(Icons.keyboard_arrow_down),
-  //           elevation: 16,
-  //           style: const TextStyle(color: Colors.black),
-  //           underline: Container(
-  //             height: 2,
-  //             color: Colors.transparent,
-  //           ),
-  //           onChanged: (Map<String, String>? newValue) {
-  //             if (newValue != null) {
-  //               selectedCodFamilia.value = newValue;
-  //             }
-  //           },
-  //           items: codFamiliasOptions.map((Map<String, String> value) {
-  //             return DropdownMenuItem<Map<String, String>>(
-  //               value: value,
-  //               child: Text(value['valor']!),
-  //             );
-  //           }).toList(),
-  //         ),
-  //       ),
-  //     ],
-  //   );
-  // }
-
-  // Widget _buildTextField(
-  //   BuildContext context,
-  //   String title,
-  //   String? description,
-  //   TextEditingController? controller, {
-  //   bool isCombo = false,
-  //   ValueNotifier? valueNotifier,
-  // }) {
-  //   if (isCombo) {
-  //     return SizedBox(
-  //       width: (MediaQuery.of(context).size.width * 0.85) / 2 - 8,
-  //       child: Column(
-  //         crossAxisAlignment: CrossAxisAlignment.start,
-  //         children: [
-  //           Text(
-  //             title,
-  //             style: const TextStyle(
-  //               color: Color(0xFF241E20),
-  //               fontSize: 16,
-  //               fontFamily: 'Gotham',
-  //               fontWeight: FontWeight.w500,
-  //               height: 1.5, // Adjust height as needed
-  //             ),
-  //           ),
-  //           const SizedBox(height: 6),
-  //           Container(
-  //             decoration: BoxDecoration(
-  //               border: Border.all(
-  //                 color: const Color(
-  //                     0xFFCCCCCC), // Replace bottomNavBarStroke with a color
-  //               ),
-  //               borderRadius: BorderRadius.circular(10),
-  //             ),
-  //             child: DropdownButton(
-  //               padding: const EdgeInsets.symmetric(horizontal: 10.0),
-  //               isExpanded: true,
-  //               value: valueNotifier!.value,
-  //               hint: const Text('Tipo de peso'),
-  //               icon: const Icon(Ionicons.chevron_down),
-  //               elevation: 16,
-  //               style: const TextStyle(color: Colors.black),
-  //               underline: Container(
-  //                 height: 2,
-  //                 color: Colors.transparent,
-  //               ),
-  //               onChanged: (newValue) {
-  //                 if (newValue != null) {
-  //                   valueNotifier.value = newValue;
-  //                 }
-  //               },
-  //               items: ['gramos'].map<DropdownMenuItem>((value) {
-  //                 return DropdownMenuItem(
-  //                   value: value,
-  //                   child: Text(value),
-  //                 );
-  //               }).toList(),
-  //             ),
-  //           ),
-  //         ],
-  //       ),
-  //     );
-  //   }
-  //   return SizedBox(
-  //     width: (MediaQuery.of(context).size.width * 0.85) / 2 - 8,
-  //     child: Column(
-  //       crossAxisAlignment: CrossAxisAlignment.start,
-  //       children: [
-  //         Text(
-  //           title,
-  //           style: const TextStyle(
-  //             color: Color(0xFF241E20),
-  //             fontSize: 16,
-  //             fontFamily: 'Gotham',
-  //             fontWeight: FontWeight.w500,
-  //             height: 1.5, // Adjust height as needed
-  //           ),
-  //         ),
-  //         const SizedBox(height: 6),
-  //         Container(
-  //           decoration: BoxDecoration(
-  //             border: Border.all(
-  //               color: const Color(
-  //                 0xFFCCCCCC,
-  //               ), // Replace bottomNavBarStroke with a color
-  //             ),
-  //             borderRadius: BorderRadius.circular(10),
-  //           ),
-  //           child: TextField(
-  //             controller: controller,
-  //             decoration: InputDecoration(
-  //               hintText: description,
-  //               border: const OutlineInputBorder(
-  //                 borderSide: BorderSide.none,
-  //               ),
-  //               contentPadding: const EdgeInsets.only(left: 12),
-  //               hintStyle: const TextStyle(
-  //                 color: Color(0xFF241E20),
-  //                 fontSize: 14,
-  //                 fontFamily: 'Gotham',
-  //                 fontWeight: FontWeight.w300,
-  //                 height: 1.5, // Adjust height as needed
-  //               ),
-  //             ),
-  //           ),
-  //         ),
-  //       ],
-  //     ),
-  //   );
-  // }
-
   SizedBox containerTextForm(
     BuildContext context,
     String title,
@@ -800,10 +634,9 @@ class DropDownMenuArtesanos extends HookWidget {
     useEffect(() {
       usersListCubitRead.getUserLists();
       return;
-    }, []);
+    }, [],);
 
-    // Add a post-frame callback to ensure the build is complete before handling state changes
-    useEffect(
+  useEffect(
       () {
         WidgetsBinding.instance.addPostFrameCallback((_) {
           queryNombre.addListener(() {
@@ -816,7 +649,6 @@ class DropDownMenuArtesanos extends HookWidget {
           });
         });
 
-        // Cleanup the listener on dispose
         return () {};
       },
       [],
