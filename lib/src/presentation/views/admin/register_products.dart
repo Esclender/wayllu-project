@@ -1,53 +1,30 @@
 // ignore_for_file: use_build_context_synchronously
-
 import 'dart:async';
 import 'dart:io';
 
 import 'package:auto_route/auto_route.dart';
+import 'package:firebase_storage/firebase_storage.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_hooks/flutter_hooks.dart';
 import 'package:hexcolor/hexcolor.dart';
 import 'package:image_picker/image_picker.dart';
 import 'package:ionicons/ionicons.dart';
+import 'package:path/path.dart';
 import 'package:wayllu_project/src/config/router/app_router.dart';
 import 'package:wayllu_project/src/domain/dtos/registerProductDto/product_rep.dart';
+import 'package:wayllu_project/src/domain/models/families_code.dart';
 import 'package:wayllu_project/src/locator.dart';
 import 'package:wayllu_project/src/presentation/cubit/product_register_cubit.dart';
 import 'package:wayllu_project/src/presentation/cubit/users_list_cubit.dart';
+import 'package:wayllu_project/src/presentation/widgets/forms_components.dart/options_categories.dart';
+import 'package:wayllu_project/src/presentation/widgets/forms_components.dart/photo_product.dart';
 import 'package:wayllu_project/src/presentation/widgets/gradient_widgets.dart';
 import 'package:wayllu_project/src/utils/constants/colors.dart';
-
-import '../../widgets/forms_components.dart/options_categories.dart';
 
 @RoutePage()
 class RegisterProductsScreen extends HookWidget {
   RegisterProductsScreen({super.key});
-
-  final List<Map<String, String>> codFamiliasOptions = const [
-    {'codigo': '1', 'valor': '1 (BOLSA ASA CUERO)'},
-    {'codigo': '2', 'valor': '2 (BOLSA ASA TELA)'},
-    {'codigo': '3', 'valor': '3 (BOLSO ASA CUERO)'},
-    {'codigo': '4', 'valor': '4 (BOLSO ASA TELA)'},
-    {'codigo': '5', 'valor': '5 (BOLSO ASA TELA)'},
-    {'codigo': '6', 'valor': '6 (CAMINO DE MESA - PIE DE CAMA)'},
-    {'codigo': '7', 'valor': '7 (CAMINO MESA LATERAL)'},
-    {'codigo': '8', 'valor': '8 (COJIN)'},
-    {'codigo': '9', 'valor': '9 (CORREA)'},
-    {'codigo': '10', 'valor': '10 (INDIVIDUAL)'},
-    {'codigo': '11', 'valor': '11 (LLAVERO TIRA)'},
-    {'codigo': '12', 'valor': '12 (MONEDERO CHICO)'},
-    {'codigo': '13', 'valor': '13 (MONEDERO GRANDE)'},
-    {'codigo': '14', 'valor': '14 (PORTA CELULARES)'},
-    {'codigo': '15', 'valor': '15 (PORTA LAPTOP)'},
-    {'codigo': '16', 'valor': '16 (POSAVASOS)'},
-  ];
-
-  final List<String> categoriasOptions = const [
-    'ACCESORIOS',
-    'BOLSOS Y MONEDEROS',
-    'TEXTILES PARA EL HOGAR',
-  ];
 
   final appRouter = getIt<AppRouter>();
   void _showAlertDialog(BuildContext context, String message) {
@@ -89,6 +66,19 @@ class RegisterProductsScreen extends HookWidget {
         );
       },
     );
+  }
+  Future<String> uploadImageToFirebase(File image) async {
+    // Get the file name
+    String fileName = basename(image.path);
+    // Create a reference to Firebase Storage
+    Reference firebaseStorageRef = FirebaseStorage.instance
+        .ref()
+        .child('Products_Images/$fileName');
+    // Upload the file
+    UploadTask uploadTask = firebaseStorageRef.putFile(image);
+    // Get the download URL after the upload is complete
+    TaskSnapshot taskSnapshot = await uploadTask.whenComplete(() => null);
+    return await taskSnapshot.ref.getDownloadURL();
   }
 
   Future<void> _submit(
@@ -155,11 +145,11 @@ class RegisterProductsScreen extends HookWidget {
 
   @override
   Widget build(BuildContext context) {
-    final ValueNotifier<File?> productImage = useState(null);
+      final ValueNotifier<File?> newProductImage = useState(null);
+    final ValueNotifier<String?> existingImageUrl = useState(null);
     final anchoController = useTextEditingController();
     final altoController = useTextEditingController();
     final tipoPesoController = useState<String>('gramos');
-    ;
     final pesoController = useTextEditingController();
     final descripcionController = useTextEditingController();
     final ubicacionController = useTextEditingController();
@@ -175,19 +165,17 @@ class RegisterProductsScreen extends HookWidget {
 
     final ImagePicker imagePicker = ImagePicker();
 
-    Future<String?> selectImage() async {
-      const String defaultImageUrl =
-          'https://firebasestorage.googleapis.com/v0/b/wayllu.appspot.com/o/Products_Images%2Fdefault.jpg?alt=media&token=df650e20-c859-4dbe-8324-8cb58585b362';
-      final XFile? image =
-          await imagePicker.pickImage(source: ImageSource.gallery);
-      if (image != null) {
-        productImage.value = File(image.path);
-        return '';
-      } else {
-        productImage.value = File(defaultImageUrl);
-      }
+      Future<void> selectImage() async {
+      final XFile? image = await imagePicker.pickImage(source: ImageSource.gallery);
 
-      return null;
+      if (image != null) {
+        // Upload the image to Firebase and get the URL
+        final String uploadedImageUrl = await uploadImageToFirebase(File(image.path));
+        
+        // Update the URL notifier
+        newProductImage.value = File(image.path);
+        urlImage.value = uploadedImageUrl;
+      }
     }
 
     return Scaffold(
@@ -209,10 +197,10 @@ class RegisterProductsScreen extends HookWidget {
         padding: const EdgeInsets.symmetric(horizontal: 20.0),
         child: ListView(
           children: [
-            photoUser(
-              context,
-              productImage,
-              selectImage,
+            PhotoProduct(
+             // existingImageUrl: existingImageUrl,
+              newProductImage: newProductImage,
+              selectImage: selectImage,
             ),
             containerTextForm(
               context,
@@ -248,10 +236,9 @@ class RegisterProductsScreen extends HookWidget {
                 DropDownOptions<dynamic>(
                   optionHead: 'Codigo familia',
                   options: codFamiliasOptions,
-                  displayField: "valor",
+                  displayField: 'valor',
                   selectedOption: selectedCodFamilia,
-                )
-                // _selectedCodigoFamilia(selectedCodFamilia),
+                ),
               ],
             ),
             containerTextForm(
@@ -290,7 +277,7 @@ class RegisterProductsScreen extends HookWidget {
                   urlImage.value,
                 );
               },
-            )
+            ),
           ],
         ),
       ),
