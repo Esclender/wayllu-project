@@ -11,7 +11,9 @@ import 'package:image_picker/image_picker.dart';
 import 'package:ionicons/ionicons.dart';
 import 'package:wayllu_project/src/config/router/app_router.dart';
 import 'package:wayllu_project/src/domain/models/families_code.dart';
+import 'package:wayllu_project/src/domain/models/list_items_model.dart';
 import 'package:wayllu_project/src/domain/models/products_info/product_info_model.dart';
+import 'package:wayllu_project/src/domain/models/user_info/user_info_model.dart';
 import 'package:wayllu_project/src/locator.dart';
 import 'package:wayllu_project/src/presentation/cubit/products_list_cubit.dart';
 import 'package:wayllu_project/src/presentation/cubit/users_list_cubit.dart';
@@ -241,33 +243,6 @@ class EditProductsScreen extends HookWidget {
   }
 
 
-
-  // Column photoUser(
-  //   BuildContext context,
-  //   ValueNotifier<File?> newproductImage,
-  //   ValueNotifier<String> productImage,
-  //   Future<String?> Function() selectImage,
-  // ) {
-  //   return Column(
-  //     children: [
-  //       InkWell(
-  //         onTap: selectImage,
-  //         child: CircleAvatar(
-  //           radius: 70,
-  //           backgroundColor: Colors.grey,
-  //           backgroundImage: newproductImage.value != null
-  //               ? FileImage(newproductImage.value!) as ImageProvider<Object>
-  //               : NetworkImage(productImage.value) as ImageProvider<Object>,
-  //           child: const Icon(
-  //             Ionicons.camera,
-  //             color: Colors.grey,
-  //           ),
-  //         ),
-  //       ),
-  //     ],
-  //   );
-  // }
-
   Text _buildTextHeader() {
     return const Text(
       'Actualizar Producto',
@@ -395,36 +370,39 @@ class DropDownMenuArtesanos extends HookWidget {
 
     useEffect(
       () {
-        usersListCubitRead
-            .getUniqueUser({'CODIGO': int.parse(selectedOption.value)});
-
-        return () {
+        if (selectedOption.value.isNotEmpty) {
           usersListCubitRead
               .getUniqueUser({'CODIGO': int.parse(selectedOption.value)});
-        };
+        }
       },
       [],
     );
 
-    // Add a post-frame callback to ensure the build is complete before handling state changes
     useEffect(
       () {
-        WidgetsBinding.instance.addPostFrameCallback((_) {
-          queryNombre.addListener(() {
-            if (queryNombre.value != selectedOption.value) {
-              usersListCubitRead.getUserLists(
-                nombre: queryNombre.value,
-                cantidad: 5,
-              );
-            }
-          });
+        queryNombre.addListener(() {
+          if (queryNombre.value != selectedOption.value) {
+            usersListCubitRead.getUserLists(
+              nombre: queryNombre.value,
+              cantidad: 5,
+            );
+          }
         });
 
-        // Cleanup the listener on dispose
         return () {};
       },
       [],
     );
+
+   String artisanName = 'Asignar artesano';
+    if (selectedOption.value.isNotEmpty && usersListCubit.state != null) {
+      for (var artisan in usersListCubit.state!) {
+        if (artisan.codigoArtesano.toString() == selectedOption.value) {
+          artisanName = artisan.nombre;
+          break;
+        }
+      }
+    }
 
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
@@ -436,14 +414,13 @@ class DropDownMenuArtesanos extends HookWidget {
             fontSize: 16,
             fontFamily: 'Gotham',
             fontWeight: FontWeight.w500,
-            height: 1.5, // Adjust height as needed
+            height: 1.5,
           ),
         ),
         DropdownMenu(
-          hintText: 'Asignar artesano',
+          hintText: artisanName, // Display the artisan's name
           controller: menuController,
-          initialSelection:
-              usersListCubit.state!.isNotEmpty ? selectedOption.value : null,
+          initialSelection: selectedOption.value,
           trailingIcon: const Icon(Ionicons.chevron_down),
           width: width,
           requestFocusOnTap: true,
