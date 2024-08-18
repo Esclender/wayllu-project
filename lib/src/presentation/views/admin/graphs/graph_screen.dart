@@ -673,22 +673,16 @@ class GraphicProductsScreen extends HookWidget {
               subtitle: Column(
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
-                  Text(
-                    'Cantidad: ${venta.CANTIDAD}',
-                    style: infoCardsProducts(),
-                  ),
+                  Text('Cantidad: ${venta.CANTIDAD}',
+                      style: infoCardsProducts()),
                   Text(
                     'Descripción: ${venta.DESCRIPCION}',
-                    style: infoCardsProducts(),
-                  ),
-                  Text(
-                    'Artesana: ${venta.COD_ARTESANA}',
                     style: infoCardsProducts(),
                   ),
                 ],
               ),
             ),
-            const Divider(),
+            Divider(),
           ],
         );
       }).toList(),
@@ -783,20 +777,23 @@ class DropDownMenuArtesanos extends HookWidget {
       return;
     }, []);
 
-    useEffect(() {
-      WidgetsBinding.instance.addPostFrameCallback((_) {
-        queryNombre.addListener(() {
-          if (queryNombre.value != selectedOption.value) {
-            usersListCubitRead.getUserLists(
-              nombre: queryNombre.value,
-              cantidad: 5,
-            );
-          }
+    useEffect(
+      () {
+        WidgetsBinding.instance.addPostFrameCallback((_) {
+          queryNombre.addListener(() {
+            if (queryNombre.value != selectedOption.value) {
+              usersListCubitRead.getUserLists(
+                nombre: queryNombre.value,
+                cantidad: 5,
+              );
+            }
+          });
         });
-      });
 
-      return () {};
-    }, []);
+        return () {};
+      },
+      [],
+    );
 
     final items = usersListCubit.state?.map<DropdownMenuItem<String>>((value) {
           return DropdownMenuItem<String>(
