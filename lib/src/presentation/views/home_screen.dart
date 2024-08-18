@@ -19,6 +19,7 @@ import 'package:wayllu_project/src/presentation/cubit/productos_carrito_cubit.da
 import 'package:wayllu_project/src/presentation/cubit/products_list_cubit.dart';
 import 'package:wayllu_project/src/presentation/cubit/user_logged_cubit.dart';
 import 'package:wayllu_project/src/presentation/widgets/actity_day.dart';
+import 'package:wayllu_project/src/presentation/widgets/actity_day.dart';
 import 'package:wayllu_project/src/presentation/widgets/bottom_navbar.dart';
 import 'package:wayllu_project/src/presentation/widgets/list_products.dart';
 import 'package:wayllu_project/src/utils/constants/colors.dart';
