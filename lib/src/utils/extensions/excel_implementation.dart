@@ -91,8 +91,8 @@ class ExcelImplementation {
     sheet.getRangeByName('F5').setText('COMUNIDAD');
     sheet.getRangeByName('G5').setText('FAMILIA');
     sheet.getRangeByName('H5').setText('CANTIDAD');
-    sheet.getRangeByName('I5').setText('MONTO');
-    sheet.getRangeByName('J5').setText('PRECIO U');
+    sheet.getRangeByName('I5').setText('PRECIO U');
+    sheet.getRangeByName('J5').setText('MONTO');
 
     // Merge cells for header and title
     sheet.getRangeByName('A1:K1').merge();
@@ -117,10 +117,10 @@ class ExcelImplementation {
       sheet.getRangeByName('F$currentRow').setText(salesDataFromJson.community);
       sheet.getRangeByName('G$currentRow').setText(salesDataFromJson.family);
       sheet.getRangeByName('H$currentRow').setValue(salesDataFromJson.quantity);
-      sheet.getRangeByName('I$currentRow').setNumber(salesDataFromJson.amount);
       sheet
-          .getRangeByName('J$currentRow')
+          .getRangeByName('I$currentRow')
           .setNumber(salesDataFromJson.unitPrice);
+      sheet.getRangeByName('J$currentRow').setNumber(salesDataFromJson.amount);
 
       // Set currency format for "MONTO" and "PRECIO U" columns
       final montoCell = sheet.getRangeByName('I$currentRow');
