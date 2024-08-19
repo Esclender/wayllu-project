@@ -123,11 +123,11 @@ class ExcelImplementation {
       sheet.getRangeByName('J$currentRow').setNumber(salesDataFromJson.amount);
 
       // Set currency format for "MONTO" and "PRECIO U" columns
-      final montoCell = sheet.getRangeByName('I$currentRow');
+      final montoCell = sheet.getRangeByName('J$currentRow');
       montoCell.setNumber(salesDataFromJson.amount);
       montoCell.cellStyle.numberFormat = '"S/"#,##0.00';
 
-      final totalCell = sheet.getRangeByName('J$currentRow');
+      final totalCell = sheet.getRangeByName('I$currentRow');
       totalCell.setNumber(salesDataFromJson.unitPrice);
       totalCell.cellStyle.numberFormat = '"S/"#,##0.00';
 

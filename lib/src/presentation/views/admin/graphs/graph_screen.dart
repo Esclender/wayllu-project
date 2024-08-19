@@ -190,8 +190,7 @@ class GraphicProductsScreen extends HookWidget {
       (venta) => venta.COD_PRODUCTO,
     );
 
-    final List<CardTemplateProducts> cardData =
-        groupedVentas.entries.map((entry) {
+    final List<CardTemplateProducts> cards = groupedVentas.entries.map((entry) {
       final codigoProducto = entry.key;
       final ventas = entry.value;
       final totalCantidad = ventas.fold<int>(
@@ -339,14 +338,18 @@ class GraphicProductsScreen extends HookWidget {
                   )
                 else
                   Container(
-                    padding: const EdgeInsets.symmetric(horizontal: 4),
+                    padding: const EdgeInsets.only(
+                      left: 2,
+                      right: 2,
+                      bottom: 60,
+                    ),
                     alignment: Alignment.topCenter,
-                    height: MediaQuery.of(context).size.height * 1.4,
-                    width: MediaQuery.of(context).size.width,
                     child: ListView.builder(
                       controller: scrollController,
+                      shrinkWrap: true,
+                      physics: NeverScrollableScrollPhysics(),
                       padding: EdgeInsets.zero,
-                      itemCount: cardData.length,
+                      itemCount: cards.length,
                       itemBuilder: (context, index) {
                         final key = groupedVentas.keys.elementAt(index);
                         return _buildGroupedItemContainer(
@@ -746,10 +749,6 @@ class GraphicProductsScreen extends HookWidget {
         );
       },
     );
-
-    Timer(const Duration(seconds: 2), () {
-      appRouter.popForced();
-    });
   }
 }
 

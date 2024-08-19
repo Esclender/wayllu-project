@@ -14,10 +14,6 @@ class CarritoItem {
     return info.PRECIO * quantity;
   }
 
-  double _calculatePrecioVenta() {
-    return info.PRECIO * quantity;
-  }
-
   Map<String, dynamic> toMap() {
     return <String, dynamic>{
       'COD_ARTESANA': info.COD_ARTESANA,
