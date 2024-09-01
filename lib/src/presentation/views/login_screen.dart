@@ -23,7 +23,7 @@ import 'package:wayllu_project/src/utils/constants/colors.dart';
 @RoutePage()
 class LoginExampleScreen extends HookWidget {
   //Dependencies Injection
-  final appRouter = getIt<AppRouter>();
+  final appRouter = getItAppRouter<AppRouter>();
 
   Future<void> _loginEvent(
     String dni,
@@ -53,6 +53,7 @@ class LoginExampleScreen extends HookWidget {
   }
 
 //45682020
+//44750328
   @override
   Widget build(BuildContext context) {
     final controllerEmail = useTextEditingController(text: "12345678");

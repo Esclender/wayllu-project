@@ -36,14 +36,16 @@ abstract class ProductsApiServices {
   @GET('/ventas')
   Future<HttpResponse<VentasListHttpResponse>> getVentas();
 
-  @GET('/ventas/{year}/{mes}')
-  Future<HttpResponse<VentasListHttpResponse>> getVentasByYearAndMonth(
+
+  @GET('/ventas/{year}/{mes}/{COD_ARTESANA}')
+  Future<HttpResponse<VentasListHttpResponse>> getVentasByfilters(
     @Path('year') String? year,
     @Path('mes') String? mes,
+    @Path('COD_ARTESANA') String? codArtisan,
   );
 
-  @GET('/ventas/artesano/{codArtisan}')
-  Future<HttpResponse<VentasListHttpResponse>> getVentasByCodeArtisians(
-    @Path('codArtisan') int codArtisan,
-  );
+  // @GET('/ventas/artesano/{COD_ARTESANA}')
+  // Future<HttpResponse<VentasListHttpResponse>> getVentasByArtisans(
+  //   @Path('COD_ARTESANA') String? codArtisan,
+  // );
 }

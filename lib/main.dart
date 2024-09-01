@@ -28,10 +28,19 @@ Future<void> main() async {
   await initializeDateFormatting('es');
   initializeDependecies();
 
-  runApp(BlocSettup());
+  runApp(BlocSetup());
 }
 
-class BlocSettup extends StatelessWidget {
+class BlocSetup extends StatefulWidget {
+  @override
+  _BlocSetupState createState() => _BlocSetupState();
+}
+
+class _BlocSetupState extends State<BlocSetup> {
+  void rebuild() {
+    setState(() {});
+  }
+
   @override
   Widget build(BuildContext context) {
     return MultiBlocProvider(
@@ -85,7 +94,7 @@ class BlocSettup extends StatelessWidget {
 class MyApp extends StatelessWidget {
   MyApp({super.key});
 
-  final _appRouter = getIt<AppRouter>();
+  final _appRouter = getItAppRouter<AppRouter>();
 
   // This widget is the root of your application.
   @override

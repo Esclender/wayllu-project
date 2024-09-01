@@ -31,7 +31,7 @@ class HomeScreen extends HookWidget {
     required this.viewIndex,
   });
 
-  final appRouter = getIt<AppRouter>();
+  final appRouter = getItAppRouter<AppRouter>();
 
   @override
   Widget build(BuildContext context) {
@@ -53,11 +53,12 @@ class HomeScreen extends HookWidget {
       isSearchingByCode.value = code;
       await productsListCubit.getProductsListsByCode(code);
     }
+
     void _clearSearch() {
-    searchController.clear();
-    isSearchingByCode.value= '';
-    isSearchingProducts.value = true;
-    productsListCubit.getProductsLists();
+      searchController.clear();
+      isSearchingByCode.value = '';
+      isSearchingProducts.value = true;
+      productsListCubit.getProductsLists();
     }
 
     final List<ProductInfo> data = [];
@@ -193,7 +194,11 @@ class HomeScreen extends HookWidget {
                                             padding: EdgeInsets.symmetric(
                                               horizontal: 6.0,
                                             ),
-                                            child: Icon(Ionicons.search, color: Colors.grey, size: 20,),
+                                            child: Icon(
+                                              Ionicons.search,
+                                              color: Colors.grey,
+                                              size: 20,
+                                            ),
                                           ),
                                           SizedBox(
                                             width: MediaQuery.of(context)
@@ -213,13 +218,19 @@ class HomeScreen extends HookWidget {
                                                 fillColor: bottomNavBar,
                                                 border: InputBorder.none,
                                                 hintText: 'Buscar por codigo',
-                                                hintStyle: TextStyle(fontWeight: FontWeight.w300),
-                                                 suffixIcon: searchController.text.isNotEmpty
-                                                 ? IconButton(
-                                                 icon: const Icon(Icons.clear, color: Colors.grey,),
-                                                onPressed: _clearSearch,
-                                                 )
-                                                : null,
+                                                hintStyle: TextStyle(
+                                                    fontWeight:
+                                                        FontWeight.w300),
+                                                suffixIcon: searchController
+                                                        .text.isNotEmpty
+                                                    ? IconButton(
+                                                        icon: const Icon(
+                                                          Icons.clear,
+                                                          color: Colors.grey,
+                                                        ),
+                                                        onPressed: _clearSearch,
+                                                      )
+                                                    : null,
                                               ),
                                             ),
                                           ),
@@ -571,7 +582,6 @@ class HomeScreen extends HookWidget {
             child: InkWell(
               onTap: () {
                 unregisterDependenciesAndEnpoints();
-                appRouter.navigateNamed('login');
               },
               child: ListTile(
                 leading: Icon(

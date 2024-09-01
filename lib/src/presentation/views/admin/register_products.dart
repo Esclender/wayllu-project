@@ -26,7 +26,32 @@ import 'package:wayllu_project/src/utils/constants/colors.dart';
 class RegisterProductsScreen extends HookWidget {
   RegisterProductsScreen({super.key});
 
-  final appRouter = getIt<AppRouter>();
+  final List<Map<String, String>> codFamiliasOptions = const [
+    {'codigo': '1', 'valor': '1 (BOLSA ASA CUERO)'},
+    {'codigo': '2', 'valor': '2 (BOLSA ASA TELA)'},
+    {'codigo': '3', 'valor': '3 (BOLSO ASA CUERO)'},
+    {'codigo': '4', 'valor': '4 (BOLSO ASA TELA)'},
+    {'codigo': '5', 'valor': '5 (BOLSO ASA TELA)'},
+    {'codigo': '6', 'valor': '6 (CAMINO DE MESA - PIE DE CAMA)'},
+    {'codigo': '7', 'valor': '7 (CAMINO MESA LATERAL)'},
+    {'codigo': '8', 'valor': '8 (COJIN)'},
+    {'codigo': '9', 'valor': '9 (CORREA)'},
+    {'codigo': '10', 'valor': '10 (INDIVIDUAL)'},
+    {'codigo': '11', 'valor': '11 (LLAVERO TIRA)'},
+    {'codigo': '12', 'valor': '12 (MONEDERO CHICO)'},
+    {'codigo': '13', 'valor': '13 (MONEDERO GRANDE)'},
+    {'codigo': '14', 'valor': '14 (PORTA CELULARES)'},
+    {'codigo': '15', 'valor': '15 (PORTA LAPTOP)'},
+    {'codigo': '16', 'valor': '16 (POSAVASOS)'},
+  ];
+
+  final List<String> categoriasOptions = const [
+    'ACCESORIOS',
+    'BOLSOS Y MONEDEROS',
+    'TEXTILES PARA EL HOGAR',
+  ];
+
+  final appRouter = getItAppRouter<AppRouter>();
   void _showAlertDialog(BuildContext context, String message) {
     showDialog<void>(
       context: context,
@@ -67,13 +92,13 @@ class RegisterProductsScreen extends HookWidget {
       },
     );
   }
+
   Future<String> uploadImageToFirebase(File image) async {
     // Get the file name
     final String fileName = basename(image.path);
     // Create a reference to Firebase Storage
-    final Reference firebaseStorageRef = FirebaseStorage.instance
-        .ref()
-        .child('Products_Images/$fileName');
+    final Reference firebaseStorageRef =
+        FirebaseStorage.instance.ref().child('Products_Images/$fileName');
     // Upload the file
     final UploadTask uploadTask = firebaseStorageRef.putFile(image);
     // Get the download URL after the upload is complete
@@ -94,7 +119,7 @@ class RegisterProductsScreen extends HookWidget {
       String? ubicacion,
       String? cantidad,
       String? precio,
-      String? urlImage,) async {
+      String? urlImage) async {
     if (ancho == null ||
         alto == null ||
         tipoPeso == null ||
@@ -145,7 +170,7 @@ class RegisterProductsScreen extends HookWidget {
 
   @override
   Widget build(BuildContext context) {
-      final ValueNotifier<File?> newProductImage = useState(null);
+    final ValueNotifier<File?> newProductImage = useState(null);
     final ValueNotifier<String?> existingImageUrl = useState(null);
     final anchoController = useTextEditingController();
     final altoController = useTextEditingController();
@@ -165,13 +190,14 @@ class RegisterProductsScreen extends HookWidget {
 
     final ImagePicker imagePicker = ImagePicker();
 
-      Future<void> selectImage() async {
-      final XFile? image = await imagePicker.pickImage(source: ImageSource.gallery);
-
+    Future<void> selectImage() async {
+      final XFile? image =
+          await imagePicker.pickImage(source: ImageSource.gallery);
       if (image != null) {
         // Upload the image to Firebase and get the URL
-        final String uploadedImageUrl = await uploadImageToFirebase(File(image.path));
-        
+        final String uploadedImageUrl =
+            await uploadImageToFirebase(File(image.path));
+
         // Update the URL notifier
         newProductImage.value = File(image.path);
         urlImage.value = uploadedImageUrl;
@@ -198,7 +224,7 @@ class RegisterProductsScreen extends HookWidget {
         child: ListView(
           children: [
             PhotoProduct(
-             // existingImageUrl: existingImageUrl,
+              // existingImageUrl: existingImageUrl,
               newProductImage: newProductImage,
               selectImage: selectImage,
             ),
@@ -283,6 +309,7 @@ class RegisterProductsScreen extends HookWidget {
       ),
     );
   }
+
   SizedBox containerTextForm(
     BuildContext context,
     String title,
@@ -526,7 +553,7 @@ SizedBox wrappedContainerTextForm(
       children: [
         const SizedBox(height: 8),
         Wrap(
-          spacing:10, // Spacing between elements
+          spacing: 10, // Spacing between elements
           runSpacing: 16, // Spacing between rows
           children: [
             _buildTextField(
@@ -631,12 +658,15 @@ class DropDownMenuArtesanos extends HookWidget {
       FocusScope.of(context).unfocus();
     }
 
-    useEffect(() {
-      usersListCubitRead.getUserLists();
-      return;
-    }, [],);
+    useEffect(
+      () {
+        usersListCubitRead.getUserLists();
+        return;
+      },
+      [],
+    );
 
-  useEffect(
+    useEffect(
       () {
         WidgetsBinding.instance.addPostFrameCallback((_) {
           queryNombre.addListener(() {

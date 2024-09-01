@@ -24,7 +24,7 @@ class InfoUserScreen extends HookWidget {
   final int viewIndex;
   final UserInfo? user;
 
-  final appRouter = getIt<AppRouter>();
+  final appRouter = getItAppRouter<AppRouter>();
   final ImagePicker imagePicker = ImagePicker();
 
   Future<void> _updateInfo(
@@ -147,9 +147,8 @@ class InfoUserScreen extends HookWidget {
                                 text: 'Cerrar Sesión',
                                 onTap: () {
                                   unregisterDependenciesAndEnpoints();
-                                  appRouter.navigateNamed('login');
                                 },
-                              )
+                              ),
                             ],
                           ),
                         ],

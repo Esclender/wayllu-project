@@ -41,5 +41,7 @@ class ProductListCubit extends Cubit<List<ProductInfo>?> {
     emit(responseState?.map((producto) => producto).toList());
   }
 
- 
+  void resetProducts() {
+    emit(null);
+  }
 }

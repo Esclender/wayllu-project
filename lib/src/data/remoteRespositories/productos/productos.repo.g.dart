@@ -178,9 +178,10 @@ class _ProductsApiServices implements ProductsApiServices {
   }
 
   @override
-  Future<HttpResponse<List<VentasList>?>> getVentasByYearAndMonth(
+  Future<HttpResponse<List<VentasList>?>> getVentasByfilters(
     String? year,
     String? mes,
+    String? codArtisan,
   ) async {
     const _extra = <String, dynamic>{};
     final queryParameters = <String, dynamic>{};
@@ -195,7 +196,7 @@ class _ProductsApiServices implements ProductsApiServices {
     )
             .compose(
               _dio.options,
-              '/ventas/${year}/${mes}',
+              '/ventas/${year}/${mes}/${codArtisan}',
               queryParameters: queryParameters,
               data: _data,
             )
@@ -212,10 +213,11 @@ class _ProductsApiServices implements ProductsApiServices {
   }
 
   @override
-  Future<HttpResponse<List<VentasList>?>> getVentasByCodeArtisians(
-      int codArtisan) async {
+  Future<HttpResponse<List<VentasList>?>> getVentasByArtisans(
+      String? codArtisan) async {
     const _extra = <String, dynamic>{};
     final queryParameters = <String, dynamic>{};
+    queryParameters.removeWhere((k, v) => v == null);
     final _headers = <String, dynamic>{};
     final Map<String, dynamic>? _data = null;
     final _result = await _dio.fetch<List<dynamic>>(

@@ -8,7 +8,6 @@ import 'package:flutter/rendering.dart';
 import 'package:flutter/widgets.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_hooks/flutter_hooks.dart';
-import 'package:gap/gap.dart';
 import 'package:hexcolor/hexcolor.dart';
 import 'package:ionicons/ionicons.dart';
 import 'package:wayllu_project/src/config/router/app_router.dart';
@@ -23,7 +22,7 @@ import 'package:wayllu_project/src/utils/constants/colors.dart';
 @RoutePage()
 class CarritoScreen extends HookWidget {
   final double checkoutBtnHeight = 150.0;
-  final appRouter = getIt<AppRouter>();
+  final appRouter = getItAppRouter<AppRouter>();
 
   Future<VentaInfo?> _checkoutVentaGoRecib(ProductsCarrito carrito) async {
     final VentaInfo ventaInfo = await carrito.registerVenta();

@@ -1,16 +1,24 @@
+import 'dart:async';
+import 'dart:isolate';
+
 import 'package:auto_route/auto_route.dart';
+import 'package:collection/collection.dart';
+import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_hooks/flutter_hooks.dart';
 import 'package:gap/gap.dart';
+import 'package:hexcolor/hexcolor.dart';
 import 'package:intl/date_symbol_data_local.dart';
 import 'package:intl/intl.dart';
 import 'package:ionicons/ionicons.dart';
 import 'package:shimmer/shimmer.dart';
+import 'package:wayllu_project/src/config/router/app_router.dart';
 import 'package:wayllu_project/src/domain/models/graphs/chart_column_bar.dart';
 import 'package:wayllu_project/src/domain/models/list_items_model.dart';
 import 'package:wayllu_project/src/domain/models/list_products_model.dart';
 import 'package:wayllu_project/src/domain/models/registro_ventas/registros_venta_repo.dart';
+import 'package:wayllu_project/src/locator.dart';
 import 'package:wayllu_project/src/presentation/cubit/users_list_cubit.dart';
 import 'package:wayllu_project/src/presentation/cubit/ventas_list_cubit.dart';
 import 'package:wayllu_project/src/presentation/widgets/bottom_navbar.dart';
@@ -19,12 +27,16 @@ import 'package:wayllu_project/src/presentation/widgets/gradient_widgets.dart';
 import 'package:wayllu_project/src/presentation/widgets/graphs_components/column_bar_chart.dart';
 import 'package:wayllu_project/src/presentation/widgets/top_vector.dart';
 import 'package:wayllu_project/src/utils/constants/colors.dart';
-import 'package:collection/collection.dart';
+import 'package:wayllu_project/src/utils/extensions/excel_implementation.dart';
+import 'package:wayllu_project/src/utils/functions/excel_util.dart';
 
 @RoutePage()
 class GraphicProductsScreen extends HookWidget {
   final int viewIndex;
+  final ExcelUtil excelUtil = ExcelUtil();
+  final ExcelImplementation excelLibrary = ExcelImplementation();
   final double containersPadding = 20.0;
+  final appRouter = getItAppRouter<AppRouter>();
 
   GraphicProductsScreen({
     required this.viewIndex,
@@ -43,23 +55,33 @@ class GraphicProductsScreen extends HookWidget {
     Map<String, String> selectedValues,
   ) {
     final ventasListCubit = context.read<VentasListCubit>();
+    final currentYear = DateTime.now().year.toString();
+    final currentMonth = DateTime.now().month.toString();
 
     if (filterType == 'Año') {
-      ventasListCubit.getVentasByYearAndMonth(selectedValue ?? '', '');
+      ventasListCubit.getVentasByfilters(
+          selectedValue ?? '', '', selectedValues['Artesano'] ?? '');
       selectedFilter.value = 'Año/$selectedValue';
       selectedValues['Año'] = selectedValue ?? '';
     } else if (filterType == 'Mes') {
-      final currentYear = DateTime.now().year;
-      ventasListCubit.getVentasByYearAndMonth(
-        '${selectedValues['Año'] ?? currentYear}/$selectedValue',
-        '',
-      );
+      final selectedYear = selectedValues['Año'] ?? currentYear;
+      ventasListCubit.getVentasByfilters(
+          selectedYear, selectedValue ?? '', selectedValues['Artesano'] ?? '');
       selectedFilter.value = 'Mes/$selectedValue';
       selectedValues['Mes'] = selectedValue ?? '';
     } else if (filterType == 'Artesano') {
       final codArtisan = int.tryParse(selectedValue ?? '');
       if (codArtisan != null) {
-        ventasListCubit.getVentasByCodeArtisians(codArtisan);
+        // Establece el año y el mes actuales si no están seleccionados
+        selectedValues['Año'] = selectedValues['Año'] ?? currentYear;
+        selectedValues['Mes'] = selectedValues['Mes'] ?? currentMonth;
+
+        ventasListCubit.getVentasByfilters(
+          selectedValue ?? '',
+          selectedValues['Año']!,
+          selectedValues['Mes']!,
+        );
+
         selectedFilter.value = 'Artesano/$selectedValue';
         selectedValues['Artesano'] = selectedValue ?? '';
       } else {
@@ -79,43 +101,53 @@ class GraphicProductsScreen extends HookWidget {
     selectedValues.clear();
   }
 
+  Future<void> generateReport() async {
+    final BuildContext context = appRouter.navigatorKey.currentContext!;
+    await excelUtil.requestStoragePermission();
+
+    _showLoadingDialog(context);
+    await excelUtil.generateExcelInBackground(context, excelLibrary);
+    appRouter.popForced();
+    _showSuccessDialog('Reporte Generado!', context);
+  }
+
   @override
   Widget build(BuildContext context) {
-    final ventasListCubit = context.watch<VentasListCubit>();
-    final dataVentas = useState<List<VentasList>>([]);
+    final isLoading = useState<bool>(true);
     final selectedFilter = useState<String>('');
+    final dataVentas = useState<List<VentasList>>([]);
     final selectedValues = useState<Map<String, String>>({});
     final scrollController = useScrollController();
-    final isLoading = useState<bool>(true);
+    final ventasListCubit = context.watch<VentasListCubit>();
+    List<ChartBarData> chartData = [];
 
     final artesanoController = useTextEditingController();
-    useEffect(
-      () {
-        final currentYear = DateTime.now().year;
-        ventasListCubit.getVentasByYearAndMonth('$currentYear', '');
-      
-        if (artesanoController.text.isNotEmpty) {
-          final codArtisan = int.tryParse(artesanoController.text);
-          if (codArtisan != null) {
-            ventasListCubit.getVentasByCodeArtisians(codArtisan);
-          } else {
-            print('Invalid artisan code: ${artesanoController.text}');
-          }
+
+    useEffect(() {
+      final currentYear = DateTime.now().year;
+      ventasListCubit.getVentasByfilters('$currentYear', '', '');
+
+      if (artesanoController.text.isNotEmpty) {
+        final codArtisan = artesanoController.text;
+        ventasListCubit.getVentasByfilters(
+          selectedFilter.value,
+          selectedFilter.value,
+          codArtisan,
+        );
+      }
+
+      final subscription = ventasListCubit.stream.listen((ventas) {
+        if (ventas != null) {
+          dataVentas.value = ventas;
+        } else {
+          dataVentas.value = []; // Set to empty list if no ventas found
         }
+        isLoading.value = false;
+      });
 
-        final subscription = ventasListCubit.stream.listen((ventas) {
-          if (ventas != null) {
-            dataVentas.value = ventas;
-          }
-          isLoading.value = false;
-        });
-        initializeDateFormatting('es_ES');
-        return subscription.cancel;
-      },
-      [ventasListCubit],
-    );
-
-    List<ChartBarData> chartData = [];
+      initializeDateFormatting('es_ES');
+      return subscription.cancel;
+    }, [ventasListCubit]);
 
     if (selectedFilter.value.startsWith('Mes')) {
       final Map<DateTime, double> dailySums = {};
@@ -125,7 +157,7 @@ class GraphicProductsScreen extends HookWidget {
         final date = DateTime.parse(venta.FECHA_REGISTRO);
 
         if (date.month.toString() == selectedValues.value['Mes']) {
-          dailySums[date] = (dailySums[date] ?? 0) + (venta.CANTIDAD ?? 0);
+          dailySums[date] = (dailySums[date] ?? 0) + (venta.CANTIDAD);
 
           if (latestDate == null || date.isAfter(latestDate)) {
             latestDate = date;
@@ -148,15 +180,17 @@ class GraphicProductsScreen extends HookWidget {
       final Map<int, double> monthlySums = {};
       for (final venta in dataVentas.value) {
         final month = DateTime.parse(venta.FECHA_REGISTRO).month;
-        monthlySums[month] = (monthlySums[month] ?? 0) + (venta.PRECIO_VENTA ?? 0);
+        monthlySums[month] = (monthlySums[month] ?? 0) + (venta.PRECIO_VENTA);
       }
 
       chartData = monthlySums.entries
-          .map((entry) => ChartBarData(
-                DateFormat.MMMM('es_ES').format(DateTime(1, entry.key)),
-                entry.value,
-                entry.key,
-              ))
+          .map(
+            (entry) => ChartBarData(
+              DateFormat.MMMM('es_ES').format(DateTime(1, entry.key)),
+              entry.value,
+              entry.key,
+            ),
+          )
           .toList();
     }
 
@@ -164,16 +198,15 @@ class GraphicProductsScreen extends HookWidget {
 
     final groupedVentas = groupBy<VentasList, String>(
       dataVentas.value,
-      (venta) => '${venta.COD_PRODUCTO}',
+      (venta) => venta.COD_PRODUCTO,
     );
 
-    final List<CardTemplateProducts> cardData =
-        groupedVentas.entries.map((entry) {
+    final List<CardTemplateProducts> cards = groupedVentas.entries.map((entry) {
       final codigoProducto = entry.key;
       final ventas = entry.value;
       final totalCantidad = ventas.fold<int>(
         0,
-        (sum, venta) => sum + (venta.CANTIDAD ?? 0),
+        (sum, venta) => sum + (venta.CANTIDAD),
       );
       final producto = ventas.first;
 
@@ -184,7 +217,7 @@ class GraphicProductsScreen extends HookWidget {
           DescriptionItem(field: 'Total Vendido', value: '$totalCantidad'),
           DescriptionItem(
             field: 'Descripción',
-            value: producto.DESCRIPCION ?? '',
+            value: producto.DESCRIPCION,
           ),
         ],
       );
@@ -220,8 +253,15 @@ class GraphicProductsScreen extends HookWidget {
     return Scaffold(
       backgroundColor: bgPrimary,
       floatingActionButtonLocation: FloatingActionButtonLocation.centerDocked,
-      floatingActionButton: BottomNavBar(
-        viewSelected: viewIndex,
+      floatingActionButton: Column(
+        mainAxisAlignment: MainAxisAlignment.end,
+        children: [
+          _downloadExcelComponent(context),
+          const Gap(8),
+          BottomNavBar(
+            viewSelected: viewIndex,
+          ),
+        ],
       ),
       body: CustomScrollView(
         slivers: [
@@ -309,14 +349,18 @@ class GraphicProductsScreen extends HookWidget {
                   )
                 else
                   Container(
-                    padding: const EdgeInsets.symmetric(horizontal: 4),
+                    padding: const EdgeInsets.only(
+                      left: 2,
+                      right: 2,
+                      bottom: 60,
+                    ),
                     alignment: Alignment.topCenter,
-                    height: MediaQuery.of(context).size.height * 1.4,
-                    width: MediaQuery.of(context).size.width,
                     child: ListView.builder(
                       controller: scrollController,
+                      shrinkWrap: true,
+                      physics: const NeverScrollableScrollPhysics(),
                       padding: EdgeInsets.zero,
-                      itemCount: cardData.length,
+                      itemCount: cards.length,
                       itemBuilder: (context, index) {
                         final key = groupedVentas.keys.elementAt(index);
                         return _buildGroupedItemContainer(
@@ -331,6 +375,23 @@ class GraphicProductsScreen extends HookWidget {
             ),
           ),
         ],
+      ),
+    );
+  }
+
+  Widget _downloadExcelComponent(BuildContext context) {
+    return Container(
+      width: MediaQuery.of(context).size.width,
+      alignment: Alignment.bottomRight,
+      margin: const EdgeInsets.only(
+        left: 10,
+        right: 10,
+      ), //bottom: 60
+      child: FloatingActionButton(
+        backgroundColor: bottomNavBar,
+        shape: const CircleBorder(),
+        onPressed: generateReport,
+        child: Image.asset('assets/images/excel-download.png'),
       ),
     );
   }
@@ -379,11 +440,13 @@ class GraphicProductsScreen extends HookWidget {
     );
   }
 
-  Widget _buildFilter(BuildContext context,
-      {required String hint,
-      required ValueNotifier<String> selectedFilter,
-      required Map<String, String> selectedValues,
-      TextEditingController? menuController,}) {
+  Widget _buildFilter(
+    BuildContext context, {
+    required String hint,
+    required ValueNotifier<String> selectedFilter,
+    required Map<String, String> selectedValues,
+    TextEditingController? menuController,
+  }) {
     final currentYear = DateTime.now().year;
 
     final List<DropdownMenuItem<String>> yearItems = [];
@@ -416,23 +479,20 @@ class GraphicProductsScreen extends HookWidget {
       return DropDownMenuArtesanos(
         menuController: menuController,
         selectedOption: selectedFilter,
+        selectedValues: selectedValues,
       );
     }
 
-    List<DropdownMenuItem<String>> items = [];
-    if (hint == 'Año') {
-      items = yearItems;
-    } else {
-      items = monthItems;
-    }
+    List<DropdownMenuItem<String>> items =
+        hint == 'Año' ? yearItems : monthItems;
 
     return DropdownButton<String>(
       value: selectedValues[hint],
       hint: Text(hint),
-      style: TextStyle(fontSize: 14, fontWeight: FontWeight.w400, color: iconColor),
+      style: TextStyle(
+          fontSize: 14, fontWeight: FontWeight.w400, color: iconColor),
       items: items,
       padding: const EdgeInsets.only(right: 2),
-
       onChanged: (String? newValue) {
         _onDropMenuChanged(
           newValue,
@@ -442,7 +502,6 @@ class GraphicProductsScreen extends HookWidget {
           selectedValues,
         );
       },
-      
     );
   }
 
@@ -471,7 +530,8 @@ class GraphicProductsScreen extends HookWidget {
                 child: _buildShimmerEffect(context),
               ),
               Container(
-                margin: const EdgeInsets.only(left: 15, top: 5 + additionalPadding),
+                margin:
+                    const EdgeInsets.only(left: 15, top: 5 + additionalPadding),
                 decoration: decoration,
                 child: _buildShimmerEffect2(context),
               ),
@@ -548,7 +608,6 @@ class GraphicProductsScreen extends HookWidget {
     );
   }
 
-
   Widget _buildItemContainer({
     required String productCode,
     required List<VentasList> ventas,
@@ -573,18 +632,15 @@ class GraphicProductsScreen extends HookWidget {
     );
 
     final totalQuantity =
-        ventas.fold<int>(0, (sum, item) => sum + (item.CANTIDAD ?? 0));
+        ventas.fold<int>(0, (sum, item) => sum + (item.CANTIDAD));
+
     final String imageUrl = ventas.isNotEmpty && ventas.first.IMAGEN != null
         ? ventas.first.IMAGEN!
         : 'https://via.placeholder.com/150'; // URL de la imagen por defecto
 
     return ExpansionTileImp(
       title: Container(
-        padding: EdgeInsets.zero,
-        margin: EdgeInsets.zero,
-        //padding: const EdgeInsets.only(bottom: 5),
         decoration: decoration,
-
         child: ListTile(
           leading: _buildImageAvatar(imageUrl),
           title: Column(
@@ -594,22 +650,23 @@ class GraphicProductsScreen extends HookWidget {
                 productCode,
                 style: const TextStyle(fontSize: 18),
               ),
-              Container(
-                margin: const EdgeInsets.only(top: 10),
-                padding: const EdgeInsets.symmetric(horizontal: 4),
-                decoration: BoxDecoration(
-                  color: secondary,
-                  borderRadius: BorderRadius.circular(3),
-                ),
-                child: Text(
-                  'Total vendidos: $totalQuantity',
-                  style: TextStyle(
-                    fontSize: 13,
-                    fontWeight: FontWeight.w500,
-                    color: bgPrimary,
-                  ),
+              Text(
+                '$totalQuantity vendidos',
+                style: TextStyle(
+                  fontSize: 12,
+                  fontWeight: FontWeight.w500,
+                  color: bottomNavBarStroke,
                 ),
               ),
+              Container(
+                  alignment: Alignment.centerRight,
+                  child: Text(
+                    ventas.isNotEmpty ? ' S/ ${ventas.first.PRECIO_VENTA}' : '',
+                    style: const TextStyle(
+                      fontSize: 16,
+                      fontWeight: FontWeight.w500,
+                    ),
+                  )),
             ],
           ),
         ),
@@ -625,20 +682,26 @@ class GraphicProductsScreen extends HookWidget {
               subtitle: Column(
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
-                  Text('Cantidad: ${venta.CANTIDAD}',
-                      style: infoCardsProducts(),),
+                  Text(
+                    'Cantidad: ${venta.CANTIDAD}',
+                    style: infoCardsProducts(),
+                  ),
                   Text(
                     'Descripción: ${venta.DESCRIPCION}',
                     style: infoCardsProducts(),
                   ),
                   Text(
-                    'Artesana: ${venta.COD_ARTESANA}',
+                    'Monto total: S/${venta.MONTO_TOTAL}',
+                    style: infoCardsProducts(),
+                  ),
+                  Text(
+                    'Vendedora: ${venta.NOMBRE_ARTESANO}',
                     style: infoCardsProducts(),
                   ),
                 ],
               ),
             ),
-            const Divider(),
+            Divider(),
           ],
         );
       }).toList(),
@@ -649,8 +712,8 @@ class GraphicProductsScreen extends HookWidget {
 
   Widget _buildImageAvatar(String url) {
     return Container(
-      width: 60,
-      height: 60,
+      width: 70,
+      height: 70,
       decoration: BoxDecoration(
         borderRadius: BorderRadius.circular(5.0),
         image: DecorationImage(
@@ -660,15 +723,59 @@ class GraphicProductsScreen extends HookWidget {
       ),
     );
   }
+
+  void _showLoadingDialog(BuildContext context) {
+    showDialog<void>(
+      barrierDismissible: false,
+      context: context,
+      builder: (BuildContext context) {
+        return AlertDialog(
+          content: Column(
+            mainAxisSize: MainAxisSize.min,
+            children: [
+              CircularProgressIndicator(
+                color: HexColor('#B80000'),
+              ),
+              const SizedBox(height: 20),
+              const Text('Generando reporte...'),
+            ],
+          ),
+        );
+      },
+    );
+  }
+
+  void _showSuccessDialog(String message, BuildContext context) {
+    showDialog<void>(
+      context: context,
+      builder: (BuildContext context) {
+        return AlertDialog(
+          content: Column(
+            mainAxisSize: MainAxisSize.min,
+            children: [
+              Icon(
+                Ionicons.checkmark_outline,
+                color: estadotxt,
+                size: 36,
+              ),
+              const SizedBox(height: 20),
+              Text(message),
+            ],
+          ),
+        );
+      },
+    );
+  }
 }
 
 class DropDownMenuArtesanos extends HookWidget {
   final TextEditingController? menuController;
   final ValueNotifier<String> selectedOption;
-
+  final Map<String, String> selectedValues;
   const DropDownMenuArtesanos({
     required this.menuController,
     required this.selectedOption,
+    required this.selectedValues,
   });
 
   @override
@@ -676,7 +783,6 @@ class DropDownMenuArtesanos extends HookWidget {
     final usersListCubit = context.watch<UsersListCubit>();
     final usersListCubitRead = context.read<UsersListCubit>();
     final queryNombre = useState(selectedOption.value);
-
 
     void closeKeyboard(BuildContext context) {
       FocusScope.of(context).unfocus();
@@ -687,40 +793,57 @@ class DropDownMenuArtesanos extends HookWidget {
       return;
     }, []);
 
-    useEffect(() {
-      WidgetsBinding.instance.addPostFrameCallback((_) {
-        queryNombre.addListener(() {
-          if (queryNombre.value != selectedOption.value) {
-            usersListCubitRead.getUserLists(
-              nombre: queryNombre.value,
-              cantidad: 5,
-            );
-          }
+    useEffect(
+      () {
+        WidgetsBinding.instance.addPostFrameCallback((_) {
+          queryNombre.addListener(() {
+            if (queryNombre.value != selectedOption.value) {
+              usersListCubitRead.getUserLists(
+                nombre: queryNombre.value,
+              );
+            }
+          });
         });
-      });
 
-      return () {};
-    }, []);
+        return () {};
+      },
+      [],
+    );
 
     final items = usersListCubit.state?.map<DropdownMenuItem<String>>((value) {
-      return DropdownMenuItem<String>(
-        value: value.codigoArtesano.toString(),
-        child: ListTile(
-          leading: SizedBox(
-            width: 35,
-            height: 35,
-            child: CircleAvatar(
-              backgroundImage: NetworkImage(value.url),
+          final isSelected =
+              value.codigoArtesano.toString() == selectedOption.value;
+          return DropdownMenuItem<String>(
+            value: value.codigoArtesano.toString(),
+            child: Container(
+              margin: const EdgeInsets.only(top: 3),
+              child: ListTile(
+                leading: isSelected
+                    ? null
+                    : SizedBox(
+                        width: 35,
+                        height: 35,
+                        child: CircleAvatar(
+                          backgroundImage: NetworkImage(value.url),
+                        ),
+                      ),
+                title: Padding(
+                  padding: const EdgeInsets.only(bottom: 8.0),
+                  child: Text(
+                    value.nombre,
+                    style: const TextStyle(
+                        fontSize: 14, fontWeight: FontWeight.w400),
+                  ),
+                ),
+              ),
             ),
-          ),
-          title: Text(value.nombre, style: const TextStyle(fontSize: 14, fontWeight: FontWeight.w400),),
-        ),
-      );
-    }).toList() ?? [];
+          );
+        }).toList() ??
+        [];
 
     // Comprobar que el valor seleccionado está en la lista de elementos
     String? selectedValue = selectedOption.value;
-    if (selectedValue != null && !items.any((item) => item.value == selectedValue)) {
+    if (!items.any((item) => item.value == selectedValue)) {
       selectedValue = null;
     }
 
@@ -729,7 +852,7 @@ class DropDownMenuArtesanos extends HookWidget {
       children: [
         DropdownButton<String>(
           value: selectedValue,
-          hint: const Text('Buscar artesano'),
+          hint: const Text('Artesano'),
           style: const TextStyle(fontSize: 14, fontWeight: FontWeight.w400),
           isExpanded: true,
           items: items,
@@ -738,12 +861,21 @@ class DropDownMenuArtesanos extends HookWidget {
               selectedOption.value = newValue;
               closeKeyboard(context);
               final ventasListCubit = context.read<VentasListCubit>();
-              final codArtisan = int.tryParse(selectedOption.value);
-              if (codArtisan != null) {
-                ventasListCubit.getVentasByCodeArtisians(codArtisan);
-              } else {
-                print('Invalid artisan code: ${selectedOption.value}');
-              }
+              final codArtisan = selectedOption.value;
+              // Obtener el año seleccionado del filtro
+              final selectedYear = selectedValues['Año'] ??
+                  DateTime.now()
+                      .year
+                      .toString(); // Usa el año actual si no se ha seleccionado
+
+              final selectedMonth =
+                  selectedValues['Mes'] ?? DateTime.now().month.toString();
+
+              ventasListCubit.getVentasByfilters(
+                selectedYear,
+                selectedMonth,
+                codArtisan,
+              );
             }
           },
         ),

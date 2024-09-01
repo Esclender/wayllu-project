@@ -26,9 +26,8 @@ import 'package:wayllu_project/src/utils/firebase/firebase_helper.dart';
 
 @RoutePage()
 class EditProductsScreen extends HookWidget {
-
   final ImagePicker imagePicker = ImagePicker();
-  final appRouter = getIt<AppRouter>();
+  final appRouter = getItAppRouter<AppRouter>();
 
   final ProductInfo productInfo;
 
@@ -50,7 +49,7 @@ class EditProductsScreen extends HookWidget {
 
     final ubicacionController =
         useTextEditingController(text: productInfo.UBICACION);
-      final precioController =
+    final precioController =
         useTextEditingController(text: productInfo.PRECIO.toString());
     final pesoController =
         useTextEditingController(text: productInfo.PESO.toString());
@@ -64,8 +63,9 @@ class EditProductsScreen extends HookWidget {
     final tipoPesoController = useState<String>(productInfo.TIPO_PESO);
     final categoria = useState<String>(productInfo.CATEGORIA);
     final codFamilia = useState<String>(
-      codFamiliasOptions.firstWhere((familias) =>
-          familias['codigo'] == productInfo.COD_FAMILIA.toString(),)['valor']!,
+      codFamiliasOptions.firstWhere(
+        (familias) => familias['codigo'] == productInfo.COD_FAMILIA.toString(),
+      )['valor']!,
     );
 
     final codigoArtesano =
@@ -105,7 +105,7 @@ class EditProductsScreen extends HookWidget {
             PhotoProduct(
               existingImageUrl: productImage,
               newProductImage: newproductImage,
-              selectImage:selectImage,
+              selectImage: selectImage,
             ),
             const SizedBox(
               height: 8,
@@ -241,7 +241,6 @@ class EditProductsScreen extends HookWidget {
       ),
     );
   }
-
 
   Text _buildTextHeader() {
     return const Text(
@@ -394,7 +393,7 @@ class DropDownMenuArtesanos extends HookWidget {
       [],
     );
 
-   String artisanName = 'Asignar artesano';
+    String artisanName = 'Asignar artesano';
     if (selectedOption.value.isNotEmpty && usersListCubit.state != null) {
       for (var artisan in usersListCubit.state!) {
         if (artisan.codigoArtesano.toString() == selectedOption.value) {
