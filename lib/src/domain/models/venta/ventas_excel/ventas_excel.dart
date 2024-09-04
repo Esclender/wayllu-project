@@ -8,6 +8,7 @@ class SalesData {
   final String productCode;
   final String categoryProduct;
   final String artisan;
+  final String artisanCode;
   final String community;
   final String family;
   final int quantity;
@@ -19,6 +20,7 @@ class SalesData {
     required this.categoryProduct,
     required this.productCode,
     required this.artisan,
+    required this.artisanCode,
     required this.community,
     required this.family,
     required this.quantity,

@@ -16,7 +16,7 @@ VentasList _$VentasListFromJson(Map<String, dynamic> json) => VentasList(
       MONTO_TOTAL: (json['MONTO_TOTAL'] as num).toDouble(),
       DESCRIPCION: json['DESCRIPCION'] as String,
       COMUNIDAD: json['COMUNIDAD'] as String,
-      COD_ARTESANA: json['COD_ARTESANA'] as int?,
+      COD_ARTESANA: json['COD_ARTESANA'] as String,
       CODIGO_REGISTRO: json['CODIGO_REGISTRO'] as String?,
       registrosVentasId: json['registrosVentasId'] as String?,
       IMAGEN: json['IMAGEN'] as String?,

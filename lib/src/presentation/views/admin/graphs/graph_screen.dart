@@ -55,23 +55,33 @@ class GraphicProductsScreen extends HookWidget {
     Map<String, String> selectedValues,
   ) {
     final ventasListCubit = context.read<VentasListCubit>();
+    final currentYear = DateTime.now().year.toString();
+    final currentMonth = DateTime.now().month.toString();
 
     if (filterType == 'Año') {
-      ventasListCubit.getVentasByYearAndMonth(selectedValue ?? '', '');
+      ventasListCubit.getVentasByfilters(
+          selectedValue ?? '', '', selectedValues['Artesano'] ?? '');
       selectedFilter.value = 'Año/$selectedValue';
       selectedValues['Año'] = selectedValue ?? '';
     } else if (filterType == 'Mes') {
-      final currentYear = DateTime.now().year;
-      ventasListCubit.getVentasByYearAndMonth(
-        '${selectedValues['Año'] ?? currentYear}/$selectedValue',
-        '',
-      );
+      final selectedYear = selectedValues['Año'] ?? currentYear;
+      ventasListCubit.getVentasByfilters(
+          selectedYear, selectedValue ?? '', selectedValues['Artesano'] ?? '');
       selectedFilter.value = 'Mes/$selectedValue';
       selectedValues['Mes'] = selectedValue ?? '';
     } else if (filterType == 'Artesano') {
       final codArtisan = int.tryParse(selectedValue ?? '');
       if (codArtisan != null) {
-        ventasListCubit.getVentasByCodeArtisians(codArtisan);
+        // Establece el año y el mes actuales si no están seleccionados
+        selectedValues['Año'] = selectedValues['Año'] ?? currentYear;
+        selectedValues['Mes'] = selectedValues['Mes'] ?? currentMonth;
+
+        ventasListCubit.getVentasByfilters(
+          selectedValue ?? '',
+          selectedValues['Año']!,
+          selectedValues['Mes']!,
+        );
+
         selectedFilter.value = 'Artesano/$selectedValue';
         selectedValues['Artesano'] = selectedValue ?? '';
       } else {
@@ -112,31 +122,32 @@ class GraphicProductsScreen extends HookWidget {
     List<ChartBarData> chartData = [];
 
     final artesanoController = useTextEditingController();
-    useEffect(
-      () {
-        final currentYear = DateTime.now().year;
-        ventasListCubit.getVentasByYearAndMonth('$currentYear', '');
 
-        if (artesanoController.text.isNotEmpty) {
-          final codArtisan = int.tryParse(artesanoController.text);
-          if (codArtisan != null) {
-            ventasListCubit.getVentasByCodeArtisians(codArtisan);
-          } else {
-            print('Invalid artisan code: ${artesanoController.text}');
-          }
+    useEffect(() {
+      final currentYear = DateTime.now().year;
+      ventasListCubit.getVentasByfilters('$currentYear', '', '');
+
+      if (artesanoController.text.isNotEmpty) {
+        final codArtisan = artesanoController.text;
+        ventasListCubit.getVentasByfilters(
+          selectedFilter.value,
+          selectedFilter.value,
+          codArtisan,
+        );
+      }
+
+      final subscription = ventasListCubit.stream.listen((ventas) {
+        if (ventas != null) {
+          dataVentas.value = ventas;
+        } else {
+          dataVentas.value = []; // Set to empty list if no ventas found
         }
+        isLoading.value = false;
+      });
 
-        final subscription = ventasListCubit.stream.listen((ventas) {
-          if (ventas != null) {
-            dataVentas.value = ventas;
-          }
-          isLoading.value = false;
-        });
-        initializeDateFormatting('es_ES');
-        return subscription.cancel;
-      },
-      [ventasListCubit],
-    );
+      initializeDateFormatting('es_ES');
+      return subscription.cancel;
+    }, [ventasListCubit]);
 
     if (selectedFilter.value.startsWith('Mes')) {
       final Map<DateTime, double> dailySums = {};
@@ -347,7 +358,7 @@ class GraphicProductsScreen extends HookWidget {
                     child: ListView.builder(
                       controller: scrollController,
                       shrinkWrap: true,
-                      physics: NeverScrollableScrollPhysics(),
+                      physics: const NeverScrollableScrollPhysics(),
                       padding: EdgeInsets.zero,
                       itemCount: cards.length,
                       itemBuilder: (context, index) {
@@ -468,15 +479,12 @@ class GraphicProductsScreen extends HookWidget {
       return DropDownMenuArtesanos(
         menuController: menuController,
         selectedOption: selectedFilter,
+        selectedValues: selectedValues,
       );
     }
 
-    List<DropdownMenuItem<String>> items = [];
-    if (hint == 'Año') {
-      items = yearItems;
-    } else {
-      items = monthItems;
-    }
+    List<DropdownMenuItem<String>> items =
+        hint == 'Año' ? yearItems : monthItems;
 
     return DropdownButton<String>(
       value: selectedValues[hint],
@@ -625,17 +633,14 @@ class GraphicProductsScreen extends HookWidget {
 
     final totalQuantity =
         ventas.fold<int>(0, (sum, item) => sum + (item.CANTIDAD));
+
     final String imageUrl = ventas.isNotEmpty && ventas.first.IMAGEN != null
         ? ventas.first.IMAGEN!
         : 'https://via.placeholder.com/150'; // URL de la imagen por defecto
 
     return ExpansionTileImp(
       title: Container(
-        padding: EdgeInsets.zero,
-        margin: EdgeInsets.zero,
-        //padding: const EdgeInsets.only(bottom: 5),
         decoration: decoration,
-
         child: ListTile(
           leading: _buildImageAvatar(imageUrl),
           title: Column(
@@ -645,22 +650,23 @@ class GraphicProductsScreen extends HookWidget {
                 productCode,
                 style: const TextStyle(fontSize: 18),
               ),
-              Container(
-                margin: const EdgeInsets.only(top: 10),
-                padding: const EdgeInsets.symmetric(horizontal: 4),
-                decoration: BoxDecoration(
-                  color: secondary,
-                  borderRadius: BorderRadius.circular(3),
-                ),
-                child: Text(
-                  'Total vendidos: $totalQuantity',
-                  style: TextStyle(
-                    fontSize: 13,
-                    fontWeight: FontWeight.w500,
-                    color: bgPrimary,
-                  ),
+              Text(
+                '$totalQuantity vendidos',
+                style: TextStyle(
+                  fontSize: 12,
+                  fontWeight: FontWeight.w500,
+                  color: bottomNavBarStroke,
                 ),
               ),
+              Container(
+                  alignment: Alignment.centerRight,
+                  child: Text(
+                    ventas.isNotEmpty ? ' S/ ${ventas.first.PRECIO_VENTA}' : '',
+                    style: const TextStyle(
+                      fontSize: 16,
+                      fontWeight: FontWeight.w500,
+                    ),
+                  )),
             ],
           ),
         ),
@@ -676,10 +682,20 @@ class GraphicProductsScreen extends HookWidget {
               subtitle: Column(
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
-                  Text('Cantidad: ${venta.CANTIDAD}',
-                      style: infoCardsProducts()),
+                  Text(
+                    'Cantidad: ${venta.CANTIDAD}',
+                    style: infoCardsProducts(),
+                  ),
                   Text(
                     'Descripción: ${venta.DESCRIPCION}',
+                    style: infoCardsProducts(),
+                  ),
+                  Text(
+                    'Monto total: S/${venta.MONTO_TOTAL}',
+                    style: infoCardsProducts(),
+                  ),
+                  Text(
+                    'Vendedora: ${venta.NOMBRE_ARTESANO}',
                     style: infoCardsProducts(),
                   ),
                 ],
@@ -696,8 +712,8 @@ class GraphicProductsScreen extends HookWidget {
 
   Widget _buildImageAvatar(String url) {
     return Container(
-      width: 60,
-      height: 60,
+      width: 70,
+      height: 70,
       decoration: BoxDecoration(
         borderRadius: BorderRadius.circular(5.0),
         image: DecorationImage(
@@ -755,10 +771,11 @@ class GraphicProductsScreen extends HookWidget {
 class DropDownMenuArtesanos extends HookWidget {
   final TextEditingController? menuController;
   final ValueNotifier<String> selectedOption;
-
+  final Map<String, String> selectedValues;
   const DropDownMenuArtesanos({
     required this.menuController,
     required this.selectedOption,
+    required this.selectedValues,
   });
 
   @override
@@ -783,7 +800,6 @@ class DropDownMenuArtesanos extends HookWidget {
             if (queryNombre.value != selectedOption.value) {
               usersListCubitRead.getUserLists(
                 nombre: queryNombre.value,
-                cantidad: 5,
               );
             }
           });
@@ -795,20 +811,30 @@ class DropDownMenuArtesanos extends HookWidget {
     );
 
     final items = usersListCubit.state?.map<DropdownMenuItem<String>>((value) {
+          final isSelected =
+              value.codigoArtesano.toString() == selectedOption.value;
           return DropdownMenuItem<String>(
             value: value.codigoArtesano.toString(),
-            child: ListTile(
-              leading: SizedBox(
-                width: 35,
-                height: 35,
-                child: CircleAvatar(
-                  backgroundImage: NetworkImage(value.url),
+            child: Container(
+              margin: const EdgeInsets.only(top: 3),
+              child: ListTile(
+                leading: isSelected
+                    ? null
+                    : SizedBox(
+                        width: 35,
+                        height: 35,
+                        child: CircleAvatar(
+                          backgroundImage: NetworkImage(value.url),
+                        ),
+                      ),
+                title: Padding(
+                  padding: const EdgeInsets.only(bottom: 8.0),
+                  child: Text(
+                    value.nombre,
+                    style: const TextStyle(
+                        fontSize: 14, fontWeight: FontWeight.w400),
+                  ),
                 ),
-              ),
-              title: Text(
-                value.nombre,
-                style:
-                    const TextStyle(fontSize: 14, fontWeight: FontWeight.w400),
               ),
             ),
           );
@@ -826,7 +852,7 @@ class DropDownMenuArtesanos extends HookWidget {
       children: [
         DropdownButton<String>(
           value: selectedValue,
-          hint: const Text('Asignar artesano'),
+          hint: const Text('Artesano'),
           style: const TextStyle(fontSize: 14, fontWeight: FontWeight.w400),
           isExpanded: true,
           items: items,
@@ -835,12 +861,21 @@ class DropDownMenuArtesanos extends HookWidget {
               selectedOption.value = newValue;
               closeKeyboard(context);
               final ventasListCubit = context.read<VentasListCubit>();
-              final codArtisan = int.tryParse(selectedOption.value);
-              if (codArtisan != null) {
-                ventasListCubit.getVentasByCodeArtisians(codArtisan);
-              } else {
-                print('Invalid artisan code: ${selectedOption.value}');
-              }
+              final codArtisan = selectedOption.value;
+              // Obtener el año seleccionado del filtro
+              final selectedYear = selectedValues['Año'] ??
+                  DateTime.now()
+                      .year
+                      .toString(); // Usa el año actual si no se ha seleccionado
+
+              final selectedMonth =
+                  selectedValues['Mes'] ?? DateTime.now().month.toString();
+
+              ventasListCubit.getVentasByfilters(
+                selectedYear,
+                selectedMonth,
+                codArtisan,
+              );
             }
           },
         ),

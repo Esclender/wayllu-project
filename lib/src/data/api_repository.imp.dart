@@ -139,16 +139,16 @@ class ProductsApiRepositoryImpl extends BaseApiRepository
     return responseHttp.data;
   }
 
-  Future<VentasListHttpResponse> getVentasByYearAndMonth(
-    String year,
-    String mes,
-  ) async {
-    final responseHttp = await getStateOf<VentasListHttpResponse>(
-      request: () => _apiServices.getVentasByYearAndMonth(year, mes),
-    );
+  // Future<VentasListHttpResponse> getVentasByYearAndMonth(
+  //   String year,
+  //   String mes,
+  // ) async {
+  //   final responseHttp = await getStateOf<VentasListHttpResponse>(
+  //     request: () => _apiServices.getVentasByYearAndMonth(year, mes),
+  //   );
 
-    return responseHttp.data;
-  }
+  //   return responseHttp.data;
+  // }
 
   @override
   Future<void> registerNewProduct(Map<String, dynamic> productData) async {
@@ -164,11 +164,19 @@ class ProductsApiRepositoryImpl extends BaseApiRepository
     );
   }
 
-  Future<VentasListHttpResponse> getVentasByCodeArtisians(
-      int codArtisan) async {
+  Future<VentasListHttpResponse> getVentasByfilters(
+      String year, String mes, String codArtisan,) async {
     final responseHttp = await getStateOf<VentasListHttpResponse>(
-      request: () => _apiServices.getVentasByCodeArtisians(codArtisan),
+      request: () => _apiServices.getVentasByfilters(year, mes, codArtisan),
     );
     return responseHttp.data;
   }
+
+  // Future<VentasListHttpResponse> getVentasByArtisan(
+  //      String codArtisan,) async {
+  //   final responseHttp = await getStateOf<VentasListHttpResponse>(
+  //     request: () => _apiServices.getVentasByArtisans(codArtisan),
+  //   );
+  //   return responseHttp.data;
+  // }
 }

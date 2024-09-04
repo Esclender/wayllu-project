@@ -182,6 +182,7 @@ class EditProductsScreen extends HookWidget {
     ValueNotifier<String> categoria,
     ValueNotifier<String> codFamilia,
     ValueNotifier<String?> codArtesano,
+    
     File? image,
   ) {
     return TextButton(

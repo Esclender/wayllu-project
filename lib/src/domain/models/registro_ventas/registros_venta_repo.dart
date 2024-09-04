@@ -20,7 +20,7 @@ class VentasList {
     required this.MONTO_TOTAL,
     required this.DESCRIPCION,
     required this.COMUNIDAD,
-    this.COD_ARTESANA,
+    required this.COD_ARTESANA,
     this.CODIGO_REGISTRO,
     this.registrosVentasId,
     this.IMAGEN,
@@ -32,7 +32,7 @@ class VentasList {
   String? registrosVentasId;
   String? CODIGO_REGISTRO;
   String? IMAGEN;
-  int? COD_ARTESANA;
+  String COD_ARTESANA;
   int CANTIDAD;
   String FECHA_REGISTRO;
   String DESCRIPCION;
@@ -61,6 +61,7 @@ class VentasList {
       date: formattingDate(),
       productCode: COD_PRODUCTO,
       artisan: NOMBRE_ARTESANO,
+      artisanCode: COD_ARTESANA,
       community: COMUNIDAD,
       categoryProduct: CATEGORIA_PRODUCTO,
       family: DESCRIPCION,
