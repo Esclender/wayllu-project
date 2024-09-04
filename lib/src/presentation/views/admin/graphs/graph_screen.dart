@@ -245,7 +245,7 @@ class GraphicProductsScreen extends HookWidget {
       floatingActionButton: Column(
         mainAxisAlignment: MainAxisAlignment.end,
         children: [
-          _downloadExcelComponent(context),
+          if (!isLoading.value) _downloadExcelComponent(context),
           const Gap(8),
           BottomNavBar(
             viewSelected: viewIndex,
